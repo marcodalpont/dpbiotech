@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MicroscopePro — Surgical Microscopes</title>
+<meta name="description" content="High‑performance surgical microscopes: optics, ergonomics, illumination and clinical accessories." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#ffffff; --text:#0a0a0a; --muted:#525252; --line:#e5e5e5; --card:#fafafa; --b1:#4f46e5; --b2:#7c3aed; --b3:#a21caf; }
+  @media (prefers-color-scheme: dark){ :root { --bg:#0a0a0a; --text:#fafafa; --muted:#cfcfcf; --line:#1f1f1f; --card:#0f0f10; } }
+  html{scroll-behavior:smooth}
+  body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text)}
+  .container{max-width:1200px; margin:0 auto; padding:0 20px}
+  
+  /* --- NAVIGATION & MENU --- */
+  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
+  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
+  .logo{display:flex; gap:8px; align-items:center; font-weight:800; letter-spacing:-0.02em}
+  .dot{width:18px; height:18px; border-radius:999px; background:linear-gradient(135deg, var(--b1), var(--b2), var(--b3))}
+  .nav a{color:inherit; text-decoration:none}
+  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
+  @media(min-width:960px){.nav-links{display:flex; align-items:center}}
+  .nav-links > li { height: 100%; display: flex; align-items: center; cursor:pointer; }
+
+  /* --- NEW APPLE-STYLE MEGA MENU (CORRECTED) --- */
+  .dropdown-menu {
+    /* Visibility & Animation */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s ease, visibility .3s ease;
+
+    /* Positioning & Full-screen Sizing */
+    position: absolute;
+    top: 57px; /* Nav height */
+    left: 0;
+    right: 0;
+    
+    /* Appearance - REMOVED TRANSPARENCY */
+    background: var(--bg); /* SOLID BACKGROUND */
+    border-top: 1px solid var(--line);
+    box-shadow: 0 20px 60px rgba(0,0,0,.15);
+    z-index: 40;
+    overflow-y: auto;
+    max-height: calc(100vh - 57px);
+  }
+  .dropdown-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+  .menu-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr; /* 3 columns layout */
+    gap: 32px;
+    padding: 32px 0;
+  }
+  .menu-main-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .menu-main-links li:first-child {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+    margin-bottom: 8px;
+    padding: 0 12px;
+  }
+  .menu-main-links a {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.5;
+    display: block;
+    padding: 4px 12px;
+    border-radius: 6px;
+  }
+  .menu-main-links a:hover { background: var(--card); }
+  .menu-link-column {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .menu-link-column li {
+    margin-bottom: 2px;
+  }
+  .menu-link-column li:first-child {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding: 0 12px;
+  }
+  .menu-link-column a {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    padding: 8px 12px;
+    border-radius: 6px;
+  }
+  .menu-link-column a:hover { background: var(--card); }
+
+  /* --- MENU BACKDROP --- */
+  .menu-backdrop {
+    position: fixed;
+    top: 57px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 30;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s ease, visibility .3s ease;
+  }
+  .menu-backdrop.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  /* --- END MENU STYLES --- */
+
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer}
+  .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
+  .btn.primary:hover{opacity:.92}
+  .btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
+
+  /* Hero */
+  .hero{background:linear-gradient(to bottom, var(--bg), color-mix(in srgb, var(--bg) 94%, var(--text))); padding: 56px 0 72px;}
+  .eyebrow{display:inline-block; padding:6px 10px; border:1px solid var(--line); border-radius:999px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+  .h1{font-size:clamp(40px, 7vw, 80px); line-height:1.05; letter-spacing:-0.03em; font-weight:800; margin:18px 0}
+  .grad{background:linear-gradient(90deg, var(--b1), var(--b2), var(--b3)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .lead{max-width:760px; margin:0 auto; color:var(--muted); font-size:clamp(16px, 2.5vw, 20px)}
+  .hero-cta{display:flex; gap:12px; justify-content:center; margin-top:24px}
+  .frame{margin-top:40px; border:1px solid var(--line); border-radius:28px; overflow:hidden; position:relative; aspect-ratio:16/9; box-shadow:0 20px 60px rgba(0,0,0,.15)}
+  .mock{position:absolute; inset:0; background:radial-gradient(60% 60% at 50% 50%, color-mix(in srgb, var(--b2) 28%, transparent), transparent 60%), radial-gradient(45% 45% at 36% 50%, color-mix(in srgb, var(--b1) 35%, transparent), transparent 60%), radial-gradient(45% 45% at 64% 50%, color-mix(in srgb, var(--b3) 35%, transparent), transparent 60%), linear-gradient(135deg, color-mix(in srgb, var(--bg) 70%, var(--text)), var(--bg));}
+  .mock-screen{position:absolute; inset:12%; border-radius:20px; background:rgba(0,0,0,.78); color:#fff; display:grid; place-items:center; font-weight:600}
+
+  section{padding:88px 0}
+  h2{font-size:clamp(28px, 4.5vw, 44px); letter-spacing:-0.02em}
+  p.muted{color:var(--muted)}
+
+  .grid{display:grid; gap:24px}
+  .grid-2{grid-template-columns:1fr} @media(min-width:640px){.grid-2{grid-template-columns:1fr 1fr}}
+  .grid-4{grid-template-columns:1fr} @media(min-width:900px){.grid-4{grid-template-columns:repeat(4,1fr)}}
+
+  .card{border:1px solid var(--line); border-radius:16px; padding:20px; background:color-mix(in srgb, var(--bg) 96%, var(--text)); transition:box-shadow .2s ease}
+  .card:hover{box-shadow:0 8px 30px rgba(0,0,0,.12)}
+  .icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--text);color:var(--bg);font-weight:700;margin-bottom:12px}
+  
+  .specs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px}
+  .row{display:flex; justify-content:space-between; border-bottom:1px solid var(--line); padding:10px 0; font-size:14px}
+  
+  footer{border-top:1px solid var(--line); padding:36px 0; color:var(--muted)}
+  
+  .backdrop{position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; z-index: 60;}
+  .modal{background:var(--bg); color:var(--text); width:min(860px, 92vw); border-radius:16px; border:1px solid var(--line); overflow:hidden}
+  .modal header{display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--line)}
+  .modal .content{aspect-ratio:16/9; background:#000; display:grid; place-items:center; color:#fff}
+  .close{background:transparent; border:1px solid var(--line); border-radius:10px; padding:8px 12px; cursor:pointer}
+</style>
+</head>
+<body>
+  <div class="nav" id="main-nav">
+    <div class="container nav-inner">
+      <a href="#home" class="logo"><span class="dot"></span><span>Microscope<strong>Pro</strong></span></a>
+      <ul class="nav-links">
+        <li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
+        <li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
+        <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
+        <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
+      </ul>
+      <div style="display:flex; gap:8px">
+        <a class="btn primary" href="buy.html">Buy</a>
+      </div>
+    </div>
+
+    <div id="microscopes-menu" class="dropdown-menu">
+      <div class="container">
+        <div class="menu-content">
+          <ul class="menu-main-links">
+            <li>Shop Microscopes</li>
+            <li><a href="DPMini.html">DP Mini</a></li>
+            <li><a href="DPPro.html">DP Pro</a></li>
+            <li><a href="all-models.html">All Models</a></li>
+          </ul>
+          <ul class="menu-link-column">
+            <li>Quick Links</li>
+            <li><a href="#">Compare Models</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div id="stands-menu" class="dropdown-menu">
+       <div class="container">
+        <div class="menu-content">
+          <ul class="menu-main-links">
+            <li>Shop Stands</li>
+            <li><a href="#">Floor Stands</a></li>
+            <li><a href="#">Ceiling Mounts</a></li>
+            <li><a href="#">Wall Mounts</a></li>
+          </ul>
+          <ul class="menu-link-column">
+            <li>Quick Links</li>
+            <li><a href="#">Compatibility Guide</a></li>
+            <li><a href="#">Installation Service</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="software-menu" class="dropdown-menu">
+        <div class="container">
+          <div class="menu-content">
+             <ul class="menu-main-links">
+              <li>Explore Software</li>
+              <li><a href="#">Imaging Suite</a></li>
+              <li><a href="#">Companion App</a></li>
+            </ul>
+             <ul class="menu-link-column">
+              <li>For Developers</li>
+              <li><a href="#">API & SDK</a></li>
+              <li><a href="#">Documentation</a></li>
+            </ul>
+          </div>
+        </div>
+    </div>
+
+    <div id="support-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+            <ul class="menu-main-links">
+              <li>Get Support</li>
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">Service Plans</a></li>
+              <li><a href="#">Manuals & Guides</a></li>
+            </ul>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="menu-backdrop"></div>
+
+  <header class="hero" id="home">
+    <div class="container" style="text-align:center">
+      <span class="eyebrow">New • Surgical Series</span>
+      <h1 class="h1">Surgical microscope <span class="grad">precision, simplified</span></h1>
+      <p class="lead">Optical performance, ergonomics and illumination designed for clinical workflows. Optional companion app available — microscope works standalone.</p>
+      <div class="hero-cta">
+        <a href="buy.html" class="btn primary">Buy</a>
+        <a href="#features" class="btn">Learn more</a>
+      </div>
+      <div class="frame">
+        <div class="mock"></div>
+        <div class="mock-screen">Optical Path — Coaxial Illumination</div>
+      </div>
+    </div>
+  </header>
+
+  <section id="features">
+    <div class="container">
+      <h2>Built for clinical use</h2>
+      <p class="muted" style="max-width:760px">From glass to mechanics, every component is tuned for stability, visibility and comfort during long procedures.</p>
+      <div class="grid grid-4" style="margin-top:24px">
+        <div class="card"><div class="icon">OP</div><h3>Optics</h3><p class="muted">Plan‑apochromatic lenses, AR‑coated, neutral colorimetry. Zoom 1:6. Eyepieces 10× or 12.5×.</p></div>
+        <div class="card"><div class="icon">WD</div><h3>Working distance</h3><p class="muted">Objectives f=175 / 200 / 250 mm to match your specialty and posture.</p></div>
+        <div class="card"><div class="icon">CX</div><h3>Coaxial LED</h3><p class="muted">High‑intensity LED (80–120 W) with homogeneous field and low heat.</p></div>
+        <div class="card"><div class="icon">ER</div><h3>Ergonomics</h3><p class="muted">Balanced arms, smooth friction, sterile‑drape ready handles and controls.</p></div>
+        <div class="card"><div class="icon">SP</div><h3>Beam splitters</h3><p class="muted">20/80 or 50/50 with dual C‑mount ports for camera/teaching.</p></div>
+        <div class="card"><div class="icon">AS</div><h3>Assistant scope</h3><p class="muted">Assistant binocular module for training and hand‑offs.</p></div>
+        <div class="card"><div class="icon">MT</div><h3>Mounting</h3><p class="muted">Floor stand, ceiling mount or wall arm — same optical head.</p></div>
+        <div class="card"><div class="icon">ST</div><h3>Sterility</h3><p class="muted">Sterile handles and drapes available; easy to clean surfaces.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tech">
+    <div class="container">
+      <div class="grid grid-2" style="align-items:start">
+        <div>
+          <h2>Technology</h2>
+          <p class="muted">Optical path with AR‑coated glass, coaxial illumination and precision mechanics. Optional companion app can provide guidance overlays — not required to operate.</p>
+          <ul class="list" style="margin:10px 0 0; padding:0 0 0 18px; line-height:1.7">
+            <li>Plan‑apochromatic objective range f=175 / 200 / 250 mm</li>
+            <li>Zoom ratio 1:6, parfocal, parcentric</li>
+            <li>Eyepieces 10× / 12.5× with diopter adjustment</li>
+            <li>LED coaxial illumination 80–120 W, uniform field</li>
+            <li>Beam splitters 20/80 or 50/50; dual C‑mount ports</li>
+            <li>Assistant binocular module (optional)</li>
+            <li>Floor / ceiling / wall mounting with counterbalance</li>
+          </ul>
+          <div style="display:flex; gap:10px; margin-top:16px">
+            <a href="buy.html" class="btn primary">Buy</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="thumb" style="aspect-ratio:16/9; background:linear-gradient(135deg, color-mix(in srgb, var(--b1) 30%, transparent), color-mix(in srgb, var(--b3) 30%, transparent))">Optical diagram / video</div>
+          <div class="specs">
+            <div class="row"><span>Optics</span><strong>Plan‑apo, AR‑coated</strong></div>
+            <div class="row"><span>Zoom</span><strong>1:6, parfocal</strong></div>
+            <div class="row"><span>Objectives</span><strong>f=175 / 200 / 250 mm</strong></div>
+            <div class="row"><span>Illumination</span><strong>LED coaxial 80–120 W</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
+      <div style="display:flex; gap:8px; align-items:center"><span class="dot"></span>DP Biotech</div>
+      <div style="display:flex; gap:18px"><a href="#" class="muted">Privacy</a><a href="#" class="muted">Terms</a></div>
+    </div>
+  </footer>
+  
+<script>
+// --- MEGA MENU SCRIPT ---
+document.addEventListener('DOMContentLoaded', () => {
+    const mainNav = document.getElementById('main-nav');
+    const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
+    const backdrop = document.querySelector('.menu-backdrop');
+    let activeMenu = null;
+    let closeTimeout;
+
+    function openMenu(menuId) {
+        if (activeMenu) {
+            activeMenu.classList.remove('is-open');
+        }
+        
+        const menu = document.getElementById(menuId);
+        if (menu) {
+            menu.classList.add('is-open');
+            backdrop.classList.add('is-visible');
+            activeMenu = menu;
+        }
+    }
+
+    function closeAllMenus() {
+        if (activeMenu) {
+            activeMenu.classList.remove('is-open');
+        }
+        backdrop.classList.remove('is-visible');
+        activeMenu = null;
+    }
+
+    triggers.forEach(trigger => {
+        trigger.addEventListener('mouseenter', () => {
+            clearTimeout(closeTimeout);
+            const menuId = trigger.dataset.menu;
+            openMenu(menuId);
+        });
+    });
+
+    mainNav.addEventListener('mouseleave', () => {
+        closeTimeout = setTimeout(closeAllMenus, 200);
+    });
+
+    mainNav.addEventListener('mouseenter', () => {
+        clearTimeout(closeTimeout);
+    });
+});
+
+// --- MODAL SCRIPT (RESTORED) ---
+const backdrop = document.getElementById('backdrop');
+const closeModal = document.getElementById('closeModal');
+function openModal(){ backdrop.style.display = 'flex'; backdrop.setAttribute('aria-hidden','false'); }
+function close(){ backdrop.style.display = 'none'; backdrop.setAttribute('aria-hidden','true'); }
+if (closeModal) closeModal.addEventListener('click', close);
+if (backdrop) backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) close(); });
+</script>
+</body>
+</html>

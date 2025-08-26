@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DP Mini — Fusion 3D Mobile Microscope</title>
+<meta name="description" content="DP Mini brings true depth to mobile imaging with Fusion 3D — real 3D perception from a single smartphone sensor. Lightweight. Fast. Clinic-ready." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ===== THEME: aligned with index (same nav), distinct page accents ===== */
+  :root{
+    --bg:#ffffff; --text:#0a0a0a; --muted:#5b5b5b; --line:#e9e9e9; --card:#f6f7f9;
+    --a1:#0ea5e9; --a2:#6366f1; --a3:#8b5cf6; /* page accents */
+  }
+  @media(prefers-color-scheme:dark){
+    :root{ --bg:#0a0a0a; --text:#fafafa; --muted:#cfcfcf; --line:#1a1a1a; --card:#101114; }
+  }
+  html{scroll-behavior:smooth}
+  body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text)}
+  .container{max-width:1200px; margin:0 auto; padding:0 20px}
+
+  /* ===== NAV copied from index for perfect consistency ===== */
+  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
+  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
+  .logo{display:flex; gap:8px; align-items:center; font-weight:800; letter-spacing:-0.02em}
+  .dot{width:18px; height:18px; border-radius:999px; background:linear-gradient(135deg, var(--a1), var(--a2), var(--a3))}
+  .nav a{color:inherit; text-decoration:none}
+  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
+  @media(min-width:960px){.nav-links{display:flex; align-items:center}}
+  .nav-links > li { height:100%; display:flex; align-items:center; cursor:pointer; }
+
+  /* Mega menu (same structure as index) */
+  .dropdown-menu{opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease; position:absolute; top:57px; left:0; right:0; background:var(--bg); border-top:1px solid var(--line); box-shadow:0 16px 50px rgba(0,0,0,.12); z-index:40; overflow-y:auto; max-height:calc(100vh - 57px)}
+  .dropdown-menu.is-open{opacity:1; visibility:visible}
+  .menu-content{display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; padding:28px 0}
+  .menu-main-links, .menu-link-column{list-style:none; margin:0; padding:0}
+  .menu-main-links li:first-child, .menu-link-column li:first-child{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:10px; padding:0 12px}
+  .menu-main-links a{font-size:22px; font-weight:700; line-height:1.4; display:block; padding:6px 12px; border-radius:8px}
+  .menu-main-links a:hover{background:var(--card)}
+  .menu-link-column a{font-size:13px; font-weight:600; display:block; padding:8px 12px; border-radius:8px}
+  .menu-link-column a:hover{background:var(--card)}
+  .menu-backdrop{position:fixed; top:57px; left:0; right:0; bottom:0; background:rgba(0,0,0,.4); z-index:30; opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease}
+  .menu-backdrop.is-visible{opacity:1; visibility:visible}
+
+  /* ===== PAGE STYLES (tighter rhythm, no empty gaps) ===== */
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:12px; border:1px solid var(--line); font-weight:700; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
+  .btn.primary{background:linear-gradient(90deg, var(--a1), var(--a2)); color:#fff; border-color:transparent}
+  .btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
+  .section{padding:68px 0} /* tighter than index to remove big holes */
+  h1{font-size:clamp(36px, 6.2vw, 80px); letter-spacing:-0.03em; line-height:1.06; margin:10px 0 8px}
+  h2{font-size:clamp(26px, 4.2vw, 44px); letter-spacing:-0.02em; margin:0 0 8px}
+  h3{font-size:18px; margin:0 0 6px}
+  p.lead{color:var(--muted); font-size:clamp(16px, 2.2vw, 19px); max-width:760px}
+  p.muted{color:var(--muted); font-size: 15px; line-height: 1.6;}
+  .subtle{color:var(--muted); font-size:13px}
+
+  /* HERO with full-bleed band so no white gaps */
+  .hero{background:
+    radial-gradient(60% 60% at 50% 30%, color-mix(in srgb, var(--a2) 12%, transparent), transparent 60%),
+    radial-gradient(50% 50% at 20% 70%, color-mix(in srgb, var(--a1) 10%, transparent), transparent 60%);}
+  .hero-inner{display:grid; gap:28px; grid-template-columns:1fr; align-items:center}
+  @media(min-width:980px){.hero-inner{grid-template-columns:1.1fr .9fr}}
+  .hero-visual{border:1px solid var(--line); border-radius:24px; aspect-ratio:16/10; background:
+      linear-gradient(135deg, color-mix(in srgb, var(--card) 70%, var(--a2)), var(--card));
+      position:relative; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.12)}
+  .hero-screen{position:absolute; inset:10%; border-radius:18px; background:rgba(0,0,0,.8); color:#eaf2ff; display:grid; place-items:center; text-align:center; font-weight:700}
+
+  /* Feature grid */
+  .grid{display:grid; gap:18px}
+  .grid-2{grid-template-columns:1fr} @media(min-width:760px){.grid-2{grid-template-columns:1fr 1fr}}
+  .grid-4{grid-template-columns:1fr} @media(min-width:980px){.grid-4{grid-template-columns:repeat(4,1fr)}}
+
+  .card{border:1px solid var(--line); border-radius:16px; padding:24px; background:color-mix(in srgb, var(--bg) 96%, var(--text)); display:flex; flex-direction:column; gap:6px}
+  .icon{width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg, var(--a1), var(--a3)); color:#fff; font-weight:800; margin-bottom:8px}
+
+  /* Band sections to alternate background and avoid “holes” */
+  .band{background:linear-gradient(180deg, var(--bg), color-mix(in srgb, var(--card) 70%, var(--bg)))}
+  .band-inverse{background:linear-gradient(180deg, color-mix(in srgb, var(--card) 86%, var(--bg)), var(--bg))}
+  
+  /* NEW Specs section style */
+  .specs-card { border:1px solid var(--line); border-radius:16px; padding:24px; background:color-mix(in srgb, var(--bg) 96%, var(--text)); }
+  .specs-list { list-style:none; padding:0; margin:16px 0 0 0; }
+  .specs-list li { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px dashed var(--line); font-size:14px; }
+  .specs-list li:last-child { border-bottom:none; }
+  .specs-list span { color: var(--muted); }
+
+
+  /* Footer */
+  footer{border-top:1px solid var(--line); padding:32px 0; color:var(--muted)}
+  /* === Overrides SOLO per la sezione "Customize Your DP Mini" === */
+.band.band--customize {
+  /* come codice 1 */
+  background: color-mix(in srgb, var(--card) 60%, transparent);
+}
+.band.band--customize .grid-3 {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 960px) {
+  .band.band--customize .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+/* Le card in questa sezione non devono avere look "card" del codice 2 */
+.band.band--customize .card {
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  display: block;
+  gap: 0;
+  box-shadow: none;
+}
+/* === Overrides SOLO per la sezione "Customize Your DP Mini" === */
+#customize.band {
+  /* come codice 1 */
+  background: color-mix(in srgb, var(--card) 60%, transparent);
+}
+
+/* grid-3 identica al codice 1 */
+#customize .grid-3 {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 960px) {
+  #customize .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* rimuovo il look "card" del codice 2 solo qui */
+#customize .card {
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  display: block;
+  box-shadow: none;
+  gap: 0;
+}
+
+/* stile liste come nel codice 1 */
+#customize .list { list-style: none; padding-left: 0; margin-top: 16px; }
+#customize .list li { padding-left: 1.5em; position: relative; margin-bottom: 10px; color: var(--muted); }
+#customize .list li::before { content: '✓'; position: absolute; left: 0; color: #0d9488; } /* = var(--b2) del codice 1 */
+
+/* titolo h3 come nel codice 1 (più grande) */
+#customize h3 { 
+  font-size: clamp(22px, 3.5vw, 32px);
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+
+</style>
+</head>
+<body>
+
+  <div class="nav" id="main-nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo"><span class="dot"></span><span>Microscope<strong>Pro</strong></span></a>
+      <ul class="nav-links">
+        <li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
+        <li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
+        <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
+        <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
+      </ul>
+      <div style="display:flex; gap:8px">
+        <a class="btn" href="buy.html">Buy Now</a>
+      </div>
+    </div>
+
+    <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compare Models</a></li></ul><ul class="menu-link-column"><li></ul></div></div></div>
+    <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li><li><a href="#">Installation Service</a></li></ul></div></div></div>
+    <div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Explore Software</li><li><a href="#">Imaging Suite</a></li><li><a href="#">Companion App</a></li></ul><ul class="menu-link-column"><li>For Developers</li><li><a href="#">API & SDK</a></li><li><a href="#">Documentation</a></li></ul></div></div></div>
+    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="#">Contact Us</a></li><li><a href="#">Service Plans</a></li><li><a href="#">Manuals & Guides</a></li></ul></div></div></div>
+  </div>
+
+  <div class="menu-backdrop"></div>
+
+  <header class="hero section" id="home">
+    <div class="container hero-inner">
+      <div>
+        <span class="subtle">Mobile Series • New</span>
+        <h1>DP Mini — <span style="background:linear-gradient(90deg,var(--a1),var(--a3)); -webkit-background-clip:text; background-clip:text; color:transparent">Fusion&nbsp;3D</span></h1>
+        <p class="lead">True stereoscopic perception on your smartphone. Fusion&nbsp;3D alternates two perspectives and fuses them into a single, stable stream — depth you can feel, without bulky rigs.</p>
+        <div style="display:flex; gap:10px; margin-top:16px">
+          <a href="buy.html" class="btn primary">Buy DP Mini</a>
+          <a href="#tech" class="btn">How it works</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-screen">FUSION 3D • Dual Perspective → Single Sensor</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="benefits">
+    <div class="container">
+      <h2>Designed for simplicity</h2>
+      <p class="subtle" style="max-width:720px">DP Mini turns your phone into a powerful tool that's easy to use and take anywhere.</p>
+      <div class="grid grid-4" style="margin-top:18px">
+        <div class="card"><div class="icon">3D</div><h3>True 3D Vision</h3><p class="muted">See things with realistic depth, making it easier to work with precision and confidence.</p></div>
+        <div class="card"><div class="icon">EZ</div><h3>Simple to Use</h3><p class="muted">Just clip it onto your phone and you're ready. The system adjusts itself automatically to give you a perfect picture.</p></div>
+        <div class="card"><div class="icon">CL</div><h3>Comfortable Viewing</h3><p class="muted">Enjoy a smooth and stable 3D image that's easy on the eyes, even for long periods.</p></div>
+        <div class="card"><div class="icon">AR</div><h3>Augmented Reality</h3><p class="muted">Add digital information, like images or 3D files, right on top of your real-time 3D view.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section band" id="tech">
+    <div class="container">
+      <div class="grid grid-2" style="align-items:center">
+        <div>
+          <h2>The magic behind Fusion&nbsp;3D</h2>
+          <p class="muted">How does it create 3D with just one camera? DP Mini rapidly captures two separate views—one for your left eye and one for your right. It then instantly combines them into a single, fluid 3D video.</p>
+          <p class="muted">This smart process creates a realistic sense of depth, making your view clear, stable, and comfortable to watch.</p>
+          <div style="display:flex; gap:10px; margin-top:16px">
+            <a href="buy.html" class="btn primary">Buy</a>
+            <a href="#specs" class="btn">Features</a>
+          </div>
+        </div>
+        <div class="hero-visual" style="aspect-ratio:16/9"><div class="hero-screen" style="font-weight:600">ACTIVE STEREO • PERFECT SYNC</div></div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section band-inverse" id="modular">
+    <div class="container">
+      <div class="grid grid-2" style="align-items:center">
+          <div class="hero-visual" style="aspect-ratio:16/9"><div class="hero-screen" style="font-weight:600">DESIGNED FOR YOU</div></div>
+          <div>
+              <h2>A versatile and flexible system</h2>
+              <p class="muted">DP Mini adapts to you. The comfortable handle gives you easy control over what you see. You can also switch the view to a 90-degree angle, just like a traditional microscope, so you can work in the most comfortable position.</p>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="specs">
+      <div class="container">
+          <h2>Key Features</h2>
+          <div class="specs-card">
+              <ul class="specs-list">
+                  <li><span>3D Technology</span><strong>Active 3D Fusion (Single Sensor)</strong></li>
+                  <li><span>Viewing Angle</span><strong>Direct (0°) or Microscope-Style (90°)</strong></li>
+                  <li><span>Working Distance</span><strong>Ideal for close-up work (~30 cm)</strong></li>
+                  <li><span>Controls</span><strong>Ergonomic handle with easy controls</strong></li>
+                  <li><span>Setup</span><strong>Automatic image stabilization</strong></li>
+                  <li><span>Compatibility</span><strong>iPhone 15+</strong></li>
+              </ul>
+          </div>
+      </div>
+  </section>
+
+  <section class="band" id="customize">
+
+    <div class="container" style="text-align:center;">
+        <h3 style="margin-bottom:12px;">Customize Your DP Mini</h3>
+        <p class="muted" style="max-width:720px; margin:0 auto 24px;">Tailor the DP Mini to your specific application with a choice of professional-grade objectives and high-resolution eyepiece modules.</p>
+        <div class="grid-3">
+            <div class="card" style="text-align:left;">
+                <h4>Objectives</h4>
+                <p class="muted">Select the ideal working distance and magnification for your needs.</p>
+                <ul class="list">
+                    <li>50mm Standard Objective</li>
+                    <li>60mm Mid-Range Objective</li>
+                    <li>75mm Long-Range Objective</li>
+                </ul>
+            </div>
+            <div class="card" style="text-align:left;">
+                <h4>Eyepieces</h4>
+                <p class="muted">Choose your preferred viewing method, from direct screen use to immersive 4K.</p>
+                 <ul class="list">
+                    <li>Screen Only (No Eyepieces)</li>
+                    <li>Full HD Eyepieces (1920x1080)</li>
+                    <li>4K UHD Eyepieces</li>
+                </ul>
+            </div>
+            <div class="card" style="text-align:left;">
+                <h4>Mounting</h4>
+                <p class="muted">Ergonomic handle and support for stable, comfortable use.</p>
+                <ul class="list">
+                    <li>Ergonomic Multifunction Handle</li>
+                    <li>Articulated Arm with Clamp</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+  </section>
+
+
+  <section class="section band" id="contact">
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap">
+      <div>
+        <h2>Depth you can feel — anywhere</h2>
+        <p class="muted" style="max-width:640px">DP Mini turns your smartphone into a compact 3D imaging system. Set up in seconds, capture with confidence.</p>
+      </div>
+      <div style="display:flex; gap:10px">
+        <a href="buy.html" class="btn primary">Buy DP Mini</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
+      <div style="display:flex; gap:8px; align-items:center"><span class="dot"></span>MicroscopePro</div>
+      <div style="display:flex; gap:18px"><a href="#" class="muted">Privacy</a><a href="#" class="muted">Terms</a></div>
+    </div>
+  </footer>
+
+<script>
+/* ==== Mega menu script (same behavior as index) ==== */
+document.addEventListener('DOMContentLoaded', () => {
+  const mainNav = document.getElementById('main-nav');
+  const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
+  const backdrop = document.querySelector('.menu-backdrop');
+  let activeMenu = null, closeTimeout;
+
+  function openMenu(id){
+    if(activeMenu){ activeMenu.classList.remove('is-open'); }
+    const menu = document.getElementById(id);
+    if(menu){ menu.classList.add('is-open'); backdrop.classList.add('is-visible'); activeMenu = menu; }
+  }
+  function closeAll(){
+    if(activeMenu){ activeMenu.classList.remove('is-open'); }
+    backdrop.classList.remove('is-visible'); activeMenu = null;
+  }
+  triggers.forEach(t => t.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); openMenu(t.dataset.menu); }));
+  mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
+  mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+});
+</script>
+</body>
+</html>

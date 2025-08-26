@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pagamento riuscito — MicroscopePro</title>
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:#0f172a;color:#e2e8f0;display:flex;min-height:100vh;align-items:center;justify-content:center}
+    .card{max-width:680px;width:92%;background:#111827;border:1px solid #1f2937;border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    h1{margin:0 0 10px;font-size:28px;line-height:1.2}
+    p{margin:8px 0 0;font-size:16px;opacity:.9}
+    .ok{display:inline-block;margin:12px 0 18px;padding:6px 10px;border-radius:999px;background:#16a34a;color:#06240e;font-weight:700;font-size:12px;letter-spacing:.02em}
+    .row{margin-top:16px;padding:14px;background:#0b1220;border:1px dashed #27324a;border-radius:12px;font-family:ui-monospace, SFMono-Regular, Menlo, monospace}
+    .actions{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+    a.btn{display:inline-block;padding:12px 16px;border-radius:12px;text-decoration:none;font-weight:600;border:1px solid #334155;background:#0b1220;color:#e2e8f0}
+    a.btn.primary{background:#22c55e;border-color:#22c55e;color:#052e12}
+    small{opacity:.7}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="ok">PAGAMENTO CONFERMATO</div>
+    <h1>Grazie! Il tuo ordine è stato ricevuto ✅</h1>
+    <p>Ti abbiamo inviato un’email di conferma all’indirizzo usato in fase di pagamento.</p>
+
+    <div class="row">
+      <div><strong>Session ID:</strong> <span id="sid">—</span></div>
+    </div>
+
+    <div class="actions">
+      <a class="btn primary" href="/buy.html">Torna allo shop</a>
+      <a class="btn" href="/configure.html">Configura un altro prodotto</a>
+    </div>
+
+    <p style="margin-top:16px"><small>
+      Suggerimento: se vuoi mostrare dettagli dell’ordine, recupera la sessione lato server
+      con <code>checkout.sessions.retrieve(session_id)</code> e visualizza qui i dati desiderati.
+    </small></p>
+  </div>
+
+  <script>
+    // Mostra l'ID di sessione passato da Stripe: .../success.html?session_id=cs_test_123
+    const params = new URLSearchParams(location.search);
+    const sid = params.get('session_id');
+    document.getElementById('sid').textContent = sid || 'non disponibile';
+  </script>
+</body>
+</html>

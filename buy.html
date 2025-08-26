@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Choose your MicroscopePro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#ffffff; --text:#0a0a0a; --muted:#525252; --line:#e5e5e5; --card:#fafafa; --b1:#4f46e5; --b2:#7c3aed; --b3:#a21caf; }
+  @media (prefers-color-scheme: dark){ :root { --bg:#0a0a0a; --text:#fafafa; --muted:#cfcfcf; --line:#1f1f1f; --card:#0f0f10; } }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text)}
+  a{color:inherit; text-decoration:none}
+  .container{max-width:1200px; margin:0 auto; padding:0 20px}
+
+  /* Glassy Nav */
+  .nav{position:sticky; top:0; z-index:50; backdrop-filter:saturate(180%) blur(10px); background:color-mix(in srgb, var(--bg) 88%, transparent); border-bottom:1px solid var(--line)}
+  .nav-inner{height:56px; display:flex; align-items:center; justify-content:space-between}
+  .logo{display:flex; gap:8px; align-items:center; font-weight:800; letter-spacing:-0.02em}
+  .dot{width:18px; height:18px; border-radius:999px; background:linear-gradient(135deg, var(--b1), var(--b2), var(--b3))}
+  .nav a{color:inherit; text-decoration:none}
+  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted)}
+  @media(min-width:768px){.nav-links{display:flex}}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer}
+  .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
+
+  header{padding:32px 0 10px; text-align:center}
+  h1{font-size:clamp(28px,4.6vw,48px); letter-spacing:-.02em; margin:8px 0}
+  .help{color:var(--muted); font-size:14px}
+  .grid{display:grid; gap:24px; grid-template-columns:1fr}
+  @media(min-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .card{border:1px solid var(--line); background:color-mix(in srgb, var(--bg) 96%, var(--text)); border-radius:18px; padding:24px; display:flex; flex-direction:column}
+  .card.featured{border-width:2px; border-color:var(--b1); position:relative}
+  .card.featured::before{content:'Popular'; position:absolute; top:-12px; left:20px; background:var(--b1); color:#fff; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:700}
+  
+  .img{aspect-ratio:16/10; border-radius:14px; margin-bottom:16px; display:grid; place-items:center; font-weight:600; text-align:center; color:#fff}
+  .img.dp-mini{background:linear-gradient(135deg, #0ea5e9, #6366f1, #8b5cf6)}
+  .img.dp-pro{background:linear-gradient(135deg, #2563eb, #059669, #7c3aed)}
+  
+  .price{color:var(--muted); font-size:14px; margin:8px 0}
+  .price-main{font-size:24px; font-weight:800; color:var(--text); margin-right:8px}
+  ul{margin:12px 0; padding-left:18px; line-height:1.6; color:var(--muted); font-size:14px}
+  .btn-card{margin-top:auto; display:inline-flex; justify-content:center; align-items:center; gap:8px; padding:12px 16px; border-radius:999px; border:1px solid var(--line); font-weight:700; text-decoration:none}
+  .btn-card.primary{background:var(--text); color:var(--bg); border-color:transparent}
+  .btn-card:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
+  .btn-card.primary:hover{opacity:.92}
+  
+  .tag{display:inline-block; background:color-mix(in srgb, var(--b2) 15%, transparent); color:var(--b2); padding:4px 8px; border-radius:6px; font-size:11px; font-weight:600; margin-bottom:8px}
+</style>
+</head>
+<body>
+  <div class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo"><span class="dot"></span><span>Microscope<strong>Pro</strong></span></a>
+      <nav class="nav-links">
+        <a href="index.html#features">Features</a>
+        <a href="all-models.html">All Models</a>
+        <a href="index.html#tech">Technology</a>
+      </nav>
+      <div>
+        <a class="btn" href="mailto:info@microscopepro.example">Contact</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="container">
+    <h1>Choose Your Microscope</h1>
+    <p class="help">Questions? <a href="mailto:info@microscopepro.example">Contact us</a> or <a href="all-models.html">compare all models</a></p>
+  </header>
+
+  <main class="container grid" style="padding-bottom:60px">
+
+    <section class="card">
+      <span class="tag">Mobile Series</span>
+      <div class="img dp-mini">DP Mini<br/>Fusion 3D Technology</div>
+      <h3 style="margin:6px 0">DP Mini</h3>
+      <div class="price">
+        <span class="price-main">€2,990</span>
+        <span>Starting price</span>
+      </div>
+      <ul>
+        <li>Active 3D Fusion from single smartphone sensor</li>
+        <li>Direct (0°) or Microscope-style (90°) viewing</li>
+        <li>Ergonomic handle with intuitive controls</li>
+        <li>Augmented Reality integration</li>
+        <li>Ultra-portable design</li>
+      </ul>
+      <a class="btn-card primary" href="configure.html?model=dp-mini">Configure DP Mini</a>
+    </section>
+
+    <section class="card featured">
+      <span class="tag">Digital Surgery Series</span>
+      <div class="img dp-pro">DP Pro<br/>Gimbal Stabilization</div>
+      <h3 style="margin:6px 0">DP Pro</h3>
+      <div class="price">
+        <span class="price-main">€8,990</span>
+        <span>Starting price</span>
+      </div>
+      <ul>
+        <li>3-axis gimbal stabilization system</li>
+        <li>Dual-segment articulated arm</li>
+        <li>AI-powered surgical guidance</li>
+        <li>Digital control with pressure-sensitive oculars</li>
+        <li>Professional surgical applications</li>
+      </ul>
+      <a class="btn-card primary" href="configure.html?model=dp-pro">Configure DP Pro</a>
+    </section>
+
+  </main>
+</body>
+</html>

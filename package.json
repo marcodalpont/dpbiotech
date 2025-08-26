@@ -1,0 +1,28 @@
+{
+  "name": "sito-microscopio",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcodalpont/dpbiotech.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marcodalpont/dpbiotech/issues"
+  },
+  "homepage": "https://github.com/marcodalpont/dpbiotech#readme",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "stripe": "^18.4.0"
+  }
+}

@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Customize your MicroscopePro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<style>
+  :root { --bg:#ffffff; --text:#0a0a0a; --muted:#525252; --line:#e5e5e5; --card:#fafafa; --b1:#4f46e5; --b2:#7c3aed; --b3:#a21caf; }
+  @media (prefers-color-scheme: dark){ :root { --bg:#0a0a0a; --text:#fafafa; --muted:#cfcfcf; --line:#1f1f1f; --card:#0f0f10; } }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text)}
+  a{color:inherit; text-decoration:none}
+  .container{max-width:1200px; margin:0 auto; padding:0 20px}
+
+  /* Glassy Nav */
+  .nav{z-index:50; backdrop-filter:saturate(180%) blur(10px); background:color-mix(in srgb, var(--bg) 88%, transparent); border-bottom:1px solid var(--line)}
+  .nav-inner{height:56px; display:flex; align-items:center; justify-content:space-between}
+  .logo{display:flex; gap:8px; align-items:center; font-weight:800; letter-spacing:-0.02em}
+  .dot{width:18px; height:18px; border-radius:999px; background:linear-gradient(135deg, var(--b1), var(--b2), var(--b3))}
+  .nav a{color:inherit; text-decoration:none}
+  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted)}
+  @media(min-width:768px){.nav-links{display:flex}}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer}
+  .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
+
+  /* Sticky top bar with crumbs + title (always visible) */
+  .top{position:sticky; top:0px; z-index:40; background:var(--bg); border-bottom:1px solid var(--line)}
+  .top-inner{display:flex; justify-content:space-between; align-items:center; padding:14px 0}
+  .crumbs{font-size:13px; color:#1d1d1f}
+  .crumbs a{color:#0066cc}
+  h1{font-size:clamp(26px,3.8vw,40px); letter-spacing:-.02em; margin:6px 0}
+
+  /* Layout */
+  main{display:grid; grid-template-columns:1fr; gap:24px; padding:18px 0 100px}
+  @media(min-width:1000px){main{grid-template-columns:6fr 5fr}}
+
+  /* Left: viewer */
+  .viewer{position:sticky; top:calc(57px + 80px); height:calc(100vh - 180px)}
+  .frame{height:min(62%, 520px); min-height:360px; border:1px solid var(--line); border-radius:18px; overflow:hidden}
+  .frame.dp-mini{background:linear-gradient(135deg, #0ea5e9, #6366f1)}
+  .frame.dp-pro{background:linear-gradient(135deg, #2563eb, #059669)}
+  .fallback{width:100%; height:100%; display:grid; place-items:center; color:#fff; font-weight:600; text-align:center}
+  .panel{border:1px solid var(--line); background:var(--card); border-radius:16px; padding:14px}
+
+  /* Right: Apple-like groups */
+  .group{background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px; margin:14px 0}
+  .groupHead{display:flex; align-items:baseline; justify-content:space-between; gap:12px}
+  .title{font-weight:800; font-size:18px}
+  .help{font-size:13px; color:var(--accent); background:none; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:6px}
+  .help .plus{display:inline-grid; place-items:center; width:18px; height:18px; border-radius:999px; border:1px solid #aacbff; color:#0066cc}
+  .row{display:grid; grid-template-columns:1fr; gap:12px; margin-top:12px}
+
+  .choice{display:flex; justify-content:space-between; align-items:center; gap:16px; border:1.5px solid var(--line); border-radius:18px; padding:16px; background:#fff; cursor:pointer; transition:box-shadow .15s ease,border-color .15s ease}
+  .choice.selected{border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,113,227,.25) inset; background:rgba(153, 204, 255, 0.06)}
+  .choice input{display:none}
+  .left{display:flex; align-items:flex-start; gap:12px}
+  .left strong{font-weight:800}
+  .choice small{display:block; color:#6e6e73}
+  .delta{color:#6e6e73; font-weight:700; white-space:nowrap; margin-left:auto}
+
+  /* Sticky bottom bar */
+  .sticky{position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--line); z-index:45;}
+  .bar{max-width:1200px; margin:0 auto; padding:10px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px}
+  .price{font-size:18px; font-weight:800}
+  .btn-bottom{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 14px; border-radius:999px; border:1px solid var(--line); font-weight:800; cursor:pointer; background:transparent}
+  .btn-bottom.primary{background:#0a0a0a; color:#fff; border-color:transparent}
+
+  /* Modal (help) */
+  .backdrop{position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; align-items:center; justify-content:center; z-index:60}
+  .modal{background:#fff; color:#0a0a0a; width:min(760px, 94vw); border-radius:20px; border:1px solid var(--line); overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.2)}
+  .modal header{display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--line)}
+  .modal .content{padding:16px}
+  .modal .content p{margin:0 0 10px}
+  .modal .content ul{margin:8px 0 0; padding-left:18px; line-height:1.6}
+  .x{background:#fff; border:1px solid var(--line); border-radius:10px; padding:6px 10px; cursor:pointer}
+</style>
+</head>
+<body>
+  <div class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo"><span class="dot"></span><span>Microscope<strong>Pro</strong></span></a>
+      <nav class="nav-links">
+        <a href="index.html#features">Features</a>
+        <a href="all-models.html">All Models</a>
+        <a href="index.html#tech">Technology</a>
+      </nav>
+      <div>
+        <button class="btn" id="demoBtn">Demo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="top">
+    <div class="container top-inner">
+      <div>
+        <div class="crumbs"><a href="buy.html">Choose model</a> › Customize</div>
+        <h1 id="title">Customize your MicroscopePro</h1>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="viewer">
+      <div class="frame" id="viewer">
+        <div class="fallback" id="fallback">Microscope viewer</div>
+      </div>
+      <div class="panel" style="margin-top:12px">
+        <div style="display:flex; justify-content:space-between"><span>Selected</span><strong id="selectedSummary">DP Mini</strong></div>
+      </div>
+    </section>
+
+    <aside aria-label="Options" id="options">
+      <!-- DP Mini Configuration -->
+      <div id="dp-mini-config" style="display:none;">
+        <div class="group" data-group="objectives">
+          <div class="groupHead">
+            <div class="title">Objectives</div>
+            <button class="help" data-help="objectives"><span class="plus">+</span> How to choose?</button>
+          </div>
+          <div class="row">
+            <label class="choice" data-name="objectives" data-value="50mm" data-price="0">
+              <div class="left"><div>
+                <strong>50mm Standard Objective</strong>
+                <small>Ideal for close-up work, maximum magnification</small>
+              </div></div>
+              <span class="delta">Included</span>
+            </label>
+            <label class="choice" data-name="objectives" data-value="60mm" data-price="180">
+              <div class="left"><div>
+                <strong>60mm Mid-Range Objective</strong>
+                <small>Balanced working distance and magnification</small>
+              </div></div>
+              <span class="delta">+ € 180</span>
+            </label>
+            <label class="choice" data-name="objectives" data-value="75mm" data-price="350">
+              <div class="left"><div>
+                <strong>75mm Long-Range Objective</strong>
+                <small>Extended working distance, more room</small>
+              </div></div>
+              <span class="delta">+ € 350</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="group" data-group="eyepieces">
+          <div class="groupHead">
+            <div class="title">Eyepieces</div>
+            <button class="help" data-help="eyepieces"><span class="plus">+</span> What's the difference?</button>
+          </div>
+          <div class="row">
+            <label class="choice" data-name="eyepieces" data-value="screen" data-price="0">
+              <div class="left"><div>
+                <strong>Screen Only</strong>
+                <small>No eyepieces, direct smartphone viewing</small>
+              </div></div>
+              <span class="delta">Included</span>
+            </label>
+            <label class="choice" data-name="eyepieces" data-value="hd" data-price="290">
+              <div class="left"><div>
+                <strong>Full HD Eyepieces</strong>
+                <small>1920x1080 resolution per eye</small>
+              </div></div>
+              <span class="delta">+ € 290</span>
+            </label>
+            <label class="choice" data-name="eyepieces" data-value="4k" data-price="580">
+              <div class="left"><div>
+                <strong>4K UHD Eyepieces</strong>
+                <small>Ultra-high resolution immersive viewing</small>
+              </div></div>
+              <span class="delta">+ € 580</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="group" data-group="mounting">
+          <div class="groupHead">
+            <div class="title">Mounting</div>
+            <button class="help" data-help="mounting"><span class="plus">+</span> Best setup for you?</button>
+          </div>
+          <div class="row">
+            <label class="choice" data-name="mounting" data-value="handle" data-price="0">
+              <div class="left"><div>
+                <strong>Ergonomic Handle Only</strong>
+                <small>Handheld operation with multifunction controls</small>
+              </div></div>
+              <span class="delta">Included</span>
+            </label>
+            <label class="choice" data-name="arm" data-value="arm" data-price="220">
+              <div class="left"><div>
+                <strong>Add Articulated Arm</strong>
+                <small>Stable positioning with clamp mount</small>
+              </div></div>
+              <span class="delta">+ € 220</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- DP Pro Configuration -->
+      <div id="dp-pro-config" style="display:none;">
+        <div class="group" data-group="stabilization">
+          <div class="groupHead">
+            <div class="title">Stabilization System</div>
+            <button class="help" data-help="stabilization"><span class="plus">+</span> Gimbal options</button>
+          </div>
+          <div class="row">
+            <label class="choice" data-name="stabilization" data-value="3axis" data-price="0">
+              <div class="left"><div>
+                <strong>3-Axis Gimbal Standard</strong>
+                <small>Roll, pitch, yaw stabilization</small>
+              </div></div>
+              <span class="delta">Included</span>
+            </label>
+            <label class="choice" data-name="stabilization" data-value="enhanced" data-price="450">
+              <div class="left"><div>
+                <strong>Enhanced Stabilization</strong>
+                <small>Advanced algorithms, faster response</small>
+              </div></div>
+              <span class="delta">+ € 450</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="group" data-group="arm">
+          <div class="groupHead">
+            <div class="title">Articulated Arm</div>
+            <button class="help" data-help="arm"><span class="plus">+</span> Arm specifications</button>
+          </div>
+          <div class="row">
+            <label class="choice" data-name="arm" data-value="standard" data-price="0">
+              <div class="left"><div>
+                <strong>Standard Dual-Segment Arm</strong>
+                <small>Precision joints, standard reach</small>
+              </div></div>
+              <span class="delta">Included</span>
+            </label>
+            <label class="choice" data-name="arm" data-value="extended" data-price="680">
+              <div class="left"><div>
+                <strong>Extended Reach Arm</strong>
+                <small>Longer segments, greater flexibility</small>
+              </div></div>
+              <span class="delta">+ € 680</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="group" data-group="controls">
+          <div class="groupHead">
+            <div class="title">Control Interface</div>
+            <button class="help" data-help="controls"><span class="plus">+</span> Control options</button>
+          </div>
+          <div class="row">
+            <label class="choice" data-name="controls" data-value="basic" data-price="0">
+              <div class="left"><div>
+                <strong>Pressure-Sensitive Oculars</strong>
+                <small>Intuitive pressure control interface</small>
+              </div></div>
+              <span class="delta">Included</span>
+            </label>
+            <label class="choice" data-name="joystick" data-value="joystick" data-price="280">
+              <div class="left"><div>
+                <strong>Add Multifunctional Joystick</strong>
+                <small>Advanced control with haptic feedback</small>
+              </div></div>
+              <span class="delta">+ € 280</span>
+            </label>
+            <label class="choice" data-name="footpedal" data-value="footpedal" data-price="190">
+              <div class="left"><div>
+                <strong>Add Foot Pedal Control</strong>
+                <small>Hands-free operation enhancement</small>
+              </div></div>
+              <span class="delta">+ € 190</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="group" data-group="ai">
+          <div class="groupHead">
+            <div class="title">AI Features</div>
+            <button class="help" data-help="ai"><span class="plus">+</span> AI capabilities</button>
+          </div>
+          <div class="row">
+            <label class="choice" data-name="ai" data-value="basic" data-price="0">
+              <div class="left"><div>
+                <strong>Basic AI Recognition</strong>
+                <small>Anatomical structure identification</small>
+              </div></div>
+              <span class="delta">Included</span>
+            </label>
+            <label class="choice" data-name="ai" data-value="advanced" data-price="590">
+              <div class="left"><div>
+                <strong>Advanced AI Suite</strong>
+                <small>Surgical guidance and predictive positioning</small>
+              </div></div>
+              <span class="delta">+ € 590</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Care Plans (Common to both models) -->
+      <div class="group" data-group="care">
+        <div class="groupHead">
+          <div class="title">Microscope Care</div>
+          <button class="help" data-help="care"><span class="plus">+</span> Care plan benefits</button>
+        </div>
+        <div class="row">
+          <label class="choice" data-name="care" data-value="none" data-price="0">
+            <div class="left"><div>
+              <strong>No Care Plan</strong>
+              <small>Standard 24-month warranty only</small>
+            </div></div>
+            <span class="delta">No additional cost</span>
+          </label>
+          <label class="choice" data-name="care" data-value="basic" data-price="290">
+            <div class="left"><div>
+              <strong>Microscope Care</strong>
+              <small>Annual maintenance, priority support, software updates</small>
+            </div></div>
+            <span class="delta">+ € 290/year</span>
+          </label>
+          <label class="choice" data-name="care" data-value="plus" data-price="490">
+            <div class="left"><div>
+              <strong>Microscope Care+</strong>
+              <small>Quarterly maintenance, 24/7 support, parts coverage, training</small>
+            </div></div>
+            <span class="delta">+ € 490/year</span>
+          </label>
+        </div>
+      </div>
+    </aside>
+    <p></p>
+  </main>
+
+  <div class="sticky">
+    <div class="bar container">
+      <div id="barLabel">DP Mini</div>
+      <div class="price" id="barPrice">€ 2,990</div>
+      <div style="display:flex; gap:10px">
+        <button class="btn-bottom" id="shareBtn">Share</button>
+        <button class="btn-bottom primary" id="orderBtn">Order Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="backdrop" id="backdrop" aria-hidden="true" role="dialog">
+    <div class="modal">
+      <header>
+        <strong id="modalTitle">Help</strong>
+        <button class="x" id="closeModal">Close</button>
+      </header>
+      <div class="content" id="modalContent"></div>
+    </div>
+  </div>
+
+<script>
+  function setVH(){ document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px'); }
+  setVH(); window.addEventListener('resize', setVH);
+
+  const EUR = new Intl.NumberFormat('en-EU',{style:'currency', currency:'EUR'});
+  
+  // Get model from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const modelFromURL = urlParams.get('model') || 'dp-mini';
+
+  const basePrices = { 'dp-mini': 2990, 'dp-pro': 8990 };
+  const basePrice = basePrices[modelFromURL] || 2990;
+
+  const defaults = { 
+    // DP Mini defaults
+    objectives: '50mm', 
+    eyepieces: 'screen',
+    mounting: 'handle',
+    // DP Pro defaults  
+    stabilization: '3axis',
+    arm: 'standard',
+    controls: 'basic',
+    ai: 'basic',
+    // Common defaults
+    care: 'none'
+  };
+
+  function showConfigForModel(model) {
+    document.getElementById('dp-mini-config').style.display = model === 'dp-mini' ? 'block' : 'none';
+    document.getElementById('dp-pro-config').style.display = model === 'dp-pro' ? 'block' : 'none';
+    
+    const frame = document.getElementById('viewer');
+    frame.className = `frame ${model}`;
+    
+    if (model === 'dp-mini') {
+      document.getElementById('fallback').textContent = 'DP Mini - Fusion 3D Technology';
+    } else {
+      document.getElementById('fallback').textContent = 'DP Pro - Gimbal Stabilization System';
+    }
+  }
+
+  function selectDefault(){
+    document.querySelectorAll('.group').forEach(g=>{
+      const radios = g.querySelectorAll('input[type="radio"][name]');
+      const names = new Set([...radios].map(r=>r.name));
+      names.forEach(n=>{
+        const chosen = [...document.querySelectorAll(`input[type="radio"][name="${n}"]`)].find(r=>r.checked);
+        if(!chosen){
+          const lab = document.querySelector(`label.choice[data-name="${n}"][data-value="${defaults[n]||''}"]`);
+          if (lab) lab.querySelector('input[type="radio"]').click();
+        }
+      });
+    });
+  }
+
+  function pairs(){
+    const out = [['model', modelFromURL, basePrice]];
+    document.querySelectorAll('label.choice').forEach(l=>{
+      const input = l.querySelector('input');
+      if(!input) return;
+      if((input.type==='radio' && input.checked) || (input.type==='checkbox' && input.checked)){
+        out.push([l.dataset.name, l.dataset.value, Number(l.dataset.price||0)]);
+      }
+    });
+    return out;
+  }
+
+  function total(){ return pairs().reduce((s,p)=> s + p[2], 0); }
+  function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+  function updateUI(){
+    document.querySelectorAll('label.choice').forEach(l=>{
+      const i = l.querySelector('input');
+      l.classList.toggle('selected', i?.checked);
+    });
+    const modelName = modelFromURL === 'dp-mini' ? 'DP Mini' : 'DP Pro';
+    document.getElementById('title').textContent = `Customize your ${modelName}`;
+    document.getElementById('selectedSummary').textContent = modelName;
+    document.getElementById('barLabel').textContent = modelName;
+    document.getElementById('barPrice').textContent = EUR.format(total());
+  }
+
+  document.querySelectorAll('label.choice').forEach(l=>{
+    const input = document.createElement('input');
+    const group = l.dataset.name;
+    const isCheckbox = ['arm','joystick','footpedal','install'].includes(l.dataset.value) || 
+                     (l.dataset.name === 'training' && l.dataset.value !== 'none');
+    input.type = isCheckbox ? 'checkbox' : 'radio';
+    input.name = group; l.prepend(input);
+    l.addEventListener('click', (ev)=>{
+      if(isCheckbox){ input.checked = !input.checked; ev.preventDefault(); updateUI(); }
+    });
+  });
+
+  document.addEventListener('change', updateUI);
+
+  const helpText = {
+    objectives: { 
+      title: 'DP Mini Objectives', 
+      html: `<p>Different working distances for various applications:</p><ul><li><strong>50mm</strong> - Close-up detail work, maximum magnification</li><li><strong>60mm</strong> - Balanced distance for general use</li><li><strong>75mm</strong> - More working space, ideal for delicate procedures</li></ul>` 
+    },
+    eyepieces: { 
+      title: 'Viewing Options', 
+      html: `<p>Choose how you want to view the 3D image:</p><ul><li><strong>Screen Only</strong> - Use your smartphone screen directly</li><li><strong>Full HD</strong> - Dedicated eyepieces for immersive viewing</li><li><strong>4K UHD</strong> - Ultra-high resolution for critical detail work</li></ul>` 
+    },
+    mounting: { 
+      title: 'Mounting Solutions', 
+      html: `<p><strong>Handle Only</strong> - Handheld operation with built-in controls. <strong>Articulated Arm</strong> - Stable positioning system with clamp mount for hands-free operation.</p>` 
+    },
+    stabilization: { 
+      title: 'Gimbal Stabilization', 
+      html: `<p>3-axis gimbal system keeps the optical body perfectly stable. <strong>Enhanced</strong> version offers faster response and advanced vibration compensation algorithms.</p>` 
+    },
+    arm: { 
+      title: 'Articulated Arm Options', 
+      html: `<p><strong>Standard</strong> - Dual-segment arm with precision joints. <strong>Extended Reach</strong> - Longer segments for greater positioning flexibility.</p>` 
+    },
+    controls: { 
+      title: 'Control Interface', 
+      html: `<p>Multiple ways to control your microscope:</p><ul><li><strong>Pressure-Sensitive Oculars</strong> - Control by varying pressure on eyepieces</li><li><strong>Joystick</strong> - Traditional control with haptic feedback</li><li><strong>Foot Pedal</strong> - Hands-free operation enhancement</li></ul>` 
+    },
+    ai: { 
+      title: 'AI Features', 
+      html: `<p><strong>Basic AI</strong> - Anatomical structure recognition. <strong>Advanced AI</strong> - Full surgical guidance, predictive positioning, and real-time assistance.</p>` 
+    },
+    care: { 
+      title: 'Microscope Care Plans', 
+      html: `<p><strong>Microscope Care</strong> - Annual maintenance, priority support, software updates.</p><p><strong>Microscope Care+</strong> - Quarterly maintenance, 24/7 support, parts coverage, comprehensive training programs.</p>` 
+    },
+    installation: { 
+      title: 'Professional Services', 
+      html: `<p><strong>Installation</strong> - Professional on-site setup and calibration.</p><p><strong>Training</strong> - Learn to use your microscope effectively with basic or advanced training programs.</p>` 
+    }
+  };
+
+  const backdrop = document.getElementById('backdrop');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalContent = document.getElementById('modalContent');
+  function openHelp(key){
+    const obj = helpText[key]; if(!obj) return;
+    modalTitle.textContent = obj.title; modalContent.innerHTML = obj.html;
+    backdrop.style.display = 'flex';
+  }
+  function closeHelp(){ backdrop.style.display = 'none'; }
+  document.querySelectorAll('[data-help]').forEach(b=> b.addEventListener('click', ()=> openHelp(b.dataset.help)));
+  document.getElementById('closeModal').addEventListener('click', closeHelp);
+  backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) closeHelp(); });
+
+  // Initialize for selected model
+  showConfigForModel(modelFromURL);
+  selectDefault();
+  updateUI();
+
+  function currentSelectionPairs(){
+    const out = [`model:${modelFromURL}`];
+    document.querySelectorAll('label.choice').forEach(l=>{
+      const input = l.querySelector('input');
+      if((input.type==='radio' && input.checked) || (input.type==='checkbox' && input.checked)){
+        out.push(`${l.dataset.name}:${l.dataset.value}`);
+      }
+    });
+    return out;
+  }
+
+  document.getElementById('shareBtn').addEventListener('click', ()=>{
+    const url = new URL(window.location.href);
+    url.search = ''; 
+    url.searchParams.set('model', modelFromURL);
+    url.searchParams.set('sel', currentSelectionPairs().join(','));
+    navigator.clipboard.writeText(url.toString()).then(()=> alert('Configuration link copied to clipboard!')).catch(()=> alert(url.toString()));
+  });
+
+ 
+  function buildSelections() {
+    // Ricavo selezioni dal DOM come fai già con pairs()
+    const map = {};
+    document.querySelectorAll('label.choice').forEach(l => {
+      const input = l.querySelector('input');
+      if (!input) return;
+      const name = l.dataset.name;
+      const val  = l.dataset.value;
+
+      // checkbox multipli (es. joystick/footpedal su DP Pro)
+      const isCheckbox = (input.type === 'checkbox');
+      if (isCheckbox && input.checked) {
+        if (name === 'joystick') map.joystick = true;
+        if (name === 'footpedal') map.footpedal = true;
+      } else if (input.type === 'radio' && input.checked) {
+        map[name] = val;
+      }
+    });
+    return map;
+  }
+
+const API_BASE =
+  (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://localhost:4242'
+    : '';
+
+
+  document.getElementById('orderBtn').addEventListener('click', async () => {
+    const selections = buildSelections();
+    const model = (new URLSearchParams(window.location.search).get('model')) || 'dp-mini';
+
+    // Descrizione leggibile (opzionale)
+    const lines = pairs().map(([n, v]) => `• ${cap(n)}: ${v}`).join('\n');
+    const description = `${model === 'dp-mini' ? 'DP Mini' : 'DP Pro'} config:\n${lines}`;
+
+    try {
+      const resp = await fetch(`${API_BASE}/create-checkout-session`, {
+  method: 'POST',
+  headers: { 'Content-Type':'application/json' },
+  body: JSON.stringify({ model, selections, description })
+});
+      const data = await resp.json();
+      if (data.url) {
+        window.location.href = data.url; // vai a Stripe
+      } else {
+        alert(data.error || 'Unable to start checkout');
+      }
+    } catch (e) {
+      alert('Connection error: ' + e.message);
+    }
+  });
+</script>
+</body>
+</html></button
