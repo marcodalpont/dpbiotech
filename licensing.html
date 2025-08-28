@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DP Biotech — License Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root { 
+    --bg:#ffffff; 
+    --text:#0a0a0a; 
+    --muted:#525252; 
+    --line:#e5e5e5; 
+    --card:#ffffff; 
+    --band-bg: #f3f4f6;
+    --b1:#4f46e5; 
+    --b2:#7c3aed; 
+    --b3:#a21caf; 
+    --a1:#f97316;
+    --a2:#ef4444;
+    --a3:#dc2626;
+  }
+  @media (prefers-color-scheme: dark){ 
+    :root { 
+      --bg:#0a0a0a; 
+      --text:#fafafa; 
+      --muted:#a1a1aa; 
+      --line:#262626;
+      --card:#18181b; 
+      --band-bg: #111111;
+    } 
+  }
+  body {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    /* This prevents the scrollbar from appearing */
+    overflow: hidden; 
+  }
+  
+  .container{max-width:1200px; margin:0 auto; padding:0 20px}
+
+  .main-card, .payments-card {
+    background-color: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+  }
+  .btn.primary {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .btn.primary:hover {
+    opacity: 0.9;
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background-color: var(--card);
+    color: var(--text);
+    font-size: 16px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--b2);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--b2) 25%, transparent);
+  }
+  .success { color: #22c55e; }
+  .expired { color: #ef4444; }
+  .not-found, .not-active { color: #f97316; }
+  
+  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
+  .nav-inner{max-width:1200px; margin:0 auto; padding:0 20px; height:57px; display:flex; align-items:center; justify-content:space-between}
+  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size: 18px;}
+  .nav a{color:inherit; text-decoration:none}
+  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
+  @media(min-width:960px){.nav-links{display:flex; align-items:center}}
+  .nav-links > li { height: 100%; display: flex; align-items: center; cursor:pointer; }
+  .dropdown-menu { opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; position: absolute; top: 57px; left: 0; right: 0; background: var(--bg); border-top: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 40; overflow-y: auto; max-height: calc(100vh - 57px); }
+  .dropdown-menu.is-open { opacity: 1; visibility: visible; }
+  .menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 32px 0; }
+  .menu-main-links { list-style: none; padding: 0; margin: 0; }
+  .menu-main-links li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 8px; padding: 0 12px; }
+  .menu-main-links a { font-size: 24px; font-weight: 600; line-height: 1.5; display: block; padding: 4px 12px; border-radius: 6px; }
+  .menu-main-links a:hover { background: var(--card); }
+  .menu-link-column { list-style: none; padding: 0; margin: 0; }
+  .menu-link-column li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 14px; padding: 0 12px; }
+  .menu-link-column a { font-size: 13px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 6px; }
+  .menu-link-column a:hover { background: var(--card); }
+  .menu-backdrop { position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 30; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; }
+  .menu-backdrop.is-visible { opacity: 1; visibility: visible; }
+
+  /* Payment history card styles */
+  .payments-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .payments-list li:last-child {
+    border-bottom: none;
+  }
+</style>
+</head>
+<body>
+
+  <!-- New Navigation Bar with identical structure -->
+  <div class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
+        <span>DP Biotech</span>
+      </a>
+      <ul class="nav-links">
+        <li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
+        <li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
+        <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
+        <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
+      </ul>
+      <div style="display:flex; gap:8px">
+        <a class="btn" href="licensing.html">Licensing</a>
+      </div>
+    </div>
+    <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="all-models.html#compare">Compare Models</a></li></ul></div></div></div>
+    <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul></div></div></div>
+    <div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Explore Software</li><li><a href="#">Imaging Suite</a></li><li><a href="#">Companion App</a></li></ul><ul class="menu-link-column"><li>For Developers</li><li><a href="#">API & SDK</a></li></ul></div></div></div>
+    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li></ul></div></div></div>
+  </div>
+  <div class="menu-backdrop"></div>
+  
+  <!-- Corrected main content container with vertical and horizontal centering -->
+  <div class="flex flex-col md:flex-row items-center justify-center md:gap-8 min-h-screen px-5">
+    <!-- License Check Card (existing) -->
+    <div class="main-card mb-8 md:mb-0">
+      <div class="flex items-center gap-2 mb-4">
+        <img src="logo.png" alt="DP Biotech Logo" class="h-10 rounded-full" />
+        <h1 class="text-2xl font-bold tracking-tight">License Check</h1>
+      </div>
+      
+      <p class="text-gray-500 mb-6 text-sm">Please enter your microscope's serial number to check its licensing status and expiration date.</p>
+
+      <div id="status-display" class="mb-6 hidden">
+        <p id="message" class="text-lg font-semibold mb-2"></p>
+        <p id="details" class="text-sm text-gray-400"></p>
+      </div>
+
+      <form id="licenseForm">
+        <div class="mb-4">
+          <label for="serialNumber" class="block text-sm font-medium mb-2">Serial Number</label>
+          <input type="text" id="serialNumber" name="serialNumber" placeholder="Enter serial number..." class="input" required />
+        </div>
+        <button type="submit" class="btn primary w-full">Check License</button>
+      </form>
+
+      <!-- Payment section moved back into the card for expired/not-active states -->
+      <div id="payment-section" class="mt-6 hidden">
+        <div class="border-t border-line pt-6">
+          <p id="payment-message" class="text-sm font-medium mb-2"></p>
+          <p class="text-sm text-gray-500 mb-4">Continue to the payment page to complete your transaction.</p>
+          <button id="payButton" class="btn primary w-full"></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- New Payment History Card -->
+    <div id="payments-history" class="payments-card hidden">
+      <h2 class="text-xl font-bold tracking-tight mb-4">Previous Payments</h2>
+      <p class="text-gray-500 text-sm mb-6">A record of your previous license transactions.</p>
+      <ul id="payments-list" class="payments-list">
+        <!-- Payment history items will be dynamically inserted here -->
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- MEGA MENU SCRIPT ---
+      const mainNav = document.getElementById('main-nav');
+      const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
+      const backdrop = document.querySelector('.menu-backdrop');
+      let activeMenu = null;
+      let closeTimeout;
+
+      function openMenu(menuId) {
+        if (activeMenu) { activeMenu.classList.remove('is-open'); }
+        const menu = document.getElementById(menuId);
+        if (menu) {
+          menu.classList.add('is-open');
+          backdrop.classList.add('is-visible');
+          activeMenu = menu;
+        }
+      }
+
+      function closeAllMenus() {
+        if (activeMenu) { activeMenu.classList.remove('is-open'); }
+        backdrop.classList.remove('is-visible');
+        activeMenu = null;
+      }
+
+      triggers.forEach(trigger => {
+        trigger.addEventListener('mouseenter', () => {
+          clearTimeout(closeTimeout);
+          openMenu(trigger.dataset.menu);
+        });
+      });
+
+      mainNav.addEventListener('mouseleave', () => {
+        closeTimeout = setTimeout(closeAllMenus, 200);
+      });
+
+      mainNav.addEventListener('mouseenter', () => {
+        clearTimeout(closeTimeout);
+      });
+
+      // --- LICENSE CHECK SCRIPT ---
+      const licenseDatabase = {
+        'DP123456': { 
+          status: 'valid', 
+          expires: '2026-12-31', 
+          payments: [
+            { date: '2023-12-31', amount: '$49.99', receiptId: 'REC-12345' },
+            { date: '2022-12-31', amount: '$49.99', receiptId: 'REC-67890' }
+          ]
+        },
+        'DP654321': { 
+          status: 'expired', 
+          expires: '2024-03-15', 
+          payments: [
+            { date: '2023-03-15', amount: '$49.99', receiptId: 'REC-54321' },
+            { date: '2022-03-15', amount: '$49.99', receiptId: 'REC-98765' },
+            { date: '2021-03-15', amount: '$49.99', receiptId: 'REC-13579' }
+          ]
+        },
+        'DP987654': { 
+          status: 'valid', 
+          expires: '2027-05-20',
+          payments: []
+        },
+        'DP000000': { 
+          status: 'not-active', 
+          expires: null,
+          payments: []
+        }
+      };
+
+      const form = document.getElementById('licenseForm');
+      const serialInput = document.getElementById('serialNumber');
+      const statusDisplay = document.getElementById('status-display');
+      const messageEl = document.getElementById('message');
+      const detailsEl = document.getElementById('details');
+      const paymentSection = document.getElementById('payment-section');
+      const payButton = document.getElementById('payButton');
+      const paymentMessageEl = document.getElementById('payment-message');
+      const paymentsHistoryCard = document.getElementById('payments-history');
+      const paymentsListEl = document.getElementById('payments-list');
+
+      function displayStatus(status, details, payments) {
+        // Always hide the payments history card and payment section first
+        paymentsHistoryCard.classList.add('hidden');
+        paymentSection.classList.add('hidden');
+        statusDisplay.classList.remove('hidden');
+
+        messageEl.textContent = status;
+        detailsEl.textContent = details;
+
+        messageEl.classList.remove('success', 'expired', 'not-found', 'not-active');
+        if (status.includes('Valid')) {
+          messageEl.classList.add('success');
+        } else if (status.includes('Expired')) {
+          messageEl.classList.add('expired');
+          paymentSection.classList.remove('hidden');
+          paymentMessageEl.textContent = 'License expired.';
+          payButton.textContent = 'Pay to Renew License';
+        } else if (status.includes('Not Active')) {
+          messageEl.classList.add('not-active');
+          paymentSection.classList.remove('hidden');
+          paymentMessageEl.textContent = 'Serial number is valid but a license is not active.';
+          payButton.textContent = 'Pay to Activate License';
+        } else {
+          messageEl.classList.add('not-found');
+        }
+
+        // Handle displaying previous payments
+        if (payments && payments.length > 0) {
+          paymentsHistoryCard.classList.remove('hidden');
+          paymentsListEl.innerHTML = ''; // Clear previous list
+          payments.forEach(payment => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <div>
+                <span class="font-medium">${payment.date}</span>
+                <p class="text-sm text-gray-400">${payment.amount}</p>
+              </div>
+              <button class="btn text-sm font-normal" data-receipt-id="${payment.receiptId}">
+                Download Receipt
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5V9a.5.5 0 0 1 .5-.5h.5L7.207 1.793 11.207 5.5l2.647-2.646a.5.5 0 0 0 0-.708l-3-3z"/>
+                </svg>
+              </button>
+            `;
+            paymentsListEl.appendChild(li);
+          });
+          
+          // Add event listeners to the new download buttons
+          paymentsListEl.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', (e) => {
+              const receiptId = e.currentTarget.dataset.receiptId;
+              console.log(`Downloading receipt for transaction ID: ${receiptId}...`);
+            });
+          });
+        }
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const serial = serialInput.value.toUpperCase().trim();
+        const licenseInfo = licenseDatabase[serial];
+
+        if (licenseInfo) {
+          if (licenseInfo.status === 'valid') {
+            displayStatus('License is Valid', `Expires on: ${licenseInfo.expires}`, licenseInfo.payments);
+          } else if (licenseInfo.status === 'expired') {
+            displayStatus('License has Expired', `Expired on: ${licenseInfo.expires}`, licenseInfo.payments);
+          } else if (licenseInfo.status === 'not-active') {
+             displayStatus('License Not Active', 'This serial number is ready for a new license.', licenseInfo.payments);
+          }
+        } else {
+          displayStatus('License Not Found', 'The serial number you entered was not found.');
+        }
+      });
+      
+      payButton.addEventListener('click', () => {
+        const action = payButton.textContent.includes('Renew') ? 'Renewing' : 'Activating';
+        console.log(`Redirecting to the payment page for ${action} your license...`); 
+      });
+    });
+  </script>
+</body>
+</html>

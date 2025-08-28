@@ -6,7 +6,7 @@
 <title>DP Mini — Fusion 3D Mobile Microscope</title>
 <meta name="description" content="DP Mini brings true depth to mobile imaging with Fusion 3D — real 3D perception from a single smartphone sensor. Lightweight. Fast. Clinic-ready." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <style>
@@ -91,16 +91,17 @@
   .menu-backdrop { position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 30; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; }
   .menu-backdrop.is-visible { opacity: 1; visibility: visible; }
 
-  /* BOTTONI MODIFICATI */
   .btn{display:inline-flex; align-items:center; gap:8px; padding:14px 24px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:16px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
   .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
   .btn.primary:hover{opacity:.92}
   .btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
+  .nav-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
 
-  /* TITOLO MODIFICATO */
   .h1{font-size:clamp(48px, 8vw, 96px); line-height:1.05; letter-spacing:-0.03em; font-weight:800; margin:18px 0}
   .grad{background:linear-gradient(90deg, var(--a1), var(--a2), var(--a3)); -webkit-background-clip:text; background-clip:text; color:transparent}
-  /* TESTO LEAD MODIFICATO */
   .lead{max-width:760px; color:var(--muted); font-size:clamp(18px, 3vw, 24px)}
   .hero-cta{display:flex; gap:12px; margin-top:24px}
   
@@ -136,11 +137,133 @@
   .control-list-icon { width: 24px; height: 24px; background: color-mix(in srgb, var(--band-bg) 50%, transparent); border-radius: 6px; display: grid; place-items:center; font-size: 25px; color: var(--a2); }
 
   model-viewer { width: 100%; height: 100%; border-radius: 24px; --poster-color: transparent; }
-  model-viewer[camera-controls] {
-    cursor: default;
-  }
+  model-viewer[camera-controls] { cursor: default; }
   
   footer{border-top:1px solid var(--line); padding:36px 0; color:var(--muted); scroll-snap-align: end;}
+  
+  .cart-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 90;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s ease, visibility .3s ease;
+  }
+  .cart-backdrop.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  .cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    background: var(--bg);
+    border-left: 1px solid var(--line);
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform .3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 20px rgba(0,0,0,0.1);
+    padding: 0; 
+  }
+  .cart-sidebar.is-open {
+    transform: translateX(0);
+  }
+  .cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 2rem;
+    flex-shrink: 0;
+  }
+  .cart-items {
+    list-style: none;
+    padding: 1rem 2rem;
+    margin: 0;
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .cart-item {
+    padding: 0;
+    border-bottom: none;
+  }
+  
+  .cart-product-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--card);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    position: relative;
+  }
+  .cart-product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .cart-product-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .cart-product-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 12px 0;
+    font-weight: 400;
+  }
+  .cart-product-price {
+    text-align: right;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .cart-product-remove-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    padding: 0;
+    margin-left: 10px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: color .2s ease;
+  }
+  .cart-product-remove-btn:hover {
+    color: var(--text);
+  }
+
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .cart-empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    margin: auto 0;
+  }
+  .cart-footer {
+    border-top: 1px solid var(--line);
+    padding: 1rem 2rem 2rem 2rem;
+    margin-top: 1rem;
+    flex-shrink: 0;
+  }
 </style>
 </head>
 <body>
@@ -161,7 +284,17 @@
         <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
         <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
       </ul>
-      <a></a>
+      <div style="display:flex; gap:8px">
+        <a class="btn nav-btn" href="licensing.html">Licensing</a>
+        <button id="cart-btn" class="btn nav-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span id="cart-count">0</span>
+        </button>
+        </div>
     </div>
     <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compare Models</a></li></ul></div></div></div>
     <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul></div></div></div>
@@ -169,6 +302,27 @@
     <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li></ul></div></div></div>
   </div>
   <div class="menu-backdrop"></div>
+
+  <div class="cart-backdrop" id="cart-backdrop"></div>
+  <div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h3 style="margin:0;">Your Cart</h3>
+      <button class="btn nav-btn" id="close-cart-btn">Close</button>
+      </div>
+    <div id="cart-empty-state" class="cart-empty-state">
+      Your cart is empty.
+    </div>
+    <ul class="cart-items" id="cart-items">
+      </ul>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cart-total-price">€0,00</span>
+      </div>
+      <button id="checkout-btn" class="btn nav-btn primary" style="width:100%; margin-top:1rem;">Checkout</button>
+      <button id="clear-cart-btn" class="btn nav-btn" style="width:100%; margin-top:0.5rem;">Clear Cart</button>
+      </div>
+  </div>
 
   <header class="snap-section" id="home">
     <div class="container">
@@ -358,6 +512,131 @@ document.addEventListener('DOMContentLoaded', () => {
     triggers.forEach(t => t.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); openMenu(t.dataset.menu); }));
     mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
     mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+
+    /* START: Cart Scripting Logic */
+    const cartBtn = document.getElementById('cart-btn');
+    const cartCountEl = document.getElementById('cart-count');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const cartBackdrop = document.getElementById('cart-backdrop');
+    const closeCartBtn = document.getElementById('close-cart-btn');
+    const cartItemsList = document.getElementById('cart-items');
+    const cartEmptyState = document.getElementById('cart-empty-state');
+    const cartTotalPriceEl = document.getElementById('cart-total-price');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const clearCartBtn = document.getElementById('clear-cart-btn');
+    let cart = [];
+
+    // --- MODIFICATION: Removed sample item logic ---
+    function initCart() {
+      const savedCart = sessionStorage.getItem('shoppingCart');
+      if (savedCart) {
+        cart = JSON.parse(savedCart);
+      }
+      updateCartUI();
+    }
+
+    function saveCart() {
+      sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+    }
+
+    function formatOptions(options) {
+        if (typeof options === 'object' && options !== null) {
+            return Object.values(options).filter(val => val).join(', ');
+        }
+        return options || '';
+    }
+
+    function updateCartUI() {
+      cartItemsList.innerHTML = '';
+      let total = 0;
+      const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+
+      if (cart.length === 0) {
+        cartEmptyState.style.display = 'block';
+        checkoutBtn.disabled = true;
+        clearCartBtn.disabled = true;
+      } else {
+        cartEmptyState.style.display = 'none';
+        checkoutBtn.disabled = false;
+        clearCartBtn.disabled = false;
+
+        cart.forEach((item, index) => {
+          total += item.price;
+          const li = document.createElement('li');
+          li.className = 'cart-item';
+          
+          // --- MODIFICATION: This is the fix for the double options ---
+          const baseName = item.name.split('(')[0].trim();
+          const formattedOptions = formatOptions(item.options);
+
+          li.innerHTML = `
+            <div class="cart-product-card">
+                <div class="cart-product-header">
+                    <h4 class="cart-product-title">${baseName}</h4>
+                    <button class="cart-product-remove-btn" data-index="${index}">&times;</button>
+                </div>
+                <p class="cart-product-subtitle">${formattedOptions}</p>
+                <div class="cart-product-price">${EUR.format(item.price)}</div>
+            </div>
+          `;
+          cartItemsList.appendChild(li);
+        });
+      }
+
+      cartCountEl.textContent = cart.length;
+      cartTotalPriceEl.textContent = EUR.format(total);
+    }
+    
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        saveCart();
+        updateCartUI();
+    }
+
+    function clearCart() {
+        cart = [];
+        saveCart();
+        updateCartUI();
+    }
+    
+    cartBtn.addEventListener('click', () => {
+      cartSidebar.classList.add('is-open');
+      cartBackdrop.classList.add('is-visible');
+    });
+
+    closeCartBtn.addEventListener('click', () => {
+      cartSidebar.classList.remove('is-open');
+      cartBackdrop.classList.remove('is-visible');
+    });
+
+    cartBackdrop.addEventListener('click', () => {
+      cartSidebar.classList.remove('is-open');
+      cartBackdrop.classList.remove('is-visible');
+    });
+    
+    cartItemsList.addEventListener('click', (e) => {
+      if (e.target.classList.contains('cart-product-remove-btn')) {
+        const indexToRemove = e.target.dataset.index;
+        removeFromCart(indexToRemove);
+      }
+    });
+
+    clearCartBtn.addEventListener('click', clearCart);
+
+    checkoutBtn.addEventListener('click', () => {
+        window.location.href = 'checkout.html';
+    });
+    
+    window.onbeforeunload = function(event) {
+        if (cart.length > 0) {
+            const message = "You have items in your cart. Closing this page will clear your cart. Are you sure you want to leave?";
+            event.returnValue = message; 
+            return message;
+        }
+    };
+    
+    initCart();
+    /* END: Cart Scripting Logic */
 });
 
 /* ==== SPLASH SCREEN SCRIPT ==== */

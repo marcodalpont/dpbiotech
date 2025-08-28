@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Buy DP Pro - DP Biotech</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <style>
@@ -32,6 +32,7 @@
   .nav a{color:inherit; text-decoration:none}
   .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
   .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
+  a.btn, button.btn { text-decoration: none !important; }
 
   /* Main Layout */
   .config-layout{
@@ -57,8 +58,8 @@
     padding-bottom: 120px;
   }
   aside::-webkit-scrollbar {
-  display: none;
-}
+    display: none;
+  }
   h1{font-size:clamp(28px, 4vw, 36px); letter-spacing:-.02em; margin:0 0 24px 0; font-weight:800;}
   .option-group{margin-bottom:24px; border:1px solid var(--line); border-radius:18px; overflow:hidden;}
   .group-header{padding:16px; display:flex; justify-content:space-between; align-items:center; background:var(--card);}
@@ -77,6 +78,161 @@
   .bar-inner{max-width:1200px; margin:0 auto; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px}
   .total-price .label{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
   .total-price .amount{font-size:24px; font-weight:700; color:var(--text);}
+
+  /* --- MODIFICATION START: Updated Cart Styles --- */
+  .cart-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 90;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s ease, visibility .3s ease;
+  }
+  .cart-backdrop.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  .cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    background: var(--bg);
+    border-left: 1px solid var(--line);
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform .3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 20px rgba(0,0,0,0.1);
+    padding: 0; 
+  }
+  .cart-sidebar.is-open {
+    transform: translateX(0);
+  }
+  .cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 2rem;
+    flex-shrink: 0;
+  }
+  .cart-items {
+    list-style: none;
+    padding: 1rem 2rem;
+    margin: 0;
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .cart-item {
+    padding: 0;
+    border-bottom: none;
+  }
+  .cart-product-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--card);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    position: relative;
+  }
+  .cart-product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .cart-product-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .cart-product-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 4px 0 12px 0;
+    font-weight: 400;
+  }
+  .cart-product-price {
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .cart-product-remove-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    padding: 0;
+    margin-left: 10px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: color .2s ease;
+  }
+  .cart-product-remove-btn:hover {
+    color: var(--text);
+  }
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .cart-empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    margin: auto 0;
+  }
+  .cart-footer {
+    border-top: 1px solid var(--line);
+    padding: 1rem 2rem 2rem 2rem;
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+  .quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .quantity-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    font-size: 18px; padding: 0;
+    display: grid;
+    place-items: center;
+    line-height: 0;
+  }
+  .quantity-input {
+    width: 32px;
+    height: 28px;
+    text-align: center;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-family: inherit;
+    font-weight: 600;
+    -moz-appearance: textfield;
+  }
+  .quantity-input::-webkit-outer-spin-button,
+  .quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  .cart-item-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+  }
+  /* --- MODIFICATION END --- */
 </style>
 </head>
 <body>
@@ -86,10 +242,40 @@
         <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
         <span>DP Biotech</span>
       </a>
-      <a href="DPPro.html" class="btn">Cancel</a>
-    </div>
+      <div style="display:flex; gap:8px;">
+        <a href="DPPro.html" class="btn">Cancel</a>
+        <button id="cart-btn" class="btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span id="cart-count">0</span>
+          </button>
+      </div>
+      </div>
   </div>
 
+  <div class="cart-backdrop" id="cart-backdrop"></div>
+  <div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h3 style="margin:0;">Your Cart</h3>
+      <button class="btn" id="close-cart-btn">Close</button>
+    </div>
+    <div id="cart-empty-state" class="cart-empty-state">
+      Your cart is empty.
+    </div>
+    <ul class="cart-items" id="cart-items">
+      </ul>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cart-total-price">€0,00</span>
+      </div>
+      <button id="checkout-btn" class="btn primary" style="width:100%; margin-top:1rem;">Checkout</button>
+      <button id="clear-cart-btn" class="btn" style="width:100%; margin-top:0.5rem;">Clear Cart</button>
+    </div>
+  </div>
   <div class="container">
     <div class="config-layout">
       <section class="viewer">
@@ -105,16 +291,16 @@
         <div class="option-group">
           <div class="group-header"><strong>Stabilization System</strong><small>Select performance level</small></div>
           <div class="option-list">
-            <label class="choice" data-price="0"><input type="radio" name="stabilization" value="standard" checked><div class="choice-details"><strong>3-Axis Gimbal Standard</strong><small>Roll, pitch, and yaw stabilization.</small></div><span class="price-delta">Included</span></label>
-            <label class="choice" data-price="450"><input type="radio" name="stabilization" value="enhanced"><div class="choice-details"><strong>Enhanced Stabilization Module</strong><small>Advanced algorithms for faster response.</small></div><span class="price-delta">+ €450</span></label>
+            <label class="choice" data-price="0"><input type="radio" name="stabilization" value="Standard" checked><div class="choice-details"><strong>3-Axis Gimbal Standard</strong><small>Roll, pitch, and yaw stabilization.</small></div><span class="price-delta">Included</span></label>
+            <label class="choice" data-price="450"><input type="radio" name="stabilization" value="Enhanced"><div class="choice-details"><strong>Enhanced Stabilization Module</strong><small>Advanced algorithms for faster response.</small></div><span class="price-delta">+ €450</span></label>
           </div>
         </div>
 
         <div class="option-group">
           <div class="group-header"><strong>Articulated Arm</strong><small>Choose your ideal reach</small></div>
           <div class="option-list">
-            <label class="choice" data-price="0"><input type="radio" name="arm" value="standard" checked><div class="choice-details"><strong>Standard Reach Arm</strong><small>Precision joints and balanced mobility.</small></div><span class="price-delta">Included</span></label>
-            <label class="choice" data-price="680"><input type="radio" name="arm" value="extended"><div class="choice-details"><strong>Extended Reach Arm</strong><small>Longer segments for greater flexibility.</small></div><span class="price-delta">+ €680</span></label>
+            <label class="choice" data-price="0"><input type="radio" name="arm" value="Standard" checked><div class="choice-details"><strong>Standard Reach Arm</strong><small>Precision joints and balanced mobility.</small></div><span class="price-delta">Included</span></label>
+            <label class="choice" data-price="680"><input type="radio" name="arm" value="Extended"><div class="choice-details"><strong>Extended Reach Arm</strong><small>Longer segments for greater flexibility.</small></div><span class="price-delta">+ €680</span></label>
           </div>
         </div>
         
@@ -130,8 +316,8 @@
          <div class="option-group">
           <div class="group-header"><strong>AI Software Suite</strong><small>Unlock advanced features</small></div>
           <div class="option-list">
-            <label class="choice" data-price="0"><input type="radio" name="ai" value="standard" checked><div class="choice-details"><strong>Standard AI Recognition</strong><small>Anatomical structure identification.</small></div><span class="price-delta">Included</span></label>
-            <label class="choice" data-price="590"><input type="radio" name="ai" value="advanced"><div class="choice-details"><strong>Advanced Surgical Guidance</strong><small>Predictive positioning and real-time alerts.</small></div><span class="price-delta">+ €590</span></label>
+            <label class="choice" data-price="0"><input type="radio" name="ai" value="Standard" checked><div class="choice-details"><strong>Standard AI Recognition</strong><small>Anatomical structure identification.</small></div><span class="price-delta">Included</span></label>
+            <label class="choice" data-price="590"><input type="radio" name="ai" value="Advanced"><div class="choice-details"><strong>Advanced Surgical Guidance</strong><small>Predictive positioning and real-time alerts.</small></div><span class="price-delta">+ €590</span></label>
           </div>
         </div>
       </aside>
@@ -144,12 +330,13 @@
         <div class="label">Total Price</div>
         <div class="amount" id="total-price-display">€8,990</div>
       </div>
-      <a href="#" class="btn primary" style="padding: 14px 28px; font-size: 16px;">Add to Cart</a>
-    </div>
+      <button id="addToCartBtn" class="btn primary" style="padding: 14px 28px; font-size: 16px;">Add to Cart</button>
+      </div>
   </div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // --- Configuration Logic ---
     const basePrice = 8990;
     const choices = document.querySelectorAll('.choice');
     const totalPriceDisplay = document.getElementById('total-price-display');
@@ -196,8 +383,210 @@
         calculateTotal();
     });
 
+    // --- MODIFICATION START: Upgraded Cart Script ---
+    const cartBtn = document.getElementById('cart-btn');
+    const cartCountEl = document.getElementById('cart-count');
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const cartBackdrop = document.getElementById('cart-backdrop');
+    const closeCartBtn = document.getElementById('close-cart-btn');
+    const cartItemsList = document.getElementById('cart-items');
+    const cartEmptyState = document.getElementById('cart-empty-state');
+    const cartTotalPriceEl = document.getElementById('cart-total-price');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const clearCartBtn = document.getElementById('clear-cart-btn');
+    let cart = [];
+
+    function initCart() {
+      const savedCart = sessionStorage.getItem('shoppingCart');
+      if (savedCart) {
+        cart = JSON.parse(savedCart);
+      }
+      updateCartUI();
+    }
+
+    function saveCart() {
+      sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+      updateCartUI();
+    }
+
+    function formatOptions(options) {
+        if (typeof options === 'object' && options !== null) {
+            return Object.values(options).filter(val => val).join(', ');
+        }
+        return options || '';
+    }
+    
+    function changeQuantity(itemId, amount) {
+        if (amount > 0) {
+            const itemToAdd = cart.find(item => item.id === itemId);
+            if (itemToAdd) {
+                cart.push({...itemToAdd});
+            }
+        } else if (amount < 0) {
+            const itemIndexToRemove = cart.findIndex(item => item.id === itemId);
+            if (itemIndexToRemove > -1) {
+                cart.splice(itemIndexToRemove, 1);
+            }
+        }
+        saveCart();
+    }
+
+    function removeItem(itemId) {
+        cart = cart.filter(item => item.id !== itemId);
+        saveCart();
+    }
+
+    function updateCartUI() {
+      const consolidatedCart = {};
+      cart.forEach(item => {
+        if (consolidatedCart[item.id]) {
+          consolidatedCart[item.id].quantity++;
+        } else {
+          consolidatedCart[item.id] = { ...item, quantity: 1 };
+        }
+      });
+      const displayCart = Object.values(consolidatedCart);
+
+      cartItemsList.innerHTML = '';
+      
+      let total = 0;
+      cart.forEach(item => { total += item.price; });
+
+      if (displayCart.length === 0) {
+        cartEmptyState.style.display = 'block';
+        checkoutBtn.disabled = true;
+        clearCartBtn.disabled = true;
+      } else {
+        cartEmptyState.style.display = 'none';
+        checkoutBtn.disabled = false;
+        clearCartBtn.disabled = false;
+
+        displayCart.forEach((item) => {
+          const li = document.createElement('li');
+          li.className = 'cart-item';
+          const baseName = item.name.split('(')[0].trim();
+          const formattedOptions = formatOptions(item.options);
+          
+          li.innerHTML = `
+            <div class="cart-product-card">
+                <div class="cart-product-header">
+                    <h4 class="cart-product-title">${baseName}</h4>
+                    <button class="cart-product-remove-btn" data-action="remove" data-id="${item.id}">&times;</button>
+                </div>
+                <p class="cart-product-subtitle">${formattedOptions}</p>
+                 <div class="cart-item-actions">
+                    <div class="quantity-control">
+                        <button class="btn quantity-btn" data-action="decrease" data-id="${item.id}">-</button>
+                        <input type="number" class="quantity-input" value="${item.quantity}" min="1" readonly>
+                        <button class="btn quantity-btn" data-action="increase" data-id="${item.id}">+</button>
+                    </div>
+                    <div class="cart-product-price">${EUR.format(item.price)}</div>
+                </div>
+            </div>
+          `;
+          cartItemsList.appendChild(li);
+        });
+      }
+
+      cartCountEl.textContent = cart.length;
+      cartTotalPriceEl.textContent = EUR.format(total);
+    }
+    
+    function addToCart() {
+      const stabilization = document.querySelector('input[name="stabilization"]:checked').value;
+      const arm = document.querySelector('input[name="arm"]:checked').value;
+      const ai = document.querySelector('input[name="ai"]:checked').value;
+      
+      const controls = ['Pressure-Sensitive Oculars'];
+      if (document.querySelector('input[name="joystick"]:checked')) {
+          controls.push('Multifunctional Joystick');
+      }
+      if (document.querySelector('input[name="footpedal"]:checked')) {
+          controls.push('Foot Pedal Control');
+      }
+
+      let currentTotal = basePrice;
+      const selectedInputs = document.querySelectorAll('input:checked');
+      selectedInputs.forEach(option => {
+        if (option.disabled) return;
+        currentTotal += Number(option.closest('.choice').dataset.price || 0);
+      });
+
+      const newItem = {
+        id: `dppro-${stabilization}-${arm}-${ai}-${controls.join('-')}`,
+        name: `DP Pro (${stabilization}, ${arm} Arm)`,
+        price: currentTotal,
+        options: { 
+            stabilization: `${stabilization} Stabilization`,
+            arm: `${arm} Reach Arm`,
+            controls: controls.join(' + '),
+            ai: `${ai} AI Suite`
+        }
+      };
+      
+      cart.push(newItem);
+      saveCart();
+      
+      cartSidebar.classList.add('is-open');
+      cartBackdrop.classList.add('is-visible');
+    }
+
+    addToCartBtn.addEventListener('click', addToCart);
+
+    cartBtn.addEventListener('click', () => {
+      cartSidebar.classList.add('is-open');
+      cartBackdrop.classList.add('is-visible');
+    });
+
+    closeCartBtn.addEventListener('click', () => {
+      cartSidebar.classList.remove('is-open');
+      cartBackdrop.classList.remove('is-visible');
+    });
+
+    cartBackdrop.addEventListener('click', () => {
+      cartSidebar.classList.remove('is-open');
+      cartBackdrop.classList.remove('is-visible');
+    });
+    
+    cartItemsList.addEventListener('click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        const action = target.dataset.action;
+        const id = target.dataset.id;
+        if (!id) return;
+
+        if (action === 'increase') {
+            changeQuantity(id, 1);
+        } else if (action === 'decrease') {
+            changeQuantity(id, -1);
+        } else if (action === 'remove') {
+            removeItem(id);
+        }
+    });
+
+    clearCartBtn.addEventListener('click', () => {
+        cart = [];
+        saveCart();
+    });
+    
+    checkoutBtn.addEventListener('click', () => {
+        window.location.href = 'checkout.html';
+    });
+
+    window.onbeforeunload = function(event) {
+        if (cart.length > 0) {
+            const message = "Your cart contains items. Are you sure you want to leave?";
+            event.returnValue = message; 
+            return message;
+        }
+    };
+    
+    // Initial setup on page load
+    initCart();
     updateSelectionUI();
     calculateTotal();
+    // --- MODIFICATION END ---
   });
 </script>
 </body>
