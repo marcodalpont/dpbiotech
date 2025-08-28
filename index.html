@@ -4,181 +4,220 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DP Biotech — Surgical Microscopes</title>
-<meta name="description" content="High‑performance surgical microscopes: optics, ergonomics, illumination and clinical accessories." />
+<meta name="description" content="High-performance surgical microscopes: optics, ergonomics, illumination and clinical accessories." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <style>
-  :root { 
-    --bg:#ffffff; 
-    --text:#0a0a0a; 
-    --muted:#525252; 
-    --line:#e5e5e5; 
-    --card:#ffffff; 
-    --band-bg: #f3f4f6;
-    --b1:#4f46e5; 
-    --b2:#7c3aed; 
-    --b3:#a21caf; 
+  :root{--bg:#ffffff;--text:#0a0a0a;--muted:#525252;--line:#e5e5e5;--card:#ffffff;--band-bg:#f3f4f6;--b1:#4f46e5;--b2:#7c3aed;--b3:#a21caf}
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#0a0a0a;--text:#fafafa;--muted:#a1a1aa;--line:#262626;--card:#18181b;--band-bg:#111111}
   }
-  @media (prefers-color-scheme: dark){ 
-    :root { 
-      --bg:#0a0a0a; 
-      --text:#fafafa; 
-      --muted:#a1a1aa; 
-      --line:#262626;
-      --card:#18181b; 
-      --band-bg: #111111;
-    } 
-  }
-  
-  html { scroll-snap-type: y mandatory; }
-  body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text); overflow-x: hidden;}
-  .container{max-width:1200px; margin:0 auto; padding:0 20px}
-  
-  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
-  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
-  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size: 18px;}
-  .nav a{color:inherit; text-decoration:none}
-  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
-  @media(min-width:960px){.nav-links{display:flex; align-items:center}}
-  .nav-links > li { height: 100%; display: flex; align-items: center; cursor:pointer; }
-  .dropdown-menu { opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; position: absolute; top: 57px; left: 0; right: 0; background: var(--bg); border-top: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 40; overflow-y: auto; max-height: calc(100vh - 57px); }
-  .dropdown-menu.is-open { opacity: 1; visibility: visible; }
-  .menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 32px 0; }
-  .menu-main-links { list-style: none; padding: 0; margin: 0; }
-  .menu-main-links li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 8px; padding: 0 12px; }
-  .menu-main-links a { font-size: 24px; font-weight: 600; line-height: 1.5; display: block; padding: 4px 12px; border-radius: 6px; }
-  .menu-main-links a:hover { background: var(--card); }
-  .menu-link-column { list-style: none; padding: 0; margin: 0; }
-  .menu-link-column li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 14px; padding: 0 12px; }
-  .menu-link-column a { font-size: 13px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 6px; }
-  .menu-link-column a:hover { background: var(--card); }
-  .menu-backdrop { position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 30; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; }
-  .menu-backdrop.is-visible { opacity: 1; visibility: visible; }
-  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer}
-  .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
+
+  /* --- Layout base --- */
+  html{scroll-snap-type:y mandatory}
+  @media(max-width:959px){ html{scroll-snap-type:none} } /* lo snap su mobile può risultare fastidioso */
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+  .container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+  /* --- NAV Desktop --- */
+  .nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 80%, transparent);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid var(--line)}
+  .nav-inner{height:57px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;gap:8px;align-items:center;font-weight:600;letter-spacing:-0.02em;font-size:18px}
+  .nav a{color:inherit;text-decoration:none}
+  .nav-links{display:none;gap:24px;font-size:14px;color:var(--muted);list-style:none;margin:0;padding:0;height:100%}
+  @media(min-width:960px){.nav-links{display:flex;align-items:center}}
+  .nav-links>li{height:100%;display:flex;align-items:center;cursor:pointer}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1px solid var(--line);font-weight:600;font-size:14px;background:transparent;color:inherit;cursor:pointer}
+  .btn.primary{background:var(--text);color:var(--bg);border-color:transparent}
   .btn.primary:hover{opacity:.92}
   .btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
 
-  .hero{padding: 0; position: relative; background: var(--bg);}
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(315deg, var(--b1), var(--b2), var(--b3));
-    background-size: 400% 400%;
-    animation: gradient-animation 15s ease infinite;
-    opacity: 0.1;
-    z-index: 0;
-  }
-  @keyframes gradient-animation {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-  }
-  .hero .container { position: relative; z-index: 1; }
+  /* --- Mega menu desktop --- */
+  .dropdown-menu{opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s ease;position:absolute;top:57px;left:0;right:0;background:var(--bg);border-top:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.15);z-index:40;overflow-y:auto;max-height:calc(100vh - 57px)}
+  .dropdown-menu.is-open{opacity:1;visibility:visible}
+  .menu-content{display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px;padding:32px 0}
+  .menu-main-links,.menu-link-column{list-style:none;padding:0;margin:0}
+  .menu-main-links li:first-child,.menu-link-column li:first-child{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;padding:0 12px}
+  .menu-main-links a{font-size:24px;font-weight:600;line-height:1.5;display:block;padding:4px 12px;border-radius:6px}
+  .menu-main-links a:hover,.menu-link-column a:hover{background:var(--card)}
+  .menu-link-column a{font-size:13px;font-weight:500;display:block;padding:8px 12px;border-radius:6px}
+  .menu-backdrop{position:fixed;top:57px;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:30;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s ease}
+  .menu-backdrop.is-visible{opacity:1;visibility:visible}
 
-  .eyebrow{display:inline-block; padding:6px 10px; border:1px solid var(--line); border-radius:999px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
-  .h1{font-size:clamp(40px, 7vw, 80px); line-height:1.05; letter-spacing:-0.03em; font-weight:800; margin:18px 0}
-  .grad{background:linear-gradient(90deg, var(--b1), var(--b2), var(--b3)); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .lead{max-width:760px; margin:0 auto; color:var(--muted); font-size:clamp(16px, 2.5vw, 20px)}
-  .hero-cta{display:flex; gap:12px; justify-content:center; margin-top:24px}
-  
-  section { padding: 100px 0; box-sizing: border-box; position: relative; overflow: hidden; }
-  .snap-section {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
-  h2{font-size:clamp(28px, 4.5vw, 44px); letter-spacing:-0.02em}
-  h3{font-size:clamp(22px, 3.5vw, 32px); letter-spacing:-0.02em}
-  p.muted{color:var(--muted); line-height: 1.6;}
-  .grid-2{display:grid; gap:48px; grid-template-columns:1fr; align-items:start}
+  /* --- Mobile header controls --- */
+  .right-actions{display:flex;gap:8px;align-items:center}
+  .mobile-toggle{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:transparent;cursor:pointer}
+  .mobile-toggle span{display:block;width:18px;height:2px;background:currentColor;position:relative}
+  .mobile-toggle span::before,.mobile-toggle span::after{content:"";position:absolute;left:0;width:18px;height:2px;background:currentColor}
+  .mobile-toggle span::before{top:-6px}.mobile-toggle span::after{top:6px}
+  @media(min-width:960px){ .mobile-toggle{display:none} }
+
+  /* --- Drawer mobile --- */
+  .drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:70;opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease}
+  .drawer-backdrop.is-visible{opacity:1;visibility:visible}
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:min(86vw, 420px);background:var(--bg);border-left:1px solid var(--line);z-index:80;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}
+  .drawer.is-open{transform:none}
+  .drawer-header{height:57px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line)}
+  .drawer-content{padding:12px 16px 20px 16px;overflow:auto}
+  .drawer h4{margin:16px 0 8px 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .drawer a{display:block;padding:12px 10px;border-radius:8px;font-weight:600}
+  .drawer a:hover{background:var(--card)}
+  .drawer .sub a{font-weight:500;font-size:14px;color:var(--muted);padding:10px}
+  .drawer .cta{margin-top:8px}
+
+  /* --- Sezioni contenuto --- */
+  .hero{padding:0;position:relative;background:var(--bg)}
+  .hero::before{content:'';position:absolute;inset:0;background:linear-gradient(315deg,var(--b1),var(--b2),var(--b3));background-size:400% 400%;animation:gradient-animation 15s ease infinite;opacity:.1;z-index:0}
+  @keyframes gradient-animation{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .hero .container{position:relative;z-index:1}
+  .eyebrow{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .h1{font-size:clamp(34px,7vw,80px);line-height:1.05;letter-spacing:-0.03em;font-weight:800;margin:18px 0}
+  .grad{background:linear-gradient(90deg,var(--b1),var(--b2),var(--b3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{max-width:760px;margin:0 auto;color:var(--muted);font-size:clamp(16px,2.5vw,20px)}
+  .hero-cta{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+
+  section{padding:100px 0;position:relative;overflow:hidden}
+  .snap-section{min-height:100vh;display:flex;align-items:center;justify-content:center;scroll-snap-align:start;scroll-snap-stop:always}
+  h2{font-size:clamp(26px,4.5vw,44px);letter-spacing:-0.02em}
+  h3{font-size:clamp(22px,3.5vw,32px);letter-spacing:-0.02em}
+  p.muted{color:var(--muted);line-height:1.6}
+  .grid-2{display:grid;gap:48px;grid-template-columns:1fr;align-items:start}
   @media(min-width:960px){.grid-2{grid-template-columns:1fr 1fr}}
-  .grid-3{display:grid; gap:24px; grid-template-columns:1fr}
+  .grid-3{display:grid;gap:24px;grid-template-columns:1fr}
   @media(min-width:640px){.grid-3{grid-template-columns:repeat(3,1fr)}}
 
-  #dppro { background: radial-gradient(circle, var(--band-bg) 0%, var(--bg) 100%); }
-  .band{background:var(--band-bg);}
+  #dppro{background:radial-gradient(circle,var(--band-bg) 0%,var(--bg) 100%)}
+  .band{background:var(--band-bg)}
 
-  #dpmini h3, #dppro h3 { font-size: clamp(28px, 4vw, 40px); }
-  #dpmini .muted, #dppro .muted, #dpmini .product-list li, #dppro .product-list li { font-size: clamp(16px, 2vw, 18px); }
+  #dpmini h3,#dppro h3{font-size:clamp(28px,4vw,40px)}
+  #dpmini .muted,#dppro .muted,#dpmini .product-list li,#dppro .product-list li{font-size:clamp(16px,2vw,18px)}
 
-  .product-visual { border: 1px solid var(--line); border-radius: 24px; aspect-ratio: 4/3; background: var(--card); padding: 0; }
-  .product-visual.mini-bg { background:radial-gradient(circle at top left, #0ea5e91a, transparent 40%), radial-gradient(circle at bottom right, #6366f11a, transparent 40%), var(--card); }
-  .product-visual.pro-bg { background:radial-gradient(circle at top left, #2563eb1a, transparent 40%), radial-gradient(circle at bottom right, #0596691a, transparent 40%), var(--card); }
-  .product-list { list-style: none; padding-left: 0; margin-top: 16px; }
-  .product-list li { padding-left: 1.5em; position: relative; margin-bottom: 10px; color: var(--muted); }
-  .product-list li::before { content: '✓'; position: absolute; left: 0; color: var(--b2); }
-  
-  .app-visual {
-    aspect-ratio: 16/10;
-    background-color: color-mix(in srgb, var(--line) 50%, transparent);
-    border-radius: 12px;
-    margin: 16px 0;
-    display: grid;
-    place-items: center;
-    color: var(--muted);
-    font-size: 14px;
-  }
+  .product-visual{border:1px solid var(--line);border-radius:24px;aspect-ratio:4/3;background:var(--card);padding:0}
+  .product-visual.mini-bg{background:radial-gradient(circle at top left,#0ea5e91a,transparent 40%),radial-gradient(circle at bottom right,#6366f11a,transparent 40%),var(--card)}
+  .product-visual.pro-bg{background:radial-gradient(circle at top left,#2563eb1a,transparent 40%),radial-gradient(circle at bottom right,#0596691a,transparent 40%),var(--card)}
+  .product-list{list-style:none;padding-left:0;margin-top:16px}
+  .product-list li{padding-left:1.5em;position:relative;margin-bottom:10px;color:var(--muted)}
+  .product-list li::before{content:'✓';position:absolute;left:0;color:var(--b2)}
 
-  .grid-4{display:grid; gap:24px; grid-template-columns:1fr} 
+  .app-visual{aspect-ratio:16/10;background-color:color-mix(in srgb,var(--line) 50%,transparent);border-radius:12px;margin:16px 0;display:grid;place-items:center;color:var(--muted);font-size:14px}
+
+  .grid-4{display:grid;gap:24px;grid-template-columns:1fr}
   @media(min-width:640px){.grid-4{grid-template-columns:1fr 1fr}}
   @media(min-width:900px){.grid-4{grid-template-columns:repeat(4,1fr)}}
-  .card{border:1px solid var(--line); border-radius:16px; padding:20px; background:var(--card); transition:box-shadow .2s ease, transform .2s ease}
-  .card:hover{box-shadow:0 12px 40px rgba(0,0,0,.1); transform: translateY(-4px);}
+  .card{border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--card);transition:box-shadow .2s ease,transform .2s ease}
+  .card:hover{box-shadow:0 12px 40px rgba(0,0,0,.1);transform:translateY(-4px)}
   .icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--text);color:var(--bg);font-weight:700;margin-bottom:12px}
-  .specs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px}
-  .row{display:flex; justify-content:space-between; border-bottom:1px solid var(--line); padding:10px 0; font-size:14px}
-  
-  .animate-item { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1); transition-delay: var(--delay, 0s); }
-  .animate-item.is-visible { opacity: 1; transform: translateY(0); }
-  
-  model-viewer {
-    width: 100%;
-    height: 100%;
-    border-radius: 24px; 
-    --poster-color: transparent;
-  }
-  
-  footer{border-top:1px solid var(--line); padding:36px 0; color:var(--muted); scroll-snap-align: end;}
+  .specs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+  .row{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:10px 0;font-size:14px}
+
+  .animate-item{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.215,.61,.355,1),transform .8s cubic-bezier(.215,.61,.355,1);transition-delay:var(--delay,0s)}
+  .animate-item.is-visible{opacity:1;transform:translateY(0)}
+
+  model-viewer{width:100%;height:100%;border-radius:24px;--poster-color:transparent}
+  /* su mobile l’aspect-ratio dei box è già definito: assicura altezza minima */
+  @media(max-width:959px){ model-viewer{min-height:280px} }
+
+  footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);scroll-snap-align:end}
 </style>
 </head>
 <body>
+  <!-- NAV -->
   <div class="nav" id="main-nav">
     <div class="container nav-inner">
       <a href="#home" class="logo">
-        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
+        <img src="logo.png" alt="DP Biotech Logo" style="height:34px;border-radius:50%">
         <span>DP Biotech</span>
       </a>
+
+      <!-- Desktop links -->
       <ul class="nav-links">
         <li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
         <li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
         <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
         <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
       </ul>
-      <div style="display:flex; gap:8px">
+
+      <div class="right-actions">
         <a class="btn primary" href="buy.html">Buy</a>
+        <!-- Mobile hamburger -->
+        <button class="mobile-toggle" aria-label="Open menu" aria-controls="mobile-drawer" aria-expanded="false">
+          <span></span>
+        </button>
       </div>
     </div>
-    <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="all-models.html#compare">Compare Models</a></li></ul></div></div></div>
-    <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul></div></div></div>
-    <div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Explore Software</li><li><a href="#">Imaging Suite</a></li><li><a href="#">Companion App</a></li></ul><ul class="menu-link-column"><li>For Developers</li><li><a href="#">API & SDK</a></li></ul></div></div></div>
-    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li></ul></div></div></div>
+
+    <!-- Desktop mega menus -->
+    <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content">
+      <ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul>
+      <ul class="menu-link-column"><li>Quick Links</li><li><a href="all-models.html#compare">Compare Models</a></li></ul>
+    </div></div></div>
+    <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content">
+      <ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul>
+      <ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul>
+    </div></div></div>
+    <div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content">
+      <ul class="menu-main-links"><li>Explore Software</li><li><a href="#">Imaging Suite</a></li><li><a href="#">Companion App</a></li></ul>
+      <ul class="menu-link-column"><li>For Developers</li><li><a href="#">API &amp; SDK</a></li></ul>
+    </div></div></div>
+    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content">
+      <ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li></ul>
+    </div></div></div>
   </div>
   <div class="menu-backdrop"></div>
 
+  <!-- Mobile drawer -->
+  <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+  <aside class="drawer" id="mobile-drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div style="display:flex;align-items:center;gap:8px">
+        <img src="logo.png" alt="DP Biotech" style="height:28px;border-radius:50%">
+        <strong>DP Biotech</strong>
+      </div>
+      <button class="mobile-toggle" id="drawer-close" aria-label="Close menu"><span></span></button>
+    </div>
+    <div class="drawer-content">
+      <h4>Microscopes</h4>
+      <nav>
+        <a href="DPMini.html">DP Mini</a>
+        <a href="DPPro.html">DP Pro</a>
+        <div class="sub">
+          <a href="all-models.html">All Models</a>
+          <a href="all-models.html#compare">Compare Models</a>
+        </div>
+      </nav>
+
+      <h4>Stands</h4>
+      <nav>
+        <a href="#">Floor Stands</a>
+        <a href="#">Ceiling Mounts</a>
+        <a href="#">Wall Mounts</a>
+        <div class="sub"><a href="#">Compatibility Guide</a></div>
+      </nav>
+
+      <h4>Software</h4>
+      <nav>
+        <a href="#">Imaging Suite</a>
+        <a href="#">Companion App</a>
+        <div class="sub"><a href="#">API &amp; SDK</a></div>
+      </nav>
+
+      <h4>Support</h4>
+      <nav><a href="contactus.html">Contact Us</a></nav>
+
+      <div class="cta"><a class="btn primary" href="buy.html" style="width:100%;justify-content:center">Buy</a></div>
+    </div>
+  </aside>
+
+  <!-- HERO -->
   <header class="hero snap-section" id="home">
     <div class="container" style="text-align:center">
       <div data-stagger-children>
         <span class="eyebrow animate-item">New • Surgical Series</span>
-        <h1 class="h1 animate-item" style="--delay: 0.1s;">Surgical microscope <span class="grad">precision, simplified</span></h1>
-        <p class="lead animate-item" style="--delay: 0.2s;">Optical performance, ergonomics and illumination designed for clinical workflows. Optional companion app available — microscope works standalone.</p>
-        <div class="hero-cta animate-item" style="--delay: 0.3s;">
+        <h1 class="h1 animate-item" style="--delay:.1s">Surgical microscope <span class="grad">precision, simplified</span></h1>
+        <p class="lead animate-item" style="--delay:.2s">Optical performance, ergonomics and illumination designed for clinical workflows. Optional companion app available — microscope works standalone.</p>
+        <div class="hero-cta animate-item" style="--delay:.3s">
           <a href="buy.html" class="btn primary">Buy</a>
           <a href="#features" class="btn">Learn more</a>
         </div>
@@ -186,6 +225,7 @@
     </div>
   </header>
 
+  <!-- DP MINI -->
   <section id="dpmini" class="snap-section">
     <div class="container">
       <div class="grid-2" style="align-items:center" data-stagger-children>
@@ -202,38 +242,23 @@
           <div style="margin-top:24px"><a href="DPMini.html" class="btn primary">Learn More about DP Mini</a></div>
         </div>
         <div class="product-visual mini-bg animate-item">
-          <model-viewer
-              id="dpmini-viewer"
-              src="dpmini.glb"
-              ios-src="dpmini.usdz"
-              alt="DP Mini surgical microscope"
-              camera-controls
-              ar
-              environment-image="neutral"
-              shadow-intensity="1"
-              camera-orbit="120deg 50deg 110%"
-              data-final-orbit="140deg 70deg 105%">
+          <model-viewer id="dpmini-viewer" src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini surgical microscope"
+            camera-controls ar environment-image="neutral" shadow-intensity="1"
+            camera-orbit="120deg 50deg 110%" data-final-orbit="140deg 70deg 105%">
           </model-viewer>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- DP PRO -->
   <section id="dppro" class="snap-section">
     <div class="container">
       <div class="grid-2" style="align-items:center" data-stagger-children>
         <div class="product-visual pro-bg animate-item">
-            <model-viewer
-              id="dppro-viewer"
-              src="dppro.glb"
-              ios-src="dppro.usdz"
-              alt="DP Pro surgical microscope"
-              camera-controls
-              ar
-              environment-image="neutral"
-              shadow-intensity="1"
-              camera-orbit="10deg 75deg 105%"
-              data-final-orbit="35deg 75deg 105%">
+          <model-viewer id="dppro-viewer" src="dppro.glb" ios-src="dppro.usdz" alt="DP Pro surgical microscope"
+            camera-controls ar environment-image="neutral" shadow-intensity="1"
+            camera-orbit="10deg 75deg 105%" data-final-orbit="35deg 75deg 105%">
           </model-viewer>
         </div>
         <div class="animate-item">
@@ -252,171 +277,209 @@
     </div>
   </section>
 
+  <!-- FEATURES -->
   <section id="features" class="band snap-section">
     <div class="container">
       <div data-stagger-children>
-        <div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
+        <div class="animate-item" style="text-align:center;max-width:760px;margin:0 auto 40px">
           <h2>Built for clinical use</h2>
           <p class="muted">From glass to mechanics, every component is tuned for stability, visibility and comfort during long procedures.</p>
         </div>
       </div>
       <div class="grid grid-4" data-stagger-children>
-        <div class="card animate-item"><div class="icon">OP</div><h3>Optics</h3><p class="muted">Plan‑apochromatic lenses, AR‑coated, neutral colorimetry. Zoom 1:6. Eyepieces 10× or 12.5×.</p></div>
+        <div class="card animate-item"><div class="icon">OP</div><h3>Optics</h3><p class="muted">Plan-apochromatic lenses, AR-coated, neutral colorimetry. Zoom 1:6. Eyepieces 10× or 12.5×.</p></div>
         <div class="card animate-item"><div class="icon">WD</div><h3>Working distance</h3><p class="muted">Objectives f=175 / 200 / 250 mm to match your specialty and posture.</p></div>
-        <div class="card animate-item"><div class="icon">CX</div><h3>Coaxial LED</h3><p class="muted">High‑intensity LED (80–120 W) with homogeneous field and low heat.</p></div>
-        <div class="card animate-item"><div class="icon">ER</div><h3>Ergonomics</h3><p class="muted">Balanced arms, smooth friction, sterile‑drape ready handles and controls.</p></div>
-        <div class="card animate-item"><div class="icon">SP</div><h3>Beam splitters</h3><p class="muted">20/80 or 50/50 with dual C‑mount ports for camera/teaching.</p></div>
-        <div class="card animate-item"><div class="icon">AS</div><h3>Assistant scope</h3><p class="muted">Assistant binocular module for training and hand‑offs.</p></div>
+        <div class="card animate-item"><div class="icon">CX</div><h3>Coaxial LED</h3><p class="muted">High-intensity LED (80–120 W) with homogeneous field and low heat.</p></div>
+        <div class="card animate-item"><div class="icon">ER</div><h3>Ergonomics</h3><p class="muted">Balanced arms, smooth friction, sterile-drape ready handles and controls.</p></div>
+        <div class="card animate-item"><div class="icon">SP</div><h3>Beam splitters</h3><p class="muted">20/80 or 50/50 with dual C-mount ports for camera/teaching.</p></div>
+        <div class="card animate-item"><div class="icon">AS</div><h3>Assistant scope</h3><p class="muted">Assistant binocular module for training and hand-offs.</p></div>
         <div class="card animate-item"><div class="icon">MT</div><h3>Mounting</h3><p class="muted">Floor stand, ceiling mount or wall arm — same optical head.</p></div>
         <div class="card animate-item"><div class="icon">ST</div><h3>Sterility</h3><p class="muted">Sterile handles and drapes available; easy to clean surfaces.</p></div>
       </div>
     </div>
   </section>
-  
+
+  <!-- SOFTWARE -->
   <section id="software" class="band snap-section">
     <div class="container">
       <div data-stagger-children>
-        <div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
+        <div class="animate-item" style="text-align:center;max-width:760px;margin:0 auto 40px">
           <h2>Dedicated Software for Every Workflow</h2>
           <p class="muted">From on-the-go imaging with your iPhone to advanced surgical planning on a Mac, our software is tailored to your device.</p>
         </div>
       </div>
       <div class="grid-2" data-stagger-children>
         <div class="card animate-item">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-              <div class="icon" style="margin-bottom: 0;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-              </div>
-              <h3 style="margin: 0; font-size: 24px;">Med Connect Mini</h3>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div class="icon" style="margin-bottom:0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
             </div>
-            <div class="app-visual" style="aspect-ratio: 2.5 / 1; margin: 12px 0; padding: 0; overflow: hidden; background-color: transparent;">
-              <img src="iphoneapp.png" alt="Med Connect Mini app screenshot" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-            <p class="muted">The perfect partner for the DP Mini. Capture true stereoscopic 3D images and video directly on your iPhone. Use augmented reality for procedural guides and collaborate with colleagues in real-time, from anywhere.</p>
+            <h3 style="margin:0;font-size:24px">Med Connect Mini</h3>
+          </div>
+          <div class="app-visual" style="aspect-ratio:2.5/1;margin:12px 0;padding:0;overflow:hidden;background-color:transparent">
+            <img src="iphoneapp.png" alt="Med Connect Mini app screenshot" style="width:100%;height:100%;object-fit:cover">
+          </div>
+          <p class="muted">The perfect partner for the DP Mini. Capture true stereoscopic 3D images and video directly on your iPhone. Use augmented reality for procedural guides and collaborate with colleagues in real-time, from anywhere.</p>
         </div>
         <div class="card animate-item">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-              <div class="icon" style="margin-bottom: 0;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="12" rx="2" ry="2"></rect><line x1="2" y1="21" x2="22" y2="21"></line><line x1="12" y1="15" x2="12" y2="21"></line></svg>
-              </div>
-              <h3 style="margin: 0; font-size: 24px;">Med Connect Pro</h3>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div class="icon" style="margin-bottom:0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="12" rx="2" ry="2"></rect><line x1="2" y1="21" x2="22" y2="21"></line><line x1="12" y1="15" x2="12" y2="21"></line></svg>
             </div>
-            <div class="app-visual" style="aspect-ratio: 2.5 / 1; margin: 12px 0; padding: 0; overflow: hidden; background-color: transparent;">
-               <img src="macapp.png" alt="Med Connect Pro app screenshot" style="width: 100%; height: 100%; object-fit:contain;">
-            </div>
-            <p class="muted">Unleash the full power of the DP Pro. This desktop-class application provides advanced tools for image analysis, patient data management, and surgical planning. Integrate seamlessly with hospital records and export detailed reports.</p>
+            <h3 style="margin:0;font-size:24px">Med Connect Pro</h3>
+          </div>
+          <div class="app-visual" style="aspect-ratio:2.5/1;margin:12px 0;padding:0;overflow:hidden;background-color:transparent">
+            <img src="macapp.png" alt="Med Connect Pro app screenshot" style="width:100%;height:100%;object-fit:contain">
+          </div>
+          <p class="muted">Unleash the full power of the DP Pro. This desktop-class application provides advanced tools for image analysis, patient data management, and surgical planning. Integrate seamlessly with hospital records and export detailed reports.</p>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- STANDS -->
   <section id="stands" class="snap-section">
     <div class="container">
       <div data-stagger-children>
-        <div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
+        <div class="animate-item" style="text-align:center;max-width:760px;margin:0 auto 40px">
           <h2>Versatile Mounting Solutions</h2>
           <p class="muted">Stable, ergonomic, and space-efficient stands designed to integrate perfectly into any clinical environment.</p>
         </div>
       </div>
       <div class="grid-3" data-stagger-children>
         <div class="card animate-item">
-            <div class="icon">FS</div>
-            <h3>Floor Stand</h3>
-            <p class="muted">Mobile and stable, the floor stand provides maximum flexibility with smooth-rolling, lockable casters and a long-reach, counterbalanced arm.</p>
+          <div class="icon">FS</div>
+          <h3>Floor Stand</h3>
+          <p class="muted">Mobile and stable, the floor stand provides maximum flexibility with smooth-rolling, lockable casters and a long-reach, counterbalanced arm.</p>
         </div>
         <div class="card animate-item">
-            <div class="icon">CM</div>
-            <h3>Ceiling Mount</h3>
-            <p class="muted">Save valuable floor space and eliminate cable clutter. The ceiling mount offers exceptional stability and positioning freedom directly over the operating area.</p>
+          <div class="icon">CM</div>
+          <h3>Ceiling Mount</h3>
+          <p class="muted">Save valuable floor space and eliminate cable clutter. The ceiling mount offers exceptional stability and positioning freedom directly over the operating area.</p>
         </div>
         <div class="card animate-item">
-            <div class="icon">WM</div>
-            <h3>Wall Mount</h3>
-            <p class="muted">Ideal for compact rooms. The wall mount folds away when not in use, providing a sturdy, fixed-base solution without occupying floor or ceiling space.</p>
+          <div class="icon">WM</div>
+          <h3>Wall Mount</h3>
+          <p class="muted">Ideal for compact rooms. The wall mount folds away when not in use, providing a sturdy, fixed-base solution without occupying floor or ceiling space.</p>
         </div>
       </div>
     </div>
   </section>
 
   <footer>
-    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
-      <div style="display:flex; gap:8px; align-items:center"><img src="logo.png" alt="DP Biotech Logo" style="height: 36px; border-radius: 50%;">DP Biotech</div>
-      <div style="display:flex; gap:18px"><a href="#" class="muted">Privacy</a><a href="#" class="muted">Terms</a></div>
+    <div class="container" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;gap:8px;align-items:center"><img src="logo.png" alt="DP Biotech Logo" style="height:36px;border-radius:50%">DP Biotech</div>
+      <div style="display:flex;gap:18px"><a href="#" class="muted">Privacy</a><a href="#" class="muted">Terms</a></div>
     </div>
   </footer>
-  
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- MEGA MENU SCRIPT ---
-    const mainNav = document.getElementById('main-nav');
-    const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
-    const backdrop = document.querySelector('.menu-backdrop');
-    let activeMenu = null;
-    let closeTimeout;
-    function openMenu(menuId) {
-        if (activeMenu) { activeMenu.classList.remove('is-open'); }
-        const menu = document.getElementById(menuId);
-        if (menu) {
-            menu.classList.add('is-open');
-            backdrop.classList.add('is-visible');
-            activeMenu = menu;
+  /* --- DESKTOP MEGA MENU (hover) --- */
+  const mainNav = document.getElementById('main-nav');
+  const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
+  const backdrop = document.querySelector('.menu-backdrop');
+  let activeMenu = null, closeTimeout;
+
+  function openMenu(menuId){
+    if(activeMenu){ activeMenu.classList.remove('is-open'); }
+    const menu = document.getElementById(menuId);
+    if(menu){
+      menu.classList.add('is-open');
+      backdrop.classList.add('is-visible');
+      activeMenu = menu;
+    }
+  }
+  function closeAllMenus(){
+    if(activeMenu){ activeMenu.classList.remove('is-open'); }
+    backdrop.classList.remove('is-visible');
+    activeMenu = null;
+  }
+
+  // Solo desktop: hover
+  const mqlDesktop = window.matchMedia('(min-width: 960px)');
+  function bindDesktopMenus(){
+    triggers.forEach(t => {
+      t.onmouseenter = () => { if(mqlDesktop.matches){ clearTimeout(closeTimeout); openMenu(t.dataset.menu); } };
+      t.onclick = (e) => {
+        // su mobile trasformiamo in click-to-open drawer (gestito sotto), quindi qui evitiamo conflitti
+        if(!mqlDesktop.matches){ e.preventDefault(); }
+      }
+    });
+    mainNav.onmouseleave = () => { if(mqlDesktop.matches){ closeTimeout = setTimeout(closeAllMenus, 200); } };
+    mainNav.onmouseenter = () => { if(mqlDesktop.matches){ clearTimeout(closeTimeout); } };
+  }
+  bindDesktopMenus();
+  mqlDesktop.addEventListener?.('change', bindDesktopMenus);
+
+  /* --- FADE-IN ANIMATION --- */
+  const observer = new IntersectionObserver((entries, obs)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const el = entry.target;
+        if(el.dataset.staggerChildren !== undefined){
+          const children = el.querySelectorAll('.animate-item');
+          children.forEach((child, i)=>{
+            child.style.transitionDelay = `${i*120}ms`;
+            child.classList.add('is-visible');
+          });
+        } else {
+          el.classList.add('is-visible');
         }
-    }
-    function closeAllMenus() {
-        if (activeMenu) { activeMenu.classList.remove('is-open'); }
-        backdrop.classList.remove('is-visible');
-        activeMenu = null;
-    }
-    triggers.forEach(trigger => {
-        trigger.addEventListener('mouseenter', () => {
-            clearTimeout(closeTimeout);
-            openMenu(trigger.dataset.menu);
-        });
+        obs.unobserve(el);
+      }
     });
-    mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAllMenus, 200); });
-    mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+  }, { rootMargin:'0px', threshold:0.2 });
+  document.querySelectorAll('[data-stagger-children]').forEach(c=>observer.observe(c));
+  document.querySelectorAll('.hero .animate-item').forEach((item,i)=>setTimeout(()=>item.classList.add('is-visible'), 100+i*80));
 
-    // --- FADE-IN ANIMATION SCRIPT ---
-    const observerOptions = { rootMargin: '0px', threshold: 0.2 };
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                if (el.dataset.staggerChildren !== undefined) {
-                    const children = el.querySelectorAll('.animate-item');
-                    children.forEach((child, index) => {
-                        child.style.transitionDelay = `${index * 120}ms`;
-                        child.classList.add('is-visible');
-                    });
-                } else {
-                    el.classList.add('is-visible');
-                }
-                observer.unobserve(el);
-            }
-        });
-    }, observerOptions);
-    const animatedContainers = document.querySelectorAll('[data-stagger-children]');
-    animatedContainers.forEach(container => observer.observe(container));
-    const heroItems = document.querySelector('.hero').querySelectorAll('.animate-item');
-     heroItems.forEach(item => {
-        setTimeout(() => item.classList.add('is-visible'), 100);
+  /* --- MODEL VIEWER SCROLL ANIMATION --- */
+  const modelObserver = new IntersectionObserver((entries, obs)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const mv = entry.target;
+        if(mv.dataset.finalOrbit) mv.cameraOrbit = mv.dataset.finalOrbit;
+        obs.unobserve(mv);
+      }
     });
+  }, { threshold:0.5 });
+  ['#dpmini-viewer','#dppro-viewer'].forEach(sel=>{
+    const mv = document.querySelector(sel);
+    if(mv) modelObserver.observe(mv);
+  });
 
-    // --- 3D MODEL SCROLL ANIMATION SCRIPT ---
-    const modelObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const modelViewer = entry.target;
-                modelViewer.cameraOrbit = modelViewer.dataset.finalOrbit;
-                observer.unobserve(modelViewer); 
-            }
-        });
-    }, { threshold: 0.5 }); 
+  /* --- MOBILE DRAWER --- */
+  const burger = document.querySelector('.mobile-toggle');
+  const drawer = document.getElementById('mobile-drawer');
+  const drawerClose = document.getElementById('drawer-close');
+  const drawerBackdrop = document.getElementById('drawer-backdrop');
 
-    const dpminiViewer = document.querySelector('#dpmini-viewer');
-    const dpproViewer = document.querySelector('#dppro-viewer');
-    if (dpminiViewer) modelObserver.observe(dpminiViewer);
-    if (dpproViewer) modelObserver.observe(dpproViewer);
+  function openDrawer(){
+    drawer.classList.add('is-open');
+    drawer.setAttribute('aria-hidden','false');
+    drawerBackdrop.classList.add('is-visible');
+    drawerBackdrop.hidden = false;
+    burger.setAttribute('aria-expanded','true');
+    // chiudi eventuali mega menu aperti
+    closeAllMenus();
+    // blocca scroll sotto (mobile UX)
+    document.documentElement.style.overflow = 'hidden';
+  }
+  function closeDrawer(){
+    drawer.classList.remove('is-open');
+    drawer.setAttribute('aria-hidden','true');
+    drawerBackdrop.classList.remove('is-visible');
+    setTimeout(()=>{ drawerBackdrop.hidden = true; }, 250);
+    burger.setAttribute('aria-expanded','false');
+    document.documentElement.style.overflow = '';
+  }
+
+  burger?.addEventListener('click', openDrawer);
+  drawerClose?.addEventListener('click', closeDrawer);
+  drawerBackdrop?.addEventListener('click', closeDrawer);
+  // Chiudi drawer al cambio breakpoint (se si ruota in orizzontale)
+  window.addEventListener('resize', ()=>{ if(window.innerWidth>=960) closeDrawer(); });
+
 });
 </script>
 </body>

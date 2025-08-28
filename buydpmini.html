@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Buy DP Mini - DP Biotech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<style>
+  :root { 
+    --bg:#ffffff; --text:#0a0a0a; --muted:#525252; --line:#e5e5e5; --card:#fafafa; 
+    --a1:#f97316; --a2:#ef4444; --a3:#dc2626;
+  }
+  @media (prefers-color-scheme: dark){ 
+    :root { --bg:#0a0a0a; --text:#fafafa; --muted:#a1a1aa; --line:#262626; --card:#18181b; } 
+  }
+  /* MODIFICA: Impedisce lo scroll dell'intera pagina su schermi grandi */
+  body{
+    margin:0; 
+    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+    background:var(--bg); 
+    color:var(--text);
+    overflow: hidden; 
+  }
+  .container{max-width:1200px; margin:0 auto; padding:0 20px}
+
+  /* Navigation Bar */
+  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
+  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
+  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size: 18px;}
+  .nav a{color:inherit; text-decoration:none}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
+  .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
+
+  /* MODIFICA: Layout principale a griglia che occupa l'intera altezza */
+  .config-layout{
+    display:grid; 
+    grid-template-columns: 3fr 2fr;
+    gap: 48px;
+    height: calc(100vh - 57px);
+  }
+  @media(max-width: 999px){
+    /* Su schermi piccoli, torna a layout a colonna singola e abilita lo scroll */
+    body { overflow: auto; padding-bottom: 100px; }
+    .config-layout{grid-template-columns:1fr; height: auto; gap: 0;}
+    .viewer { position: static; height: auto; padding: 24px 0; }
+    aside { overflow-y: visible; padding-bottom: 0; }
+  }
+
+  /* Left Column: Viewer Fisso */
+  .viewer{ padding: 24px 0; }
+  .viewer-frame{width:100%; height: 50vh; min-height:400px; border-radius:18px; border:1px solid var(--line); background:var(--card)}
+  model-viewer {width: 100%; height: 100%; border-radius: 18px; --poster-color: transparent;}
+  
+  /* Right Column: Opzioni Scorrevoli */
+  aside {
+    padding-top: 24px;
+    overflow-y: scroll;
+    padding-bottom: 120px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+  }
+  aside::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, etc. */
+  }
+  
+  h1{font-size:clamp(28px, 4vw, 36px); letter-spacing:-.02em; margin:0 0 24px 0; font-weight:800;}
+  .option-group{margin-bottom:24px; border:1px solid var(--line); border-radius:18px; overflow:hidden;}
+  .group-header{padding:16px; display:flex; justify-content:space-between; align-items:center; background:var(--card);}
+  .group-header strong{font-size:18px;}
+  .option-list{padding:16px; display:flex; flex-direction:column; gap:12px;}
+  .choice{display:flex; justify-content:space-between; align-items:center; gap:16px; border:2px solid var(--line); border-radius:12px; padding:16px; background:var(--bg); cursor:pointer; transition: all .2s ease;}
+  .choice.selected{border-color:var(--a2); box-shadow:0 0 0 4px color-mix(in srgb, var(--a2) 20%, transparent);}
+  .choice:hover{border-color:var(--a1);}
+  .choice input{display:none}
+  .choice-details strong{font-weight:600; font-size:15px;}
+  .choice-details small{display:block; color:var(--muted); font-size:13px; margin-top:2px;}
+  .price-delta{color:var(--text); font-weight:600; white-space:nowrap; font-size:14px;}
+
+  /* Dropdown Telefono */
+  .select-wrapper { position: relative; padding: 16px; }
+  .select-wrapper::after { content: '⌄'; position: absolute; top: 50%; right: 32px; transform: translateY(-50%); pointer-events: none; font-size: 20px; color: var(--muted); }
+  select.custom-select { width: 100%; padding: 16px; border: 2px solid var(--line); border-radius: 12px; background: var(--bg); font-size: 16px; font-weight: 500; font-family: inherit; appearance: none; -webkit-appearance: none; cursor: pointer; }
+
+  /* Sticky Bottom Bar */
+  .sticky-bar{position:fixed; left:0; right:0; bottom:0; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-top:1px solid var(--line); z-index:45;}
+  .bar-inner{max-width:1200px; margin:0 auto; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px}
+  .total-price .label{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
+  .total-price .amount{font-size:24px; font-weight:700; color:var(--text);}
+</style>
+</head>
+<body>
+  <div class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
+        <span>DP Biotech</span>
+      </a>
+      <a href="DPMini.html" class="btn">Cancel</a>
+    </div>
+  </div>
+
+  <div class="container">
+      <div class="config-layout">
+        <section class="viewer">
+            <h1>Configure your DP Mini</h1>
+            <div class="viewer-frame">
+              <model-viewer src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope" 
+                  camera-controls ar shadow-intensity="1" camera-orbit="230deg 80deg 1.5m" interaction-prompt="none">
+              </model-viewer>
+            </div>
+        </section>
+
+        <aside>
+            <div class="option-group">
+            <div class="group-header"><strong>Device</strong><small>Select your phone model</small></div>
+            <div class="select-wrapper">
+                <select class="custom-select" name="phone_model">
+                <option>iPhone 17 Pro Max</option>
+                <option>iPhone 17 Pro</option>
+                <option>iPhone 17 Plus</option>
+                <option>iPhone 17</option>
+                <option>iPhone 16 Pro Max</option>
+                <option>iPhone 16 Pro</option>
+                <option>iPhone 16 Plus</option>
+                <option>iPhone 16</option>
+                <option selected>iPhone 15 Pro Max</option>
+                <option>iPhone 15 Pro</option>
+                <option>iPhone 15 Plus</option>
+                <option>iPhone 15</option>
+                </select>
+            </div>
+            </div>
+
+            <div class="option-group">
+            <div class="group-header"><strong>Objective</strong><small>Select working distance</small></div>
+            <div class="option-list">
+                <label class="choice" data-price="0"><input type="radio" name="objective" value="50mm" checked><div class="choice-details"><strong>50mm Standard Objective</strong><small>Ideal for close-up work, maximum magnification.</small></div><span class="price-delta">Included</span></label>
+                <label class="choice" data-price="180"><input type="radio" name="objective" value="60mm"><div class="choice-details"><strong>60mm Mid-Range Objective</strong><small>Balanced distance and magnification.</small></div><span class="price-delta">+ €180</span></label>
+                <label class="choice" data-price="350"><input type="radio" name="objective" value="75mm"><div class="choice-details"><strong>75mm Long-Range Objective</strong><small>Maximum working space for tools.</small></div><span class="price-delta">+ €350</span></label>
+            </div>
+            </div>
+
+            <div class="option-group">
+            <div class="group-header"><strong>Eyepieces</strong><small>Choose your viewing method</small></div>
+            <div class="option-list">
+                <label class="choice" data-price="0"><input type="radio" name="eyepiece" value="screen" checked><div class="choice-details"><strong>Screen Only</strong><small>Use your smartphone screen for direct viewing.</small></div><span class="price-delta">Included</span></label>
+                <label class="choice" data-price="290"><input type="radio" name="eyepiece" value="hd"><div class="choice-details"><strong>Full HD Eyepieces</strong><small>Immersive 1920x1080 resolution per eye.</small></div><span class="price-delta">+ €290</span></label>
+                <label class="choice" data-price="580"><input type="radio" name="eyepiece" value="4k"><div class="choice-details"><strong>4K UHD Eyepieces</strong><small>Ultra-high resolution for critical detail.</small></div><span class="price-delta">+ €580</span></label>
+            </div>
+            </div>
+
+            <div class="option-group">
+            <div class="group-header"><strong>Mounting</strong><small>Select your setup</small></div>
+            <div class="option-list">
+                <label class="choice" data-price="0"><input type="radio" name="mount" value="handle" checked><div class="choice-details"><strong>Ergonomic Handle</strong><small>For handheld operation with multifunction controls.</small></div><span class="price-delta">Included</span></label>
+                <label class="choice" data-price="220"><input type="radio" name="mount" value="arm"><div class="choice-details"><strong>Articulated Arm with Clamp</strong><small>For stable, hands-free positioning.</small></div><span class="price-delta">+ €220</span></label>
+            </div>
+            </div>
+        </aside>
+    </div>
+  </div>
+
+  <div class="sticky-bar">
+    <div class="bar-inner container">
+      <div class="total-price">
+        <div class="label">Total Price</div>
+        <div class="amount" id="total-price-display">€2,990</div>
+      </div>
+      <a href="#" class="btn primary" style="padding: 14px 28px; font-size: 16px;">Add to Cart</a>
+    </div>
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const basePrice = 2990;
+    const choices = document.querySelectorAll('.choice');
+    const totalPriceDisplay = document.getElementById('total-price-display');
+    const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+
+    function calculateTotal() {
+      let currentTotal = basePrice;
+      const selectedOptions = document.querySelectorAll('input[type="radio"]:checked');
+      selectedOptions.forEach(option => {
+        currentTotal += Number(option.closest('.choice').dataset.price);
+      });
+      totalPriceDisplay.textContent = EUR.format(currentTotal);
+    }
+
+    function updateSelectionUI() {
+      choices.forEach(choice => {
+        const radio = choice.querySelector('input');
+        if (radio.checked) {
+          choice.classList.add('selected');
+        } else {
+          choice.classList.remove('selected');
+        }
+      });
+    }
+
+    choices.forEach(choice => {
+      choice.addEventListener('click', () => {
+        const radio = choice.querySelector('input');
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    });
+
+    document.body.addEventListener('change', (event) => {
+      if (event.target.type === 'radio') {
+        updateSelectionUI();
+        calculateTotal();
+      }
+    });
+
+    // Initial calculation
+    updateSelectionUI();
+    calculateTotal();
+  });
+</script>
+</body>
+</html>

@@ -38,9 +38,6 @@
     font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
     color:var(--text); 
     overflow-x: hidden;
-    /* MODIFICATO: Aggiunti più punti per una sfumatura più morbida al centro,
-      mantenendo l'inizio e la fine come richiesto.
-    */
     background: linear-gradient(180deg, var(--band-bg) 0%, #f6a6a6 40%, #ffbbbb 70%, var(--bg) 100%);
   }
   .container{max-width:1200px; margin:0 auto; padding:0 20px}
@@ -57,7 +54,7 @@
     place-items: center;
     z-index: 1000;
     transition: opacity 0.8s ease-out;
-    pointer-events: none; /* Allows scrolling 'through' it after hiding */
+    pointer-events: none;
   }
   .splash-screen.hidden {
     opacity: 0;
@@ -69,14 +66,8 @@
     animation: fadeInScale 1.5s cubic-bezier(0.215, 0.610, 0.355, 1) forwards;
   }
   @keyframes fadeInScale {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
   }
   
   .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
@@ -100,14 +91,17 @@
   .menu-backdrop { position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 30; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; }
   .menu-backdrop.is-visible { opacity: 1; visibility: visible; }
 
-  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
+  /* BOTTONI MODIFICATI */
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:14px 24px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:16px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
   .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
   .btn.primary:hover{opacity:.92}
   .btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
 
-  .h1{font-size:clamp(40px, 7vw, 80px); line-height:1.05; letter-spacing:-0.03em; font-weight:800; margin:18px 0}
+  /* TITOLO MODIFICATO */
+  .h1{font-size:clamp(48px, 8vw, 96px); line-height:1.05; letter-spacing:-0.03em; font-weight:800; margin:18px 0}
   .grad{background:linear-gradient(90deg, var(--a1), var(--a2), var(--a3)); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .lead{max-width:760px; color:var(--muted); font-size:clamp(16px, 2.5vw, 20px)}
+  /* TESTO LEAD MODIFICATO */
+  .lead{max-width:760px; color:var(--muted); font-size:clamp(18px, 3vw, 24px)}
   .hero-cta{display:flex; gap:12px; margin-top:24px}
   
   .snap-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; scroll-snap-align: start; scroll-snap-stop: always; padding: 100px 0; box-sizing: border-box; }
@@ -142,6 +136,9 @@
   .control-list-icon { width: 24px; height: 24px; background: color-mix(in srgb, var(--band-bg) 50%, transparent); border-radius: 6px; display: grid; place-items:center; font-size: 25px; color: var(--a2); }
 
   model-viewer { width: 100%; height: 100%; border-radius: 24px; --poster-color: transparent; }
+  model-viewer[camera-controls] {
+    cursor: default;
+  }
   
   footer{border-top:1px solid var(--line); padding:36px 0; color:var(--muted); scroll-snap-align: end;}
 </style>
@@ -164,7 +161,7 @@
         <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
         <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
       </ul>
-      <a class="btn" href="buy.html">Buy Now</a>
+      <a></a>
     </div>
     <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compare Models</a></li></ul></div></div></div>
     <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul></div></div></div>
@@ -180,20 +177,21 @@
           <h1 class="h1">DP Mini</h1>
           <p class="lead">The first system to generate true 3D perception from a single smartphone sensor with <span class="grad">Fusion&nbsp;3D</span>. Depth you can feel, without bulky rigs.</p>
           <div class="hero-cta">
-            <a href="buy.html" class="btn primary">Buy DP Mini</a>
+            <a href="buydpmini.html" class="btn primary">Buy DP Mini</a>
             <a href="#features" class="btn">How it works</a>
           </div>
         </div>
- <div class="product-visual animate-item">
-  <model-viewer src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope" 
-    camera-orbit="230deg 80deg 1.5m" 
-    auto-rotate 
-    camera-controls 
-    ar 
-    shadow-intensity="1"
-    shadow-softness="1" style="background-color: white; --shadow-color: #3b82f6;">
-  </model-viewer>
-</div>
+        <div class="product-visual animate-item">
+            <model-viewer src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope" 
+                camera-orbit="230deg 80deg 1.5m" 
+                auto-rotate 
+                camera-controls 
+                ar 
+                shadow-intensity="1"
+                shadow-softness="1" 
+                interaction-prompt="none">
+            </model-viewer>
+        </div>
       </div>
     </div>
   </header>
@@ -365,14 +363,12 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ==== SPLASH SCREEN SCRIPT ==== */
 window.addEventListener('load', () => {
     const splash = document.querySelector('.splash-screen');
-    // Set a timeout to hide the splash screen
     setTimeout(() => {
         splash.classList.add('hidden');
-    }, 1800); // 2.2 seconds
-    // Optional: completely remove it from the DOM after transition
+    }, 1800);
     setTimeout(() => {
         splash.remove();
-    }, 2600); // 2.2s + 0.8s transition
+    }, 2600);
 });
 </script>
 </body>

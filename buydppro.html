@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Buy DP Pro - DP Biotech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<style>
+  :root { 
+    --bg: #ffffff; --text: #0a0a0a; --muted: #525252; --line: #e5e5e5; --card: #fafafa; 
+    --a1: #2563eb; --a2: #7c3aed; --a3: #059669; /* DP Pro Colors */
+  }
+  @media (prefers-color-scheme: dark){ 
+    :root { --bg:#0a0a0a; --text:#fafafa; --muted:#a1a1aa; --line:#262626; --card:#18181b; } 
+  }
+  body{
+    margin:0; 
+    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+    background:var(--bg); 
+    color:var(--text);
+    overflow: hidden; /* Prevent body from scrolling */
+  }
+  .container{max-width:1200px; margin:0 auto; padding:0 20px}
+
+  /* Navigation Bar */
+  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
+  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
+  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size: 18px;}
+  .nav a{color:inherit; text-decoration:none}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
+  .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
+
+  /* Main Layout */
+  .config-layout{
+    display:grid; 
+    grid-template-columns: 3fr 2fr;
+    gap: 48px;
+    height: calc(100vh - 57px);
+  }
+  @media(max-width:1000px){
+    body { overflow: auto; padding-bottom: 100px; }
+    .config-layout{grid-template-columns:1fr; height: auto; gap: 0;}
+  }
+
+  /* Left Column: Viewer */
+  .viewer{ padding: 24px 0; }
+  .viewer-frame{width:100%; height: 50vh; min-height:400px; border-radius:18px; border:1px solid var(--line); background:var(--card)}
+  model-viewer {width: 100%; height: 100%; border-radius: 18px; --poster-color: transparent;}
+  
+  /* Right Column: Options */
+  aside {
+    padding-top: 24px;
+    overflow-y: scroll;
+    padding-bottom: 120px;
+  }
+  aside::-webkit-scrollbar {
+  display: none;
+}
+  h1{font-size:clamp(28px, 4vw, 36px); letter-spacing:-.02em; margin:0 0 24px 0; font-weight:800;}
+  .option-group{margin-bottom:24px; border:1px solid var(--line); border-radius:18px; overflow:hidden;}
+  .group-header{padding:16px; display:flex; justify-content:space-between; align-items:center; background:var(--card);}
+  .group-header strong{font-size:18px;}
+  .option-list{padding:16px; display:flex; flex-direction:column; gap:12px;}
+  .choice{display:flex; justify-content:space-between; align-items:center; gap:16px; border:2px solid var(--line); border-radius:12px; padding:16px; background:var(--bg); cursor:pointer; transition: all .2s ease;}
+  .choice.selected{border-color:var(--a1); box-shadow:0 0 0 4px color-mix(in srgb, var(--a1) 20%, transparent);}
+  .choice:hover{border-color:var(--a2);}
+  .choice input{display:none}
+  .choice-details strong{font-weight:600; font-size:15px;}
+  .choice-details small{display:block; color:var(--muted); font-size:13px; margin-top:2px;}
+  .price-delta{color:var(--text); font-weight:600; white-space:nowrap; font-size:14px;}
+
+  /* Sticky Bottom Bar */
+  .sticky-bar{position:fixed; left:0; right:0; bottom:0; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-top:1px solid var(--line); z-index:45;}
+  .bar-inner{max-width:1200px; margin:0 auto; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px}
+  .total-price .label{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
+  .total-price .amount{font-size:24px; font-weight:700; color:var(--text);}
+</style>
+</head>
+<body>
+  <div class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
+        <span>DP Biotech</span>
+      </a>
+      <a href="DPPro.html" class="btn">Cancel</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="config-layout">
+      <section class="viewer">
+        <h1>Configure your DP Pro</h1>
+        <div class="viewer-frame">
+            <model-viewer src="dppro.glb" ios-src="dppro.usdz" alt="DP Pro Surgical Microscope" 
+                camera-controls ar shadow-intensity="1" camera-orbit="15deg 75deg 1.5m" interaction-prompt="none">
+            </model-viewer>
+        </div>
+      </section>
+
+      <aside>
+        <div class="option-group">
+          <div class="group-header"><strong>Stabilization System</strong><small>Select performance level</small></div>
+          <div class="option-list">
+            <label class="choice" data-price="0"><input type="radio" name="stabilization" value="standard" checked><div class="choice-details"><strong>3-Axis Gimbal Standard</strong><small>Roll, pitch, and yaw stabilization.</small></div><span class="price-delta">Included</span></label>
+            <label class="choice" data-price="450"><input type="radio" name="stabilization" value="enhanced"><div class="choice-details"><strong>Enhanced Stabilization Module</strong><small>Advanced algorithms for faster response.</small></div><span class="price-delta">+ €450</span></label>
+          </div>
+        </div>
+
+        <div class="option-group">
+          <div class="group-header"><strong>Articulated Arm</strong><small>Choose your ideal reach</small></div>
+          <div class="option-list">
+            <label class="choice" data-price="0"><input type="radio" name="arm" value="standard" checked><div class="choice-details"><strong>Standard Reach Arm</strong><small>Precision joints and balanced mobility.</small></div><span class="price-delta">Included</span></label>
+            <label class="choice" data-price="680"><input type="radio" name="arm" value="extended"><div class="choice-details"><strong>Extended Reach Arm</strong><small>Longer segments for greater flexibility.</small></div><span class="price-delta">+ €680</span></label>
+          </div>
+        </div>
+        
+         <div class="option-group">
+          <div class="group-header"><strong>Control Interface</strong><small>Add optional controls</small></div>
+          <div class="option-list">
+            <label class="choice selected"><input type="radio" name="base_control" checked disabled><div class="choice-details"><strong>Pressure-Sensitive Oculars</strong><small>Intuitive hands-on control interface.</small></div><span class="price-delta">Included</span></label>
+            <label class="choice" data-price="280"><input type="checkbox" name="joystick"><div class="choice-details"><strong>Add Multifunctional Joystick</strong><small>Advanced control with haptic feedback.</small></div><span class="price-delta">+ €280</span></label>
+            <label class="choice" data-price="190"><input type="checkbox" name="footpedal"><div class="choice-details"><strong>Add Foot Pedal Control</strong><small>Enhance your hands-free workflow.</small></div><span class="price-delta">+ €190</span></label>
+          </div>
+        </div>
+
+         <div class="option-group">
+          <div class="group-header"><strong>AI Software Suite</strong><small>Unlock advanced features</small></div>
+          <div class="option-list">
+            <label class="choice" data-price="0"><input type="radio" name="ai" value="standard" checked><div class="choice-details"><strong>Standard AI Recognition</strong><small>Anatomical structure identification.</small></div><span class="price-delta">Included</span></label>
+            <label class="choice" data-price="590"><input type="radio" name="ai" value="advanced"><div class="choice-details"><strong>Advanced Surgical Guidance</strong><small>Predictive positioning and real-time alerts.</small></div><span class="price-delta">+ €590</span></label>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="sticky-bar">
+    <div class="bar-inner container">
+      <div class="total-price">
+        <div class="label">Total Price</div>
+        <div class="amount" id="total-price-display">€8,990</div>
+      </div>
+      <a href="#" class="btn primary" style="padding: 14px 28px; font-size: 16px;">Add to Cart</a>
+    </div>
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const basePrice = 8990;
+    const choices = document.querySelectorAll('.choice');
+    const totalPriceDisplay = document.getElementById('total-price-display');
+    const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+
+    function calculateTotal() {
+      let currentTotal = basePrice;
+      const selectedOptions = document.querySelectorAll('input:checked');
+      selectedOptions.forEach(option => {
+        if (option.disabled) return;
+        currentTotal += Number(option.closest('.choice').dataset.price || 0);
+      });
+      totalPriceDisplay.textContent = EUR.format(currentTotal);
+    }
+
+    function updateSelectionUI() {
+      choices.forEach(choice => {
+        const input = choice.querySelector('input');
+        if (input.checked) {
+          choice.classList.add('selected');
+        } else {
+          choice.classList.remove('selected');
+        }
+      });
+    }
+
+    choices.forEach(choice => {
+      choice.addEventListener('click', (event) => {
+        const input = choice.querySelector('input');
+        if (input.disabled) return;
+
+        if (input.type === 'radio') {
+            input.checked = true;
+        } else if (input.type === 'checkbox') {
+            input.checked = !input.checked;
+        }
+        
+        document.body.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    });
+
+    document.body.addEventListener('change', () => {
+        updateSelectionUI();
+        calculateTotal();
+    });
+
+    updateSelectionUI();
+    calculateTotal();
+  });
+</script>
+</body>
+</html>

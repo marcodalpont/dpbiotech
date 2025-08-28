@@ -8,22 +8,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <style>
   /* ===== THEME and STYLES ===== */
   :root { 
-    --bg: #ffffff;         /* Main background color is white (for the bottom of the gradient) */
+    --bg: #ffffff;
     --text: #0a0a0a; 
     --muted: #525252; 
     --line: #e5e5e5; 
-    --card: #ffffff;       /* Cards remain white */
-    /* Blue accent colors */
+    --card: #ffffff;
     --a1: #2563eb;           
     --a2: #059669;           
     --a3: #7c3aed;           
   }
   @media (prefers-color-scheme: dark){ 
     :root { 
-      --bg: #0a0a0a;        /* Dark mode background */
+      --bg: #0a0a0a;
       --text: #fafafa; 
       --muted: #a1a1aa; 
       --line: #262626;
@@ -37,47 +37,22 @@
     font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
     color:var(--text); 
     overflow-x: hidden;
-    /* THIS IS THE KEY CHANGE:
-      Replicating the exact gradient structure from the DP Mini code, but with blue colors.
-      It starts with a very light blue, fades to a slightly richer light blue, and ends in white.
-    */
     background: linear-gradient(180deg, #d8e3ff 0%, #a7ccfc 50%, var(--bg) 100%);
   }
   .container{max-width:1200px; margin:0 auto; padding:0 20px}
 
   /* ==== SPLASH SCREEN STYLES ==== */
   .splash-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg);
-    display: grid;
-    place-items: center;
-    z-index: 1000;
-    transition: opacity 0.8s ease-out;
-    pointer-events: none;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg); display: grid; place-items: center; z-index: 1000;
+    transition: opacity 0.8s ease-out; pointer-events: none;
   }
-  .splash-screen.hidden {
-    opacity: 0;
-  }
+  .splash-screen.hidden { opacity: 0; }
   .splash-text {
-    font-size: clamp(60px, 15vw, 200px);
-    font-weight: 800;
-    letter-spacing: -0.04em;
+    font-size: clamp(60px, 15vw, 200px); font-weight: 800; letter-spacing: -0.04em;
     animation: fadeInScale 1.5s cubic-bezier(0.215, 0.610, 0.355, 1) forwards;
   }
-  @keyframes fadeInScale {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
+  @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
   
   .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
   .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
@@ -100,7 +75,8 @@
   .menu-backdrop { position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 30; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; }
   .menu-backdrop.is-visible { opacity: 1; visibility: visible; }
 
-  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
+  /* MODIFICATO: Pulsanti più grandi */
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:16px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
   .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
   .btn.primary:hover{opacity:.92}
   .btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
@@ -110,11 +86,11 @@
   .lead{max-width:760px; color:var(--muted); font-size:clamp(16px, 2.5vw, 20px)}
   
   .snap-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; scroll-snap-align: start; scroll-snap-stop: always; padding: 100px 0; box-sizing: border-box; }
-  /* Band sections are transparent to show the body's gradient */
-  .band{background:transparent;}
+  .band{background: color-mix(in srgb, var(--bg) 50%, transparent);}
   
   h2{font-size:clamp(28px, 4.5vw, 44px); letter-spacing:-0.02em}
-  h3{font-size:20px; letter-spacing:-0.01em; margin-bottom: 4px;}
+  h3{font-size:20px; letter-spacing:-0.01em; margin-bottom: 4px; font-weight:600;}
+  h4{font-size:16px; margin-bottom:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
   p.muted{color:var(--muted); line-height: 1.6;}
   .grid-2{display:grid; gap:48px; grid-template-columns:1fr; align-items:center}
   @media(min-width:960px){.grid-2{grid-template-columns:1fr 1fr}}
@@ -125,26 +101,29 @@
 
   .card{border:1px solid var(--line); border-radius:16px; padding:24px; background:var(--card); transition:box-shadow .2s ease, transform .2s ease}
   .card:hover{box-shadow:0 12px 40px rgba(0,0,0,.1); transform: translateY(-4px);}
-  .icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg, var(--a1), var(--a3));color:#fff;font-weight:700;margin-bottom:12px}
   
-  .product-visual { border: 1px solid var(--line); border-radius: 24px; aspect-ratio: 4/3; background: var(--card); padding: 32px; display:grid; place-items:center; text-align:center; font-weight:600; }
-  
-  .specs-card { border:1px solid var(--line); border-radius:16px; padding:24px; background:var(--card); max-width: 640px; margin: 24px auto 0 auto; }
-  .specs-list { list-style:none; padding:0; margin:0; }
-  .specs-list li { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px dashed var(--line); font-size:14px; }
-  .specs-list li:last-child { border-bottom:none; }
-  .specs-list span { color: var(--muted); }
+  .icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg, var(--a1), var(--a3));color:#fff;margin-bottom:12px}
+  .icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* ==== Animation Styles ==== */
-  .animate-item { 
-    opacity: 0; 
-    transform: translateY(40px); 
-    transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1); 
+  .product-visual { border: 1px solid var(--line); border-radius: 24px; aspect-ratio: 4/3; background: var(--card); padding: 0; }
+  
+  /* --- STYLES FOR NEW SPECIFICATIONS SECTION --- */
+  .spec-item { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; text-align: left; } /* MODIFICATO: Più spazio sotto */
+  .spec-item:last-child { margin-bottom: 0; }
+  .spec-icon { 
+    flex-shrink: 0; width: 36px; height: 36px;
+    background: color-mix(in srgb, var(--a1) 10%, transparent); 
+    border-radius: 8px; display: grid; place-items: center;
   }
-  .animate-item.is-visible { 
-    opacity: 1; 
-    transform: translateY(0); 
-  }
+  .spec-icon svg { width: 20px; height: 20px; stroke: var(--a1); stroke-width: 2; }
+  .spec-content strong { display: block; margin-bottom: 4px; font-size: 17px; color: var(--text); } /* MODIFICATO: Font size e spazio */
+  .spec-content p { margin: 0; font-size: 15px; color: var(--muted); line-height: 1.6; } /* MODIFICATO: Font size e line-height */
+
+  .animate-item { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1); }
+  .animate-item.is-visible { opacity: 1; transform: translateY(0); }
+  
+  model-viewer { width: 100%; height: 100%; border-radius: 24px; --poster-color: transparent; }
+  model-viewer[camera-controls] { cursor: default; }
 
   footer{border-top:1px solid var(--line); padding:36px 0; color:var(--muted); scroll-snap-align: end;}
 </style>
@@ -167,7 +146,7 @@
         <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
         <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
       </ul>
-      <a class="btn" href="buy.html">Buy Now</a>
+      <a class="btn" href="buydppro.html">Buy Now</a>
     </div>
     <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compare Models</a></li></ul></div></div></div>
     <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul></div></div></div>
@@ -183,26 +162,104 @@
           <h1 class="h1">DP Pro <span class="grad">Surgical Microscope</span></h1>
           <p class="lead">Revolutionary surgical microscope with gimbal stabilization and articulated arm for surgical excellence.</p>
           <div style="display:flex; gap:12px; margin-top:24px">
-            <a href="buy.html" class="btn primary">Buy Now</a>
+            <a href="buydppro.html" class="btn primary">Buy Now</a>
             <a href="#features" class="btn">Learn More</a>
           </div>
         </div>
-        <div class="product-visual animate-item"><strong>GIMBAL STABILIZED • DIGITAL PRECISION</strong></div>
+        <div class="product-visual animate-item">
+          <model-viewer src="dppro.glb" ios-src="dppro.usdz" alt="DP Pro Surgical Microscope" 
+            camera-controls auto-rotate ar shadow-intensity="1" interaction-prompt="none"
+            camera-orbit="15deg 75deg 1.5m">
+          </model-viewer>
+        </div>
       </div>
     </div>
   </header>
+  
+  <section class="snap-section band" id="specifications">
+    <div class="container animate-item">
+        <div style="text-align: center; max-width: 760px; margin: 0 auto 60px auto;">
+            <h2>Engineered for Excellence</h2>
+            <p class="muted">Every component is meticulously designed to enhance surgical workflow, providing unparalleled stability, optical clarity, and intelligent control.</p>
+        </div>
+        <div class="grid-2" style="gap: 60px; max-width:1000px; margin:0 auto; align-items: start;">
+            <div>
+                <div class="spec-item">
+                    <div class="spec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="2"></circle><path d="M12 2a10 10 0 0 0-2.3.19M12 22a10 10 0 0 1-2.3-.19"></path><path d="M2 12a10 10 0 0 1 .19-2.3M22 12a10 10 0 0 0-.19-2.3"></path></svg></div>
+                    <div class="spec-content">
+                        <strong>3-Axis Gimbal Stabilization</strong>
+                        <p>Eliminates vibrations and micro-tremors by isolating the optical body, ensuring an exceptionally stable image during repositioning.</p>
+                    </div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 17l-1 1-1.5-1.5L13 18l-1-1 1.5-1.5L12 14l-1 1-1.5-1.5L8 15l-1-1 1.5-1.5L7 11l-1 1-1.5-1.5L3 12l-1-1 1.5-1.5L2 8l-1-1 1.5-1.5L1 4l1-1 1.5 1.5L5 3l1 1-1.5 1.5L6 7l1-1 1.5 1.5L10 6l1 1-1.5 1.5L11 9l1-1 1.5 1.5L15 8l1 1-1.5 1.5L16 11l-1 1 1.5 1.5L15 13l1 1-1.5 1.5L16 16z"></path><path d="M9 12a3 3 0 11-3-3"></path></svg></div>
+                    <div class="spec-content">
+                        <strong>Articulated Robotic Arm</strong>
+                        <p>Provides extensive reach and effortless, precise positioning with smooth, counterbalanced mechanics for optimal ergonomics.</p>
+                    </div>
+                </div>
+                 <div class="spec-item">
+                    <div class="spec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 10a2 2 0 10-4 0v4a2 2 0 104 0V5a2 2 0 10-4 0"></path><path d="M8 19.5a2.5 2.5 0 005 0"></path><path d="M6 17H4a2 2 0 01-2-2V7a2 2 0 012-2h2"></path><path d="M18 17h2a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path></svg></div>
+                    <div class="spec-content">
+                        <strong>Multi-Modal Control</strong>
+                        <p>Manage focus, zoom, and positioning via a multifunctional joystick, pressure-sensitive oculars, or an optional foot pedal.</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="spec-item">
+                    <div class="spec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M20.62 12.38a8.38 8.38 0 0 1-1.24 3.06c-1.63 2.62-4.04 4.31-7.38 4.31s-5.75-1.69-7.38-4.31A8.38 8.38 0 0 1 3.38 12.38a8.38 8.38 0 0 1 1.24-3.06c1.63-2.62 4.04-4.31 7.38-4.31s5.75 1.69 7.38 4.31a8.38 8.38 0 0 1 1.24 3.06z"></path></svg></div>
+                    <div class="spec-content">
+                        <strong>Apochromatic Optics</strong>
+                        <p>Corrects for chromatic aberrations, delivering razor-sharp images with true-to-life color fidelity and exceptional depth perception.</p>
+                    </div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></div>
+                    <div class="spec-content">
+                        <strong>Motorized 5-Step Zoom</strong>
+                        <p>Offers a wide magnification range (e.g., 5x-25x) with a smooth, motorized transition between steps to maintain focus on the surgical field.</p>
+                    </div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M23 12.15c0 6.3-5.15 11.45-11.45 11.45A11.45 11.45 0 0 1 0 12.15C0 5.85 5.15.7 11.45.7A11.45 11.45 0 0 1 23 12.15z"></path><path d="M5.1 12.15h13.8"></path><path d="M12 5.25v13.8"></path></svg></div>
+                    <div class="spec-content">
+                        <strong>Coaxial LED Illumination</strong>
+                        <p>Provides a bright, shadow-free field of view with excellent color rendering (CRI >90) for accurate tissue assessment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
 
-  <section class="snap-section band" id="features">
+  <section class="snap-section" id="features">
     <div class="container" data-stagger-children>
       <div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
         <h2>Advanced Surgical Precision</h2>
         <p class="muted">Engineered for modern surgical environments with unmatched stability and intelligent control.</p>
       </div>
       <div class="grid-4 animate-item">
-        <div class="card"><div class="icon">⚖️</div><h3>Gimbal Stabilization</h3><p class="muted">Three-axis gimbal maintains constant optical body stabilization during any movement.</p></div>
-        <div class="card"><div class="icon">🔧</div><h3>Articulated Arm</h3><p class="muted">Dual-segment extensible arm for optimal positioning without moving the patient.</p></div>
-        <div class="card"><div class="icon">📱</div><h3>Digital Control</h3><p class="muted">Intuitive control via joystick and pressure-sensitive oculars for seamless operation.</p></div>
-        <div class="card"><div class="icon">🤖</div><h3>AI Integration</h3><p class="muted">Built-in AI for anatomical structure recognition and real-time surgical guidance.</p></div>
+        <div class="card">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"></circle><path d="M12 2a10 10 0 0 0-2.3.19M12 22a10 10 0 0 1-2.3-.19"></path><path d="M2 12a10 10 0 0 1 .19-2.3M22 12a10 10 0 0 0-.19-2.3"></path><path d="M12 6a6 6 0 0 0-3.5 1.04M12 18a6 6 0 0 1-3.5-1.04"></path><path d="M6 12a6 6 0 0 1 1.04-3.5M18 12a6 6 0 0 0-1.04-3.5"></path></svg></div>
+            <h3>Gimbal Stabilization</h3>
+            <p class="muted">Three-axis gimbal maintains constant optical body stabilization during any movement.</p>
+        </div>
+        <div class="card">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 17l-1 1-1.5-1.5L13 18l-1-1 1.5-1.5L12 14l-1 1-1.5-1.5L8 15l-1-1 1.5-1.5L7 11l-1 1-1.5-1.5L3 12l-1-1 1.5-1.5L2 8l-1-1 1.5-1.5L1 4l1-1 1.5 1.5L5 3l1 1-1.5 1.5L6 7l1-1 1.5 1.5L10 6l1 1-1.5 1.5L11 9l1-1 1.5 1.5L15 8l1 1-1.5 1.5L16 11l-1 1 1.5 1.5L15 13l1 1-1.5 1.5L16 16z"></path><path d="M9 12a3 3 0 11-3-3"></path></svg></div>
+            <h3>Articulated Arm</h3>
+            <p class="muted">Dual-segment extensible arm for optimal positioning without moving the patient.</p>
+        </div>
+        <div class="card">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14.5c0 1.93-1.57 3.5-3.5 3.5s-3.5-1.57-3.5-3.5 1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5z"></path><path d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2s10 4.48 10 10z"></path><path d="M12 18v4"></path><path d="M12 2v4"></path></svg></div>
+            <h3>Digital Control</h3>
+            <p class="muted">Intuitive control via joystick and pressure-sensitive oculars for seamless operation.</p>
+        </div>
+        <div class="card">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a5.24 5.24 0 00-4 2c-1.8 2.4-1.4 5.2.2 6.2 1.3 1 3.2.3 4.8.3s3.5.7 4.8-.3c1.6-1 2-3.8.2-6.2a5.24 5.24 0 00-4-2z"></path><path d="M5 12c-1.8 2.4-1.4 5.2.2 6.2 1.3 1 3.2.3 4.8.3s3.5.7 4.8-.3c1.6-1 2-3.8.2-6.2"></path><path d="M8 21c-1.8-2.4-1.4-5.2.2-6.2 1.3-1 3.2-.3 4.8-.3s3.5.7 4.8.3c1.6 1 2 3.8.2 6.2"></path></svg></div>
+            <h3>AI Integration</h3>
+            <p class="muted">Built-in AI for anatomical structure recognition and real-time surgical guidance.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -214,7 +271,7 @@
           <h2>Gimbal Stabilization Technology</h2>
           <p class="muted">Our patented three-axis gimbal system separates rotational from translational movements, providing unprecedented stability. The optical body remains constantly stabilized regardless of arm movements, eliminating vibrations and ensuring steady imaging throughout procedures.</p>
         </div>
-        <div class="product-visual animate-item"><strong>PRECISION STABILIZATION</strong></div>
+        <div class="product-visual animate-item" style="padding:32px; text-align:center; font-weight:600; display:grid; place-items:center;"><strong>PRECISION STABILIZATION</strong></div>
       </div>
     </div>
   </section>
@@ -222,7 +279,7 @@
   <section class="snap-section band" id="control">
     <div class="container">
       <div class="grid-2" data-stagger-children>
-          <div class="product-visual animate-item"><strong>INTELLIGENT CONTROL</strong></div>
+          <div class="product-visual animate-item" style="padding:32px; text-align:center; font-weight:600; display:grid; place-items:center;"><strong>INTELLIGENT CONTROL</strong></div>
           <div class="animate-item">
               <h2>Intuitive Control Systems</h2>
               <p class="muted">Multiple control interfaces including pressure-sensitive oculars, a multifunctional joystick, and optional foot pedal. The system responds to subtle pressure changes for natural, hands-free operation and combines optical and digital zoom for seamless magnification.</p>
@@ -234,34 +291,29 @@
   <section class="snap-section" id="applications">
     <div class="container" data-stagger-children>
       <div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
-        <h2>Surgical Applications</h2>
-        <p class="muted">Designed for precision surgical procedures across multiple medical specialties.</p>
+        <h2>Precision Across Specialties</h2>
+        <p class="muted">Designed to excel in a wide range of demanding surgical procedures.</p>
       </div>
       <div class="grid-3 animate-item">
-        <div class="card"><div class="icon">🦷</div><h3>Dental Surgery</h3><p class="muted">Integrated into dental units for precise oral cavity procedures with enhanced ergonomics.</p></div>
-        <div class="card"><div class="icon">👁️</div><h3>Ophthalmic Surgery</h3><p class="muted">Superior visualization for delicate eye procedures with point-lock and target-tracking.</p></div>
-        <div class="card"><div class="icon">🧠</div><h3>Neurosurgery</h3><p class="muted">Anti-collision system and intelligent positioning for complex neurological procedures.</p></div>
+        <div class="card">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 2c-2.4 0-4.5 1.2-5.5 3 0 0 0 0 0 0-2.3.3-4 2.2-4 4.5 0 2.1 1.5 4 3.5 4.5.3 0 .5.2.5.5v2c0 .3-.2.5-.5.5A6.5 6.5 0 0 1 2 9.5C2 6.5 4.5 4 7.5 4c.8 0 1.5.2 2.2.5.3.1.5-.2.4-.5A5.5 5.5 0 0 1 9.5 2zM14.5 22c2.4 0 4.5-1.2 5.5-3 0 0 0 0 0 0 2.3-.3 4-2.2 4-4.5 0-2.1-1.5-4-3.5-4.5-.3 0-.5-.2-.5-.5v-2c0-.3.2-.5.5-.5A6.5 6.5 0 0 1 22 14.5c0 3-2.5 5.5-5.5 5.5-.8 0-1.5-.2-2.2-.5-.3-.1-.5.2-.4.5a5.5 5.5 0 0 1 .6 2.5z"></path></svg></div>
+            <h3>Neurosurgery</h3>
+            <p class="muted">Unmatched stability for delicate neural and spinal procedures, aided by an anti-collision system.</p>
+        </div>
+        <div class="card">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M20.62 12.38a8.38 8.38 0 0 1-1.24 3.06c-1.63 2.62-4.04 4.31-7.38 4.31s-5.75-1.69-7.38-4.31A8.38 8.38 0 0 1 3.38 12.38a8.38 8.38 0 0 1 1.24-3.06c1.63-2.62 4.04-4.31 7.38-4.31s5.75 1.69 7.38 4.31a8.38 8.38 0 0 1 1.24 3.06z"></path></svg></div>
+            <h3>Ophthalmology</h3>
+            <p class="muted">Superior depth perception and clarity for intricate corneal, retinal, and cataract surgeries.</p>
+        </div>
+        <div class="card">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.78 6.22a.5.5 0 0 0-.56-.04l-1.6 1.07A6.47 6.47 0 0 0 16.5 6a6.5 6.5 0 0 0-9.67 5.14l-1.53 1.53a.5.5 0 0 0 .7.7l1.54-1.54a6.5 6.5 0 0 0 4.6 1.94 6.47 6.47 0 0 0 3.12-1.25l1.6 1.07a.5.5 0 0 0 .56-.04l2-1.33a.5.5 0 0 0 .22-.45v-5a.5.5 0 0 0-.22-.45l-2-1.33z"></path><path d="M12 11a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"></path></svg></div>
+            <h3>Microsurgery</h3>
+            <p class="muted">Enhanced ergonomics and visualization for complex endodontic and periodontal treatments.</p>
+        </div>
       </div>
     </div>
   </section>
   
-  <section class="snap-section band" id="specifications">
-    <div class="container animate-item" style="text-align: center;">
-        <h2>Technical Specifications</h2>
-        <div class="specs-card">
-            <ul class="specs-list">
-                <li><span>Stabilization System</span><strong>3-Axis Gimbal (Roll, Pitch, Yaw)</strong></li>
-                <li><span>Arm Configuration</span><strong>Dual-Segment Articulated Arm</strong></li>
-                <li><span>Optical System</span><strong>Dual-Path Stereoscopic Vision</strong></li>
-                <li><span>Control Interface</span><strong>Pressure-Sensitive Oculars & Joystick</strong></li>
-                <li><span>Zoom System</span><strong>Hybrid Optical-Digital Zoom</strong></li>
-                <li><span>AI Features</span><strong>Anatomical Recognition & Guidance</strong></li>
-                <li><span>Materials</span><strong>Titanium & Carbon Fiber Composite</strong></li>
-            </ul>
-        </div>
-    </div>
-  </section>
-
   <footer>
     <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
       <div style="display:flex; gap:8px; align-items:center"><img src="logo.png" alt="DP Biotech Logo" style="height: 36px; border-radius: 50%;">DP Biotech</div>

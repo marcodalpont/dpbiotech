@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Schedule a Consultation - DP Biotech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+--bg: #fafafa;
+--surface: #ffffff;
+--text: #0f0f0f;
+--text-muted: #525252;
+--text-subtle: #a1a1aa;
+--border: #e4e4e7;
+--primary: #0070f3;
+--primary-dark: #0051cc;
+--primary-light: #3291ff;
+--secondary: #7c3aed;
+--success: #10b981;
+--error: #ef4444;
+--warning: #f59e0b;
+--shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+--shadow-md: 0 4px 16px 0 rgb(0 0 0 / 0.08);
+--shadow-lg: 0 20px 40px -12px rgb(0 0 0 / 0.15);
+--shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+--radius-sm: 8px;
+--radius-md: 12px;
+--radius-lg: 16px;
+--radius-xl: 20px;
+--blur: blur(16px);
+--gradient-bg: linear-gradient(135deg,
+ color-mix(in srgb, var(--primary) 2%, var(--bg)) 0%,
+ color-mix(in srgb, var(--secondary) 1%, var(--bg)) 50%,
+ var(--bg) 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+:root {
+--bg: #0a0a0a;
+--surface: #111111;
+--text: #fafafa;
+--text-muted: #a1a1aa;
+--text-subtle: #71717a;
+--border: #27272a;
+--shadow-sm: 0 1px 3px 0 rgb(255 255 255 / 0.05);
+--shadow-md: 0 4px 16px 0 rgb(255 255 255 / 0.08);
+--shadow-lg: 0 20px 40px -12px rgb(255 255 255 / 0.12);
+--shadow-xl: 0 25px 50px -12px rgb(255 255 255 / 0.2);
+--gradient-bg: linear-gradient(135deg,
+ color-mix(in srgb, var(--primary) 3%, var(--bg)) 0%,
+ color-mix(in srgb, var(--secondary) 2%, var(--bg)) 50%,
+ var(--bg) 100%);
+}
+}
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: Inter, system-ui, -apple-system, sans-serif;
+background: var(--gradient-bg);
+color: var(--text);
+line-height: 1.5;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+height: 100vh;
+overflow: hidden;
+}
+
+.container {
+max-width: 1400px;
+margin: 0 auto;
+padding: 0 24px;
+height: 100%;
+}
+
+.nav {
+position: sticky;
+top: 0;
+z-index: 100;
+background: color-mix(in srgb, var(--bg) 85%, transparent);
+backdrop-filter: var(--blur);
+border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+height: 60px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.logo {
+display: flex;
+gap: 12px;
+align-items: center;
+font-weight: 700;
+font-size: 18px;
+text-decoration: none;
+}
+
+.back-btn {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 8px 16px;
+border-radius: var(--radius-md);
+color: var(--text-muted);
+text-decoration: none;
+transition: all 0.2s ease;
+font-size: 14px;
+}
+
+.back-btn:hover {
+color: var(--text);
+background: color-mix(in srgb, var(--text) 5%, transparent);
+}
+
+.main {
+height: calc(100vh - 60px);
+display: flex;
+align-items: center;
+padding: 20px 0;
+}
+
+.consultation-layout {
+display: grid;
+grid-template-columns: auto 1fr;
+gap: 40px;
+height: 100%;
+max-height: calc(100vh - 100px);
+}
+
+.info-panel {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--radius-xl);
+padding: 24px;
+box-shadow: var(--shadow-md);
+position: relative;
+overflow: hidden;
+width: 320px;
+height: fit-content;
+align-self: start;
+}
+
+.info-panel::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 4px;
+background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.info-header {
+margin-bottom: 20px;
+}
+
+.info-title {
+font-size: 20px;
+font-weight: 800;
+letter-spacing: -0.02em;
+margin-bottom: 6px;
+background: linear-gradient(135deg, var(--primary), var(--secondary));
+-webkit-background-clip: text;
+background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+.info-subtitle {
+color: var(--text-muted);
+font-size: 13px;
+line-height: 1.4;
+}
+
+.consultation-info {
+background: color-mix(in srgb, var(--primary) 5%, var(--surface));
+border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
+border-radius: var(--radius-lg);
+padding: 16px;
+}
+
+.consultation-info h3 {
+font-size: 14px;
+font-weight: 700;
+margin-bottom: 10px;
+color: var(--text);
+}
+
+.consultation-info ul {
+list-style: none;
+margin: 0;
+}
+
+.consultation-info li {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 6px;
+color: var(--text-muted);
+font-size: 12px;
+}
+
+.consultation-info li::before {
+content: '✓';
+color: var(--success);
+font-weight: 800;
+font-size: 11px;
+}
+
+.form-container {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--radius-xl);
+padding: 24px;
+box-shadow: var(--shadow-lg);
+position: relative;
+overflow: hidden;
+display: flex;
+flex-direction: column;
+height: 100%;
+}
+
+.form-container::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 4px;
+background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.form-header {
+text-align: center;
+margin-bottom: 20px;
+}
+
+.form-title {
+font-size: 24px;
+font-weight: 800;
+letter-spacing: -0.02em;
+margin-bottom: 6px;
+background: linear-gradient(135deg, var(--primary), var(--secondary));
+-webkit-background-clip: text;
+background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+.form-subtitle {
+color: var(--text-muted);
+font-size: 13px;
+}
+
+.form-content {
+flex: 1;
+}
+
+.form-grid {
+display: grid;
+gap: 14px;
+grid-template-columns: repeat(4, 1fr);
+grid-template-rows: auto auto auto auto;
+height: 100%;
+max-height: 400px;
+}
+
+.form-group {
+display: flex;
+flex-direction: column;
+gap: 4px;
+}
+
+.form-group.span-2 {
+grid-column: span 2;
+}
+
+.form-group.span-3 {
+grid-column: span 3;
+}
+
+.form-group.span-4 {
+grid-column: span 4;
+}
+
+.form-label {
+font-weight: 600;
+font-size: 12px;
+color: var(--text);
+}
+
+.form-input, .form-select, .form-textarea {
+padding: 10px 12px;
+border: 2px solid var(--border);
+border-radius: var(--radius-md);
+font-size: 13px;
+font-family: inherit;
+background: var(--surface);
+color: var(--text);
+transition: all 0.2s ease;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+outline: none;
+border-color: var(--primary);
+box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+.form-textarea {
+resize: vertical;
+min-height: 50px;
+max-height: 60px;
+}
+
+.time-slots {
+display: grid;
+gap: 6px;
+grid-template-columns: repeat(6, 1fr);
+margin-top: 4px;
+}
+
+.time-slot {
+padding: 8px 6px;
+border: 2px solid var(--border);
+border-radius: var(--radius-md);
+background: var(--surface);
+color: var(--text-muted);
+text-align: center;
+cursor: pointer;
+transition: all 0.2s ease;
+font-weight: 500;
+font-size: 11px;
+}
+
+.time-slot:hover {
+border-color: var(--primary-light);
+color: var(--text);
+}
+
+.time-slot.selected {
+border-color: var(--primary);
+background: var(--primary);
+color: white;
+}
+
+.time-slot.unavailable {
+opacity: 0.5;
+cursor: not-allowed;
+background: color-mix(in srgb, var(--text-subtle) 10%, var(--surface));
+}
+
+.form-actions {
+padding-top: 16px;
+border-top: 1px solid var(--border);
+margin-top: 16px;
+}
+
+.submit-btn {
+width: 100%;
+padding: 14px 24px;
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+border: none;
+border-radius: var(--radius-md);
+font-size: 14px;
+font-weight: 700;
+cursor: pointer;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+position: relative;
+overflow: hidden;
+}
+
+.submit-btn::before {
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+transition: left 0.5s;
+}
+
+.submit-btn:hover {
+transform: translateY(-2px);
+box-shadow: var(--shadow-lg);
+}
+
+.submit-btn:hover::before {
+left: 100%;
+}
+
+.submit-btn:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+transform: none;
+}
+
+.success-message {
+display: none;
+text-align: center;
+padding: 40px 32px;
+background: color-mix(in srgb, var(--success) 10%, var(--surface));
+border: 2px solid var(--success);
+border-radius: var(--radius-lg);
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: 1000;
+width: 400px;
+box-shadow: var(--shadow-xl);
+}
+
+.success-icon {
+width: 50px;
+height: 50px;
+background: var(--success);
+border-radius: 50%;
+margin: 0 auto 16px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-size: 20px;
+font-weight: bold;
+}
+
+.error-message {
+color: var(--error);
+font-size: 12px;
+margin-top: 4px;
+display: none;
+}
+
+.loading .submit-btn {
+background: var(--text-muted);
+cursor: wait;
+}
+
+@media (max-width: 1200px) {
+.consultation-layout {
+grid-template-columns: 350px 1fr;
+gap: 32px;
+}
+
+.info-panel, .form-container {
+padding: 24px;
+}
+}
+
+@media (max-width: 1024px) {
+.consultation-layout {
+grid-template-columns: 1fr;
+gap: 0;
+}
+
+.info-panel {
+display: none;
+}
+
+.form-container {
+height: calc(100vh - 100px);
+}
+
+.form-row {
+grid-template-columns: 1fr;
+}
+
+.time-slots {
+grid-template-columns: repeat(2, 1fr);
+}
+}
+
+@media (max-width: 640px) {
+.container {
+padding: 0 16px;
+}
+
+.nav-inner {
+height: 50px;
+}
+
+.main {
+height: calc(100vh - 50px);
+}
+
+.form-container {
+height: calc(100vh - 70px);
+padding: 20px;
+}
+
+.time-slots {
+grid-template-columns: 1fr;
+}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="container nav-inner">
+<a href="index.html" class="logo">
+<img src="logo.png" alt="DP Biotech" style="height: 36px; border-radius: 50%;">
+<span>DP Biotech</span>
+</a>
+<a href="javascript:history.back()" class="back-btn">
+← Back
+</a>
+</div>
+</nav>
+
+<main class="main">
+<div class="container">
+<div class="consultation-layout">
+
+<div class="info-panel">
+<div class="info-header">
+<h2 class="info-title">Expert Consultation</h2>
+<p class="info-subtitle">Connect with our specialists to find the perfect microscope solution</p>
+</div>
+
+<div class="consultation-info">
+<h3>What to Expect</h3>
+<ul>
+<li>30-minute personalized session</li>
+<li>Product recommendations</li>
+<li>Live demonstration available</li>
+<li>Custom pricing options</li>
+<li>Technical specifications</li>
+<li>Implementation guidance</li>
+</ul>
+</div>
+</div>
+
+<div class="form-container">
+<div class="form-header">
+<h1 class="form-title">Schedule Your Session</h1>
+<p class="form-subtitle">Fill out the details below to book your consultation</p>
+</div>
+
+<div class="form-content">
+<form id="consultationForm" class="form-grid">
+<!-- Row 1: Name fields -->
+<div class="form-group">
+<label class="form-label" for="firstName">First Name</label>
+<input type="text" id="firstName" name="firstName" class="form-input" required>
+<div class="error-message" id="firstNameError">Required</div>
+</div>
+<div class="form-group">
+<label class="form-label" for="lastName">Last Name</label>
+<input type="text" id="lastName" name="lastName" class="form-input" required>
+<div class="error-message" id="lastNameError">Required</div>
+</div>
+<div class="form-group">
+<label class="form-label" for="email">Email Address</label>
+<input type="email" id="email" name="email" class="form-input" required>
+<div class="error-message" id="emailError">Valid email required</div>
+</div>
+<div class="form-group">
+<label class="form-label" for="phone">Phone Number</label>
+<input type="tel" id="phone" name="phone" class="form-input" required>
+<div class="error-message" id="phoneError">Required</div>
+</div>
+
+<!-- Row 2: Organization and Interest -->
+<div class="form-group span-2">
+<label class="form-label" for="organization">Organization/Hospital</label>
+<input type="text" id="organization" name="organization" class="form-input" required>
+<div class="error-message" id="organizationError">Required</div>
+</div>
+<div class="form-group">
+<label class="form-label" for="interest">Primary Interest</label>
+<select id="interest" name="interest" class="form-select" required>
+<option value="">Select product...</option>
+<option value="DP Mini">DP Mini - Mobile</option>
+<option value="DP Pro">DP Pro - Digital Surgery</option>
+<option value="Both">Both Products</option>
+<option value="General">General Info</option>
+</select>
+<div class="error-message" id="interestError">Required</div>
+</div>
+<div class="form-group">
+<label class="form-label" for="timezone">Timezone</label>
+<select id="timezone" name="timezone" class="form-select" required>
+<option value="">Select timezone...</option>
+<option value="EST">Eastern (EST)</option>
+<option value="CST">Central (CST)</option>
+<option value="MST">Mountain (MST)</option>
+<option value="PST">Pacific (PST)</option>
+<option value="GMT">GMT</option>
+<option value="CET">CET</option>
+</select>
+<div class="error-message" id="timezoneError">Required</div>
+</div>
+
+<!-- Row 3: Date and Time -->
+<div class="form-group">
+<label class="form-label" for="consultationDate">Preferred Date</label>
+<input type="date" id="consultationDate" name="consultationDate" class="form-input" required>
+<div class="error-message" id="dateError">Required</div>
+</div>
+<div class="form-group span-3">
+<label class="form-label">Preferred Time</label>
+<div class="time-slots">
+<div class="time-slot" data-time="09:00">9:00 AM</div>
+<div class="time-slot" data-time="10:00">10:00 AM</div>
+<div class="time-slot" data-time="11:00">11:00 AM</div>
+<div class="time-slot" data-time="14:00">2:00 PM</div>
+<div class="time-slot" data-time="15:00">3:00 PM</div>
+<div class="time-slot" data-time="16:00">4:00 PM</div>
+</div>
+<div class="error-message" id="timeError">Time required</div>
+</div>
+
+<!-- Row 4: Additional Information -->
+<div class="form-group span-4">
+<label class="form-label" for="message">Additional Information (Optional)</label>
+<textarea id="message" name="message" class="form-textarea" placeholder="Specific needs, current setup, questions..."></textarea>
+</div>
+</form>
+</div>
+
+<div class="form-actions">
+<button type="submit" class="submit-btn" id="submitBtn" form="consultationForm">
+Schedule Consultation
+</button>
+</div>
+</div>
+
+</div>
+</div>
+</main>
+
+<div class="success-message" id="successMessage">
+<div class="success-icon">✓</div>
+<h3 style="margin-bottom: 12px; color: var(--success); font-size: 18px;">Consultation Scheduled!</h3>
+<p style="color: var(--text-muted); font-size: 14px; line-height: 1.4;">We've received your request and will send confirmation shortly. Our team will reach out within 24 hours.</p>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const form = document.getElementById('consultationForm');
+const submitBtn = document.getElementById('submitBtn');
+const successMessage = document.getElementById('successMessage');
+let selectedTime = '';
+
+// Set minimum date to today
+const dateInput = document.getElementById('consultationDate');
+const today = new Date().toISOString().split('T')[0];
+dateInput.min = today;
+
+// Time slot selection
+document.querySelectorAll('.time-slot').forEach(slot => {
+slot.addEventListener('click', function() {
+if (!this.classList.contains('unavailable')) {
+document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+this.classList.add('selected');
+selectedTime = this.dataset.time;
+document.getElementById('timeError').style.display = 'none';
+}
+});
+});
+
+// Form validation
+function validateField(fieldId, errorId, customValidation = null) {
+const field = document.getElementById(fieldId);
+const error = document.getElementById(errorId);
+const isValid = customValidation ? customValidation(field.value) : field.value.trim() !== '';
+
+if (!isValid) {
+error.style.display = 'block';
+field.style.borderColor = 'var(--error)';
+} else {
+error.style.display = 'none';
+field.style.borderColor = 'var(--border)';
+}
+return isValid;
+}
+
+function validateEmail(email) {
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+return emailRegex.test(email);
+}
+
+function validateForm() {
+let isValid = true;
+isValid = validateField('firstName', 'firstNameError') && isValid;
+isValid = validateField('lastName', 'lastNameError') && isValid;
+isValid = validateField('email', 'emailError', validateEmail) && isValid;
+isValid = validateField('phone', 'phoneError') && isValid;
+isValid = validateField('organization', 'organizationError') && isValid;
+isValid = validateField('interest', 'interestError') && isValid;
+isValid = validateField('consultationDate', 'dateError') && isValid;
+isValid = validateField('timezone', 'timezoneError') && isValid;
+
+if (!selectedTime) {
+document.getElementById('timeError').style.display = 'block';
+isValid = false;
+}
+
+return isValid;
+}
+
+// Add real-time validation
+['firstName', 'lastName', 'email', 'phone', 'organization', 'interest', 'consultationDate', 'timezone'].forEach(fieldId => {
+document.getElementById(fieldId).addEventListener('blur', function() {
+if (fieldId === 'email') {
+validateField(fieldId, fieldId + 'Error', validateEmail);
+} else {
+validateField(fieldId, fieldId + 'Error');
+}
+});
+});
+
+// Form submission
+form.addEventListener('submit', function(e) {
+e.preventDefault();
+if (!validateForm()) return;
+
+// Show loading state
+submitBtn.textContent = 'Scheduling...';
+submitBtn.disabled = true;
+document.body.classList.add('loading');
+
+// Collect form data
+const formData = new FormData(form);
+const consultationData = {
+firstName: formData.get('firstName'),
+lastName: formData.get('lastName'),
+email: formData.get('email'),
+phone: formData.get('phone'),
+organization: formData.get('organization'),
+interest: formData.get('interest'),
+date: formData.get('consultationDate'),
+time: selectedTime,
+timezone: formData.get('timezone'),
+message: formData.get('message') || 'No additional information provided'
+};
+
+// Create email content
+const emailSubject = `New Consultation Request - ${consultationData.firstName} ${consultationData.lastName}`;
+const emailBody = `
+New consultation request received:
+
+Name: ${consultationData.firstName} ${consultationData.lastName}
+Email: ${consultationData.email}
+Phone: ${consultationData.phone}
+Organization: ${consultationData.organization}
+Interest: ${consultationData.interest}
+
+Preferred Date: ${consultationData.date}
+Preferred Time: ${consultationData.time}
+Timezone: ${consultationData.timezone}
+
+Additional Information:
+${consultationData.message}
+
+Please follow up within 24 hours to confirm the appointment.
+`.trim();
+
+// Simulate API call
+setTimeout(() => {
+// Create mailto link
+const mailtoLink = `mailto:support@dpbiotech.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
+// Open email client
+window.location.href = mailtoLink;
+
+// Show success message
+successMessage.style.display = 'block';
+
+// Reset loading state
+document.body.classList.remove('loading');
+submitBtn.disabled = false;
+submitBtn.textContent = 'Schedule Consultation';
+
+// Hide success message after 5 seconds
+setTimeout(() => {
+successMessage.style.display = 'none';
+}, 5000);
+}, 1000);
+});
+
+// Auto-detect timezone
+function detectTimezone() {
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const timezoneSelect = document.getElementById('timezone');
+
+const timezoneMap = {
+'America/New_York': 'EST',
+'America/Chicago': 'CST', 
+'America/Denver': 'MST',
+'America/Los_Angeles': 'PST',
+'Europe/London': 'GMT',
+'Europe/Berlin': 'CET'
+};
+
+const mappedTimezone = timezoneMap[timezone];
+if (mappedTimezone) {
+timezoneSelect.value = mappedTimezone;
+}
+}
+
+detectTimezone();
+});
+</script>
+
+</body>
+</html>
