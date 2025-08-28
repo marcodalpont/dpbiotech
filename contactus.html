@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Contact Us — DP Biotech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff; --text:#0a0a0a; --muted:#5b5b5b; --line:#e5e5e5; --card:#f6f7f9;
+    --a1:#0ea5e9; --a2:#6366f1; --a3:#8b5cf6;
+  }
+  @media(prefers-color-scheme:dark){
+    :root{ --bg:#0a0a0a; --text:#fafafa; --muted:#cfcfcf; --line:#1a1a1a; --card:#101114; }
+  }
+  html{scroll-behavior:smooth}
+  body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text)}
+  .container{max-width:1100px; margin:0 auto; padding:0 20px}
+
+  /* NAV */
+  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
+  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
+  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size:18px}
+  .nav a{color:inherit; text-decoration:none}
+  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
+  @media(min-width:960px){.nav-links{display:flex; align-items:center}}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:12px; border:1px solid var(--line); font-weight:700; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration:none}
+  .btn.primary{background:linear-gradient(90deg, var(--a1), var(--a2)); color:#fff; border-color:transparent}
+  .btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
+
+  /* MEGA MENU (identico alle altre pagine) */
+  .dropdown-menu{
+    opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease;
+    position:absolute; top:57px; left:0; right:0; background:var(--bg);
+    border-top:1px solid var(--line); box-shadow:0 16px 50px rgba(0,0,0,.12); z-index:40;
+    overflow-y:auto; max-height:calc(100vh - 57px)
+  }
+  .dropdown-menu.is-open{opacity:1; visibility:visible}
+  .menu-content{display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; padding:28px 0}
+  .menu-main-links, .menu-link-column{list-style:none; margin:0; padding:0}
+  .menu-main-links li:first-child, .menu-link-column li:first-child{
+    font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted);
+    margin-bottom:10px; padding:0 12px
+  }
+  .menu-main-links a{font-size:22px; font-weight:700; line-height:1.4; display:block; padding:6px 12px; border-radius:8px}
+  .menu-main-links a:hover{background:var(--card)}
+  .menu-link-column a{font-size:13px; font-weight:600; display:block; padding:8px 12px; border-radius:8px}
+  .menu-link-column a:hover{background:var(--card)}
+  .menu-backdrop{
+    position:fixed; top:57px; left:0; right:0; bottom:0; background:rgba(0,0,0,.4); z-index:30;
+    opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease
+  }
+  .menu-backdrop.is-visible{opacity:1; visibility:visible}
+
+  /* HERO */
+  .hero{padding:72px 0; background:
+    radial-gradient(60% 60% at 50% 30%, color-mix(in srgb, var(--a2) 12%, transparent), transparent 60%),
+    radial-gradient(50% 50% at 20% 70%, color-mix(in srgb, var(--a1) 10%, transparent), transparent 60%)}
+  .hero h1{font-size:clamp(34px, 6vw, 64px); letter-spacing:-0.03em; margin:0}
+  .lead{color:var(--muted); max-width:720px}
+
+  /* CARDS */
+  .grid{display:grid; gap:18px; grid-template-columns:1fr}
+  @media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
+  .card{border:1px solid var(--line); background:color-mix(in srgb, var(--bg) 96%, var(--text)); border-radius:16px; padding:22px; display:flex; flex-direction:column; gap:10px}
+  .eyebrow{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+  h2{font-size:clamp(22px,3.2vw,28px); margin:6px 0}
+  p{margin:0; color:var(--muted)}
+  .item{display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px dashed var(--line)}
+  .item:first-of-type{border-top:none}
+  .pill{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid var(--line); font-weight:700; text-decoration:none}
+  .pill.primary{background:linear-gradient(90deg, var(--a1), var(--a2)); color:#fff; border-color:transparent}
+  .muted{color:var(--muted)}
+
+  footer{border-top:1px solid var(--line); padding:32px 0; color:var(--muted)}
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <div class="nav" id="main-nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
+        <span>DP Biotech</span>
+      </a>
+
+      <ul class="nav-links">
+        <li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
+        <li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
+        <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
+        <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
+      </ul>
+      <div style="display:flex; gap:8px">
+        <a class="btn primary" href="buy.html">Buy</a>
+      </div>
+    </div>
+
+    <div id="microscopes-menu" class="dropdown-menu">
+      <div class="container">
+        <div class="menu-content">
+          <ul class="menu-main-links">
+            <li>Shop Microscopes</li>
+            <li><a href="DPMini.html">DP Mini</a></li>
+            <li><a href="DPPro.html">DP Pro</a></li>
+            <li><a href="all-models.html">All Models</a></li>
+          </ul>
+          <ul class="menu-link-column">
+            <li>Quick Links</li>
+            <li><a href="#">Compare Models</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div id="stands-menu" class="dropdown-menu">
+      <div class="container">
+        <div class="menu-content">
+          <ul class="menu-main-links">
+            <li>Shop Stands</li>
+            <li><a href="#">Floor Stands</a></li>
+            <li><a href="#">Ceiling Mounts</a></li>
+            <li><a href="#">Wall Mounts</a></li>
+          </ul>
+          <ul class="menu-link-column">
+            <li>Quick Links</li>
+            <li><a href="#">Compatibility Guide</a></li>
+            <li><a href="#">Installation Service</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="software-menu" class="dropdown-menu">
+      <div class="container">
+        <div class="menu-content">
+          <ul class="menu-main-links">
+            <li>Explore Software</li>
+            <li><a href="#">Imaging Suite</a></li>
+            <li><a href="#">Companion App</a></li>
+          </ul>
+          <ul class="menu-link-column">
+            <li>For Developers</li>
+            <li><a href="#">API & SDK</a></li>
+            <li><a href="#">Documentation</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="support-menu" class="dropdown-menu">
+      <div class="container">
+        <div class="menu-content">
+          <ul class="menu-main-links">
+            <li>Get Support</li>
+            <li><a href="contactus.html">Contact Us</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backdrop per chiudere il mega-menu -->
+    <div class="menu-backdrop" id="menu-backdrop"></div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="container">
+      <h1>Any questions? <span style="background:linear-gradient(90deg,var(--a1),var(--a3)); -webkit-background-clip:text; background-clip:text; color:transparent">Contact us</span></h1>
+      <p class="lead">We’re here to help with product questions, orders, and technical guidance. Choose the channel you prefer — we usually respond quickly.</p>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section style="padding:36px 0 64px">
+    <div class="container grid">
+      <!-- Phone / Messaging -->
+      <div class="card">
+        <div class="eyebrow">Phone & Messaging</div>
+        <h2>Call or message us</h2>
+        <p>Talk with our team or send a quick message — we’ll get back to you.</p>
+
+        <div class="item">
+          <div style="font-weight:700">+39&nbsp;327&nbsp;386&nbsp;6293</div>
+          <div class="muted">Mobile / WhatsApp</div>
+          <div style="margin-left:auto"><a class="pill" href="tel:+393273866293">Call</a> <a class="pill" href="https://wa.me/393273866293">Message</a></div>
+        </div>
+
+        <div class="item">
+          <div style="font-weight:700">+39&nbsp;391&nbsp;472&nbsp;7070</div>
+          <div class="muted">Mobile / WhatsApp</div>
+          <div style="margin-left:auto"><a class="pill" href="tel:+393914727070">Call</a> <a class="pill" href="https://wa.me/393914727070">Message</a></div>
+        </div>
+        <p class="muted" style="margin-top:6px">Hours: Mon–Fri 09:00–18:00 (CET)</p>
+      </div>
+
+      <!-- Email -->
+      <div class="card">
+        <div class="eyebrow">Email</div>
+        <h2>Prefer to write an email?</h2>
+        <p>Send us the details — we typically reply within one business day.</p>
+        <div class="item">
+          <div style="font-weight:700">support@dpbiotech.com</div>
+          <div class="muted">Customer support</div>
+          <div style="margin-left:auto"><a class="pill primary" href="mailto:support@dpbiotech.com?subject=Support%20request%20—%20DP%20Biotech">Email us</a></div>
+        </div>
+        <div class="item">
+          <div style="font-weight:700">info@dpbiotech.com</div>
+          <div class="muted">General inquiries</div>
+          <div style="margin-left:auto"><a class="pill primary" href="mailto:info@dpbiotech.com?subject=Info%20request%20—%20DP%20Biotech">Email us</a></div>
+        </div>
+        <p class="muted" style="margin-top:6px">Attachments welcome (PDF, images).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap">
+      <a href="index.html" class="logo">
+        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
+        <span>DP Biotech</span>
+      </a>
+      <div>© <span id="y"></span> DP Biotech — All rights reserved.</div>
+    </div>
+  </footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // Mega-menu: stesso comportamento delle altre pagine
+  document.addEventListener('DOMContentLoaded', () => {
+    const mainNav = document.getElementById('main-nav');
+    const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
+    const backdrop = document.getElementById('menu-backdrop');
+    let activeMenu = null, timer;
+
+    function openMenu(id){
+      if(activeMenu) activeMenu.classList.remove('is-open');
+      const menu = document.getElementById(id);
+      if(menu){ menu.classList.add('is-open'); backdrop.classList.add('is-visible'); activeMenu = menu; }
+    }
+    function closeAll(){
+      if(activeMenu) activeMenu.classList.remove('is-open');
+      backdrop.classList.remove('is-visible'); activeMenu = null;
+    }
+
+    triggers.forEach(t => t.addEventListener('mouseenter', () => { clearTimeout(timer); openMenu(t.dataset.menu); }));
+    mainNav.addEventListener('mouseleave', () => { timer = setTimeout(closeAll, 180); });
+    mainNav.addEventListener('mouseenter', () => { clearTimeout(timer); });
+    backdrop.addEventListener('mouseenter', closeAll);
+  });
+</script>
+</body>
+</html>

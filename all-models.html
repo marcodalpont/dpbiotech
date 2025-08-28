@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>All Models — MicroscopePro</title>
+<title>All Models — DP Biotech</title>
 <meta name="description" content="Explore our complete range of microscopes: from the revolutionary mobile series to the surgical precision of our digital and modular systems." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,15 @@
   /* --- NAVIGATION & MENU (identico alle altre pagine) --- */
   .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
   .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
-  .logo{display:flex; gap:8px; align-items:center; font-weight:800; letter-spacing:-0.02em}
+  .logo {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  font-weight:600;   /* 👈 adesso non è più 800 ma 600 */
+  letter-spacing:-0.02em;
+  font-size:18px;
+}
+
   .dot{width:18px; height:18px; border-radius:999px; background:linear-gradient(135deg, var(--b1), var(--b2), var(--b3))}
   .nav a{color:inherit; text-decoration:none}
   .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
@@ -81,7 +89,11 @@
 <body>
   <div class="nav" id="main-nav">
     <div class="container nav-inner">
-      <a href="index.html" class="logo"><span class="dot"></span><span>Microscope<strong>Pro</strong></span></a>
+      <a href="index.html" class="logo">
+  <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
+  <span>DP Biotech</span>
+</a>
+
       <ul class="nav-links">
         <li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
         <li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
@@ -110,7 +122,7 @@
     </div>
     <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul></div></div></div>
     <div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Explore Software</li><li><a href="#">Imaging Suite</a></li><li><a href="#">Companion App</a></li></ul><ul class="menu-link-column"><li>For Developers</li><li><a href="#">API & SDK</a></li></ul></div></div></div>
-    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="#">Contact Us</a></li><li><a href="#">Service Plans</a></li></ul></div></div></div>
+    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li></ul></div></div></div>
   </div>
   <div class="menu-backdrop"></div>
 
@@ -200,13 +212,13 @@
       <div class="container" style="text-align:center">
           <h2>Have Questions?</h2>
           <p class="lead" style="margin-bottom:24px">Our team of specialists is ready to help you find the right microscope for your needs. Contact us for a consultation or a personalized demo.</p>
-          <a href="mailto:info@microscopepro.example" class="btn primary">Request a Demo</a>
+          <a href="mailto:info@dpbiotech.example" class="btn primary">Request a Demo</a>
       </div>
   </section>
 
   <footer>
     <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
-      <div style="display:flex; gap:8px; align-items:center"><span class="dot"></span>MicroscopePro</div>
+      <div style="display:flex; gap:8px; align-items:center"><img src="logo.png" alt="DP Biotech Logo" style="height: 36px; border-radius: 50%;">DP Biotech</div>
       <div style="display:flex; gap:18px"><a href="#" class="muted">Privacy</a><a href="#" class="muted">Terms</a></div>
     </div>
   </footer>
