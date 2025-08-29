@@ -26,8 +26,6 @@
     color:var(--text);
   }
   .container{max-width:1200px; margin:0 auto; padding:0 20px}
-
-  /* Navigation Bar */
   .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
   .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
   .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size: 18px;}
@@ -35,134 +33,30 @@
   .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; border-radius:12px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
   .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
   .btn.primary:hover{opacity:0.9}
-
-  /* Checkout Layout */
-  .checkout-layout {
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    gap: 32px;
-    align-items: start;
-  }
-  @media(max-width: 900px) {
-    .checkout-layout { grid-template-columns: 1fr; }
-  }
-  
-  .page-header {
-      padding: 48px 0 24px 0;
-  }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .checkout-layout { display: grid; grid-template-columns: 3fr 2fr; gap: 32px; align-items: start; }
+  @media(max-width: 900px) { .checkout-layout { grid-template-columns: 1fr; } }
+  .page-header { padding: 48px 0 24px 0; }
   h1 { font-size: 32px; letter-spacing: -0.02em; margin: 0; }
-  
-  /* Order Items */
-  .order-items {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .product-card {
-    display: flex;
-    gap: 16px;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 16px;
-    position: relative;
-  }
+  .order-items { display: flex; flex-direction: column; gap: 16px; }
+  .product-card { display: flex; gap: 16px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 16px; position: relative; }
   .product-info { flex-grow: 1; }
   .product-title { font-size: 16px; font-weight: 600; margin: 0; }
   .product-subtitle { font-size: 13px; color: var(--muted); margin: 4px 0 0 0; }
   .product-price { font-size: 15px; font-weight: 500; margin-top: 12px; }
-
-  .title-dp-mini {
-    background: linear-gradient(90deg, var(--mini-1), var(--mini-2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .title-dp-pro {
-    background: linear-gradient(90deg, var(--pro-1), var(--pro-2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  
-  .quantity-control {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 12px;
-  }
-  .quantity-btn {
-    width: 32px; height: 32px; border-radius: 8px;
-    font-size: 20px; line-height: 1;
-  }
-  .quantity-input {
-    width: 40px;
-    height: 32px;
-    text-align: center;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    font-family: inherit;
-    font-weight: 600;
-    -moz-appearance: textfield;
-    background: var(--card);
-    color: var(--text);
-  }
-  .quantity-input::-webkit-outer-spin-button,
-  .quantity-input::-webkit-inner-spin-button {
-    -webkit-appearance: none; margin: 0;
-  }
-  
-  .remove-btn {
-    position: absolute;
-    top: 12px; right: 12px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    line-height: 1;
-    padding: 0;
-    cursor: pointer;
-    color: var(--muted);
-    transition: color .2s ease;
-  }
-  .remove-btn:hover {
-    color: var(--text);
-  }
-
-  /* Summary Box */
-  .summary-box {
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 24px;
-    position: sticky;
-    top: calc(57px + 24px); /* Height of nav + desired top gap */
-  }
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    font-size: 15px;
-  }
-  .summary-row.total {
-    font-size: 18px;
-    font-weight: 700;
-    margin-top: 24px;
-    padding-top: 16px;
-    border-top: 1px solid var(--line);
-  }
-  .summary-box .btn.primary {
-    width: 100%;
-    padding: 14px;
-    font-size: 16px;
-    margin-top: 24px;
-  }
-
-  /* Empty Cart State */
-  .empty-cart-container {
-    text-align: center;
-    padding: 80px 20px;
-    margin-top: 48px;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-  }
+  .title-dp-mini { background: linear-gradient(90deg, var(--mini-1), var(--mini-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .title-dp-pro { background: linear-gradient(90deg, var(--pro-1), var(--pro-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .quantity-control { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+  .quantity-btn { width: 32px; height: 32px; border-radius: 8px; font-size: 20px; line-height: 1; }
+  .quantity-input { width: 40px; height: 32px; text-align: center; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-weight: 600; -moz-appearance: textfield; background: var(--card); color: var(--text); }
+  .quantity-input::-webkit-outer-spin-button, .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .remove-btn { position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 24px; line-height: 1; padding: 0; cursor: pointer; color: var(--muted); transition: color .2s ease; }
+  .remove-btn:hover { color: var(--text); }
+  .summary-box { background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 24px; position: sticky; top: calc(57px + 24px); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 15px; }
+  .summary-row.total { font-size: 18px; font-weight: 700; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .summary-box .btn.primary { width: 100%; padding: 14px; font-size: 16px; margin-top: 24px; }
+  .empty-cart-container { text-align: center; padding: 80px 20px; margin-top: 48px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; }
 </style>
 </head>
 <body>
@@ -184,8 +78,12 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const checkoutContent = document.getElementById('checkout-content');
-    let cart = []; // This will hold the raw, ungrouped list of items
+    let cart = [];
     const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+
+    // L'indirizzo del tuo server pubblicato su Render.
+    // Assicurati che questo sia l'URL corretto che ti ha dato Render.
+    const SERVER_URL = 'https://server-pagamenti-dp.onrender.com';
 
     function loadCart() {
       const savedCart = sessionStorage.getItem('shoppingCart');
@@ -195,7 +93,7 @@
 
     function saveCart() {
       sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
-      renderPage(); // Re-render the entire page on any change
+      renderPage();
     }
 
     function formatOptions(options) {
@@ -205,16 +103,13 @@
         return options || '';
     }
     
-    // --- MODIFICATION: Logic now works on the raw cart data ---
     function changeQuantity(itemId, amount) {
         if (amount > 0) {
-            // Add an item by finding a matching one and creating a copy
             const itemToAdd = cart.find(item => item.id === itemId);
             if (itemToAdd) {
                 cart.push({...itemToAdd});
             }
         } else if (amount < 0) {
-            // Remove an item by finding its index
             const itemIndexToRemove = cart.findIndex(item => item.id === itemId);
             if (itemIndexToRemove > -1) {
                 cart.splice(itemIndexToRemove, 1);
@@ -224,11 +119,9 @@
     }
 
     function removeItem(itemId) {
-        // Remove all items with the matching ID
         cart = cart.filter(item => item.id !== itemId);
         saveCart();
     }
-    // --- MODIFICATION END ---
 
     function renderPage() {
       if (cart.length === 0) {
@@ -242,7 +135,6 @@
         return;
       }
 
-      // --- MODIFICATION START: Group identical items for display ---
       const consolidatedCart = {};
       cart.forEach(item => {
         if (consolidatedCart[item.id]) {
@@ -252,7 +144,6 @@
         }
       });
       const displayCart = Object.values(consolidatedCart);
-      // --- MODIFICATION END ---
 
       let subtotal = 0;
       cart.forEach(item => { subtotal += item.price; });
@@ -260,7 +151,7 @@
       const total = subtotal + shipping;
 
       let itemsHTML = '';
-      displayCart.forEach((item) => { // Now iterating over the grouped cart
+      displayCart.forEach((item) => {
         const baseName = item.name.split('(')[0].trim();
         const formattedOptions = formatOptions(item.options);
         
@@ -288,7 +179,6 @@
         `;
       });
       
-      // --- MODIFICATION START: Moved H1 outside of the grid layout ---
       checkoutContent.innerHTML = `
         <div class="page-header">
             <h1>Your Order</h1>
@@ -312,18 +202,49 @@
                 <span>Total</span>
                 <span>${EUR.format(total)}</span>
               </div>
-              <button class="btn primary">Proceed to Payment</button>
+              <button id="checkout-button" class="btn primary">Proceed to Payment</button>
             </div>
           </aside>
         </div>
       `;
-      // --- MODIFICATION END ---
+      
+      // Logica per gestire il click sul pulsante di pagamento
+      const checkoutButton = document.getElementById('checkout-button');
+      checkoutButton.addEventListener('click', async () => {
+          checkoutButton.disabled = true;
+          checkoutButton.textContent = 'Reindirizzamento al pagamento...';
+
+          try {
+              const response = await fetch(`${SERVER_URL}/create-checkout-session`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ cart: cart })
+              });
+              
+              const session = await response.json();
+
+              if (session.url) {
+                  // Reindirizza l'utente alla pagina di pagamento sicura di Stripe
+                  window.location.href = session.url;
+              } else {
+                  alert('Errore: ' + (session.error || 'Impossibile creare la sessione di pagamento.'));
+                  checkoutButton.disabled = false;
+                  checkoutButton.textContent = 'Proceed to Payment';
+              }
+
+          } catch (error) {
+              console.error('Errore:', error);
+              alert('Impossibile contattare il server di pagamento. Riprova più tardi.');
+              checkoutButton.disabled = false;
+              checkoutButton.textContent = 'Proceed to Payment';
+          }
+      });
     }
 
     checkoutContent.addEventListener('click', (event) => {
         const target = event.target;
         const action = target.dataset.action;
-        const id = target.dataset.id; // Using data-id now
+        const id = target.dataset.id; 
 
         if (!id) return;
 

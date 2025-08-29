@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Activate License - DP Biotech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --text: #0a0a0a;
+  --muted: #525252;
+  --light-muted: #94a3b8;
+  --line: #e5e5e5;
+  --card: #ffffff;
+  --card-hover: #f8fafc;
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --primary-light: #f3f4f6;
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0a0a;
+    --text: #fafafa;
+    --muted: #a1a1aa;
+    --light-muted: #64748b;
+    --line: #262626;
+    --card: #18181b;
+    --card-hover: #27272a;
+    --primary-light: #1e1b2e;
+    --success-light: #064e3b;
+    --warning-light: #451a03;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.background-pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+  z-index: -1;
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(5px) rotate(-1deg); }
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Navigation */
+.nav {
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.025em;
+}
+
+.nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.btn:hover::before {
+  transform: translateX(100%);
+}
+
+.btn.primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.btn.primary:hover {
+  background: var(--primary-hover);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.btn.secondary {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn.secondary:hover {
+  background: var(--card-hover);
+  box-shadow: var(--shadow-md);
+}
+
+/* MODIFICATION: Make the nav button smaller */
+.nav .btn.secondary {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 10px;
+  gap: 6px;
+}
+.nav .btn.secondary svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 48px 0 32px;
+}
+
+.header h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin: 0 0 16px;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.serial-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.serial-info svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Layout */
+.purchase-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .purchase-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* Feature List */
+.feature-list {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-list::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient);
+}
+
+.feature-list h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 16px;
+  color: var(--text);
+}
+
+.feature-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-item:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.feature-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--primary), var(--success));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.feature-item.base-license {
+  background: var(--success-light);
+  border-color: var(--success);
+  cursor: default;
+}
+
+.feature-item.selectable:hover {
+  background: color-mix(in srgb, var(--primary) 5%, var(--card));
+  border-color: color-mix(in srgb, var(--primary) 30%, var(--line));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-item.selected {
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+.feature-item.selected::before {
+  opacity: 0.02;
+}
+
+.feature-item.owned {
+  background: color-mix(in srgb, var(--success) 8%, var(--card));
+  border-color: var(--success);
+  opacity: 0.8;
+  cursor: default;
+}
+
+.feature-item input[type="checkbox"] {
+  display: none;
+}
+
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  display: grid;
+  place-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.feature-item.selected .custom-checkbox {
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+.feature-item.owned .custom-checkbox {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.custom-checkbox svg {
+  width: 12px;
+  height: 12px;
+  stroke: white;
+  stroke-width: 3;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-item.selected .custom-checkbox svg,
+.feature-item.owned .custom-checkbox svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.feature-content {
+  z-index: 1;
+  position: relative;
+}
+
+.feature-title {
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0 0 1px;
+  color: var(--text);
+}
+
+.feature-description {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+  z-index: 1;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.icon-wrapper svg {
+  width: 18px;
+  height: 18px;
+}
+
+.feature-item.base-license .icon-wrapper {
+  background: color-mix(in srgb, var(--success) 15%, transparent);
+  color: var(--success);
+}
+
+.feature-item.owned .icon-wrapper {
+  background: color-mix(in srgb, var(--success) 15%, transparent);
+  color: var(--success);
+}
+
+.price-tag {
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  z-index: 1;
+  position: relative;
+  color: var(--text);
+}
+
+.feature-item.base-license .price-tag {
+  color: var(--text);
+}
+
+.feature-item.owned .price-tag {
+  color: var(--text);
+  font-style: normal;
+}
+
+/* Summary Card */
+.summary-card {
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 32px;
+  background: var(--card);
+  position: sticky;
+  top: calc(64px + 32px);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient);
+}
+
+.summary-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 24px;
+  color: var(--text);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  font-size: 15px;
+  border-bottom: 1px solid var(--line);
+  transition: all 0.2s ease;
+}
+
+.summary-row:hover {
+  background: var(--card-hover);
+  margin: 0 -16px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.summary-row:first-of-type {
+  padding-top: 0;
+}
+
+.summary-row:first-of-type:hover {
+  margin-top: -8px;
+  padding-top: 16px;
+}
+
+.summary-total {
+  border-top: 2px solid var(--text);
+  border-bottom: none !important;
+  margin-top: 24px;
+  padding-top: 24px;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text);
+  position: relative;
+}
+
+.summary-total:hover {
+  background: none !important;
+  margin: 24px 0 0 0 !important;
+  padding: 24px 0 !important;
+}
+
+.owned-badge {
+  background: var(--success-light);
+  color: var(--success);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.valid {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.status-badge.expired {
+  background: var(--warning-light);
+  color: var(--warning);
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-in:nth-child(1) { animation-delay: 0.1s; opacity: 0; }
+.animate-in:nth-child(2) { animation-delay: 0.2s; opacity: 0; }
+.animate-in:nth-child(3) { animation-delay: 0.3s; opacity: 0; }
+.animate-in:nth-child(4) { animation-delay: 0.4s; opacity: 0; }
+.animate-in:nth-child(5) { animation-delay: 0.5s; opacity: 0; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px;
+  }
+  
+  .feature-item {
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+  }
+  
+  .feature-item .price-tag {
+    grid-column: 2;
+    text-align: right;
+    margin-top: 8px;
+  }
+  
+  .summary-card {
+    position: static;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="background-pattern"></div>
+  
+  <div class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <img src="logo.png" alt="DP Biotech Logo" style="height:40px; border-radius:50%;">
+        <span>DP Biotech</span>
+      </a>
+      <a class="btn secondary" href="licensing.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Back to Licenses
+      </a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div style="text-align: center; padding: 24px 0;">
+      <div class="serial-info">
+        Serial: <span id="serial-display"></span>
+      </div>
+    </div>
+
+    <div class="purchase-layout">
+      <div class="feature-list">
+        <h2>License Options</h2>
+        
+        <div class="feature-item base-license animate-in">
+          <div class="feature-content">
+            <div class="feature-title">Annual License</div>
+            <p class="feature-description">Base license for one year of updates and support. Required for all devices.</p>
+          </div>
+          <span class="price-tag" id="base-price-display"></span>
+        </div>
+
+        <div id="item-3d" class="feature-item selectable animate-in" data-price="129" data-key="3d-models">
+          <div class="custom-checkbox">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <input type="checkbox" id="feature-3d">
+          <div class="feature-content">
+            <label for="feature-3d" class="feature-title">3D Models</label>
+            <p class="feature-description">Enable 3D model overlay and analysis with real-time rendering capabilities.</p>
+          </div>
+          <span class="price-tag">+ €129</span>
+        </div>
+
+        <div id="item-parallax" class="feature-item selectable animate-in" data-price="49" data-key="parallax">
+          <div class="custom-checkbox">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <input type="checkbox" id="feature-parallax">
+          <div class="feature-content">
+            <label for="feature-parallax" class="feature-title">Parallax Measurement</label>
+            <p class="feature-description">Advanced tools for depth and distance measurement with precision controls.</p>
+          </div>
+          <span class="price-tag">+ €49</span>
+        </div>
+
+        <div id="item-image" class="feature-item selectable animate-in" data-price="49" data-key="image-addition">
+          <div class="custom-checkbox">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <input type="checkbox" id="feature-image">
+          <div class="feature-content">
+            <label for="feature-image" class="feature-title">Image Addition</label>
+            <p class="feature-description">Import and overlay external images with full opacity and positioning control.</p>
+          </div>
+          <span class="price-tag">+ €49</span>
+        </div>
+
+        <div id="item-ndi" class="feature-item selectable animate-in" data-price="220" data-key="ndi">
+          <div class="custom-checkbox">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <input type="checkbox" id="feature-ndi">
+          <div class="feature-content">
+            <label for="feature-ndi" class="feature-title">NDI Transmission</label>
+            <p class="feature-description">Stream high-quality video over your network with professional NDI protocol.</p>
+          </div>
+          <span class="price-tag">+ €220</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="summary-card">
+          <h2>Order Summary</h2>
+          <div id="summary-items"></div>
+          <div class="summary-row summary-total">
+            <span>Total</span>
+            <span id="total-price-display"></span>
+          </div>
+          <button id="pay-button" class="btn primary" style="width: 100%; margin-top: 24px; padding: 16px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="5" rx="2"/>
+              <line x1="2" x2="22" y1="10" y2="10"/>
+            </svg>
+            Proceed to Payment
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const licenseDatabase = {
+    'DP123456': { status: 'valid', expires: '2026-12-31', activeFeatures: ['3d-models', 'parallax', 'image-addition', 'ndi'] },
+    'DP654321': { status: 'expired', expires: '2024-03-15', activeFeatures: ['parallax', 'ndi'] },
+    'DP000000': { status: 'not-active', expires: null, activeFeatures: [] }
+  };
+
+  const microscopePrice = 3000;
+  const baseLicensePrice = microscopePrice / 5;
+  const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+  const SERVER_URL = 'https://server-pagamenti-dp.onrender.com';
+
+  const serialDisplay = document.getElementById('serial-display');
+  const basePriceDisplay = document.getElementById('base-price-display');
+  const summaryItemsEl = document.getElementById('summary-items');
+  const totalPriceDisplay = document.getElementById('total-price-display');
+  const payButton = document.getElementById('pay-button');
+  const featureItems = document.querySelectorAll('.feature-item.selectable');
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const serialNumber = urlParams.get('serial');
+  const licenseInfo = licenseDatabase[serialNumber];
+
+  function initializePage() {
+    if (!serialNumber || !licenseInfo) {
+      document.body.innerHTML = `
+        <div class="background-pattern"></div>
+        <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 2rem;">
+          <div style="max-width: 500px;">
+            <div style="width: 80px; height: 80px; background: var(--warning-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                <path d="M12 9v4"/>
+                <path d="m12 17 .01 0"/>
+              </svg>
+            </div>
+            <h1 style="font-size: 2rem; font-weight: 800; margin: 0 0 16px; color: var(--text);">Invalid Serial Number</h1>
+            <p style="color: var(--muted); margin: 0 0 24px; font-size: 1.125rem;">The serial number you provided could not be found in our system.</p>
+            <a href="licensing.html" class="btn primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m12 19-7-7 7-7"/>
+                <path d="m19 12-7 7-7-7"/>
+              </svg>
+              Back to License Portal
+            </a>
+          </div>
+        </div>`;
+      return;
+    }
+
+    serialDisplay.textContent = serialNumber;
+    basePriceDisplay.textContent = EUR.format(baseLicensePrice);
+
+    featureItems.forEach(item => {
+      const checkbox = item.querySelector('input[type="checkbox"]');
+      const featureKey = item.dataset.key;
+      
+      if (licenseInfo.activeFeatures.includes(featureKey)) {
+        checkbox.checked = true;
+      }
+
+      item.addEventListener('click', (e) => {
+        if (item.classList.contains('selectable')) {
+          checkbox.checked = !checkbox.checked;
+          const changeEvent = new Event('change');
+          checkbox.dispatchEvent(changeEvent);
+        }
+      });
+
+      checkbox.addEventListener('change', () => {
+        updateSelectionUI();
+        calculateTotal();
+      });
+    });
+
+    updateSelectionUI();
+    calculateTotal();
+  }
+
+  function updateSelectionUI() {
+    featureItems.forEach(item => {
+      const checkbox = item.querySelector('input[type="checkbox"]');
+      if (checkbox.checked && !checkbox.disabled) {
+        item.classList.add('selected');
+      } else {
+        item.classList.remove('selected');
+      }
+    });
+  }
+
+  function calculateTotal() {
+    let total = baseLicensePrice;
+    let summaryHTML = `<div class="summary-row"><span>Annual License</span><span>${EUR.format(baseLicensePrice)}</span></div>`;
+
+    featureItems.forEach(item => {
+      const checkbox = item.querySelector('input[type="checkbox"]');
+      if (checkbox.checked) {
+        const price = Number(item.dataset.price);
+        const name = item.querySelector('.feature-title').textContent;
+        total += price;
+        summaryHTML += `<div class="summary-row"><span>${name}</span><span>+ ${EUR.format(price)}</span></div>`;
+      }
+    });
+
+    summaryItemsEl.innerHTML = summaryHTML;
+    totalPriceDisplay.textContent = EUR.format(total);
+  }
+
+  payButton.addEventListener('click', async () => {
+    payButton.disabled = true;
+    payButton.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin">
+        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+      </svg>
+      Processing...
+    `;
+
+    const itemsToPay = [{
+      id: 'license-base',
+      name: `Annual License (${serialNumber})`,
+      price: baseLicensePrice
+    }];
+
+    featureItems.forEach(item => {
+      const checkbox = item.querySelector('input[type="checkbox"]');
+      if (checkbox.checked && !checkbox.disabled) {
+        itemsToPay.push({
+          id: `feature-${item.dataset.key}`,
+          name: `${item.querySelector('.feature-title').textContent} Add-on`,
+          price: Number(item.dataset.price)
+        });
+      }
+    });
+
+    try {
+      const response = await fetch(`${SERVER_URL}/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cart: itemsToPay })
+      });
+
+      const session = await response.json();
+      
+      if (session.url) {
+        window.location.href = session.url;
+      } else {
+        throw new Error(session.error || 'Failed to create payment session.');
+      }
+    } catch (error) {
+      // Show error message with better styling
+      const errorDiv = document.createElement('div');
+      errorDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--warning-light);
+        color: var(--warning);
+        border: 1px solid var(--warning);
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: var(--shadow-lg);
+        z-index: 1000;
+        max-width: 400px;
+        font-weight: 500;
+      `;
+      errorDiv.textContent = 'Error connecting to payment server: ' + error.message;
+      document.body.appendChild(errorDiv);
+
+      setTimeout(() => {
+        errorDiv.remove();
+      }, 5000);
+
+      payButton.disabled = false;
+      payButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="14" x="2" y="5" rx="2"/>
+          <line x1="2" x2="22" y1="10" y2="10"/>
+        </svg>
+        Proceed to Payment
+      `;
+    }
+  });
+
+  initializePage();
+});
+</script>
+</body>
+</html>

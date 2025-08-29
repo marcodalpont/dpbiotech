@@ -1,112 +1,119 @@
-// server.js
-import express from "express";
-import Stripe from "stripe";
-import bodyParser from "body-parser";
-import path from "path";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname  = path.dirname(__filename);
-import dotenv from "dotenv"; // <-- Aggiungi questo
-dotenv.config(); // <-- Aggiungi questo all'inizio
+import express from 'express';
+import Stripe from 'stripe';
+import cors from 'cors';
+import 'dotenv/config';
 
-const app = express(); // LA CORREZIONE È QUI: 'app' viene definito prima di essere usato
-
-app.use(express.static(__dirname));
-app.use(express.static("public"));
-app.use(bodyParser.json());
-
-// (Opzionale) CORS se il front NON è servito da questo stesso Express:
-// import cors from "cors";
-// app.use(cors({ origin: true }));
-
+const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// --- Listini come sul sito ---
-const BASE_PRICES = { "dp-mini": 2990, "dp-pro": 8990 };
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-const DP_MINI_OPTIONS = {
-  objectives: { "50mm": 0, "60mm": 180, "75mm": 350 },
-  eyepieces: { screen: 0, hd: 290, "4k": 580 },
-  mounting: { handle: 0, arm: 220 }
+// --- Price Database ---
+// Contains all purchasable items, physical or digital.
+// Prices are in CENTS (e.g., €129.00 -> 12900).
+const PRICES = {
+  // Physical Products
+  'dp-mini-base': 299000,
+  'dp-pro-base': 899000,
+  
+  // License Products (Added)
+  'license-base': 60000,               // 3000€ / 5 = 600€ -> 60000 cents
+  'feature-3d-models': 12900,         // 129€ -> 12900 cents
+  'feature-parallax': 4900,             // 49€  -> 4900 cents
+  'feature-image-addition': 4900,     // 49€  -> 4900 cents
+  'feature-ndi': 22000,                 // 220€ -> 22000 cents
 };
 
-const DP_PRO_OPTIONS = {
-  stabilization: { "3axis": 0, enhanced: 450 },
-  arm: { standard: 0, extended: 680 },
-  controls: { basic: 0, joystick: 280, footpedal: 190 }, // joystick/footpedal cumulabili
-  ai: { basic: 0, advanced: 590 }
+const OPTIONS_PRICES = {
+  // Options for physical products
+  objectives: { '50mm': 0, '60mm': 18000, '75mm': 35000 },
+  eyepieces: { screen: 0, hd: 29000, '4k': 58000 },
+  mounting: { handle: 0, arm: 22000 },
+  stabilization: { '3axis': 0, enhanced: 45000 },
+  care: { none: 0, basic: 29000, plus: 49000 },
 };
 
-const CARE = { none: 0, basic: 290, plus: 490 };
-
-function computeTotalEUR(payload) {
-  const { model, selections = {} } = payload || {};
-  if (!BASE_PRICES[model]) throw new Error("Invalid model");
-
-  let total = BASE_PRICES[model];
-
-  if (model === "dp-mini") {
-    const { objectives = "50mm", eyepieces = "screen", mounting = "handle", care = "none" } = selections;
-    total += DP_MINI_OPTIONS.objectives[objectives] ?? 0;
-    total += DP_MINI_OPTIONS.eyepieces[eyepieces] ?? 0;
-    total += DP_MINI_OPTIONS.mounting[mounting] ?? 0;
-    total += CARE[care] ?? 0;
-  } else if (model === "dp-pro") {
-    const {
-      stabilization = "3axis",
-      arm = "standard",
-      controls = "basic",
-      ai = "basic",
-      care = "none",
-      joystick = false,
-      footpedal = false
-    } = selections;
-
-    total += DP_PRO_OPTIONS.stabilization[stabilization] ?? 0;
-    total += DP_PRO_OPTIONS.arm[arm] ?? 0;
-    if (joystick) total += DP_PRO_OPTIONS.controls.joystick;
-    if (footpedal) total += DP_PRO_OPTIONS.controls.footpedal;
-    total += DP_PRO_OPTIONS.ai[ai] ?? 0;
-    total += CARE[care] ?? 0;
+// Calculates the final price of an item on the server to prevent tampering
+function calculateItemPrice(item) {
+  // For items with options (like physical microscopes)
+  if (item.options && Object.keys(item.options).length > 0) {
+    if (!item || !item.id || PRICES[item.id] === undefined) {
+      throw new Error(`Base product ID '${item.id}' is invalid.`);
+    }
+    let total = PRICES[item.id];
+    for (const [category, selection] of Object.entries(item.options)) {
+      if (OPTIONS_PRICES[category] && OPTIONS_PRICES[category][selection] !== undefined) {
+        total += OPTIONS_PRICES[category][selection];
+      }
+    }
+    return total;
+  } 
+  // For simple items without options (like licenses and features)
+  else {
+    if (!item || !item.id || PRICES[item.id] === undefined) {
+      throw new Error(`Product ID '${item.id}' is invalid.`);
+    }
+    return PRICES[item.id];
   }
-
-  return Math.round(total * 100); // centesimi per Stripe
 }
 
-app.post("/create-checkout-session", async (req, res) => {
+app.get('/', (req, res) => {
+  res.send('DP Biotech Payment Server is active.');
+});
+
+app.post('/create-checkout-session', async (req, res) => {
+  const { cart } = req.body;
+
+  if (!cart || !Array.isArray(cart) || cart.length === 0) {
+    return res.status(400).json({ error: 'Cart is empty or invalid.' });
+  }
+
   try {
-    const amount = computeTotalEUR(req.body);
-    const lineName = req.body.model === "dp-mini" ? "DP Mini — Custom Config" : "DP Pro — Custom Config";
+    const lineItems = cart.map(item => {
+      const serverPrice = calculateItemPrice(item);
+      
+      return {
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: item.name,
+            description: item.options ? Object.values(item.options).filter(val => val).join(', ') : undefined,
+          },
+          unit_amount: serverPrice,
+        },
+        quantity: 1,
+      };
+    });
 
     const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      line_items: [
+      mode: 'payment',
+      payment_method_types: ['card', 'paypal'],
+      line_items: lineItems,
+      shipping_address_collection: {
+        allowed_countries: ['IT', 'FR', 'DE', 'ES', 'GB', 'US', 'CH', 'AT', 'BE', 'NL'],
+      },
+      shipping_options: [
         {
-          price_data: {
-            currency: "eur",
-            product_data: {
-              name: lineName,
-              description: (req.body.description || "Customized configuration").slice(0, 500)
-            },
-            unit_amount: amount
+          shipping_rate_data: {
+            type: 'fixed_amount',
+            fixed_amount: { amount: 4990, currency: 'eur' },
+            display_name: 'Standard International Shipping',
           },
-          quantity: 1
-        }
+        },
       ],
-      // In server.js
-      success_url: "https://www.dpbiotech.com/success.html?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url:  "https://www.dpbiotech.com/cancel.html",
-      metadata: {
-        model: req.body.model,
-        selections: JSON.stringify(req.body.selections || {})
-      }
+      success_url: `https://www.dpbiotech.com/success.html`,
+      cancel_url: `https://www.dpbiotech.com/checkout.html`,
     });
 
     res.json({ url: session.url });
-  } catch (err) {
-    console.error("Stripe error:", err.message);
-    res.status(400).json({ error: err.message });
+
+  } catch (error) {
+    console.error('Stripe session creation error:', error.message);
+    res.status(500).json({ error: 'Internal server error: ' + error.message });
   }
 });
 
-app.listen(4242, () => console.log("Server listening on http://localhost:4242"));
+const PORT = process.env.PORT || 4242;
+app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`));

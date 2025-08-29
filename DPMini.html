@@ -6,648 +6,1491 @@
 <title>DP Mini — Fusion 3D Mobile Microscope</title>
 <meta name="description" content="DP Mini brings true depth to mobile imaging with Fusion 3D — real 3D perception from a single smartphone sensor. Lightweight. Fast. Clinic-ready." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <style>
-  :root { 
-    --bg:#ffffff; 
-    --text:#0a0a0a; 
-    --muted:#525252; 
-    --line:#e5e5e5; 
-    --card:#ffffff; 
-    --band-bg: #fef2f2; 
-    --a1:#f97316;
-    --a2:#ef4444;
-    --a3:#dc2626;
-  }
-  @media (prefers-color-scheme: dark){ 
-    :root { 
-      --bg:#0a0a0a; 
-      --text:#fafafa; 
-      --muted:#a1a1aa; 
-      --line:#262626;
-      --card:#18181b; 
-      --band-bg: #1f1111;
-    } 
-  }
-  
-  html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
-  body{
-    margin:0; 
-    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-    color:var(--text); 
-    overflow-x: hidden;
-    background: linear-gradient(180deg, var(--band-bg) 0%, #f6a6a6 40%, #ffbbbb 70%, var(--bg) 100%);
-  }
-  .container{max-width:1200px; margin:0 auto; padding:0 20px}
-  
-  /* ==== SPLASH SCREEN STYLES ==== */
-  .splash-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg);
-    display: grid;
-    place-items: center;
-    z-index: 1000;
-    transition: opacity 0.8s ease-out;
-    pointer-events: none;
-  }
-  .splash-screen.hidden {
-    opacity: 0;
-  }
-  .splash-text {
-    font-size: clamp(60px, 15vw, 200px);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    animation: fadeInScale 1.5s cubic-bezier(0.215, 0.610, 0.355, 1) forwards;
-  }
-  @keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-  }
-  
-  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
-  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
-  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size: 18px;}
-  .nav a{color:inherit; text-decoration:none}
-  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
-  @media(min-width:960px){.nav-links{display:flex; align-items:center}}
-  .nav-links > li { height: 100%; display: flex; align-items: center; cursor:pointer; }
-  .dropdown-menu { opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; position: absolute; top: 57px; left: 0; right: 0; background: var(--bg); border-top: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 40; overflow-y: auto; max-height: calc(100vh - 57px); }
-  .dropdown-menu.is-open { opacity: 1; visibility: visible; }
-  .menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 32px 0; }
-  .menu-main-links { list-style: none; padding: 0; margin: 0; }
-  .menu-main-links li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 8px; padding: 0 12px; }
-  .menu-main-links a { font-size: 24px; font-weight: 600; line-height: 1.5; display: block; padding: 4px 12px; border-radius: 6px; }
-  .menu-main-links a:hover { background: var(--card); }
-  .menu-link-column { list-style: none; padding: 0; margin: 0; }
-  .menu-link-column li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 14px; padding: 0 12px; }
-  .menu-link-column a { font-size: 13px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 6px; }
-  .menu-link-column a:hover { background: var(--card); }
-  .menu-backdrop { position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 30; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; }
-  .menu-backdrop.is-visible { opacity: 1; visibility: visible; }
+:root {
+--bg:#ffffff;
+--text:#0a0a0a;
+--muted:#525252;
+--line:#e5e5e5;
+--card:#ffffff;
+--band-bg: #fef2f2;
+--a1:#f97316;
+--a2:#ef4444;
+--a3:#dc2626;
+}
+@media (prefers-color-scheme: dark){
+:root {
+--bg:#0a0a0a;
+--text:#fafafa;
+--muted:#a1a1aa;
+--line:#262626;
+--card:#18181b;
+--band-bg: #1f1111;
+}
+}
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+body{
+margin:0;
+font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+color:var(--text);
+overflow-x: hidden;
+background: linear-gradient(180deg, var(--band-bg) 0%, #f6a6a6 40%, #ffbbbb 70%, var(--bg) 100%);
+}
+.container{max-width:1200px; margin:0 auto; padding:0 20px}
+/* ==== SPLASH SCREEN STYLES ==== */
+.splash-screen {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: var(--bg);
+display: grid;
+place-items: center;
+z-index: 1000;
+transition: opacity 0.8s ease-out;
+pointer-events: none;
+}
+.splash-screen.hidden {
+opacity: 0;
+}
+.splash-text {
+font-size: clamp(60px, 15vw, 200px);
+font-weight: 800;
+letter-spacing: -0.04em;
+animation: fadeInScale 1.5s cubic-bezier(0.215, 0.610, 0.355, 1) forwards;
+}
+@keyframes fadeInScale {
+from { opacity: 0; transform: scale(0.9); }
+to { opacity: 1; transform: scale(1); }
+}
+.nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
+.nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
+.logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size: 18px;}
+.nav a{color:inherit; text-decoration:none}
+.nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
+@media(min-width:960px){.nav-links{display:flex; align-items:center}}
+.nav-links > li { height: 100%; display: flex; align-items: center; cursor:pointer; }
+.dropdown-menu { opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; position: absolute; top: 57px; left: 0; right: 0; background: var(--bg); border-top: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 40; overflow-y: auto; max-height: calc(100vh - 57px); }
+.dropdown-menu.is-open { opacity: 1; visibility: visible; }
+.menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 32px 0; }
+.menu-main-links { list-style: none; padding: 0; margin: 0; }
+.menu-main-links li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 8px; padding: 0 12px; }
+.menu-main-links a { font-size: 24px; font-weight: 600; line-height: 1.5; display: block; padding: 4px 12px; border-radius: 6px; }
+.menu-main-links a:hover { background: var(--card); }
+.menu-link-column { list-style: none; padding: 0; margin: 0; }
+.menu-link-column li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 14px; padding: 0 12px; }
+.menu-link-column a { font-size: 13px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 6px; }
+.menu-link-column a:hover { background: var(--card); }
+.menu-backdrop { position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 30; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; }
+.menu-backdrop.is-visible { opacity: 1; visibility: visible; }
 
-  .btn{display:inline-flex; align-items:center; gap:8px; padding:14px 24px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:16px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
-  .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
-  .btn.primary:hover{opacity:.92}
-  .btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
-  .nav-btn {
-    padding: 10px 16px;
-    font-size: 14px;
-  }
+.btn{display:inline-flex; align-items:center; gap:8px; padding:14px 24px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:16px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
+.btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
+.btn.primary:hover{opacity:.92}
+.btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
+.nav-btn {
+padding: 10px 16px;
+font-size: 14px;
+}
 
-  .h1{font-size:clamp(48px, 8vw, 96px); line-height:1.05; letter-spacing:-0.03em; font-weight:800; margin:18px 0}
-  .grad{background:linear-gradient(90deg, var(--a1), var(--a2), var(--a3)); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .lead{max-width:760px; color:var(--muted); font-size:clamp(18px, 3vw, 24px)}
-  .hero-cta{display:flex; gap:12px; margin-top:24px}
-  
-  .snap-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; scroll-snap-align: start; scroll-snap-stop: always; padding: 100px 0; box-sizing: border-box; }
-  .band { background: transparent; }
-  
-  h2{font-size:clamp(28px, 4.5vw, 44px); letter-spacing:-0.02em}
-  h3{font-size:clamp(22px, 3.5vw, 32px); letter-spacing:-0.02em}
-  h4{font-size:20px; letter-spacing:-0.01em; margin-bottom: 4px; font-weight:600;}
-  p.muted{color:var(--muted); line-height: 1.6;}
-  .grid-2{display:grid; gap:48px; grid-template-columns:1fr; align-items:center}
-  @media(min-width:960px){.grid-2{grid-template-columns:1fr 1fr}}
-  .grid-3{display:grid; gap:24px; grid-template-columns:1fr}
-  @media(min-width:640px){.grid-3{grid-template-columns:repeat(3,1fr)}}
+.h1{font-size:clamp(48px, 8vw, 96px); line-height:1.05; letter-spacing:-0.03em; font-weight:800; margin:18px 0}
+.grad{background:linear-gradient(90deg, var(--a1), var(--a2), var(--a3)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.lead{max-width:760px; color:var(--muted); font-size:clamp(18px, 3vw, 24px)}
+.hero-cta{display:flex; gap:12px; margin-top:24px}
+.snap-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; scroll-snap-align: start; scroll-snap-stop: always; padding: 100px 0; box-sizing: border-box; }
+.band { background: transparent; }
+h2{font-size:clamp(28px, 4.5vw, 44px); letter-spacing:-0.02em}
+h3{font-size:clamp(22px, 3.5vw, 32px); letter-spacing:-0.02em}
+h4{font-size:20px; letter-spacing:-0.01em; margin-bottom: 4px; font-weight:600;}
+p.muted{color:var(--muted); line-height: 1.6;}
+.grid-2{display:grid; gap:48px; grid-template-columns:1fr 1fr; align-items:center}
+.grid-3{display:grid; gap:24px; grid-template-columns:1fr}
+@media(min-width:640px){.grid-3{grid-template-columns:repeat(3,1fr)}}
 
-  .card{border:1px solid var(--line); border-radius:16px; padding:24px; background:var(--card); transition:box-shadow .2s ease, transform .2s ease}
-  .card:hover{box-shadow:0 12px 40px rgba(0,0,0,.1); transform: translateY(-4px);}
-  .icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg, var(--a1), var(--a3));color:#fff;font-weight:700;margin-bottom:12px}
-  .list { list-style: none; padding-left: 0; margin-top: 16px; }
-  .list li { padding-left: 1.5em; position: relative; margin-bottom: 10px; color: var(--muted); }
-  .list li::before { content: '✓'; position: absolute; left: 0; color: var(--a2); }
-  
-  .product-visual { border: 1px solid var(--line); border-radius: 24px; aspect-ratio: 4/3; background: var(--card); padding: 0; }
-  .product-visual.mini-bg { background:radial-gradient(circle at top left, var(--a1)1a, transparent 40%), radial-gradient(circle at bottom right, var(--a2)1a, transparent 40%), var(--card); }
+.card{border:1px solid var(--line); border-radius:16px; padding:24px; background:var(--card); transition:box-shadow .2s ease, transform .2s ease}
+.card:hover{box-shadow:0 12px 40px rgba(0,0,0,.1); transform: translateY(-4px);}
+.icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg, var(--a1), var(--a3));color:#fff;font-weight:700;margin-bottom:12px}
+.list { list-style: none; padding-left: 0; margin-top: 16px; }
+.list li { padding-left: 1.5em; position: relative; margin-bottom: 10px; color: var(--muted); }
+.list li::before { content: '✓'; position: absolute; left: 0; color: var(--a2); }
+.product-visual { border: 1px solid var(--line); border-radius: 24px; aspect-ratio: 4/3; background: var(--card); padding: 0; }
+.product-visual.mini-bg { background:radial-gradient(circle at top left, var(--a1)1a, transparent 40%), radial-gradient(circle at bottom right, var(--a2)1a, transparent 40%), var(--card); }
 
-  .animate-item { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1); }
-  .animate-item.is-visible { opacity: 1; transform: translateY(0); }
-  
-  .control-card { border: 1px solid var(--line); border-radius: 24px; padding: 32px; background: var(--card); }
-  .control-card h3 { margin-top: 0; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
-  .control-list { list-style: none; padding: 0; margin: 16px 0 0 0; }
-  .control-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; color: var(--muted); font-size: 14px; font-weight: 500; }
-  .control-list-icon { width: 24px; height: 24px; background: color-mix(in srgb, var(--band-bg) 50%, transparent); border-radius: 6px; display: grid; place-items:center; font-size: 25px; color: var(--a2); }
+.animate-item { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1); }
+.animate-item.is-visible { opacity: 1; transform: translateY(0); }
+.control-card { border: 1px solid var(--line); border-radius: 24px; padding: 32px; background: var(--card); }
+.control-card h3 { margin-top: 0; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+.control-list { list-style: none; padding: 0; margin: 16px 0 0 0; }
+.control-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; color: var(--muted); font-size: 14px; font-weight: 500; }
+.control-list-icon { width: 24px; height: 24px; background: color-mix(in srgb, var(--band-bg) 50%, transparent); border-radius: 6px; display: grid; place-items:center; font-size: 25px; color: var(--a2); }
 
-  model-viewer { width: 100%; height: 100%; border-radius: 24px; --poster-color: transparent; }
-  model-viewer[camera-controls] { cursor: default; }
-  
-  footer{border-top:1px solid var(--line); padding:36px 0; color:var(--muted); scroll-snap-align: end;}
-  
-  .cart-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 90;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .3s ease, visibility .3s ease;
-  }
-  .cart-backdrop.is-visible {
-    opacity: 1;
-    visibility: visible;
-  }
-  .cart-sidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 100%;
-    max-width: 400px;
-    height: 100%;
-    background: var(--bg);
-    border-left: 1px solid var(--line);
-    z-index: 100;
-    transform: translateX(100%);
-    transition: transform .3s ease;
-    display: flex;
-    flex-direction: column;
-    box-shadow: -10px 0 20px rgba(0,0,0,0.1);
-    padding: 0; 
-  }
-  .cart-sidebar.is-open {
-    transform: translateX(0);
-  }
-  .cart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--line);
-    padding: 1rem 2rem;
-    flex-shrink: 0;
-  }
-  .cart-items {
-    list-style: none;
-    padding: 1rem 2rem;
-    margin: 0;
-    flex-grow: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .cart-item {
-    padding: 0;
-    border-bottom: none;
-  }
-  
-  .cart-product-card {
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 16px;
-    background: var(--card);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    position: relative;
-  }
-  .cart-product-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
-  }
-  .cart-product-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-  }
-  .cart-product-subtitle {
-    font-size: 13px;
-    color: var(--muted);
-    margin: 0 0 12px 0;
-    font-weight: 400;
-  }
-  .cart-product-price {
-    text-align: right;
-    font-size: 15px;
-    font-weight: 500;
-  }
-  .cart-product-remove-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    line-height: 1;
-    padding: 0;
-    margin-left: 10px;
+model-viewer { width: 100%; height: 100%; border-radius: 24px; --poster-color: transparent; }
+model-viewer[camera-controls] { cursor: default; }
+footer{border-top:1px solid var(--line); padding:36px 0; color:var(--muted); scroll-snap-align: end;}
+/* ==== IMPROVED AUTOFOCUS SECTION STYLES ==== */
+.autofocus-demo {
+position: relative;
+height: 400px;
+border: 1px solid var(--line);
+border-radius: 24px;
+background: var(--card);
+overflow: hidden;
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 24px;
+gap: 24px;
+box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+}
+.parallax-header {
+display: flex;
+flex-direction: column;
+gap: 12px;
+align-items: center;
+justify-content: center;
+padding: 0;
+border-bottom: none;
+background: none;
+flex-shrink: 0;
+}
+
+.eye-view-container {
+display: flex;
+gap: 10px;
+}
+.eye-view {
+width: 80px;
+height: 60px;
+border: 2px solid var(--a2);
+border-radius: 12px;
+background: var(--card);
+position: relative;
+overflow: hidden;
+box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15);
+}
+.eye-view::before {
+content: '';
+position: absolute;
+top: 8px;
+left: 8px;
+right: 8px;
+bottom: 8px;
+border: 1px solid var(--line);
+border-radius: 8px;
+background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+.eye-view.left::after {
+content: 'L';
+position: absolute;
+top: 6px;
+left: 8px;
+font-size: 12px;
+font-weight: 700;
+color: var(--a2);
+z-index: 2;
+}
+.eye-view.right::after {
+content: 'R';
+position: absolute;
+top: 6px;
+right: 8px;
+font-size: 12px;
+font-weight: 700;
+color: var(--a2);
+z-index: 2;
+}
+.parallax-indicator {
+position: absolute;
+top: 50%;
+width: 16px;
+height: 16px;
+background: var(--a2);
+border-radius: 50%;
+transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+transform: translateY(-50%);
+z-index: 3;
+border: 2px solid white;
+box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+.eye-view.left .parallax-indicator {
+left: 20px;
+}
+.eye-view.right .parallax-indicator {
+right: 20px;
+}
+.parallax-label {
+text-align: center;
+font-size: 14px;
+font-weight: 600;
+color: var(--muted);
+background: var(--card);
+padding: 8px 16px;
+border-radius: 20px;
+border: 1px solid var(--line);
+box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+/* 3D Scene Container */
+.scene-container {
+flex: 1;
+position: relative;
+display: flex;
+align-items: center;
+justify-content: center;
+background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+height: 100%;
+border-radius: 16px;
+}
+.microscope-setup {
+position: relative;
+width: 300px;
+height: 320px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: space-between;
+}
+
+/* MODIFICATION: Prettier Floor/Base */
+.floor-base {
+position: absolute;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+width: 200px;
+height: 12px;
+background: var(--line);
+border-radius: 6px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* MODIFICATION: Prettier Specimen Object */
+.specimen-object {
+position: absolute;
+bottom: 30px; /* Adjusted to be shorter and sit on the base */
+left: 50%;
+transform: translateX(-50%);
+width: 100px; /* Slightly wider */
+height: 30px; /* Much shorter */
+background: linear-gradient(135deg, #d4d4d8 0%, #e5e5e5 100%); /* Simpler gradient */
+border-radius: 6px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+display: flex;
+align-items: center;
+justify-content: center;
+color: var(--muted);
+font-size: 10px;
+font-weight: 600;
+overflow: hidden;
+border: 1px solid var(--line);
+letter-spacing: 0.5px;
+}
+.specimen-object::before {
+background-color: transparent; /* No background for text */
+padding: 0;
+border-radius: 0;
+position: static; /* Position within the flex container */
+font-size: 10px;
+color: var(--muted);
+box-shadow: none;
+}
+.microscope-model {
+position: absolute;
+width: 240px;
+height: 240px;
+transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+z-index: 10;
+left: 56%;
+transform: translateX(-50%);
+}
+.distance-indicator {
+position: absolute;
+left: 20px;
+bottom: 36px; /* ADD: Positions the bottom of the indicator at the specimen's top */
+/* top: 50%; REMOVE */
+/* transform: translateY(-50%); REMOVE */
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 8px;
+z-index: 5;
+}
+.distance-line {
+width: 2px;
+background: var(--a2);
+border-radius: 1px;
+position: relative;
+transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+opacity: 0.7;
+}
+.distance-value {
+font-size: 11px;
+font-weight: 600;
+color: var(--a2);
+background: white;
+padding: 4px 8px;
+border-radius: 12px;
+border: 1px solid var(--line);
+transition: all 0.3s ease;
+box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+min-width: 50px;
+text-align: center;
+}
+/* MODIFICATION: Adjusted top positions for larger model */
+.position-near .microscope-model {
+top: 60px; /* Adjusted to center over the shorter specimen */
+}
+.position-medium .microscope-model {
+top: 20px; /* Adjusted to center over the shorter specimen */
+}
+.position-far .microscope-model {
+top: -20px; /* Adjusted to center over the shorter specimen */
+}
+.position-near .distance-line {
+height: 30px;
+}
+.position-medium .distance-line {
+height: 70px;
+}
+.position-far .distance-line {
+height: 110px;
+}
+.parallax-near .eye-view.left .parallax-indicator {
+left: 45px; /* Changed from 12px to 28px */
+}
+.parallax-near .eye-view.right .parallax-indicator {
+right: 45px; /* Changed from 12px to 28px */
+}
+.parallax-medium .eye-view.left .parallax-indicator {
+left: 30px; /* Remains the same as it's the middle ground */
+}
+.parallax-medium .eye-view.right .parallax-indicator {
+right: 30px; /* Remains the same as it's the middle ground */
+}
+.parallax-far .eye-view.left .parallax-indicator {
+left: 15px; /* Changed from 28px to 12px */
+}
+.parallax-far .eye-view.right .parallax-indicator {
+right: 15px; /* Changed from 28px to 12px */
+}
+/* Distance Controls */
+.distance-controls {
+margin-top: 24px;
+display: flex;
+gap: 12px;
+align-items: center;
+flex-wrap: wrap;
+}
+.distance-btn {
+padding: 10px 18px;
+border: 1px solid var(--line);
+border-radius: 22px;
+background: var(--card);
+cursor: pointer;
+font-size: 14px;
+font-weight: 500;
+transition: all 0.3s ease;
+color: var(--text);
+}
+.distance-btn:hover, .distance-btn.active {
+background: var(--a2);
+color: white;
+border-color: var(--a2);
+transform: translateY(-1px);
+box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+/* ==== MULTI-VIEW CAROUSEL STYLES ==== */
+.feature-carousel {
+position: relative;
+overflow: hidden;
+border: 1px solid var(--line);
+border-radius: 24px;
+background: var(--card);
+box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+.carousel-container {
+display: flex;
+transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.carousel-slide {
+min-width: 100%;
+padding: 50px;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 50px;
+align-items: center;
+box-sizing: border-box; /* FIX: Prevents padding from causing overflow */
+}
+@media (max-width: 960px) {
+.carousel-slide {
+grid-template-columns: 1fr;
+gap: 32px;
+padding: 40px 30px;
+}
+}
+.slide-visual {
+aspect-ratio: 4/3;
+border-radius: 20px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 600;
+font-size: 18px;
+position: relative;
+overflow: hidden;
+box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+.slide-visual.models-bg {
+background:
+radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.3) 0%, transparent 50%),
+linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: white;
+}
+.slide-visual.radiograph-bg {
+background:
+radial-gradient(circle at 30% 70%, rgba(240, 147, 251, 0.3) 0%, transparent 50%),
+radial-gradient(circle at 70% 30%, rgba(245, 87, 108, 0.3) 0%, transparent 50%),
+linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+color: white;
+}
+.slide-visual.ndi-bg {
+background:
+radial-gradient(circle at 25% 75%, rgba(79, 172, 254, 0.3) 0%, transparent 50%),
+radial-gradient(circle at 75% 25%, rgba(0, 242, 254, 0.3) 0%, transparent 50%),
+linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+color: white;
+}
+/* Enhanced 3D Model Animation */
+.model-viewer {
+position: relative;
+width: 160px;
+height: 160px;
+margin: 0 auto;
+perspective: 1000px;
+}
+.model-center {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 60px;
+height: 60px;
+background:
+linear-gradient(45deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: bold;
+font-size: 14px;
+color: #667eea;
+box-shadow: 0 8px 25px rgba(255,255,255,0.3);
+border: 2px solid rgba(255,255,255,0.8);
+}
+.model-left, .model-right {
+position: absolute;
+width: 50px;
+height: 50px;
+background:
+linear-gradient(45deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: bold;
+font-size: 12px;
+color: #667eea;
+transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+box-shadow: 0 6px 20px rgba(255,255,255,0.2);
+border: 2px solid rgba(255,255,255,0.6);
+}
+.model-left {
+left: 10px;
+top: 55px;
+transform: rotateY(-15deg) translateZ(-20px);
+}
+.model-right {
+right: 10px;
+top: 55px;
+transform: rotateY(15deg) translateZ(-20px);
+}
+.model-viewer.active .model-left {
+transform: rotateY(-35deg) translateZ(-40px) translateX(-20px);
+}
+.model-viewer.active .model-right {
+transform: rotateY(35deg) translateZ(-40px) translateX(20px);
+}
+.model-viewer.active .model-center {
+transform: translate(-50%, -50%) scale(1.1) rotateY(5deg);
+}
+/* Enhanced Radiograph Animation */
+.radiograph-stack {
+position: relative;
+width: 140px;
+height: 160px;
+margin: 0 auto;
+}
+.radiograph-image {
+position: absolute;
+width: 90px;
+height: 120px;
+background:
+linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+border-radius: 8px;
+border: 2px solid rgba(255,255,255,0.8);
+transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+box-shadow: 0 6px 20px rgba(255,255,255,0.2);
+overflow: hidden;
+}
+.radiograph-image::before {
+content: '';
+position: absolute;
+top: 20%;
+left: 20%;
+right: 20%;
+bottom: 20%;
+background:
+radial-gradient(ellipse at center, rgba(240, 147, 251, 0.3) 0%, transparent 70%),
+linear-gradient(45deg, rgba(245, 87, 108, 0.2) 0%, rgba(240, 147, 251, 0.2) 100%);
+border-radius: 4px;
+}
+.radiograph-image:nth-child(1) {
+left: 25px;
+top: 20px;
+z-index: 3;
+}
+.radiograph-image:nth-child(2) {
+left: 30px;
+top: 25px;
+z-index: 2;
+opacity: 0.9;
+}
+.radiograph-image:nth-child(3) {
+left: 35px;
+top: 30px;
+z-index: 1;
+opacity: 0.8;
+}
+.radiograph-stack.active .radiograph-image:nth-child(1) {
+transform: translateX(-30px) rotate(-8deg) scale(1.05);
+}
+.radiograph-stack.active .radiograph-image:nth-child(2) {
+transform: translateX(0) rotate(0deg) scale(1);
+}
+.radiograph-stack.active .radiograph-image:nth-child(3) {
+transform: translateX(30px) rotate(8deg) scale(1.05);
+}
+/* Enhanced NDI Screen Animation */
+.ndi-screen {
+position: relative;
+width: 180px;
+height: 120px;
+margin: 0 auto;
+background:
+linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+box-shadow: 0 8px 25px rgba(255,255,255,0.3);
+border: 3px solid rgba(255,255,255,0.8);
+}
+.ndi-content {
+width: 75%;
+height: 65%;
+background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #667eea 100%);
+border-radius: 6px;
+transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-size: 14px;
+font-weight: bold;
+position: relative;
+overflow: hidden;
+}
+.ndi-content::before {
+content: '';
+position: absolute;
+top: -50%;
+left: -50%;
+width: 200%;
+height: 200%;
+background:
+linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+animation: shimmer 2s infinite;
+}
+@keyframes shimmer {
+0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+.ndi-screen.active .ndi-content {
+transform: scale(1.15);
+box-shadow: 0 0 30px rgba(79, 172, 254, 0.4);
+}
+.ndi-controls {
+position: absolute;
+bottom: 10px;
+right: 10px;
+display: flex;
+gap: 4px;
+}
+.ndi-btn {
+width: 8px;
+height: 8px;
+background: rgba(255,255,255,0.6);
+border-radius: 50%;
+transition: all 0.3s ease;
+}
+.ndi-screen.active .ndi-btn {
+background: rgba(79, 172, 254, 0.8);
+transform: scale(1.2);
+}
+.carousel-controls {
+position: absolute;
+bottom: 25px;
+left: 50%;
+transform: translateX(-50%);
+display: flex;
+gap: 16px;
+align-items: center;
+}
+.carousel-nav {
+display: flex;
+gap: 10px;
+}
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--muted);
     cursor: pointer;
-    color: var(--muted);
-    transition: color .2s ease;
-  }
-  .cart-product-remove-btn:hover {
-    color: var(--text);
-  }
+    transition: background-color 0.3s ease;
+    border: none;
+    box-shadow: none;
+    transform: none;
+    position: relative;
+}
 
-  .cart-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 18px;
-    font-weight: 600;
-  }
-  .cart-empty-state {
-    text-align: center;
-    padding: 2rem;
-    color: var(--muted);
-    margin: auto 0;
-  }
-  .cart-footer {
-    border-top: 1px solid var(--line);
-    padding: 1rem 2rem 2rem 2rem;
-    margin-top: 1rem;
-    flex-shrink: 0;
-  }
+/* Hide any rogue pseudo-elements causing shadows or shapes */
+.carousel-dot::before,
+.carousel-dot::after {
+    display: none !important;
+}
+
+.carousel-dot.active {
+    background: var(--a2);
+    transform: none;
+    box-shadow: none;
+}
+.carousel-arrow {
+width: 44px;
+height: 44px;
+border-radius: 50%;
+background:
+linear-gradient(135deg, var(--card) 0%, color-mix(in srgb, var(--card) 95%, var(--text)) 100%);
+border: 1px solid var(--line);
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+font-size: 20px;
+font-weight: bold;
+color: var(--muted);
+box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.carousel-arrow:hover {
+background:
+linear-gradient(135deg, var(--a2) 0%, var(--a3) 100%);
+color: white;
+border-color: var(--a2);
+transform: scale(1.05);
+box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+}
+.cart-backdrop {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.4);
+z-index: 90;
+opacity: 0;
+visibility: hidden;
+transition: opacity .3s ease, visibility .3s ease;
+}
+.cart-backdrop.is-visible {
+opacity: 1;
+visibility: visible;
+}
+.cart-sidebar {
+position: fixed;
+top: 0;
+right: 0;
+width: 100%;
+max-width: 400px;
+height: 100%;
+background: var(--bg);
+border-left: 1px solid var(--line);
+z-index: 100;
+transform: translateX(100%);
+transition: transform .3s ease;
+display: flex;
+flex-direction: column;
+box-shadow: -10px 0 20px rgba(0,0,0,0.1);
+padding: 0;
+}
+.cart-sidebar.is-open {
+transform: translateX(0);
+}
+.cart-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-bottom: 1px solid var(--line);
+padding: 1rem 2rem;
+flex-shrink: 0;
+}
+.cart-items {
+list-style: none;
+padding: 1rem 2rem;
+margin: 0;
+flex-grow: 1;
+overflow-y: auto;
+display: flex;
+flex-direction: column;
+gap: 1rem;
+}
+.cart-item {
+padding: 0;
+border-bottom: none;
+}
+.cart-product-card {
+border: 1px solid var(--line);
+border-radius: 12px;
+padding: 16px;
+background: var(--card);
+box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+position: relative;
+}
+.cart-product-header {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+margin-bottom: 8px;
+}
+.cart-product-title {
+font-size: 16px;
+font-weight: 600;
+margin: 0;
+}
+.cart-product-subtitle {
+font-size: 13px;
+color: var(--muted);
+margin: 0 0 12px 0;
+font-weight: 400;
+}
+.cart-product-price {
+text-align: right;
+font-size: 15px;
+font-weight: 500;
+}
+.cart-product-remove-btn {
+background: none;
+border: none;
+font-size: 24px;
+line-height: 1;
+padding: 0;
+margin-left: 10px;
+cursor: pointer;
+color: var(--muted);
+transition: color .2s ease;
+}
+.cart-product-remove-btn:hover {
+color: var(--text);
+}
+
+.cart-total {
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-size: 18px;
+font-weight: 600;
+}
+.cart-empty-state {
+text-align: center;
+padding: 2rem;
+color: var(--muted);
+margin: auto 0;
+}
+.cart-footer {
+border-top: 1px solid var(--line);
+padding: 1rem 2rem 2rem 2rem;
+margin-top: 1rem;
+flex-shrink: 0;
+}
 </style>
 </head>
 <body>
 
-  <div class="splash-screen">
-    <div class="splash-text grad">DP MINI</div>
-  </div>
+<div class="splash-screen">
+<div class="splash-text grad">DP MINI</div>
+</div>
 
-  <div class="nav" id="main-nav">
-    <div class="container nav-inner">
-      <a href="index.html" class="logo">
-        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
-        <span>DP Biotech</span>
-      </a>
-      <ul class="nav-links">
-        <li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
-        <li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
-        <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
-        <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
-      </ul>
-      <div style="display:flex; gap:8px">
-        <a class="btn nav-btn" href="licensing.html">Licensing</a>
-        <button id="cart-btn" class="btn nav-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <path d="M16 10a4 4 0 0 1-8 0"></path>
-          </svg>
-          <span id="cart-count">0</span>
-        </button>
-        </div>
-    </div>
-    <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compare Models</a></li></ul></div></div></div>
-    <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul></div></div></div>
-    <div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Explore Software</li><li><a href="#">Imaging Suite</a></li><li><a href="#">Companion App</a></li></ul><ul class="menu-link-column"><li>For Developers</li><li><a href="#">API & SDK</a></li></ul></div></div></div>
-    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li></ul></div></div></div>
-  </div>
-  <div class="menu-backdrop"></div>
+<div class="nav" id="main-nav">
+<div class="container nav-inner">
+<a href="index.html" class="logo">
+<img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
+<span>DP Biotech</span>
+</a>
+<ul class="nav-links">
+<li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
+<li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
+<li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
+<li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
+</ul>
+<div style="display:flex; gap:8px">
+<a class="btn nav-btn" href="licensing.html">Licensing</a>
+<button id="cart-btn" class="btn nav-btn">
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+<line x1="3" y1="6" x2="21" y2="6"></line>
+<path d="M16 10a4 4 0 0 1-8 0"></path>
+</svg>
+<span id="cart-count">0</span>
+</button>
+</div>
+</div>
+<div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compare Models</a></li></ul></div></div></div>
+<div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul></div></div></div>
+<div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Explore Software</li><li><a href="#">Imaging Suite</a></li><li><a href="#">Companion App</a></li></ul><ul class="menu-link-column"><li>For Developers</li><li><a href="#">API & SDK</a></li></ul></div></div></div>
+<div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li></ul></div></div></div>
+</div>
+<div class="menu-backdrop"></div>
 
-  <div class="cart-backdrop" id="cart-backdrop"></div>
-  <div class="cart-sidebar" id="cart-sidebar">
-    <div class="cart-header">
-      <h3 style="margin:0;">Your Cart</h3>
-      <button class="btn nav-btn" id="close-cart-btn">Close</button>
-      </div>
-    <div id="cart-empty-state" class="cart-empty-state">
-      Your cart is empty.
-    </div>
-    <ul class="cart-items" id="cart-items">
-      </ul>
-    <div class="cart-footer">
-      <div class="cart-total">
-        <span>Total</span>
-        <span id="cart-total-price">€0,00</span>
-      </div>
-      <button id="checkout-btn" class="btn nav-btn primary" style="width:100%; margin-top:1rem;">Checkout</button>
-      <button id="clear-cart-btn" class="btn nav-btn" style="width:100%; margin-top:0.5rem;">Clear Cart</button>
-      </div>
-  </div>
+<div class="cart-backdrop" id="cart-backdrop"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+<div class="cart-header">
+<h3 style="margin:0;">Your Cart</h3>
+<button class="btn nav-btn" id="close-cart-btn">Close</button>
+</div>
+<div id="cart-empty-state" class="cart-empty-state">
+Your cart is empty.
+</div>
+<ul class="cart-items" id="cart-items">
+</ul>
+<div class="cart-footer">
+<div class="cart-total">
+<span>Total</span>
+<span id="cart-total-price">€0,00</span>
+</div>
+<button id="checkout-btn" class="btn nav-btn primary" style="width:100%; margin-top:1rem;">Checkout</button>
+<button id="clear-cart-btn" class="btn nav-btn" style="width:100%; margin-top:0.5rem;">Clear Cart</button>
+</div>
+</div>
 
-  <header class="snap-section" id="home">
-    <div class="container">
-      <div class="grid-2" data-stagger-children>
-        <div class="animate-item">
-          <h1 class="h1">DP Mini</h1>
-          <p class="lead">The first system to generate true 3D perception from a single smartphone sensor with <span class="grad">Fusion&nbsp;3D</span>. Depth you can feel, without bulky rigs.</p>
-          <div class="hero-cta">
-            <a href="buydpmini.html" class="btn primary">Buy DP Mini</a>
-            <a href="#features" class="btn">How it works</a>
-          </div>
-        </div>
-        <div class="product-visual animate-item">
-            <model-viewer src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope" 
-                camera-orbit="230deg 80deg 1.5m" 
-                auto-rotate 
-                camera-controls 
-                ar 
-                shadow-intensity="1"
-                shadow-softness="1" 
-                interaction-prompt="none">
-            </model-viewer>
-        </div>
-      </div>
-    </div>
-  </header>
-  
-  <section class="snap-section band" id="features">
-    <div class="container" data-stagger-children>
-        <div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
-            <h2>Advanced Features, Effortless Workflow</h2>
-            <p class="muted">Every detail of the DP Mini is engineered for performance and ease of use, putting powerful technology at your fingertips.</p>
-        </div>
-        <div class="grid-3 animate-item">
-            <div class="card">
-                <div class="icon">3D</div>
-                <h3>Active 3D Fusion</h3>
-                <p class="muted">Our single-sensor system creates true stereoscopic depth by rapidly alternating perspectives, delivering a clear and stable 3D image.</p>
-            </div>
-            <div class="card">
-                <div class="icon">VA</div>
-                <h3>Flexible Viewing Angles</h3>
-                <p class="muted">Instantly switch between a direct 0° view and a traditional 90° microscope-style view for stationary or mobile work.</p>
-            </div>
-            <div class="card">
-                <div class="icon">WD</div>
-                <h3>Optimized Working Distance</h3>
-                <p class="muted">Engineered for precision tasks, the ~30 cm working distance provides ample space for tools and hands-on manipulation.</p>
-            </div>
-            <div class="card">
-                <div class="icon">EC</div>
-                <h3>Ergonomic Controls</h3>
-                <p class="muted">The multifunction handle provides intuitive control over zoom, focus, and capture, designed for comfort during long sessions.</p>
-            </div>
-            <div class="card">
-                <div class="icon">AS</div>
-                <h3>Automatic Stabilization</h3>
-                <p class="muted">The system automatically corrects for minor movements to ensure a smooth, jitter-free viewing experience from the start.</p>
-            </div>
-            <div class="card">
-                <div class="icon">iP</div>
-                <h3>iPhone 15+ Ready</h3>
-                <p class="muted">Seamlessly connects with iPhone 15 and newer, leveraging their advanced camera systems for unparalleled image quality.</p>
-            </div>
-        </div>
-    </div>
-  </section>
-  
-  <section class="snap-section" id="modular">
-    <div class="container">
-      <div class="grid-2" data-stagger-children>
-        <div class="animate-item">
-          <div class="control-card">
-              <h3>Total Control Handle</h3>
-              <ul class="control-list">
-                  <li><div class="control-list-icon">🔎</div><span>Precise Zoom & Focus</span></li>
-                  <li><div class="control-list-icon">📸</div><span>Image & Video Capture</span></li>
-                  <li><div class="control-list-icon">💡</div><span>Brightness Adjustment</span></li>
-                  <li><div class="control-list-icon"> AR </div><span>AR Overlay Control</span></li>
-                  <li><div class="control-list-icon">📂</div><span>Load Patient Files & 3D Models</span></li>
-              </ul>
-          </div>
-        </div>
-        <div class="animate-item">
-            <h2>Stay Focused, Stay in Control</h2>
-            <p class="muted">The DP Mini's multifunction handle is your command center. Its intuitive joystick allows you to manage every critical function—from precise zoom and focus adjustments to capturing images and manipulating augmented reality overlays.</p>
-            <p class="muted">Load patient scans, 3D models, or reference images directly into your field of view. This seamless integration means you can make informed decisions without ever taking your eyes off the patient, ensuring an uninterrupted and efficient workflow.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+<header class="snap-section" id="home">
+<div class="container">
+<div class="grid-2" data-stagger-children>
+<div class="animate-item">
+<h1 class="h1">DP Mini</h1>
+<p class="lead">The first system to generate true 3D perception from a single smartphone sensor with <span class="grad">Fusion&nbsp;3D</span>. Depth you can feel, without bulky rigs.</p>
+<div class="hero-cta">
+<a href="buydpmini.html" class="btn primary">Buy DP Mini</a>
+<a href="#autofocus" class="btn">How it works</a>
+</div>
+</div>
+<div class="product-visual animate-item">
+<model-viewer src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope"
+camera-orbit="230deg 80deg 1.5m"
+auto-rotate
+camera-controls
+ar
+shadow-intensity="1"
+shadow-softness="1"
+interaction-prompt="none">
+</model-viewer>
+</div>
+</div>
+</div>
+</header>
 
-  <section class="snap-section band" id="customize">
-    <div class="container" style="text-align:center;">
-        <h3 style="margin-bottom:12px;">Customize Your DP Mini</h3>
-        <p class="muted" style="max-width:720px; margin:0 auto 24px;">Tailor the DP Mini to your specific application with a choice of professional-grade objectives and high-resolution eyepiece modules.</p>
-        <div class="grid-3">
-            <div class="card" style="text-align:left;">
-                <h4>Objectives</h4>
-                <p class="muted">Select the ideal working distance and magnification for your needs.</p>
-                <ul class="list">
-                    <li>50mm Standard Objective</li>
-                    <li>60mm Mid-Range Objective</li>
-                    <li>75mm Long-Range Objective</li>
-                </ul>
-            </div>
-            <div class="card" style="text-align:left;">
-                <h4>Eyepieces</h4>
-                <p class="muted">Choose your preferred viewing method, from direct screen use to immersive 4K.</p>
-                 <ul class="list">
-                    <li>Screen Only (No Eyepieces)</li>
-                    <li>Full HD Eyepieces (1920x1080)</li>
-                    <li>4K UHD Eyepieces</li>
-                </ul>
-            </div>
-            <div class="card" style="text-align:left;">
-                <h4>Mounting</h4>
-                <p class="muted">Ergonomic handle and support for stable, comfortable use.</p>
-                <ul class="list">
-                    <li>Ergonomic Multifunction Handle</li>
-                    <li>Articulated Arm with Clamp</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-  </section>
+<section class="snap-section" id="autofocus">
+<div class="container">
+<div class="grid-2" data-stagger-children>
+<div class="animate-item">
+<h2>Intelligent Autofocus System</h2>
+<p class="muted">The DP Mini uses advanced CMOS depth sensing to automatically detect the microscope's distance from the subject. This real-time distance data precisely calibrates the parallax between the left and right eye images displayed in the external oculars.</p>
+<p class="muted">As you move closer or further from your subject, the system instantly adjusts the stereoscopic separation, ensuring perfect 3D perception at any working distance. No manual adjustments needed—just focus on your work.</p>
+<div class="distance-controls">
+<span style="font-size: 14px; color: var(--muted); margin-right: 12px;">Distance:</span>
+<button class="distance-btn active" data-distance="near">Near (20cm)</button>
+<button class="distance-btn" data-distance="medium">Medium (30cm)</button>
+<button class="distance-btn" data-distance="far">Far (40cm)</button>
+</div>
+</div>
+<div class="animate-item">
+<div class="autofocus-demo" id="autofocus-demo">
+<div class="parallax-header" id="parallax-display">
+<div class="parallax-label">Parallax Adjustment</div>
+<div class="eye-view-container">
+<div class="eye-view left">
+<div class="parallax-indicator" id="left-indicator"></div>
+</div>
+<div class="eye-view right">
+<div class="parallax-indicator" id="right-indicator"></div>
+</div>
+</div>
+</div>
+<div class="scene-container">
+<div class="microscope-setup" id="microscope-setup">
+<div class="distance-indicator">
+<div class="distance-value" id="distance-value">20cm</div>
+<div class="distance-line" id="distance-line"></div>
+</div>
+<div class="microscope-model" id="microscope-model">
+<model-viewer
+src="dpmini.glb"
+alt="DP Mini mobile microscope"
+camera-orbit="150deg 75deg 1.9m"
+interaction-prompt="none"
+shadow-intensity="0.4"
+shadow-softness="0.5">
+</model-viewer>
+</div>
+<div class="specimen-object"></div>
+<div class="floor-base"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-  <section class="snap-section" id="tech">
-    <div class="container">
-      <div class="grid-2" data-stagger-children>
-        <div class="animate-item">
-          <h2>The magic behind Fusion&nbsp;3D</h2>
-          <p class="muted">How does it create 3D with just one camera? DP Mini rapidly captures two separate views—one for your left eye and one for your right. It then instantly combines them into a single, fluid 3D video.</p>
-          <p class="muted">This smart process creates a realistic sense of depth, making your view clear, stable, and comfortable to watch.</p>
-        </div>
-        <div class="animate-item" style="border:1px solid var(--line); border-radius:24px; aspect-ratio:4/3; display:grid; place-items:center; background:var(--card)"><strong>ACTIVE STEREO • PERFECT SYNC</strong></div>
-      </div>
-    </div>
-  </section>
-  
-  <footer>
-    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
-      <div style="display:flex; gap:8px; align-items:center"><img src="logo.png" alt="DP Biotech Logo" style="height: 36px; border-radius: 50%;">DP Biotech</div>
-      <div style="display:flex; gap:18px"><a href="#" class="muted">Privacy</a><a href="#" class="muted">Terms</a></div>
-    </div>
-  </footer>
+<section class="snap-section band" id="advanced-features">
+<div class="container" data-stagger-children>
+<div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
+</div>
+<div class="animate-item">
+<div class="feature-carousel">
+<div class="carousel-container" id="carousel-container">
+<div class="carousel-slide">
+<div class="slide-content">
+<h3>3D Model Integration</h3>
+<p class="muted">Load patient-specific 3D models directly into your microscope view. Our stereoscopic system renders different perspectives for each eye, creating true depth perception that helps you understand spatial relationships between anatomical structures.</p>
+<p class="muted">Whether it's CT reconstructions, surgical planning models, or anatomical references, see them floating in your real workspace with perfect depth and scale. This revolutionary approach keeps your focus on the patient while providing essential visual context.</p>
+<ul class="list">
+<li>CT/MRI reconstruction support</li>
+<li>Real-time model manipulation</li>
+<li>Scale and positioning controls</li>
+<li>Transparency and layering options</li>
+</ul>
+</div>
+<div class="slide-visual models-bg">
+<div class="model-viewer" id="model-animation">
+<div class="model-left">L</div>
+<div class="model-right">R</div>
+<div class="model-center">3D</div>
+</div>
+</div>
+</div>
+<div class="carousel-slide">
+<div class="slide-content">
+<h3>Integrated Radiographic Imaging</h3>
+<p class="muted">Display X-rays, CT scans, and other radiographic images directly in your microscope view. No more looking away from your patient to check monitors—critical imaging data appears exactly where you need it.</p>
+<p class="muted">The system supports multiple image formats and allows real-time switching between different views. Overlay opacity can be adjusted to blend radiographic data with your live view, providing unprecedented surgical guidance and diagnostic capabilities.</p>
+<ul class="list">
+<li>X-ray and CT scan overlay</li>
+<li>Multi-format image support</li>
+<li>Variable opacity blending</li>
+<li>Instant image switching</li>
+</ul>
+</div>
+<div class="slide-visual radiograph-bg">
+<div class="radiograph-stack" id="radiograph-animation">
+<div class="radiograph-image"></div>
+<div class="radiograph-image"></div>
+<div class="radiograph-image"></div>
+</div>
+</div>
+</div>
+<div class="carousel-slide">
+<div class="slide-content">
+<h3>NDI Screen Control & Streaming</h3>
+<p class="muted">Connect and control any NDI-enabled device directly through your microscope's handle. Stream content from surgical monitors, ultrasound machines, or any networked display right into your eyepieces.</p>
+<p class="muted">Use the microscope's joystick to zoom, pan, and navigate through streamed content without touching external devices. This seamless integration maintains sterility while giving you full control over all your digital tools and displays.</p>
+<ul class="list">
+<li>Real-time NDI streaming</li>
+<li>Joystick zoom and navigation</li>
+<li>Multi-device connectivity</li>
+<li>Sterile operation maintenance</li>
+</ul>
+</div>
+<div class="slide-visual ndi-bg">
+<div class="ndi-screen" id="ndi-animation">
+<div class="ndi-content">NDI</div>
+<div class="ndi-controls">
+<div class="ndi-btn"></div>
+<div class="ndi-btn"></div>
+<div class="ndi-btn"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="carousel-controls">
+<button class="carousel-arrow" id="prev-slide">‹</button>
+<div class="carousel-nav">
+<button class="carousel-dot active" data-slide="0"></button>
+<button class="carousel-dot" data-slide="1"></button>
+<button class="carousel-dot" data-slide="2"></button>
+</div>
+<button class="carousel-arrow" id="next-slide">›</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="snap-section" id="features">
+<div class="container" data-stagger-children>
+<div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
+<h2>Core Technical Features</h2>
+<p class="muted">Every detail of the DP Mini is engineered for performance and ease of use, putting powerful technology at your fingertips.</p>
+</div>
+<div class="grid-3 animate-item">
+<div class="card">
+<div class="icon">3D</div>
+<h3>Active 3D Fusion</h3>
+<p class="muted">Our single-sensor system creates true stereoscopic depth by rapidly alternating perspectives, delivering a clear and stable 3D image.</p>
+</div>
+<div class="card">
+<div class="icon">VA</div>
+<h3>Flexible Viewing Angles</h3>
+<p class="muted">Instantly switch between a direct 0° view and a traditional 90° microscope-style view for stationary or mobile work.</p>
+</div>
+<div class="card">
+<div class="icon">WD</div>
+<h3>Optimized Working Distance</h3>
+<p class="muted">Engineered for precision tasks, the ~30 cm working distance provides ample space for tools and hands-on manipulation.</p>
+</div>
+<div class="card">
+<div class="icon">EC</div>
+<h3>Ergonomic Controls</h3>
+<p class="muted">The multifunction handle provides intuitive control over zoom, focus, and capture, designed for comfort during long sessions.</p>
+</div>
+<div class="card">
+<div class="icon">AS</div>
+<h3>Automatic Stabilization</h3>
+<p class="muted">The system automatically corrects for minor movements to ensure a smooth, jitter-free viewing experience from the start.</p>
+</div>
+<div class="card">
+<div class="icon">iP</div>
+<h3>iPhone 15+ Ready</h3>
+<p class="muted">Seamlessly connects with iPhone 15 and newer, leveraging their advanced camera systems for unparalleled image quality.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="snap-section" id="modular">
+<div class="container">
+<div class="grid-2" data-stagger-children>
+<div class="animate-item">
+<div class="control-card">
+<h3>Total Control Handle</h3>
+<ul class="control-list">
+<li><div class="control-list-icon">🔎</div><span>Precise Zoom & Focus</span></li>
+<li><div class="control-list-icon">📸</div><span>Image & Video Capture</span></li>
+<li><div class="control-list-icon">💡</div><span>Brightness Adjustment</span></li>
+<li><div class="control-list-icon"> AR </div><span>AR Overlay Control</span></li>
+<li><div class="control-list-icon">📂</div><span>Load Patient Files & 3D Models</span></li>
+</ul>
+</div>
+</div>
+<div class="animate-item">
+<h2>Stay Focused, Stay in Control</h2>
+<p class="muted">The DP Mini's multifunction handle is your command center. Its intuitive joystick allows you to manage every critical function—from precise zoom and focus adjustments to capturing images and manipulating augmented reality overlays.</p>
+<p class="muted">Load patient scans, 3D models, or reference images directly into your field of view. This seamless integration means you can make informed decisions without ever taking your eyes off the patient, ensuring an uninterrupted and efficient workflow.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="snap-section band" id="customize">
+<div class="container" style="text-align:center;">
+<h3 style="margin-bottom:12px;">Customize Your DP Mini</h3>
+<p class="muted" style="max-width:720px; margin:0 auto 24px;">Tailor the DP Mini to your specific application with a choice of professional-grade objectives and high-resolution eyepiece modules.</p>
+<div class="grid-3">
+<div class="card" style="text-align:left;">
+<h4>Objectives</h4>
+<p class="muted">Select the ideal working distance and magnification for your needs.</p>
+<ul class="list">
+<li>50mm Standard Objective</li>
+<li>60mm Mid-Range Objective</li>
+<li>75mm Long-Range Objective</li>
+</ul>
+</div>
+<div class="card" style="text-align:left;">
+<h4>Eyepieces</h4>
+<p class="muted">Choose your preferred viewing method, from direct screen use to immersive 4K.</p>
+<ul class="list">
+<li>Screen Only (No Eyepieces)</li>
+<li>Full HD Eyepieces (1920x1080)</li>
+<li>4K UHD Eyepieces</li>
+</ul>
+</div>
+<div class="card" style="text-align:left;">
+<h4>Mounting</h4>
+<p class="muted">Ergonomic handle and support for stable, comfortable use.</p>
+<ul class="list">
+<li>Ergonomic Multifunction Handle</li>
+<li>Articulated Arm with Clamp</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<section class="snap-section" id="tech">
+<div class="container">
+<div class="grid-2" data-stagger-children>
+<div class="animate-item">
+<h2>The magic behind Fusion&nbsp;3D</h2>
+<p class="muted">How does it create 3D with just one camera? DP Mini rapidly captures two separate views—one for your left eye and one for your right. It then instantly combines them into a single, fluid 3D video.</p>
+<p class="muted">This smart process creates a realistic sense of depth, making your view clear, stable, and comfortable to watch.</p>
+</div>
+<div class="animate-item" style="border:1px solid var(--line); border-radius:24px; aspect-ratio:4/3; display:grid; place-items:center; background:var(--card)"><strong>ACTIVE STEREO • PERFECT SYNC</strong></div>
+</div>
+</div>
+</section>
+<footer>
+<div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
+<div style="display:flex; gap:8px; align-items:center"><img src="logo.png" alt="DP Biotech Logo" style="height: 36px; border-radius: 50%;">DP Biotech</div>
+<div style="display:flex; gap:18px"><a href="#" class="muted">Privacy</a><a href="#" class="muted">Terms</a></div>
+</div>
+</footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    /* ==== Animation on scroll script ==== */
-    const observerOptions = { rootMargin: '0px', threshold: 0.2 };
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                if (el.dataset.staggerChildren !== undefined) {
-                    const children = el.querySelectorAll('.animate-item');
-                    children.forEach((child, index) => {
-                        child.style.transitionDelay = `${index * 120}ms`;
-                        child.classList.add('is-visible');
-                    });
-                } else {
-                    el.classList.add('is-visible');
-                }
-                observer.unobserve(el);
-            }
-        });
-    }, observerOptions);
-    const animatedItems = document.querySelectorAll('.animate-item, [data-stagger-children]');
-    animatedItems.forEach(item => observer.observe(item));
+/* ==== Animation on scroll script ==== */
+const observerOptions = { rootMargin: '0px', threshold: 0.2 };
+const observer = new IntersectionObserver((entries, observer) => {
+entries.forEach(entry => {
+if (entry.isIntersecting) {
+const el = entry.target;
+if (el.dataset.staggerChildren !== undefined) {
+const children = el.querySelectorAll('.animate-item');
+children.forEach((child, index) => {
+child.style.transitionDelay = `${index * 120}ms`;
+child.classList.add('is-visible');
+});
+} else {
+el.classList.add('is-visible');
+}
+observer.unobserve(el);
+}
+});
+}, observerOptions);
+const animatedItems = document.querySelectorAll('.animate-item, [data-stagger-children]');
+animatedItems.forEach(item => observer.observe(item));
 
-    /* ==== Mega menu script ==== */
-    const mainNav = document.getElementById('main-nav');
-    const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
-    const backdrop = document.querySelector('.menu-backdrop');
-    let activeMenu = null, closeTimeout;
+/* ==== Improved Autofocus Demo Script ==== */
+const autofocusDemo = document.getElementById('autofocus-demo');
+const parallaxDisplay = document.getElementById('parallax-display');
+const microscopeSetup = document.getElementById('microscope-setup');
+const distanceValue = document.getElementById('distance-value');
+const distanceButtons = document.querySelectorAll('.distance-btn');
+const positions = {
+near: {
+distance: '20cm',
+position: 'position-near',
+parallax: 'parallax-near'
+},
+medium: {
+distance: '30cm',
+position: 'position-medium',
+parallax: 'parallax-medium'
+},
+far: {
+distance: '40cm',
+position: 'position-far',
+parallax: 'parallax-far'
+}
+};
+function updateAutofocusDemo(distance) {
+const pos = positions[distance];
+// Remove all position classes
+Object.values(positions).forEach(p => {
+microscopeSetup.classList.remove(p.position);
+parallaxDisplay.classList.remove(p.parallax);
+});
+// Add new position classes
+microscopeSetup.classList.add(pos.position);
+parallaxDisplay.classList.add(pos.parallax);
+// Update text values
+distanceValue.textContent = pos.distance;
+// Update button states
+distanceButtons.forEach(btn => {
+btn.classList.remove('active');
+if (btn.dataset.distance === distance) {
+btn.classList.add('active');
+}
+});
+}
+// Button event listeners
+distanceButtons.forEach(btn => {
+btn.addEventListener('click', () => {
+updateAutofocusDemo(btn.dataset.distance);
+});
+});
+// Auto-cycle through distances
+let currentDistance = 0;
+const distanceKeys = Object.keys(positions);
+// Auto-advance every 4 seconds
+setInterval(() => {
+currentDistance = (currentDistance + 1) % distanceKeys.length;
+updateAutofocusDemo(distanceKeys[currentDistance]);
+}, 4000);
+// Initialize with medium position
+updateAutofocusDemo('medium');
 
-    function openMenu(id){
-        if(activeMenu){ activeMenu.classList.remove('is-open'); }
-        const menu = document.getElementById(id);
-        if(menu){ menu.classList.add('is-open'); backdrop.classList.add('is-visible'); activeMenu = menu; }
-    }
-    function closeAll(){
-        if(activeMenu){ activeMenu.classList.remove('is-open'); }
-        backdrop.classList.remove('is-visible'); activeMenu = null;
-    }
-    triggers.forEach(t => t.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); openMenu(t.dataset.menu); }));
-    mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
-    mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+/* ==== Feature Carousel Script ==== */
+let currentSlide = 0;
+const totalSlides = 3;
+const carouselContainer = document.getElementById('carousel-container');
+const dots = document.querySelectorAll('.carousel-dot');
+const prevBtn = document.getElementById('prev-slide');
+const nextBtn = document.getElementById('next-slide');
+// Animation elements
+const modelAnimation = document.getElementById('model-animation');
+const radiographAnimation = document.getElementById('radiograph-animation');
+const ndiAnimation = document.getElementById('ndi-animation');
+// MODIFICATION: Add variables for auto-scroll management
+let autoSlideInterval;
+let autoSlideTimeout;
 
-    /* START: Cart Scripting Logic */
-    const cartBtn = document.getElementById('cart-btn');
-    const cartCountEl = document.getElementById('cart-count');
-    const cartSidebar = document.getElementById('cart-sidebar');
-    const cartBackdrop = document.getElementById('cart-backdrop');
-    const closeCartBtn = document.getElementById('close-cart-btn');
-    const cartItemsList = document.getElementById('cart-items');
-    const cartEmptyState = document.getElementById('cart-empty-state');
-    const cartTotalPriceEl = document.getElementById('cart-total-price');
-    const checkoutBtn = document.getElementById('checkout-btn');
-    const clearCartBtn = document.getElementById('clear-cart-btn');
-    let cart = [];
+function updateCarousel() {
+carouselContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+dots.forEach((dot, index) => {
+dot.classList.toggle('active', index === currentSlide);
+});
+// Reset all animations
+modelAnimation.classList.remove('active');
+radiographAnimation.classList.remove('active');
+ndiAnimation.classList.remove('active');
+// Trigger current slide animation
+setTimeout(() => {
+switch(currentSlide) {
+case 0:
+modelAnimation.classList.add('active');
+break;
+case 1:
+radiographAnimation.classList.add('active');
+break;
+case 2:
+ndiAnimation.classList.add('active');
+break;
+}
+}, 300);
+}
+function nextSlide() {
+currentSlide = (currentSlide + 1) % totalSlides;
+updateCarousel();
+}
+function prevSlide() {
+currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+updateCarousel();
+}
 
-    // --- MODIFICATION: Removed sample item logic ---
-    function initCart() {
-      const savedCart = sessionStorage.getItem('shoppingCart');
-      if (savedCart) {
-        cart = JSON.parse(savedCart);
-      }
-      updateCartUI();
-    }
+// MODIFICATION: Functions to manage auto-sliding
+function startAutoSlide() {
+clearInterval(autoSlideInterval); // Clear any existing interval
+autoSlideInterval = setInterval(nextSlide, 5000);
+}
+function resetAutoSlide() {
+clearInterval(autoSlideInterval);
+clearTimeout(autoSlideTimeout);
+autoSlideTimeout = setTimeout(startAutoSlide, 10000); // Pause for 10 seconds
+}
 
-    function saveCart() {
-      sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
-    }
+// MODIFICATION: Update event listeners to reset auto-slide
+nextBtn.addEventListener('click', () => {
+nextSlide();
+resetAutoSlide();
+});
+prevBtn.addEventListener('click', () => {
+prevSlide();
+resetAutoSlide();
+});
+dots.forEach((dot, index) => {
+dot.addEventListener('click', () => {
+currentSlide = index;
+updateCarousel();
+resetAutoSlide();
+});
+});
 
-    function formatOptions(options) {
-        if (typeof options === 'object' && options !== null) {
-            return Object.values(options).filter(val => val).join(', ');
-        }
-        return options || '';
-    }
+// Initialize first slide animation and start auto-sliding
+setTimeout(() => {
+modelAnimation.classList.add('active');
+}, 500);
+startAutoSlide(); // Start the auto-slide on load
 
-    function updateCartUI() {
-      cartItemsList.innerHTML = '';
-      let total = 0;
-      const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
 
-      if (cart.length === 0) {
-        cartEmptyState.style.display = 'block';
-        checkoutBtn.disabled = true;
-        clearCartBtn.disabled = true;
-      } else {
-        cartEmptyState.style.display = 'none';
-        checkoutBtn.disabled = false;
-        clearCartBtn.disabled = false;
+/* ==== Mega menu script ==== */
+const mainNav = document.getElementById('main-nav');
+const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
+const backdrop = document.querySelector('.menu-backdrop');
+let activeMenu = null, closeTimeout;
 
-        cart.forEach((item, index) => {
-          total += item.price;
-          const li = document.createElement('li');
-          li.className = 'cart-item';
-          
-          // --- MODIFICATION: This is the fix for the double options ---
-          const baseName = item.name.split('(')[0].trim();
-          const formattedOptions = formatOptions(item.options);
+function openMenu(id){
+if(activeMenu){ activeMenu.classList.remove('is-open'); }
+const menu = document.getElementById(id);
+if(menu){ menu.classList.add('is-open'); backdrop.classList.add('is-visible'); activeMenu = menu; }
+}
+function closeAll(){
+if(activeMenu){ activeMenu.classList.remove('is-open'); }
+backdrop.classList.remove('is-visible'); activeMenu = null;
+}
+triggers.forEach(t => t.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); openMenu(t.dataset.menu); }));
+mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
+mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
 
-          li.innerHTML = `
-            <div class="cart-product-card">
-                <div class="cart-product-header">
-                    <h4 class="cart-product-title">${baseName}</h4>
-                    <button class="cart-product-remove-btn" data-index="${index}">&times;</button>
-                </div>
-                <p class="cart-product-subtitle">${formattedOptions}</p>
-                <div class="cart-product-price">${EUR.format(item.price)}</div>
-            </div>
-          `;
-          cartItemsList.appendChild(li);
-        });
-      }
+/* Cart Scripting Logic */
+const cartBtn = document.getElementById('cart-btn');
+const cartCountEl = document.getElementById('cart-count');
+const cartSidebar = document.getElementById('cart-sidebar');
+const cartBackdrop = document.getElementById('cart-backdrop');
+const closeCartBtn = document.getElementById('close-cart-btn');
+const cartItemsList = document.getElementById('cart-items');
+const cartEmptyState = document.getElementById('cart-empty-state');
+const cartTotalPriceEl = document.getElementById('cart-total-price');
+const checkoutBtn = document.getElementById('checkout-btn');
+const clearCartBtn = document.getElementById('clear-cart-btn');
+let cart = [];
 
-      cartCountEl.textContent = cart.length;
-      cartTotalPriceEl.textContent = EUR.format(total);
-    }
-    
-    function removeFromCart(index) {
-        cart.splice(index, 1);
-        saveCart();
-        updateCartUI();
-    }
+function initCart() {
+const savedCart = sessionStorage.getItem('shoppingCart');
+if (savedCart) {
+cart = JSON.parse(savedCart);
+}
+updateCartUI();
+}
 
-    function clearCart() {
-        cart = [];
-        saveCart();
-        updateCartUI();
-    }
-    
-    cartBtn.addEventListener('click', () => {
-      cartSidebar.classList.add('is-open');
-      cartBackdrop.classList.add('is-visible');
-    });
+function saveCart() {
+sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+}
 
-    closeCartBtn.addEventListener('click', () => {
-      cartSidebar.classList.remove('is-open');
-      cartBackdrop.classList.remove('is-visible');
-    });
+function formatOptions(options) {
+if (typeof options === 'object' && options !== null) {
+return Object.values(options).filter(val => val).join(', ');
+}
+return options || '';
+}
 
-    cartBackdrop.addEventListener('click', () => {
-      cartSidebar.classList.remove('is-open');
-      cartBackdrop.classList.remove('is-visible');
-    });
-    
-    cartItemsList.addEventListener('click', (e) => {
-      if (e.target.classList.contains('cart-product-remove-btn')) {
-        const indexToRemove = e.target.dataset.index;
-        removeFromCart(indexToRemove);
-      }
-    });
+function updateCartUI() {
+cartItemsList.innerHTML = '';
+let total = 0;
+const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
 
-    clearCartBtn.addEventListener('click', clearCart);
+if (cart.length === 0) {
+cartEmptyState.style.display = 'block';
+checkoutBtn.disabled = true;
+clearCartBtn.disabled = true;
+} else {
+cartEmptyState.style.display = 'none';
+checkoutBtn.disabled = false;
+clearCartBtn.disabled = false;
 
-    checkoutBtn.addEventListener('click', () => {
-        window.location.href = 'checkout.html';
-    });
-    
-    window.onbeforeunload = function(event) {
-        if (cart.length > 0) {
-            const message = "You have items in your cart. Closing this page will clear your cart. Are you sure you want to leave?";
-            event.returnValue = message; 
-            return message;
-        }
-    };
-    
-    initCart();
-    /* END: Cart Scripting Logic */
+cart.forEach((item, index) => {
+total += item.price;
+const li = document.createElement('li');
+li.className = 'cart-item';
+const baseName = item.name.split('(')[0].trim();
+const formattedOptions = formatOptions(item.options);
+
+li.innerHTML = `
+<div class="cart-product-card">
+<div class="cart-product-header">
+<h4 class="cart-product-title">${baseName}</h4>
+<button class="cart-product-remove-btn" data-index="${index}">&times;</button>
+</div>
+<p class="cart-product-subtitle">${formattedOptions}</p>
+<div class="cart-product-price">${EUR.format(item.price)}</div>
+</div>
+`;
+cartItemsList.appendChild(li);
+});
+}
+
+cartCountEl.textContent = cart.length;
+cartTotalPriceEl.textContent = EUR.format(total);
+}
+function removeFromCart(index) {
+cart.splice(index, 1);
+saveCart();
+updateCartUI();
+}
+
+function clearCart() {
+cart = [];
+saveCart();
+updateCartUI();
+}
+cartBtn.addEventListener('click', () => {
+cartSidebar.classList.add('is-open');
+cartBackdrop.classList.add('is-visible');
+});
+
+closeCartBtn.addEventListener('click', () => {
+cartSidebar.classList.remove('is-open');
+cartBackdrop.classList.remove('is-visible');
+});
+
+cartBackdrop.addEventListener('click', () => {
+cartSidebar.classList.remove('is-open');
+cartBackdrop.classList.remove('is-visible');
+});
+cartItemsList.addEventListener('click', (e) => {
+if (e.target.classList.contains('cart-product-remove-btn')) {
+const indexToRemove = e.target.dataset.index;
+removeFromCart(indexToRemove);
+}
+});
+
+clearCartBtn.addEventListener('click', clearCart);
+
+checkoutBtn.addEventListener('click', () => {
+window.location.href = 'checkout.html';
+});
+window.onbeforeunload = function(event) {
+if (cart.length > 0) {
+const message = "You have items in your cart. Closing this page will clear your cart. Are you sure you want to leave?";
+event.returnValue = message;
+return message;
+}
+};
+initCart();
 });
 
 /* ==== SPLASH SCREEN SCRIPT ==== */
 window.addEventListener('load', () => {
-    const splash = document.querySelector('.splash-screen');
-    setTimeout(() => {
-        splash.classList.add('hidden');
-    }, 1800);
-    setTimeout(() => {
-        splash.remove();
-    }, 2600);
+const splash = document.querySelector('.splash-screen');
+if (splash) {
+setTimeout(() => {
+splash.classList.add('hidden');
+}, 800);
+setTimeout(() => {
+splash.remove();
+}, 1600);
+}
 });
 </script>
 </body>

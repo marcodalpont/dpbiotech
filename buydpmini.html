@@ -476,7 +476,7 @@
       cartTotalPriceEl.textContent = EUR.format(total);
     }
     
-    function addToCart() {
+function addToCart() {
       const objective = document.querySelector('input[name="objective"]:checked').value;
       const eyepiece = document.querySelector('input[name="eyepiece"]:checked').value;
       const mount = document.querySelector('input[name="mount"]:checked').value;
@@ -489,7 +489,9 @@
       });
 
       const newItem = {
-        id: `dpmini-${objective}-${eyepiece}-${mount}-${phone}`,
+        // --- MODIFICA FONDAMENTALE ---
+        id: 'dp-mini-base', // Ora usiamo sempre l'ID di base corretto!
+        // -----------------------------
         name: `DP Mini (${objective} Objective, ${eyepiece} Eyepiece, ${mount} Mount)`,
         price: currentTotal,
         options: { 
@@ -503,6 +505,7 @@
       cart.push(newItem);
       saveCart();
       
+      // Apre la sidebar del carrello per mostrare l'articolo aggiunto
       cartSidebar.classList.add('is-open');
       cartBackdrop.classList.add('is-visible');
     }
