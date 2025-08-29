@@ -64,10 +64,14 @@ app.get('/', (req, res) => {
 });
 
 app.post('/create-checkout-session', async (req, res) => {
-  const { cart } = req.body;
+  const { cart, customerEmail } = req.body;
 
   if (!cart || !Array.isArray(cart) || cart.length === 0) {
     return res.status(400).json({ error: 'Cart is empty or invalid.' });
+  }
+  
+  if (!customerEmail) {
+    return res.status(400).json({ error: 'Customer email is required.'});
   }
 
   try {
@@ -87,10 +91,27 @@ app.post('/create-checkout-session', async (req, res) => {
       };
     });
 
+    const customer = await stripe.customers.create({
+      email: customerEmail,
+    });
+
     const session = await stripe.checkout.sessions.create({
+      customer: customer.id,
       mode: 'payment',
-      payment_method_types: ['card', 'paypal'],
+      payment_method_types: ['card', 'paypal', 'customer_balance'],
       line_items: lineItems,
+      payment_method_options: {
+        customer_balance: {
+          funding_type: 'bank_transfer',
+          bank_transfer: {
+            type: 'eu_bank_transfer',
+            // *** ECCO LA RIGA CORRETTA ***
+            eu_bank_transfer: {
+              country: 'DE'
+            }
+          },
+        },
+      },
       shipping_address_collection: {
         allowed_countries: ['IT', 'FR', 'DE', 'ES', 'GB', 'US', 'CH', 'AT', 'BE', 'NL'],
       },

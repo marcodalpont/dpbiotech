@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Activate License - DP Biotech</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -552,6 +552,29 @@ body {
   color: var(--warning);
 }
 
+/* MODIFICA 1 (CSS): Aggiunto stile per il campo email */
+.form-group {
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+.text-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.text-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
 /* Animations */
 @keyframes slideIn {
   from {
@@ -691,6 +714,11 @@ body {
             <span>Total</span>
             <span id="total-price-display"></span>
           </div>
+
+          <div class="form-group">
+            <input type="email" id="email-input" class="text-input" placeholder="Your Email Address" required>
+          </div>
+
           <button id="pay-button" class="btn primary" style="width: 100%; margin-top: 24px; padding: 16px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect width="20" height="14" x="2" y="5" rx="2"/>
@@ -763,6 +791,10 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (licenseInfo.activeFeatures.includes(featureKey)) {
         checkbox.checked = true;
+        item.classList.add('owned');
+        item.classList.remove('selectable');
+        item.querySelector('.price-tag').innerHTML = '<span class="owned-badge">Owned</span>';
+        checkbox.disabled = true;
       }
 
       item.addEventListener('click', (e) => {
@@ -800,7 +832,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     featureItems.forEach(item => {
       const checkbox = item.querySelector('input[type="checkbox"]');
-      if (checkbox.checked) {
+      const isOwned = licenseInfo.activeFeatures.includes(item.dataset.key);
+
+      if (checkbox.checked && !isOwned) {
         const price = Number(item.dataset.price);
         const name = item.querySelector('.feature-title').textContent;
         total += price;
@@ -813,12 +847,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   payButton.addEventListener('click', async () => {
+    // MODIFICA 3 (JS): Leggi e valida l'email prima di inviare
+    const emailInput = document.getElementById('email-input');
+    const email = emailInput.value.trim();
+
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+        alert('Please enter a valid email address.');
+        emailInput.focus();
+        return;
+    }
+
     payButton.disabled = true;
     payButton.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;">
         <path d="M21 12a9 9 0 11-6.219-8.56"/>
       </svg>
       Processing...
+      <style>@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
     `;
 
     const itemsToPay = [{
@@ -829,7 +874,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     featureItems.forEach(item => {
       const checkbox = item.querySelector('input[type="checkbox"]');
-      if (checkbox.checked && !checkbox.disabled) {
+      const isOwned = licenseInfo.activeFeatures.includes(item.dataset.key);
+
+      if (checkbox.checked && !isOwned) {
         itemsToPay.push({
           id: `feature-${item.dataset.key}`,
           name: `${item.querySelector('.feature-title').textContent} Add-on`,
@@ -842,7 +889,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch(`${SERVER_URL}/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cart: itemsToPay })
+        // MODIFICA 4 (JS): Invia l'email insieme al carrello
+        body: JSON.stringify({ cart: itemsToPay, customerEmail: email })
       });
 
       const session = await response.json();
@@ -853,7 +901,6 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(session.error || 'Failed to create payment session.');
       }
     } catch (error) {
-      // Show error message with better styling
       const errorDiv = document.createElement('div');
       errorDiv.style.cssText = `
         position: fixed;

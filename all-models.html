@@ -3,266 +3,590 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>All Models — DP Biotech</title>
-<meta name="description" content="Explore our complete range of microscopes: from the revolutionary mobile series to the surgical precision of our digital and modular systems." />
+<title>Choose Your Microscope - DP Biotech</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <style>
-  /* Stili base coerenti con il sito, con una nuova palette di colori */
-  :root { 
-    --bg:#ffffff; --text:#0a0a0a; --muted:#525252; --line:#e5e5e5; --card:#fafafa; 
-    /* Nuova Palette Colori: Verde/Ciano */
-    --b1:#059669; --b2:#0d9488; --b3:#0891b2; 
-  }
-  @media (prefers-color-scheme: dark){ 
-    :root { --bg:#0a0a0a; --text:#fafafa; --muted:#cfcfcf; --line:#1f1f1f; --card:#0f0f10; } 
-  }
-  html{scroll-behavior:smooth}
-  body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text)}
-  .container{max-width:1200px; margin:0 auto; padding:0 20px}
-  
-  /* --- NAVIGATION & MENU (identico alle altre pagine) --- */
-  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
-  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
-  .logo {
-  display:flex;
-  gap:8px;
-  align-items:center;
-  font-weight:600;   /* 👈 adesso non è più 800 ma 600 */
-  letter-spacing:-0.02em;
-  font-size:18px;
+:root {
+--bg: #fafafa;
+--surface: #ffffff;
+--surface-elevated: #ffffff;
+--text: #0f0f0f;
+--text-muted: #525252;
+--text-subtle: #a1a1aa;
+--border: #e4e4e7;
+--border-subtle: #f4f4f5;
+--primary: #0070f3;
+--primary-dark: #0051cc;
+--primary-light: #3291ff;
+--secondary: #7c3aed;
+--accent-orange: #f97316;
+--accent-red: #ef4444;
+--success: #10b981;
+--shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+--shadow-md: 0 4px 16px 0 rgb(0 0 0 / 0.08);
+--shadow-lg: 0 20px 40px -12px rgb(0 0 0 / 0.15);
+--shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+--radius-sm: 8px;
+--radius-md: 12px;
+--radius-lg: 16px;
+--radius-xl: 20px;
+--blur: blur(16px);
+--gradient-bg: linear-gradient(135deg,
+ color-mix(in srgb, var(--primary) 2%, var(--bg)) 0%,
+ color-mix(in srgb, var(--secondary) 1%, var(--bg)) 50%,
+ var(--bg) 100%);
 }
 
-  .dot{width:18px; height:18px; border-radius:999px; background:linear-gradient(135deg, var(--b1), var(--b2), var(--b3))}
-  .nav a{color:inherit; text-decoration:none}
-  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
-  @media(min-width:960px){.nav-links{display:flex; align-items:center}}
-  .nav-links > li { height: 100%; display: flex; align-items: center; cursor:pointer; }
-  .dropdown-menu{opacity:0; visibility:hidden; transition:opacity .3s ease, visibility .3s ease; position:absolute; top:57px; left:0; right:0; background:var(--bg); border-top:1px solid var(--line); box-shadow:0 20px 60px rgba(0,0,0,.15); z-index:40; overflow-y:auto; max-height:calc(100vh - 57px)}
-  .dropdown-menu.is-open{opacity:1; visibility:visible}
-  .menu-content{display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; padding:32px 0}
-  .menu-main-links{list-style:none; padding:0; margin:0}
-  .menu-main-links li:first-child{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:8px; padding:0 12px}
-  .menu-main-links a{font-size:24px; font-weight:600; line-height:1.5; display:block; padding:4px 12px; border-radius:6px}
-  .menu-main-links a:hover{background:var(--card)}
-  .menu-link-column{list-style:none; padding:0; margin:0}
-  .menu-link-column li:first-child{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:14px; padding:0 12px}
-  .menu-link-column a{font-size:13px; font-weight:500; display:block; padding:8px 12px; border-radius:6px}
-  .menu-link-column a:hover{background:var(--card)}
-  .menu-backdrop{position:fixed; top:57px; left:0; right:0; bottom:0; background:rgba(0,0,0,0.4); z-index:30; opacity:0; visibility:hidden; transition:opacity .3s ease, visibility .3s ease}
-  .menu-backdrop.is-visible{opacity:1; visibility:visible}
+@media (prefers-color-scheme: dark) {
+:root {
+--bg: #0a0a0a;
+--surface: #111111;
+--surface-elevated: #1a1a1a;
+--text: #fafafa;
+--text-muted: #a1a1aa;
+--text-subtle: #71717a;
+--border: #27272a;
+--border-subtle: #1a1a1a;
+--shadow-sm: 0 1px 3px 0 rgb(255 255 255 / 0.05);
+--shadow-md: 0 4px 16px 0 rgb(255 255 255 / 0.08);
+--shadow-lg: 0 20px 40px -12px rgb(255 255 255 / 0.12);
+--shadow-xl: 0 25px 50px -12px rgb(255 255 255 / 0.2);
+--gradient-bg: linear-gradient(135deg,
+ color-mix(in srgb, var(--primary) 3%, var(--bg)) 0%,
+ color-mix(in srgb, var(--secondary) 2%, var(--bg)) 50%,
+ var(--bg) 100%);
+}
+}
 
-  /* --- Page Styles --- */
-  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration:none;}
-  .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
-  .btn.primary:hover{opacity:.92}
-  .btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
-  .hero{padding:56px 0 72px; text-align:center;}
-  h1{font-size:clamp(40px, 7vw, 80px); line-height:1.05; letter-spacing:-0.03em; font-weight:800; margin:18px 0}
-  .grad{background:linear-gradient(90deg, var(--b1), var(--b2), var(--b3)); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .lead{max-width:760px; margin:0 auto; color:var(--muted); font-size:clamp(16px, 2.5vw, 20px)}
-  section{padding:88px 0}
-  h2{font-size:clamp(28px, 4.5vw, 44px); letter-spacing:-0.02em}
-  h3{font-size:clamp(22px, 3.5vw, 32px); letter-spacing:-0.02em}
-  p.muted{color:var(--muted); line-height: 1.6;}
-  .grid-2{display:grid; gap:48px; grid-template-columns:1fr; align-items:center}
-  @media(min-width:960px){.grid-2{grid-template-columns:1fr 1fr}}
-  .grid-3{display:grid; gap:24px; grid-template-columns:1fr}
-  @media(min-width:960px){.grid-3{grid-template-columns:repeat(3, 1fr)}}
-  .visual{border:1px solid var(--line); border-radius:24px; aspect-ratio:4/3; background:var(--card); display:grid; place-items:center; font-weight:600; color:var(--muted); text-align:center; padding: 20px;}
-  .band{background:color-mix(in srgb, var(--card) 60%, transparent)}
-  .list{list-style:none; padding-left:0; margin-top:16px}
-  .list li{padding-left:1.5em; position:relative; margin-bottom:10px; color:var(--muted);}
-  .list li::before{content:'✓'; position:absolute; left:0; color:var(--b2);}
-  
-  /* Comparison Table Styles */
-  .table-wrapper{overflow-x:auto; margin-top:32px;}
-  .compare-table{width:100%; border-collapse:collapse; min-width:800px;}
-  .compare-table th, .compare-table td{padding:16px; text-align:left; border-bottom:1px solid var(--line);}
-  .compare-table th{font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted);}
-  .compare-table td strong{display:block; font-size:16px; margin-bottom:4px; color:var(--text);}
-  
-  footer{border-top:1px solid var(--line); padding:36px 0; color:var(--muted)}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: Inter, system-ui, -apple-system, sans-serif;
+background: var(--gradient-bg);
+color: var(--text);
+line-height: 1.6;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+min-height: 100vh;
+}
+
+a {
+color: inherit;
+text-decoration: none;
+}
+
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 24px;
+}
+
+.nav {
+position: sticky;
+top: 0;
+z-index: 100;
+background: color-mix(in srgb, var(--bg) 85%, transparent);
+backdrop-filter: var(--blur);
+border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+height: 72px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.logo {
+display: flex;
+gap: 12px;
+align-items: center;
+font-weight: 700;
+font-size: 20px;
+}
+
+.nav-links {
+display: none;
+gap: 20px;
+font-size: 14px;
+color: var(--text-muted);
+}
+
+@media (min-width: 1024px) {
+.nav-links {
+display: flex;
+}
+}
+
+.nav-links a:hover {
+color: var(--text);
+transition: color 0.2s ease;
+}
+
+.btn {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 10px 16px;
+border-radius: var(--radius-md);
+border: 1px solid var(--border);
+font-weight: 600;
+font-size: 13px;
+background: var(--surface);
+cursor: pointer;
+transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:hover {
+transform: translateY(-1px);
+box-shadow: var(--shadow-md);
+}
+
+.products {
+padding: 32px 0 20px;
+min-height: calc(100vh - 72px);
+display: flex;
+align-items: center;
+}
+
+.product-grid {
+display: grid;
+gap: 24px;
+grid-template-columns: 1fr 1fr 300px;
+max-width: 1200px;
+margin: 0 auto;
+width: 100%;
+align-items: stretch;
+}
+
+@media (max-width: 1023px) {
+.product-grid {
+grid-template-columns: 1fr;
+align-items: start;
+}
+}
+
+.product-card {
+background: var(--surface-elevated);
+border: 1px solid var(--border);
+border-radius: var(--radius-xl);
+padding: 32px;
+position: relative;
+transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+display: flex;
+flex-direction: column;
+height: 100%;
+overflow: hidden;
+}
+
+.product-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--primary) 3%, transparent) 0%, transparent 70%);
+opacity: 0;
+transition: opacity 0.4s ease;
+pointer-events: none;
+}
+
+.product-card:hover {
+transform: translateY(-8px) scale(1.02);
+box-shadow: var(--shadow-xl);
+border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+}
+
+.product-card:hover::before {
+opacity: 1;
+}
+
+.product-visual {
+aspect-ratio: 2/1;
+border-radius: var(--radius-lg);
+margin-bottom: 24px;
+display: grid;
+place-items: center;
+font-weight: 800;
+font-size: 20px;
+letter-spacing: -0.02em;
+color: white;
+position: relative;
+overflow: hidden;
+box-shadow: var(--shadow-md);
+transition: all 0.3s ease;
+}
+
+.product-visual::before {
+content: '';
+position: absolute;
+inset: 0;
+background:
+radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08) 0%, transparent 70%);
+z-index: 2;
+}
+
+.product-visual::after {
+content: '';
+position: absolute;
+inset: 0;
+background: linear-gradient(135deg, transparent 0%, rgba(0,0,0,0.05) 100%);
+z-index: 2;
+}
+
+.product-card:hover .product-visual {
+transform: scale(1.02);
+box-shadow: var(--shadow-lg);
+}
+
+.product-visual.dp-mini {
+background: linear-gradient(135deg, 
+color-mix(in srgb, var(--accent-orange) 80%, var(--accent-orange)), 
+color-mix(in srgb, var(--accent-red) 80%, var(--accent-red)));
+}
+
+.product-visual.dp-pro {
+background: linear-gradient(135deg, 
+color-mix(in srgb, var(--primary) 80%, var(--primary)), 
+color-mix(in srgb, var(--secondary) 80%, var(--secondary)));
+}
+
+model-viewer {
+width: 100%;
+height: 100%;
+--poster-color: transparent;
+position: relative;
+z-index: 1;
+}
+
+.product-tag {
+display: inline-block;
+background: color-mix(in srgb, var(--primary) 10%, transparent);
+color: var(--primary);
+padding: 4px 10px;
+border-radius: var(--radius-sm);
+font-size: 11px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+margin-bottom: 16px;
+}
+
+.product-title {
+font-size: 24px;
+font-weight: 800;
+letter-spacing: -0.02em;
+margin-bottom: 6px;
+}
+
+.product-pricing {
+margin-bottom: 20px;
+}
+
+.product-price {
+font-size: 28px;
+font-weight: 800;
+color: var(--text);
+margin-right: 8px;
+}
+
+.product-price-note {
+color: var(--text-muted);
+font-size: 14px;
+font-weight: 500;
+}
+
+.product-info {
+flex-grow: 1;
+display: flex;
+flex-direction: column;
+}
+
+.product-features {
+list-style: none;
+margin: 0 0 24px 0;
+flex-grow: 1;
+}
+
+.product-features li {
+display: flex;
+align-items: flex-start;
+gap: 10px;
+margin-bottom: 12px;
+color: var(--text-muted);
+font-size: 14px;
+line-height: 1.4;
+}
+
+.product-features li::before {
+content: '✓';
+color: var(--success);
+font-weight: 800;
+font-size: 14px;
+flex-shrink: 0;
+margin-top: 1px;
+}
+
+.product-action {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+padding: 12px 20px;
+border-radius: var(--radius-md);
+font-weight: 700;
+font-size: 15px;
+text-decoration: none;
+transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+border: none;
+margin-top: auto;
+}
+
+.product-action:hover {
+transform: translateY(-1px);
+box-shadow: var(--shadow-lg);
+opacity: 0.9;
+}
+
+.product-card:first-child .product-action {
+background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+color: white;
+}
+
+.product-card:first-child .product-action:hover {
+background: linear-gradient(135deg, #ea580c, #dc2626);
+}
+
+.product-card:nth-child(2) .product-action {
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+}
+
+.product-card:nth-child(2) .product-action:hover {
+background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+}
+
+.comparison-hint {
+background: linear-gradient(135deg,
+ color-mix(in srgb, var(--primary) 4%, var(--surface-elevated)) 0%,
+ var(--surface-elevated) 100%);
+border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
+border-radius: var(--radius-xl);
+padding: 32px;
+height: fit-content;
+margin-top: 40px;
+position: relative;
+overflow: hidden;
+transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.comparison-hint::before {
+content: '';
+position: absolute;
+top: 0;
+right: 0;
+width: 100px;
+height: 100px;
+background: radial-gradient(circle, color-mix(in srgb, var(--primary) 8%, transparent) 0%, transparent 70%);
+border-radius: 50%;
+transform: translate(30px, -30px);
+}
+
+.comparison-hint:hover {
+transform: translateY(-2px);
+box-shadow: var(--shadow-lg);
+border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+}
+
+.comparison-hint h3 {
+font-size: 20px;
+font-weight: 800;
+margin-bottom: 12px;
+color: var(--text);
+position: relative;
+z-index: 2;
+}
+
+.comparison-hint p {
+color: var(--text-muted);
+margin-bottom: 20px;
+font-size: 15px;
+line-height: 1.6;
+position: relative;
+z-index: 2;
+}
+
+.comparison-hint a {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 12px 24px;
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+font-weight: 700;
+font-size: 14px;
+text-decoration: none;
+border-radius: var(--radius-md);
+transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+position: relative;
+z-index: 2;
+box-shadow: var(--shadow-sm);
+}
+
+.comparison-hint a:hover {
+transform: translateY(-1px);
+box-shadow: var(--shadow-md);
+background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+}
+
+@media (max-width: 1023px) {
+.comparison-hint {
+margin-top: 24px;
+}
+}
+
+.fade-in {
+opacity: 0;
+transform: translateY(32px);
+animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.fade-in:nth-child(1) { animation-delay: 0.1s; }
+.fade-in:nth-child(2) { animation-delay: 0.2s; }
+.fade-in:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+@media (max-width: 767px) {
+.product-grid {
+gap: 32px;
+}
+
+.product-card {
+padding: 32px;
+}
+
+.product-title {
+font-size: 28px;
+}
+
+.product-price {
+font-size: 32px;
+}
+}
 </style>
 </head>
 <body>
-  <div class="nav" id="main-nav">
-    <div class="container nav-inner">
-      <a href="index.html" class="logo">
-  <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
-  <span>DP Biotech</span>
+
+<nav class="nav">
+<div class="container nav-inner">
+<a href="index.html" class="logo">
+<img src="logo.png" alt="DP Biotech" style="height: 40px; border-radius: 50%;">
+<span>DP Biotech</span>
 </a>
+<div style="display: flex; gap: 16px; align-items: center;">
+<div class="nav-links">
+<a href="index.html#features">Features</a>
+<a href="DPMini.html">DP Mini</a>
+<a href="DPPro.html">DP Pro</a>
+</div>
+<a class="btn" href="mailto:info@dpbiotech.example">Contact</a>
+</div>
+</div>
+</nav>
 
-      <ul class="nav-links">
-        <li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
-        <li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
-        <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
-        <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
-      </ul>
-      <div style="display:flex; gap:8px">
-        <a class="btn primary" href="buy.html">Buy Now</a>
-      </div>
-    </div>
-    <div id="microscopes-menu" class="dropdown-menu">
-      <div class="container">
-        <div class="menu-content">
-          <ul class="menu-main-links">
-            <li>Shop Microscopes</li>
-            <li><a href="DPMini.html">DP Mini</a></li>
-            <li><a href="DPPro.html">DP Pro</a></li>
-            <li><a href="all-models.html">All Models</a></li>
-          </ul>
-          <ul class="menu-link-column">
-            <li>Quick Links</li>
-            <li><a href="#compare">Compare Models</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul></div></div></div>
-    <div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Explore Software</li><li><a href="#">Imaging Suite</a></li><li><a href="#">Companion App</a></li></ul><ul class="menu-link-column"><li>For Developers</li><li><a href="#">API & SDK</a></li></ul></div></div></div>
-    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li></ul></div></div></div>
-  </div>
-  <div class="menu-backdrop"></div>
+<main class="products">
+<div class="container">
+<div class="product-grid">
 
-  <header class="hero">
-    <div class="container">
-      <h1>Our Microscope <span class="grad">Lineup</span></h1>
-      <p class="lead">Engineered for precision, built for the future. Discover the perfect solution for your needs, from mobile diagnostics to the most complex surgical procedures.</p>
-    </div>
-  </header>
+<article class="product-card fade-in">
+<span class="product-tag">Mobile Series</span>
+<div class="product-visual dp-mini">
+<model-viewer
+src="dpmini.glb"
+ios-src="dpmini.usdz"
+alt="DP Mini surgical microscope"
+camera-orbit="230deg 80deg 1.5m"
+auto-rotate
+shadow-intensity="1"
+shadow-softness="1"
+interaction-prompt="none"
+environment-image="neutral">
+</model-viewer>
+</div>
+<div class="product-info">
+<h2 class="product-title">DP Mini</h2>
+<div class="product-pricing">
+<span class="product-price">€2,990</span>
+<span class="product-price-note">starting price</span>
+</div>
+<ul class="product-features">
+<li>Active 3D Fusion from single smartphone sensor</li>
+<li>Direct (0°) or microscope-style (90°) viewing</li>
+<li>Ergonomic handle with intuitive controls</li>
+<li>Full augmented reality integration</li>
+<li>Ultra-portable and lightweight design</li>
+<li>iPhone 15+ compatibility</li>
+</ul>
+</div>
+<a class="product-action" href="buydpmini.html">Configure DP Mini</a>
+</article>
 
-  <section>
-    <div class="container">
-      <div class="grid-2">
-        <div>
-          <span class="muted">Mobile Series</span>
-          <h2>DP Mini</h2>
-          <p class="muted">The first system to turn a smartphone into a true stereoscopic microscope. Using an innovative optical architecture, it captures 3D images from a single mobile sensor, offering unprecedented portability and quality.</p>
-          <ul class="list">
-            <li>Active stereoscopic system that acquires alternate images from two distinct optical paths using a single mobile sensor.</li>
-            <li>Compact optical architecture with a beam splitter and two electro-optical shutters to separate the channels.</li>
-            <li>Optional 90° viewing angle via a pentaprism, for ergonomics similar to a traditional microscope.</li>
-            <li>Full integration with Augmented and Mixed Reality to overlay 3D models and clinical data.</li>
-          </ul>
-          <div style="margin-top:24px"><a href="DPMini.html" class="btn primary">Learn More about DP Mini</a></div>
-        </div>
-        <div class="visual">DP Mini<br>Mobile Stereoscopic System</div>
-      </div>
-    </div>
-  </section>
+<article class="product-card fade-in">
+<span class="product-tag">Digital Surgery Series</span>
+<div class="product-visual dp-pro">
+<model-viewer
+src="dppro.glb"
+ios-src="dppro.usdz"
+alt="DP Pro surgical microscope"
+camera-orbit="10deg 75deg 105%"
+auto-rotate
+shadow-intensity="1"
+shadow-softness="1"
+interaction-prompt="none"
+environment-image="neutral">
+</model-viewer>
+</div>
+<div class="product-info">
+<h2 class="product-title">DP Pro</h2>
+<div class="product-pricing">
+<span class="product-price">€8,990</span>
+<span class="product-price-note">starting price</span>
+</div>
+<ul class="product-features">
+<li>3-axis gimbal stabilization system</li>
+<li>Dual-segment articulated robotic arm</li>
+<li>AI-powered surgical guidance integration</li>
+<li>Digital control with pressure-sensitive oculars</li>
+<li>Professional surgical suite compatibility</li>
+<li>Advanced imaging and documentation</li>
+</ul>
+</div>
+<a class="product-action" href="buydppro.html">Configure DP Pro</a>
+</article>
 
-  <section class="band">
-    <div class="container" style="text-align:center;">
-        <h3 style="margin-bottom:12px;">Customize Your DP Mini</h3>
-        <p class="muted" style="max-width:720px; margin:0 auto 24px;">Tailor the DP Mini to your specific application with a choice of professional-grade objectives and high-resolution eyepiece modules.</p>
-        <div class="grid-3">
-            <div class="card" style="text-align:left;">
-                <h4>Objectives</h4>
-                <p class="muted">Select the ideal working distance and magnification for your needs.</p>
-                <ul class="list">
-                    <li>50mm Standard Objective</li>
-                    <li>60mm Mid-Range Objective</li>
-                    <li>75mm Long-Range Objective</li>
-                </ul>
-            </div>
-            <div class="card" style="text-align:left;">
-                <h4>Eyepieces</h4>
-                <p class="muted">Choose your preferred viewing method, from direct screen use to immersive 4K.</p>
-                 <ul class="list">
-                    <li>Screen Only (No Eyepieces)</li>
-                    <li>Full HD Eyepieces (1920x1080)</li>
-                    <li>4K UHD Eyepieces</li>
-                </ul>
-            </div>
-            <div class="card" style="text-align:left;">
-                <h4>Mounting</h4>
-                <p class="muted">Ergonomic handle and support for stable, comfortable use.</p>
-                <ul class="list">
-                    <li>Ergonomic Multifunction Handle</li>
-                    <li>Articulated Arm with Clamp</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-  </section>
+<div class="comparison-hint fade-in">
+<h3>Need Help Deciding?</h3>
+<p>Our team can help you choose the right microscope for your specific needs and workflow requirements.</p>
+<a href="consultation.html">Schedule a Consultation</a>
+</div>
 
-  <section>
-    <div class="container">
-      <div class="grid-2">
-        <div class="visual">DP Pro<br>Digital Surgical Microscope</div>
-        <div>
-          <span class="muted">Digital Surgical Series</span>
-          <h2>DP Pro</h2>
-          <p class="muted">A revolutionary digital surgical microscope that redefines stability, control, and ergonomics. The optical body moves independently on a gimbal stabilization system, offering unparalleled precision.</p>
-          <ul class="list">
-            <li>Three-axis gimbal stabilization (roll, pitch, yaw) keeps the optical body perfectly steady, regardless of arm movements.</li>
-            <li>Articulated, extensible arm for flexible positioning without disturbing the patient.</li>
-            <li>Intuitive control via pressure sensors integrated into the oculars or a multifunction joystick.</li>
-            <li>Native integration with Artificial Intelligence for anatomical structure recognition and surgical guidance.</li>
-          </ul>
-          <div style="margin-top:24px"><a href="DPPro.html" class="btn primary">Learn More about DP Pro</a></div>
-        </div>
-      </div>
-    </div>
-  </section>
+</div>
+</div>
+</main>
 
-  <section id="contact">
-      <div class="container" style="text-align:center">
-          <h2>Have Questions?</h2>
-          <p class="lead" style="margin-bottom:24px">Our team of specialists is ready to help you find the right microscope for your needs. Contact us for a consultation or a personalized demo.</p>
-          <a href="mailto:info@dpbiotech.example" class="btn primary">Request a Demo</a>
-      </div>
-  </section>
-
-  <footer>
-    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
-      <div style="display:flex; gap:8px; align-items:center"><img src="logo.png" alt="DP Biotech Logo" style="height: 36px; border-radius: 50%;">DP Biotech</div>
-      <div style="display:flex; gap:18px"><a href="#" class="muted">Privacy</a><a href="#" class="muted">Terms</a></div>
-    </div>
-  </footer>
-  
-<script>
-// --- MEGA MENU SCRIPT ---
-document.addEventListener('DOMContentLoaded', () => {
-    const mainNav = document.getElementById('main-nav');
-    const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
-    const backdrop = document.querySelector('.menu-backdrop');
-    let activeMenu = null;
-    let closeTimeout;
-
-    function openMenu(menuId) {
-        if (activeMenu) { activeMenu.classList.remove('is-open'); }
-        const menu = document.getElementById(menuId);
-        if (menu) {
-            menu.classList.add('is-open');
-            backdrop.classList.add('is-visible');
-            activeMenu = menu;
-        }
-    }
-
-    function closeAllMenus() {
-        if (activeMenu) { activeMenu.classList.remove('is-open'); }
-        backdrop.classList.remove('is-visible');
-        activeMenu = null;
-    }
-
-    triggers.forEach(trigger => {
-        trigger.addEventListener('mouseenter', () => {
-            clearTimeout(closeTimeout);
-            openMenu(trigger.dataset.menu);
-        });
-    });
-
-    mainNav.addEventListener('mouseleave', () => {
-        closeTimeout = setTimeout(closeAllMenus, 200);
-    });
-
-    mainNav.addEventListener('mouseenter', () => {
-        clearTimeout(closeTimeout);
-    });
-});
-</script>
 </body>
 </html>

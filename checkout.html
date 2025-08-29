@@ -57,6 +57,25 @@
   .summary-row.total { font-size: 18px; font-weight: 700; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); }
   .summary-box .btn.primary { width: 100%; padding: 14px; font-size: 16px; margin-top: 24px; }
   .empty-cart-container { text-align: center; padding: 80px 20px; margin-top: 48px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; }
+  
+  /* MODIFICA 1: Stile per il campo di input dell'email */
+  .form-group { margin-bottom: 16px; margin-top: 24px; }
+  .text-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      box-sizing: border-box;
+  }
+  .text-input:focus {
+      outline: none;
+      border-color: var(--a2);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--a2) 20%, transparent);
+  }
 </style>
 </head>
 <body>
@@ -81,8 +100,6 @@
     let cart = [];
     const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
 
-    // L'indirizzo del tuo server pubblicato su Render.
-    // Assicurati che questo sia l'URL corretto che ti ha dato Render.
     const SERVER_URL = 'https://server-pagamenti-dp.onrender.com';
 
     function loadCart() {
@@ -202,39 +219,53 @@
                 <span>Total</span>
                 <span>${EUR.format(total)}</span>
               </div>
+              
+              <div class="form-group">
+                <input type="email" id="email-input" class="text-input" placeholder="Your Email Address" required>
+              </div>
+
               <button id="checkout-button" class="btn primary">Proceed to Payment</button>
             </div>
           </aside>
         </div>
       `;
       
-      // Logica per gestire il click sul pulsante di pagamento
       const checkoutButton = document.getElementById('checkout-button');
       checkoutButton.addEventListener('click', async () => {
+          // MODIFICA 3: Leggi e valida l'email prima di inviare
+          const emailInput = document.getElementById('email-input');
+          const email = emailInput.value.trim();
+
+if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+              alert('Please enter a valid email address.');
+              emailInput.focus();
+              return;
+          }
+
           checkoutButton.disabled = true;
-          checkoutButton.textContent = 'Reindirizzamento al pagamento...';
+          checkoutButton.textContent = 'Redirecting to payment...';
 
           try {
               const response = await fetch(`${SERVER_URL}/create-checkout-session`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ cart: cart })
+                  // MODIFICA 4: Invia l'email insieme al carrello
+                  body: JSON.stringify({ cart: cart, customerEmail: email })
               });
               
               const session = await response.json();
 
               if (session.url) {
-                  // Reindirizza l'utente alla pagina di pagamento sicura di Stripe
                   window.location.href = session.url;
               } else {
-                  alert('Errore: ' + (session.error || 'Impossibile creare la sessione di pagamento.'));
+                  alert('Error: ' + (session.error || 'Could not create payment session.'));
                   checkoutButton.disabled = false;
                   checkoutButton.textContent = 'Proceed to Payment';
               }
 
           } catch (error) {
-              console.error('Errore:', error);
-              alert('Impossibile contattare il server di pagamento. Riprova più tardi.');
+              console.error('Error:', error);
+              alert('Could not contact the payment server. Please try again later.');
               checkoutButton.disabled = false;
               checkoutButton.textContent = 'Proceed to Payment';
           }

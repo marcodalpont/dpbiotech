@@ -254,40 +254,21 @@ align-items: center;
 justify-content: space-between;
 }
 
-/* MODIFICATION: Prettier Floor/Base */
 .floor-base {
-position: absolute;
-bottom: 20px;
-left: 50%;
-transform: translateX(-50%);
-width: 200px;
-height: 12px;
-background: var(--line);
-border-radius: 6px;
-box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 12px;
+  /* Modifica qui: Scurisco il colore di sfondo */
+  background: color-mix(in srgb, var(--line) 80%, black); /* Rende il colore più scuro del 20% rispetto al nero */
+  /* oppure */
+  /* background: #a0a0a0; */ /* Un grigio più scuro fisso */
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(80, 77, 77, 0.05);
 }
 
-/* MODIFICATION: Prettier Specimen Object */
-.specimen-object {
-position: absolute;
-bottom: 30px; /* Adjusted to be shorter and sit on the base */
-left: 50%;
-transform: translateX(-50%);
-width: 100px; /* Slightly wider */
-height: 30px; /* Much shorter */
-background: linear-gradient(135deg, #d4d4d8 0%, #e5e5e5 100%); /* Simpler gradient */
-border-radius: 6px;
-box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-display: flex;
-align-items: center;
-justify-content: center;
-color: var(--muted);
-font-size: 10px;
-font-weight: 600;
-overflow: hidden;
-border: 1px solid var(--line);
-letter-spacing: 0.5px;
-}
 .specimen-object::before {
 background-color: transparent; /* No background for text */
 padding: 0;
@@ -926,7 +907,7 @@ interaction-prompt="none">
 <div class="container">
 <div class="grid-2" data-stagger-children>
 <div class="animate-item">
-<h2>Intelligent Autofocus System</h2>
+<h2>Intelligent Parallax System</h2>
 <p class="muted">The DP Mini uses advanced CMOS depth sensing to automatically detect the microscope's distance from the subject. This real-time distance data precisely calibrates the parallax between the left and right eye images displayed in the external oculars.</p>
 <p class="muted">As you move closer or further from your subject, the system instantly adjusts the stereoscopic separation, ensuring perfect 3D perception at any working distance. No manual adjustments needed—just focus on your work.</p>
 <div class="distance-controls">
@@ -1158,18 +1139,6 @@ shadow-softness="0.5">
 </div>
 </section>
 
-<section class="snap-section" id="tech">
-<div class="container">
-<div class="grid-2" data-stagger-children>
-<div class="animate-item">
-<h2>The magic behind Fusion&nbsp;3D</h2>
-<p class="muted">How does it create 3D with just one camera? DP Mini rapidly captures two separate views—one for your left eye and one for your right. It then instantly combines them into a single, fluid 3D video.</p>
-<p class="muted">This smart process creates a realistic sense of depth, making your view clear, stable, and comfortable to watch.</p>
-</div>
-<div class="animate-item" style="border:1px solid var(--line); border-radius:24px; aspect-ratio:4/3; display:grid; place-items:center; background:var(--card)"><strong>ACTIVE STEREO • PERFECT SYNC</strong></div>
-</div>
-</div>
-</section>
 <footer>
 <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
 <div style="display:flex; gap:8px; align-items:center"><img src="logo.png" alt="DP Biotech Logo" style="height: 36px; border-radius: 50%;">DP Biotech</div>
