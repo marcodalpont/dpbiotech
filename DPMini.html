@@ -4,6 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DP Mini — Fusion 3D Mobile Microscope</title>
+<script>
+    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
 <meta name="description" content="DP Mini brings true depth to mobile imaging with Fusion 3D — real 3D perception from a single smartphone sensor. Lightweight. Fast. Clinic-ready." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

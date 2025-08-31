@@ -4,6 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DP Pro — Digital Surgical Microscope</title>
+<script>
+    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
 <meta name="description" content="Revolutionary digital surgical microscope with gimbal stabilizer and articulated arm. Perfect stabilization, precise control, and AI integration for surgical excellence." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
