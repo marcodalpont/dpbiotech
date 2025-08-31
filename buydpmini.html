@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Buy DP Mini - DP Biotech</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <style>
@@ -294,7 +294,7 @@
         <section class="viewer">
             <h1>Configure your DP Mini</h1>
             <div class="viewer-frame">
-              <model-viewer src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope" 
+              <model-viewer id="product-viewer" src="75mm4K.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope" 
                   camera-controls ar shadow-intensity="1" camera-orbit="230deg 80deg 1.5m" interaction-prompt="none">
               </model-viewer>
             </div>
@@ -324,27 +324,29 @@
             <div class="option-group">
             <div class="group-header"><strong>Objective</strong><small>Select working distance</small></div>
             <div class="option-list" id="objective-options">
-                <label class="choice" data-price="0"><input type="radio" name="objective" value="50mm" checked><div class="choice-details"><strong>50mm Standard Objective</strong><small>Ideal for close-up work, maximum magnification.</small></div><span class="price-delta">Included</span></label>
+                <label class="choice" data-price="0"><input type="radio" name="objective" value="50mm"><div class="choice-details"><strong>50mm Standard Objective</strong><small>Ideal for close-up work, maximum magnification.</small></div><span class="price-delta">Included</span></label>
                 <label class="choice" data-price="290"><input type="radio" name="objective" value="60mm"><div class="choice-details"><strong>60mm Mid-Range Objective</strong><small>Balanced distance and magnification.</small></div><span class="price-delta">+ €290</span></label>
-                <label class="choice" data-price="540"><input type="radio" name="objective" value="75mm"><div class="choice-details"><strong>75mm Long-Range Objective</strong><small>Maximum working space for tools.</small></div><span class="price-delta">+ €540</span></label>
+                <label class="choice" data-price="540"><input type="radio" name="objective" value="75mm" checked><div class="choice-details"><strong>75mm Long-Range Objective</strong><small>Maximum working space for tools.</small></div><span class="price-delta">+ €540</span></label>
             </div>
             </div>
 
             <div class="option-group">
             <div class="group-header"><strong>Eyepieces</strong><small>Choose your viewing method</small></div>
             <div class="option-list" id="eyepiece-options">
-                <label class="choice" data-price="0"><input type="radio" name="eyepiece" value="Screen" checked><div class="choice-details"><strong>Screen Only</strong><small>Use your smartphone screen for direct viewing.</small></div><span class="price-delta">Included</span></label>
+                <label class="choice" data-price="0"><input type="radio" name="eyepiece" value="Screen"><div class="choice-details"><strong>Screen Only</strong><small>Use your smartphone screen for direct viewing.</small></div><span class="price-delta">Included</span></label>
                 <label class="choice" data-price="1540"><input type="radio" name="eyepiece" value="Full HD"><div class="choice-details"><strong>Full HD Eyepieces</strong><small>Immersive 1920x1080 resolution per eye.</small></div><span class="price-delta">+ €1540</span></label>
-                <label class="choice" data-price="2085"><input type="radio" name="eyepiece" value="4K UHD"><div class="choice-details"><strong>4K UHD Eyepieces</strong><small>Ultra-high resolution for critical detail.</small></div><span class="price-delta">+ €2085</span></label>
+                <label class="choice" data-price="2085"><input type="radio" name="eyepiece" value="4K UHD" checked><div class="choice-details"><strong>4K UHD Eyepieces</strong><small>Ultra-high resolution for critical detail.</small></div><span class="price-delta">+ €2085</span></label>
             </div>
             </div>
 
             <div class="option-group">
-            <div class="group-header"><strong>Mounting</strong><small>Select your setup</small></div>
-            <div class="option-list" id="mount-options">
-                <label class="choice" data-price="0"><input type="radio" name="mount" value="Handle" checked><div class="choice-details"><strong>Ergonomic Handle</strong><small>For handheld operation with multifunction controls.</small></div><span class="price-delta">Included</span></label>
-                <label class="choice" data-price="750"><input type="radio" name="mount" value="Arm"><div class="choice-details"><strong>Articulated Arm with Clamp</strong><small>For stable, hands-free positioning.</small></div><span class="price-delta">+ €750</span></label>
-            </div>
+                <div class="group-header"><strong>Mounting</strong><small>Select your setup</small></div>
+                <div class="option-list" id="mount-options">
+                    <label class="choice" data-price="0"><input type="radio" name="mount" value="Desk Mount" checked><div class="choice-details"><strong>Desk Mount</strong><small>For stable positioning on a desk or workbench.</small></div><span class="price-delta">Included</span></label>
+                    <label class="choice" data-price="0"><input type="radio" name="mount" value="Floor Stand"><div class="choice-details"><strong>Floor Stand</strong><small>Provides a freestanding, adjustable setup.</small></div><span class="price-delta">Included</span></label>
+                    <label class="choice" data-price="0"><input type="radio" name="mount" value="Wall Mount"><div class="choice-details"><strong>Wall Mount</strong><small>For a fixed, space-saving installation.</small></div><span class="price-delta">Included</span></label>
+                    <label class="choice" data-price="0"><input type="radio" name="mount" value="Ceiling Mount"><div class="choice-details"><strong>Ceiling Mount</strong><small>Offers an overhead, unobstructed view.</small></div><span class="price-delta">Included</span></label>
+                </div>
             </div>
         </aside>
     </div>
@@ -362,12 +364,38 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // --- MODIFICATION START: Model Viewer Script ---
+    const modelViewer = document.getElementById('product-viewer');
+    
+    function updateModelViewer() {
+        const objective = document.querySelector('input[name="objective"]:checked').value;
+        const eyepiece = document.querySelector('input[name="eyepiece"]:checked').value;
+
+        // Map eyepiece value to the string used in the filename
+        let eyepieceFilePart = '';
+        switch(eyepiece) {
+            case 'Full HD':
+                eyepieceFilePart = '1920x1080';
+                break;
+            case '4K UHD':
+                eyepieceFilePart = '4K';
+                break;
+            case 'Screen':
+                // Assuming a filename for "Screen Only", adjust if needed
+                eyepieceFilePart = 'Screen'; 
+                break;
+        }
+
+        const newModelSrc = `${objective}${eyepieceFilePart}.glb`;
+        modelViewer.src = newModelSrc;
+    }
+    // --- MODIFICATION END: Model Viewer Script ---
+
     const basePrice = 14900;
     const choices = document.querySelectorAll('.choice');
     const totalPriceDisplay = document.getElementById('total-price-display');
     const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
 
-    // --- MODIFICATION START: Upgraded Cart Script ---
     const cartBtn = document.getElementById('cart-btn');
     const cartCountEl = document.getElementById('cart-count');
     const addToCartBtn = document.getElementById('addToCartBtn');
@@ -477,7 +505,7 @@
       cartTotalPriceEl.textContent = EUR.format(total);
     }
     
-function addToCart() {
+    function addToCart() {
       const objective = document.querySelector('input[name="objective"]:checked').value;
       const eyepiece = document.querySelector('input[name="eyepiece"]:checked').value;
       const mount = document.querySelector('input[name="mount"]:checked').value;
@@ -490,7 +518,7 @@ function addToCart() {
       });
 
       const newItem = {
-        id: `dp-mini-${phone}-${objective}-${eyepiece}-${mount}`, // Creates a unique ID from the options
+        id: `dp-mini-${phone}-${objective}-${eyepiece}-${mount}`,
         name: `DP Mini (${objective} Objective, ${eyepiece} Eyepiece, ${mount} Mount)`,
         price: currentTotal,
         options: { 
@@ -504,7 +532,6 @@ function addToCart() {
       cart.push(newItem);
       saveCart();
       
-      // Apre la sidebar del carrello per mostrare l'articolo aggiunto
       cartSidebar.classList.add('is-open');
       cartBackdrop.classList.add('is-visible');
     }
@@ -538,7 +565,11 @@ function addToCart() {
     });
 
     document.body.addEventListener('change', (event) => {
-      if (event.target.type === 'radio') {
+      if (event.target.name === 'objective' || event.target.name === 'eyepiece') {
+        updateSelectionUI();
+        calculateTotal();
+        updateModelViewer(); // Call the function to update the 3D model
+      } else if (event.target.type === 'radio') {
         updateSelectionUI();
         calculateTotal();
       }
@@ -599,7 +630,6 @@ function addToCart() {
     initCart();
     updateSelectionUI();
     calculateTotal();
-    // --- MODIFICATION END ---
   });
 </script>
 </body>
