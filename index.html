@@ -140,14 +140,13 @@
   }
   
   .mobile-menu-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 16px;
-    padding: 0 4px;
-    text-align: center;
+  font-size: 20px;
+  font-weight: 900;
+  color: rgb(39, 39, 150);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+  padding: 0 4px;
   }
   
   .mobile-menu-links {
@@ -159,9 +158,9 @@
   .mobile-menu-links a {
     display: block;
     padding: 16px 4px;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 500;
-    color: var(--text);
+    color: rgb(39, 39, 39);
     text-decoration: none;
     border-bottom: 1px solid var(--line);
     transition: color 0.2s ease;
@@ -620,7 +619,10 @@
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobile-menu">
     <div class="mobile-menu-section">
-      <div class="mobile-menu-title">Microscopes</div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="mobile-menu-title">Microscopes</div>
+        <button id="close-mobile-menu" style="background: none; border: none; font-size: 30px; cursor: pointer; color: var(--text); padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
+      </div>
       <ul class="mobile-menu-links">
         <li><a href="DPMini.html">DP Mini</a></li>
         <li><a href="DPPro.html">DP Pro</a></li>
@@ -860,6 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- MOBILE HAMBURGER MENU SCRIPT ---
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const mobileMenu = document.getElementById('mobile-menu');
+    const closeMobileMenuBtn = document.getElementById('close-mobile-menu');
     const body = document.body;
 
     // Show desktop buttons on larger screens
@@ -872,6 +875,12 @@ document.addEventListener('DOMContentLoaded', () => {
             licensingBtn.style.display = 'none';
             hamburgerBtn.style.display = 'flex';
         }
+    }
+
+    function closeMobileMenu() {
+        hamburgerBtn.classList.remove('is-open');
+        mobileMenu.classList.remove('is-open');
+        body.style.overflow = '';
     }
 
     // Initial check and event listener for resize
@@ -890,21 +899,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Close button functionality
+    closeMobileMenuBtn.addEventListener('click', closeMobileMenu);
+
     // Close mobile menu when clicking on links
     mobileMenu.addEventListener('click', (e) => {
         if (e.target.tagName === 'A') {
-            hamburgerBtn.classList.remove('is-open');
-            mobileMenu.classList.remove('is-open');
-            body.style.overflow = '';
+            closeMobileMenu();
         }
     });
 
     // Close mobile menu on window resize to desktop
     window.addEventListener('resize', () => {
         if (window.innerWidth >= 960) {
-            hamburgerBtn.classList.remove('is-open');
-            mobileMenu.classList.remove('is-open');
-            body.style.overflow = '';
+            closeMobileMenu();
         }
     });
 
