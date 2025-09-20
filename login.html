@@ -106,36 +106,52 @@
     <h1>Restricted Access</h1>
     <p>This website is still being developed. Enter password to continue</p>
     
-    <form id="login-form">
-      <input type="password" id="password-input" class="input-field" placeholder="Password" required>
-      <button type="submit" class="btn">Login</button>
+    <div id="login-box" role="form" aria-labelledby="login-title">
+      <input
+        id="access-key"
+        class="input-field"
+        type="text"
+        placeholder="Enter here"
+        inputmode="none"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="Access key"
+        style="-webkit-text-security: disc;"
+      >
+      <button id="login-btn" type="button" class="btn">Login</button>
       <p id="error-message" class="error-message">Incorrect password.</p>
-    </form>
+    </div>
   </div>
 
 <script>
   // IMPOSTA LA TUA PASSWORD QUI
   const correctPassword = 'lyn';
 
-  const loginForm = document.getElementById('login-form');
-  const passwordInput = document.getElementById('password-input');
+  const loginBtn = document.getElementById('login-btn');
+  const input = document.getElementById('access-key');
   const errorMessage = document.getElementById('error-message');
 
-  loginForm.addEventListener('submit', (event) => {
-    event.preventDefault(); // Impedisce il ricaricamento della pagina
-    
-    const enteredPassword = passwordInput.value;
-
-    if (enteredPassword === correctPassword) {
-      // Se la password è corretta, salviamo una "chiave" temporanea nel browser
-      // e reindirizziamo alla pagina principale.
+  function doLogin() {
+    const entered = input.value;
+    // Prima di qualsiasi navigazione, svuotiamo e "neutralizziamo" il campo
+    // per non attivare euristiche dei password manager.
+    if (entered === correctPassword) {
+      input.value = '';
+      // Chiave di sessione + eventuale cookie di comodo
       sessionStorage.setItem('isAuthenticated', 'true');
+      document.cookie = "dpb_gate=1; Path=/; Max-Age=7200; SameSite=Lax; Secure";
       window.location.href = 'index.html';
     } else {
-      // Se sbagliata, mostriamo il messaggio di errore
       errorMessage.style.display = 'block';
-      passwordInput.value = ''; // Pulisce il campo
+      input.value = '';
+      input.focus();
     }
+  }
+
+  loginBtn.addEventListener('click', doLogin);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') doLogin();
   });
 </script>
 
