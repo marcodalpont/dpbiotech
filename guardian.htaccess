@@ -1,11 +1,4 @@
 DirectoryIndex login.html index.html
-# Attiva il modulo di riscrittura
-RewriteEngine On
-
-# Se la richiesta non è per un file o directory esistente
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-
-# Aggiungi automaticamente ".html" se il file esiste
-RewriteCond %{REQUEST_FILENAME}.html -f
-RewriteRule ^([^/]+)/?$ $1.html [L]
+# Redirect visivo da .html a URL senza estensione
+RewriteCond %{THE_REQUEST} \s/+([^.]+)\.html [NC]
+RewriteRule ^ %1 [R=301,L]
