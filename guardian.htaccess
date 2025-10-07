@@ -1,5 +1,7 @@
 DirectoryIndex login.html index.html
 
+ErrorDocument 404 /login.html
+
 RewriteEngine On
 
 # Redirect da .html a URL senza estensione (mostra URL pulito)
