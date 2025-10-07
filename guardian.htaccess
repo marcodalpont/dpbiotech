@@ -1,4 +1,13 @@
 DirectoryIndex login.html index.html
-# Redirect visivo da .html a URL senza estensione
+
+RewriteEngine On
+
+# Redirect da .html a URL senza estensione (mostra URL pulito)
 RewriteCond %{THE_REQUEST} \s/+([^.]+)\.html [NC]
 RewriteRule ^ %1 [R=301,L]
+
+# Serve file .html anche quando non scritto
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^/]+)/?$ $1.html [L]
