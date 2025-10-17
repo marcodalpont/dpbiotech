@@ -138,7 +138,7 @@
     const entered = input.value;
     // Prima di qualsiasi navigazione, svuotiamo e "neutralizziamo" il campo
     // per non attivare euristiche dei password manager.
-    if (entered === correctPassword || entered === alternativePassword) {
+    if (entered === correctPassword /*|| entered === alternativePassword*/) {
       input.value = '';
       // Chiave di sessione + eventuale cookie di comodo
       sessionStorage.setItem('isAuthenticated', 'true');
