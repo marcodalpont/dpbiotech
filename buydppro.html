@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Buy DP Pro - DP Biotech</title>
+<title>Buy DP Bro - DP Biotech</title>
 <script>
     if (sessionStorage.getItem('isAuthenticated') !== 'true') {
       window.location.href = 'login.html';
@@ -16,7 +16,7 @@
 <style>
   :root { 
     --bg: #ffffff; --text: #0a0a0a; --muted: #525252; --line: #e5e5e5; --card: #fafafa; 
-    --a1: #2563eb; --a2: #7c3aed; --a3: #059669; /* DP Pro Colors */
+    --a1: #2563eb; --a2: #7c3aed; --a3: #059669; /* DP Bro Colors */
   }
   @media (prefers-color-scheme: dark){ 
     :root { --bg:#0a0a0a; --text:#fafafa; --muted:#a1a1aa; --line:#262626; --card:#18181b; } 
@@ -285,9 +285,9 @@
   <div class="container">
     <div class="config-layout">
       <section class="viewer">
-        <h1>Configure your DP Pro</h1>
+        <h1>Configure your DP Bro</h1>
         <div class="viewer-frame">
-            <model-viewer src="dppro.glb" ios-src="dppro.usdz" alt="DP Pro Surgical Microscope" 
+            <model-viewer src="dppro.glb" ios-src="dppro.usdz" alt="DP Bro Surgical Microscope" 
                 camera-controls ar shadow-intensity="1" camera-orbit="15deg 75deg 1.5m" interaction-prompt="none">
             </model-viewer>
         </div>
@@ -521,7 +521,7 @@
 
       const newItem = {
         id: `dppro-${stabilization}-${arm}-${ai}-${controls.join('-')}`,
-        name: `DP Pro (${stabilization}, ${arm} Arm)`,
+        name: `DP Bro (${stabilization}, ${arm} Arm)`,
         price: currentTotal,
         options: { 
             stabilization: `${stabilization} Stabilization`,
