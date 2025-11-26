@@ -216,7 +216,7 @@
         </div>
       </div>
 
-      <!-- DP Bro Configuration -->
+      <!-- DP Pro Configuration -->
       <div id="dp-pro-config" style="display:none;">
         <div class="group" data-group="stabilization">
           <div class="groupHead">
@@ -391,7 +391,7 @@
     objectives: '50mm', 
     eyepieces: 'screen',
     mounting: 'handle',
-    // DP Bro defaults  
+    // DP Pro defaults  
     stabilization: '3axis',
     arm: 'standard',
     controls: 'basic',
@@ -410,7 +410,7 @@
     if (model === 'dp-mini') {
       document.getElementById('fallback').textContent = 'DP Mini - Fusion 3D Technology';
     } else {
-      document.getElementById('fallback').textContent = 'DP Bro - Gimbal Stabilization System';
+      document.getElementById('fallback').textContent = 'DP Pro - Gimbal Stabilization System';
     }
   }
 
@@ -448,7 +448,7 @@
       const i = l.querySelector('input');
       l.classList.toggle('selected', i?.checked);
     });
-    const modelName = modelFromURL === 'dp-mini' ? 'DP Mini' : 'DP Bro';
+    const modelName = modelFromURL === 'dp-mini' ? 'DP Mini' : 'DP Pro';
     document.getElementById('title').textContent = `Customize your ${modelName}`;
     document.getElementById('selectedSummary').textContent = modelName;
     document.getElementById('barLabel').textContent = modelName;
@@ -555,7 +555,7 @@
       const name = l.dataset.name;
       const val  = l.dataset.value;
 
-      // checkbox multipli (es. joystick/footpedal su DP Bro)
+      // checkbox multipli (es. joystick/footpedal su DP Pro)
       const isCheckbox = (input.type === 'checkbox');
       if (isCheckbox && input.checked) {
         if (name === 'joystick') map.joystick = true;
@@ -579,7 +579,7 @@ const API_BASE =
 
     // Descrizione leggibile (opzionale)
     const lines = pairs().map(([n, v]) => `• ${cap(n)}: ${v}`).join('\n');
-    const description = `${model === 'dp-mini' ? 'DP Mini' : 'DP Bro'} config:\n${lines}`;
+    const description = `${model === 'dp-mini' ? 'DP Mini' : 'DP Pro'} config:\n${lines}`;
 
     try {
       const resp = await fetch(`${API_BASE}/create-checkout-session`, {
