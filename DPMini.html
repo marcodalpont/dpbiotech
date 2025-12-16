@@ -892,7 +892,22 @@ footer {
 
 .hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-primary); }
 @media(max-width: 960px) { .hamburger { display: block; } }
+/* Target the new class you added */
+.blank-card.image-card {
+    padding: 0; /* Remove default padding */
+    display: block; /* Reset flex display */
+    overflow: hidden; /* Ensure image doesn't spill out */
+    /* min-height is already 500px from .blank-card */
+}
 
+/* Style the image itself */
+.blank-card.image-card img {
+    width: 125%;
+    height: 100%;
+    object-fit: contain; /* This is key: fill space, maintain aspect ratio, crop excess */
+    object-position: left center;; /* Focus on the center of the image */
+    display: block; /* Remove bottom whitespace */
+}
 </style>
 </head>
 <body>
@@ -1036,44 +1051,7 @@ footer {
   </div>
 </section>
 
-<section class="section section-bg">
-  <div class="container-wide">
-      <div class="split-feature-grid">
-          <div class="feature-deck">
-              <div class="deck-slide active" id="slide-0">
-                  <div class="deck-content">
-                      <h3 style="color: #4facfe;">3D Model Integration</h3>
-                      <p>Load patient CT/MRI reconstructions directly into your view. Manipulate scale and orientation in real-time.</p>
-                  </div>
-                  <div class="deck-visual"><div style="font-size:80px;">🧠</div></div>
-              </div>
-              <div class="deck-slide" id="slide-1">
-                  <div class="deck-content">
-                      <h3 style="color: #ff9a9e;">Radiographic Overlay</h3>
-                      <p>Display X-rays and scans without looking away. Blend opacity to compare live view.</p>
-                  </div>
-                  <div class="deck-visual"><div style="font-size:80px;">🩻</div></div>
-              </div>
-              <div class="deck-slide" id="slide-2">
-                  <div class="deck-content">
-                      <h3 style="color: #a18cd1;">NDI Streaming</h3>
-                      <p>Stream content from ultrasound machines or surgical monitors directly to your eyepieces.</p>
-                  </div>
-                  <div class="deck-visual"><div style="font-size:80px;">📡</div></div>
-              </div>
 
-              <div class="deck-nav">
-                  <button class="deck-dot active" onclick="goToSlide(0)"></button>
-                  <button class="deck-dot" onclick="goToSlide(1)"></button>
-                  <button class="deck-dot" onclick="goToSlide(2)"></button>
-              </div>
-          </div>
-          <div class="blank-card">
-              <div>Placeholder Image</div>
-          </div>
-      </div>
-  </div>
-</section>
 
 <section class="section" id="voice-commands-section">
 <div class="container">
@@ -1179,6 +1157,43 @@ footer {
     </div>
 </div>
 </section>
+<section class="section section-bg">
+    <div class="container-wide">
+        <div class="split-feature-grid">
+            <div class="feature-deck">
+                <div class="deck-slide active" id="slide-0">
+                    <div class="deck-content">
+                        <h3 style="color: #4facfe;">3D Model Integration</h3>
+                        <p>Load patient CT/MRI reconstructions directly into your view. Manipulate scale and orientation in real-time.</p>
+                    </div>
+                    <div class="deck-visual"><div style="font-size:80px;">🧠</div></div>
+                </div>
+                <div class="deck-slide" id="slide-1">
+                    <div class="deck-content">
+                        <h3 style="color: #ff9a9e;">Radiographic Overlay</h3>
+                        <p>Display X-rays and scans without looking away. Blend opacity to compare live view.</p>
+                    </div>
+                    <div class="deck-visual"><div style="font-size:80px;">🩻</div></div>
+                </div>
+                <div class="deck-slide" id="slide-2">
+                    <div class="deck-content">
+                        <h3 style="color: #a18cd1;">NDI Streaming</h3>
+                        <p>Stream content from ultrasound machines or surgical monitors directly to your eyepieces.</p>
+                    </div>
+                    <div class="deck-visual"><div style="font-size:80px;">📡</div></div>
+                </div>
+  
+                <div class="deck-nav">
+                    <button class="deck-dot active" onclick="goToSlide(0)"></button>
+                    <button class="deck-dot" onclick="goToSlide(1)"></button>
+                    <button class="deck-dot" onclick="goToSlide(2)"></button>
+                </div>
+            </div>
+            <div class="blank-card image-card"> <img src="dpminiimage1.jpg" alt="A description of what is in the image">
+            </div>
+        </div>
+    </div>
+  </section>
 
 <section class="section section-bg" id="handle-section">
   <div class="container">
