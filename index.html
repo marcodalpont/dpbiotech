@@ -2,1276 +2,1063 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>DP Biotech — Surgical Microscopes</title>
 <script>
+    // RESTRICTED ACCESS CHECK
     if (sessionStorage.getItem('isAuthenticated') !== 'true') {
       window.location.href = 'login.html';
     }
-  </script>
+</script>
 <meta name="description" content="High‑performance surgical microscopes: optics, ergonomics, illumination and clinical accessories." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+
 <style>
-  :root { 
-    --bg:#ffffff; 
-    --text:#0a0a0a; 
-    --muted:#525252; 
-    --line:#e5e5e5; 
-    --card:#ffffff; 
-    --band-bg: #f3f4f6;
-    --b1:#4f46e5; 
-    --b2:#7c3aed; 
-    --b3:#a21caf; 
-  }
-  @media (prefers-color-scheme: dark){ 
-    :root { 
-      --bg:#0a0a0a; 
-      --text:#fafafa; 
-      --muted:#a1a1aa; 
-      --line:#262626;
-      --card:#18181b; 
-      --band-bg: #111111;
-    } 
-  }
-  
-  html { 
-    scroll-snap-type: y mandatory; 
-  }
-  
-  @media(max-width:768px) {
-    html { 
-      scroll-snap-type: none; 
+/* =========================================
+   DESIGN SYSTEM
+   ========================================= */
+:root {
+    --bg-body: #ffffff;
+    --bg-secondary: #f5f5f7;
+    --bg-card: #ffffff;
+    --text-primary: #1d1d1f;
+    --text-secondary: #86868b;
+    --accent: #4f46e5; 
+    --accent-gradient: linear-gradient(135deg, #4f46e5, #a21caf);
+    --divider: rgba(0, 0, 0, 0.08);
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --nav-height: 52px;
+    --container-width: 1080px;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 12px 24px rgba(0,0,0,0.06);
+}
+.container-wide { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #000000;
+        --bg-secondary: #121212;
+        --bg-card: #1c1c1e;
+        --text-primary: #f5f5f7;
+        --text-secondary: #a1a1aa;
+        --divider: rgba(255, 255, 255, 0.12);
     }
-  }
-  
-  body{
-    margin:0; 
-    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-    background:var(--bg); 
-    color:var(--text); 
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-  }
-  .container{max-width:1200px; margin:0 auto; padding:0 20px}
-  
-  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
-  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
-  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size: 18px;}
-  .nav a{color:inherit; text-decoration:none}
-  
-  /* Desktop navigation */
-  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
-  @media(min-width:960px){.nav-links{display:flex; align-items:center}}
-  .nav-links > li { height: 100%; display: flex; align-items: center; cursor:pointer; }
-  .dropdown-menu { opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; position: absolute; top: 57px; left: 0; right: 0; background: var(--bg); border-top: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 40; overflow-y: auto; max-height: calc(100vh - 57px); }
-  .dropdown-menu.is-open { opacity: 1; visibility: visible; }
-  .menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 32px 0; }
-  .menu-main-links { list-style: none; padding: 0; margin: 0; }
-  .menu-main-links li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 8px; padding: 0 12px; }
-  .menu-main-links a { font-size: 24px; font-weight: 600; line-height: 1.5; display: block; padding: 4px 12px; border-radius: 6px; }
-  .menu-main-links a:hover { background: var(--card); }
-  .menu-link-column { list-style: none; padding: 0; margin: 0; }
-  .menu-link-column li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 14px; padding: 0 12px; }
-  .menu-link-column a { font-size: 13px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 6px; }
-  .menu-link-column a:hover { background: var(--card); }
-  .menu-backdrop { position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 30; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; }
-  .menu-backdrop.is-visible { opacity: 1; visibility: visible; }
-
-  /* Mobile hamburger menu */
-  .hamburger-btn {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    z-index: 60;
-  }
-  
-  @media(min-width:960px) {
-    .hamburger-btn { display: none; }
-  }
-  
-  .hamburger-line {
-    width: 22px;
-    height: 2px;
-    background: var(--text);
-    margin: 2px 0;
-    transition: 0.3s ease;
-    border-radius: 2px;
-  }
-  
-  .hamburger-btn.is-open .hamburger-line:nth-child(1) {
-    transform: rotate(-45deg) translate(-5px, 6px);
-  }
-  
-  .hamburger-btn.is-open .hamburger-line:nth-child(2) {
-    opacity: 0;
-  }
-  
-  .hamburger-btn.is-open .hamburger-line:nth-child(3) {
-    transform: rotate(45deg) translate(-5px, -6px);
-  }
-
-  /* Mobile menu overlay */
-  .mobile-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: var(--bg);
-    z-index: 55;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    overflow-y: auto;
-    padding: 80px 20px 40px;
-    box-sizing: border-box;
-  }
-  
-  .mobile-menu.is-open {
-    transform: translateX(0);
-  }
-  
-  .mobile-menu-section {
-    margin-bottom: 32px;
-  }
-  
-  .mobile-menu-title {
-  font-size: 19px;
-  font-weight: 900;
-  color: rgb(39, 39, 150);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 16px;
-  padding: 0 4px;
-  }
-  
-  .mobile-menu-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .mobile-menu-links a {
-    display: block;
-    padding: 16px 4px;
-    font-size: 16px;
-    font-weight: 500;
-    color: rgb(39, 39, 39);
-    text-decoration: none;
-    border-bottom: 1px solid var(--line);
-    transition: color 0.2s ease;
-  }
-  
-  .mobile-menu-links a:hover {
-    color: var(--b2);
-  }
-  
-  .mobile-menu-cta {
-  margin-top: 32px;
-  padding-bottom: 50px;
-  }
-
-  @media(min-width:960px) {
-    .mobile-menu { display: none; }
-  }
-
-  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer}
-  .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
-  .btn.primary:hover{opacity:.92}
-  .btn:hover{background:color-mix(in srgb, var(--text) 6%, transparent)}
-  a.btn, button.btn { text-decoration: none !important; }
-
-  /* Mobile-specific button adjustments */
-  @media(max-width:480px) {
-    .btn {
-      padding: 12px 20px;
-      font-size: 16px;
-      min-height: 44px;
-      box-sizing: border-box;
-    }
-  }
-
-  .hero{padding: 0; position: relative; background: var(--bg);}
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(315deg, var(--b1), var(--b2), var(--b3));
-    background-size: 400% 400%;
-    animation: gradient-animation 15s ease infinite;
-    opacity: 0.1;
-    z-index: 0;
-  }
-  @keyframes gradient-animation {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-  }
-  .hero .container { position: relative; z-index: 1; }
-  
-  @media(max-width:768px) {
-    .hero .container { 
-      padding-top: 0px; 
-      padding-bottom: 0px; 
-    }
-  }
-
-  .eyebrow{display:inline-block; padding:6px 10px; border:1px solid var(--line); border-radius:999px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
-  .h1{font-size:clamp(32px, 8vw, 80px); line-height:1.05; letter-spacing:-0.03em; font-weight:800; margin:18px 0}
-  .grad{background:linear-gradient(90deg, var(--b1), var(--b2), var(--b3)); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .lead{max-width:760px; margin:0 auto; color:var(--muted); font-size:clamp(16px, 3.5vw, 20px); line-height: 1.5;}
-  .hero-cta{display:flex; gap:12px; justify-content:center; margin-top:24px; flex-wrap: wrap;}
-  
-  /* Mobile hero adjustments */
-  @media(max-width:640px) {
-    .hero-cta {
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-    .hero-cta .btn {
-      width: 100%;
-      max-width: 280px;
-      justify-content: center;
-    }
-  }
-  
-  section { padding: 80px 0; box-sizing: border-box; position: relative; overflow: hidden; }
-  @media(max-width:768px) {
-    section { padding: 60px 0; }
-  }
-  
-  .snap-section {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
-  
-  @media(max-width:768px) {
-    .snap-section {
-      min-height: auto;
-      scroll-snap-align: none;
-      scroll-snap-stop: normal;
-      padding: 40px 0;
-    }
-    
-    .snap-section:first-of-type {
-      min-height: 100vh;
-      min-height: 100dvh; /* Dynamic viewport height for mobile */
-      padding: 40px 0;
-    }
-  }
-  
-  h2{font-size:clamp(24px, 5vw, 44px); letter-spacing:-0.02em; line-height: 1.2;}
-  h3{font-size:clamp(20px, 4vw, 32px); letter-spacing:-0.02em; line-height: 1.3;}
-  p.muted{color:var(--muted); line-height: 1.6;}
-  .grid-2{display:grid; gap:32px; grid-template-columns:1fr; align-items:start}
-  @media(min-width:768px){.grid-2{gap:48px}}
-  @media(min-width:960px){.grid-2{grid-template-columns:1fr 1fr}}
-  .grid-3{display:grid; gap:24px; grid-template-columns:1fr}
-  @media(min-width:640px){.grid-3{grid-template-columns:repeat(3,1fr)}}
-
-  #dppro { background: radial-gradient(circle, var(--band-bg) 0%, var(--bg) 100%); }
-  .band{background:var(--band-bg);}
-
-  #dpmini h3, #dppro h3 { font-size: clamp(24px, 5vw, 40px); }
-  #dpmini .muted, #dppro .muted, #dpmini .product-list li, #dppro .product-list li { font-size: clamp(16px, 2.5vw, 18px); }
-
-  .product-visual { 
-    border: 1px solid var(--line); 
-    border-radius: 24px; 
-    aspect-ratio: 4/3; 
-    background: var(--card); 
-    padding: 0; 
-    position: relative;
-    touch-action: none; /* Prevent scrolling when touching the 3D model */
-  }
-  
-  .product-visual.mini-bg { background:radial-gradient(circle at top left, #0ea5e91a, transparent 40%), radial-gradient(circle at bottom right, #6366f11a, transparent 40%), var(--card); }
-  .product-visual.pro-bg { background:radial-gradient(circle at top left, #2563eb1a, transparent 40%), radial-gradient(circle at bottom right, #0596691a, transparent 40%), var(--card); }
-  .product-list { list-style: none; padding-left: 0; margin-top: 16px; }
-  .product-list li { padding-left: 1.5em; position: relative; margin-bottom: 10px; color: var(--muted); }
-  .product-list li::before { content: '✓'; position: absolute; left: 0; color: var(--b2); }
-  
-  /* Mobile adjustments for product sections */
-  @media(max-width:960px) {
-    .grid-2 { gap: 24px; }
-    .product-visual { 
-      aspect-ratio: 16/12; 
-      margin-bottom: 16px;
-    }
-    #dpmini .grid-2, #dppro .grid-2 {
-      grid-template-columns: 1fr;
-    }
-    /* DP Mini: text first, then model (already correct in HTML) */
-    #dpmini .grid-2 > div:first-child { order: 1; }
-    #dpmini .grid-2 > div:last-child { order: 2; }
-    
-    /* DP Pro: swap order so text comes first, then model */
-    #dppro .grid-2 > div:first-child { order: 2; } /* model goes second */
-    #dppro .grid-2 > div:last-child { order: 1; } /* text comes first */
-  }
-  
-  .app-visual {
-    aspect-ratio: 16/10;
-    background-color: color-mix(in srgb, var(--line) 50%, transparent);
-    border-radius: 12px;
-    margin: 16px 0;
-    display: grid;
-    place-items: center;
-    color: var(--muted);
-    font-size: 14px;
-  }
-
-  .grid-4{display:grid; gap:24px; grid-template-columns:1fr} 
-  @media(min-width:640px){.grid-4{grid-template-columns:1fr 1fr}}
-  @media(min-width:900px){.grid-4{grid-template-columns:repeat(4,1fr)}}
-  .card{border:1px solid var(--line); border-radius:16px; padding:20px; background:var(--card); transition:box-shadow .2s ease, transform .2s ease}
-  .card:hover{box-shadow:0 12px 40px rgba(0,0,0,.1); transform: translateY(-4px);}
-  .icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--text);color:var(--bg);font-weight:700;margin-bottom:12px}
-  .specs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px}
-  .row{display:flex; justify-content:space-between; border-bottom:1px solid var(--line); padding:10px 0; font-size:14px}
-  
-  /* Mobile card adjustments */
-  @media(max-width:640px) {
-    .card {
-      padding: 24px;
-    }
-    .grid-4 {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-  }
-  
-  .animate-item { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1); transition-delay: var(--delay, 0s); }
-  .animate-item.is-visible { opacity: 1; transform: translateY(0); }
-  
-  model-viewer {
-    width: 100%;
-    height: 100%;
-    border-radius: 24px; 
-    --poster-color: transparent;
-  }
-  
-  footer{
-    border-top:1px solid var(--line); 
-    padding:36px 0; 
-    color:var(--muted); 
-    scroll-snap-align: end;
-    margin-top: auto;
-  }
-  
-  @media(max-width:768px) {
-    footer {
-      scroll-snap-align: none;
-      padding: 40px 0;
-    }
-  }
-  
-  /* Mobile footer */
-  @media(max-width:640px) {
-    footer .container {
-      flex-direction: column !important;
-      text-align: center;
-      gap: 16px !important;
-    }
-  }
-  
-  .cart-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 90;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .3s ease, visibility .3s ease;
-  }
-  .cart-backdrop.is-visible {
-    opacity: 1;
-    visibility: visible;
-  }
-  .cart-sidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 100%;
-    max-width: 400px;
-    height: 100%;
-    background: var(--bg);
-    border-left: 1px solid var(--line);
-    z-index: 100;
-    transform: translateX(100%);
-    transition: transform .3s ease;
-    display: flex;
-    flex-direction: column;
-    box-shadow: -10px 0 20px rgba(0,0,0,0.1);
-    padding: 0; 
-  }
-  
-  /* Mobile cart adjustments */
-  @media(max-width:640px) {
-    .cart-sidebar {
-      max-width: 100%;
-      border-left: none;
-    }
-  }
-  
-  .cart-sidebar.is-open {
-    transform: translateX(0);
-  }
-  .cart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--line);
-    padding: 1rem 2rem;
-    flex-shrink: 0;
-  }
-  .cart-items {
-    list-style: none;
-    padding: 1rem 2rem;
-    margin: 0;
-    flex-grow: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .cart-item {
-    padding: 0;
-    border-bottom: none;
-  }
-  .cart-product-card {
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 16px;
-    background: var(--card);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    position: relative;
-  }
-  .cart-product-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
-  }
-  .cart-product-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-  }
-  .cart-product-subtitle {
-    font-size: 13px;
-    color: var(--muted);
-    margin: 4px 0 12px 0;
-    font-weight: 400;
-  }
-  .cart-product-price {
-    font-size: 15px;
-    font-weight: 500;
-  }
-  .cart-product-remove-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    line-height: 1;
-    padding: 0;
-    margin-left: 10px;
-    cursor: pointer;
-    color: var(--muted);
-    transition: color .2s ease;
-  }
-  .cart-product-remove-btn:hover {
-    color: var(--text);
-  }
-  .cart-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 18px;
-    font-weight: 600;
-  }
-  .cart-empty-state {
-    text-align: center;
-    padding: 2rem;
-    color: var(--muted);
-    margin: auto 0;
-  }
-  .cart-footer {
-    border-top: 1px solid var(--line);
-    padding: 1rem 2rem 2rem 2rem;
-    margin-top: auto;
-    flex-shrink: 0;
-  }
-
-  .quantity-control {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .quantity-btn {
-    width: 28px; height: 28px; border-radius: 6px;
-    font-size: 18px; padding: 0;
-    display: grid;
-    place-items: center;
-    line-height: 0;
-  }
-  .quantity-input {
-    width: 32px;
-    height: 28px;
-    text-align: center;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    font-family: inherit;
-    font-weight: 600;
-    -moz-appearance: textfield;
-    appearance: textfield;
-  }
-  .quantity-input::-webkit-outer-spin-button,
-  .quantity-input::-webkit-inner-spin-button {
-    -webkit-appearance: none; margin: 0;
-  }
-  .cart-item-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
-  }
-
-  /* Mobile quantity controls */
-  @media(max-width:640px) {
-    .quantity-btn {
-      width: 36px;
-      height: 36px;
-      font-size: 20px;
-    }
-    .quantity-input {
-      width: 48px;
-      height: 36px;
-      font-size: 16px;
-    }
-  }
-  
-  /* Mobile navigation buttons */
-  @media(max-width:640px) {
-    .nav-inner {
-      padding: 0 16px;
-    }
-    .nav-inner > div:last-child {
-      gap: 12px !important;
-    }
-  }
-  /* ==== SPLASH SCREEN STYLES ==== */
-/* ==== SPLASH SCREEN STYLES (FINAL) ==== */
-
-/* Animazione per l'intero contenitore: scorre da destra verso il centro */
-@keyframes slide-in-container {
-  from {
-    /* Il valore esatto qui può essere regolato (es. 150px, 170px) */
-    transform: translateX(160px);
-  }
-  to {
-    transform: translateX(0);
-  }
 }
 
-/* Animazione per l'apertura del testo da sinistra a destra */
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-primary); overflow-x: hidden; }
+body.no-scroll { overflow: hidden; height: 100vh; }
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+p { line-height: 1.5; color: var(--text-secondary); margin: 0; }
+a { text-decoration: none; color: inherit; transition: opacity 0.2s; }
+a:hover { opacity: 0.7; }
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+
+/* =========================
+   SPLASH SCREEN
+   ========================= */
+@keyframes slide-in-container {
+  from { transform: translateX(160px); }
+  to { transform: translateX(0); }
+}
 @keyframes reveal-text-from-left {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
 }
 
 .splash-screen {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: var(--bg);
-  display: grid;
-  place-items: center;
-  z-index: 1000;
-  transition: opacity 1s ease-out;
-  pointer-events: none;
+  background: var(--bg-body);
+  display: grid; place-items: center; z-index: 1000;
+  transition: opacity 1s ease-out; pointer-events: none;
 }
-.splash-screen.hidden {
-  opacity: 0;
-}
-
-/* 2. L'intero blocco si muove per mantenere il centro visivo */
-.splash-content {
-  display: flex;
-  align-items: center;
-  vertical-align: center;
-  gap: 24px;
-  /* Applica l'animazione di scorrimento al contenitore */
-  animation: slide-in-container 2.3s cubic-bezier(0.8, 0, 0.2, 1) forwards;
-}
+.splash-screen.hidden { opacity: 0; }
 
 .splash-content img {
-  /* 3. Logo ben più grande e nessuna animazione di fade-in */
   height: clamp(90px, 20vw, 180px);
   border-radius: 50%;
-  /* Nessuna animazione qui, si muove perché il suo contenitore si muove */
+}
+
+.splash-content {
+  display: flex; align-items: center; gap: 24px;
+  animation: slide-in-container 1.5s cubic-bezier(0.8, 0, 0.2, 1) forwards;
 }
 
 .splash-text {
-  font-size: clamp(40px, 10vw, 90px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: var(--text);
-  
-  /* 1. Niente fade-in, solo apertura */
+  font-size: clamp(40px, 10vw, 90px); font-weight: 800; letter-spacing: -0.04em;
+  color: var(--text-primary);
   clip-path: inset(0 100% 0 0);
-  /* Applica solo l'animazione di apertura */
-  animation: reveal-text-from-left 1.8s cubic-bezier(0.8, 0, 0.2, 1) 0.2s forwards;
+  animation: reveal-text-from-left 1.1s cubic-bezier(0.8, 0, 0.2, 1) 0.2s forwards;
+}
+
+/* =========================
+   NAVIGATION
+   ========================= */
+.nav {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height);
+    background: rgba(255, 255, 255, 0.7); backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    z-index: 100; border-bottom: 1px solid var(--divider);
+}
+@media (prefers-color-scheme: dark) { .nav { background: rgba(0,0,0,0.7); } }
+
+.nav-inner { height: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+
+.nav-links { display: none; list-style: none; gap: 32px; margin: 0; padding: 0; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+@media(min-width: 960px) { .nav-links { display: flex; } }
+.nav-links li { cursor: pointer; transition: color 0.2s; height: 100%; display: flex; align-items: center; }
+.nav-links li:hover { color: var(--text-primary); }
+
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+
+/* Buttons */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; border: none; text-decoration: none !important;
+}
+.btn-primary { background: var(--text-primary); color: var(--bg-body); }
+.btn-primary:hover { transform: scale(1.02); opacity: 0.95; }
+.btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--divider); }
+.btn-ghost:hover { background: var(--bg-secondary); }
+
+.desktop-btn { display: none !important; }
+@media(min-width: 960px) { .desktop-btn { display: inline-flex !important; } }
+
+.cart-icon-btn {
+    position: relative; background: none; border: none; color: var(--text-primary); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
+}
+.cart-badge {
+    position: absolute; top: 4px; right: 4px; background: var(--accent); color: white;
+    font-size: 10px; width: 16px; height: 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+.hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-primary); }
+@media(max-width: 960px) { .hamburger { display: block; } }
+
+/* =========================
+   MEGA MENU
+   ========================= */
+.dropdown-menu { 
+    opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; 
+    position: absolute; top: var(--nav-height); left: 0; right: 0; 
+    background: var(--bg-body); border-top: 1px solid var(--divider); 
+    box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 90; 
+    overflow-y: auto; max-height: calc(100vh - var(--nav-height)); 
+}
+.dropdown-menu.is-open { opacity: 1; visibility: visible; }
+.menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 40px 0; }
+.menu-main-links, .menu-link-column { list-style: none; padding: 0; margin: 0; }
+.menu-main-links li:first-child, .menu-link-column li:first-child { 
+    font-size: 11px; text-transform: uppercase; letter-spacing: .05em; 
+    color: var(--text-secondary); margin-bottom: 12px; padding: 0 12px; 
+}
+.menu-main-links a { font-size: 24px; font-weight: 600; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-link-column a { font-size: 14px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-main-links a:hover, .menu-link-column a:hover { background: var(--bg-secondary); }
+.menu-backdrop { position: fixed; top: var(--nav-height); left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; visibility: hidden; transition: 0.3s; }
+.menu-backdrop.is-visible { opacity: 1; visibility: visible; }
+
+/* =========================
+   SECTIONS
+   ========================= */
+.hero {
+    padding-top: 140px; padding-bottom: 80px; text-align: center;
+    background: radial-gradient(circle at 50% 30%, rgba(79, 70, 229, 0.08) 0%, transparent 60%);
+    min-height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.hero h1 { font-size: clamp(32px, 6vw, 72px); line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 24px; }
+.gradient-text { background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero p.lead { font-size: clamp(18px, 3vw, 22px); margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto; }
+
+.section { padding: 100px 0; }
+.section-bg { background-color: var(--bg-secondary); }
+.section-header { text-align: center; max-width: 700px; margin: 0 auto 60px; }
+.section-header h2 { font-size: 42px; margin-bottom: 16px; }
+
+/* Feature Rows */
+.feature-row { display: flex; align-items: center; gap: 60px; }
+.feature-row.reverse { flex-direction: row-reverse; }
+.feature-text { flex: 1; }
+.feature-visual { flex: 1; height: 500px; position: relative; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--divider); overflow: hidden; }
+.eyebrow { font-size: 13px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 12px; }
+.feature-text h2 { font-size: clamp(32px, 4vw, 48px); margin-bottom: 24px; line-height: 1.1; }
+.feature-text p { font-size: 17px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 32px; }
+.feature-list { list-style: none; padding: 0; margin-bottom: 32px; }
+.feature-list li { padding: 12px 0; border-bottom: 1px solid var(--divider); display: flex; gap: 12px; align-items: center; font-weight: 500; color: var(--text-primary); }
+.check-icon { color: var(--accent); }
+
+@media(max-width: 900px) {
+    .feature-row, .feature-row.reverse { flex-direction: column; gap: 40px; text-align: center; }
+    .feature-visual { width: 100%; height: 400px; }
+    .feature-list li { justify-content: center; }
+}
+
+/* =========================
+   NEW SOFTWARE SECTION
+   ========================= */
+.software-duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 40px;
+}
+
+.duo-card {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 520px;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+}
+
+.duo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.duo-content {
+    padding: 48px 40px 0 40px;
+    z-index: 2;
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.duo-content h3 {
+    font-size: 28px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.duo-content p {
+    font-size: 17px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.duo-visual {
+    flex: 1;
+    width: 100%;
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    background: var(--bg-secondary);
+    position: relative;
+}
+
+/* Gradients behind screens */
+.duo-visual::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0; left: 0;
+    opacity: 0.5;
+    z-index: 0;
+}
+.visual-mini::before { background: radial-gradient(circle at bottom, #e0e7ff 0%, transparent 60%); }
+.visual-pro::before { background: radial-gradient(circle at bottom, #f3e8ff 0%, transparent 60%); }
+
+.duo-img {
+    height: auto;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.15);
+    z-index: 1;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-bottom: none;
+    background: white;
+    display: block;
+    margin-bottom: 0;
+}
+
+@media(max-width: 900px) {
+    .software-duo { grid-template-columns: 1fr; }
+    .duo-card { min-height: 450px; }
+}
+/* --- NEW SPLIT SOFTWARE SECTION --- */
+.software-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Exact 50/50 Split */
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.software-card {
+  background: var(--bg-secondary); /* Light grey to contrast with white bg */
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Pushes content apart */
+  min-height: 550px; /* Taller height for better presence */
+  transition: transform 0.3s ease;
+}
+
+.software-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.sw-text {
+  padding: 40px;
+  text-align: left;
+}
+
+.sw-text h3 {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.sw-text p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Image Container - Anchors to bottom */
+.sw-visual {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: flex-end; /* Align image to bottom */
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(to top, rgba(0,0,0,0.02), transparent); /* Subtle depth */
+}
+
+.sw-visual img {
+  max-width: 90%;
+  height: auto;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+  margin-bottom: -5px; /* Hides bottom pixel gap */
+}
+
+/* Mobile Stack */
+@media(max-width: 900px) {
+  .software-split { grid-template-columns: 1fr; }
+  .software-card { min-height: 450px; }
+}
+/* =========================
+   STANDS GRID
+   ========================= */
+.stands-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.tech-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  transition: transform 0.3s ease;
+}
+.tech-card:hover { transform: translateY(-4px); }
+.tech-inner {
+  background: var(--bg-card);
+  border-radius: 14px;
+  padding: 32px 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.tech-icon-box {
+  width: 80px; height: 80px;
+  margin-bottom: 24px;
+  display: grid; place-items: center;
+  color: var(--text-primary);
+}
+.tech-spec {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(79, 70, 229, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+@media(max-width: 900px) { .stands-grid { grid-template-columns: 1fr; } }
+
+/* =========================
+   CART & FOOTER
+   ========================= */
+.cart-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 200; }
+.cart-backdrop.is-visible { opacity: 1; visibility: visible; }
+.cart-sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 400px; background: var(--bg-card); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 201; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
+.cart-sidebar.is-open { transform: translateX(0); }
+.cart-header { padding: 20px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
+.cart-items { flex: 1; overflow-y: auto; padding: 20px; list-style: none; margin: 0; }
+.cart-footer { padding: 24px; border-top: 1px solid var(--divider); background: var(--bg-secondary); }
+
+/* Cart Styling */
+.cart-item { margin-bottom: 16px; }
+.cart-product-card { border: 1px solid var(--divider); border-radius: 12px; padding: 16px; background: var(--bg-card); }
+.cart-product-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.cart-product-title { font-size: 15px; font-weight: 600; margin: 0; }
+.cart-item-actions { display: flex; justify-content: space-between; align-items: center; }
+.quantity-control { display: flex; gap: 8px; align-items: center; }
+.quantity-btn { width: 24px; height: 24px; background: var(--bg-secondary); border: none; border-radius: 4px; cursor: pointer; display: grid; place-items: center; }
+.quantity-input { width: 30px; text-align: center; border: none; font-weight: 600; background: transparent; }
+
+/* Changed footer background to white to alternate with gray Team section */
+footer { padding: 60px 0; border-top: 1px solid var(--divider); font-size: 13px; color: var(--text-secondary); background: var(--bg-body); }
+.footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.footer-links { display: flex; gap: 24px; }
+
+/* 3D Model specific */
+model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
+.mini-bg { background: radial-gradient(circle at top left, #e0e7ff 0%, transparent 40%), var(--bg-card); }
+.pro-bg { background: radial-gradient(circle at top right, #f3e8ff 0%, transparent 40%), var(--bg-card); }
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 150; padding: 80px 24px; transform: translateY(-100%); transition: transform 0.4s ease; display: flex; flex-direction: column; gap: 24px; }
+.mobile-menu-overlay.is-open { transform: translateY(0); }
+.mobile-link { font-size: 24px; font-weight: 600; border-bottom: 1px solid var(--divider); padding-bottom: 16px; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* =========================
+   TEAM SECTION
+   ========================= */
+   .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+    margin-top: 60px;
+}
+
+.team-member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.team-photo {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%; /* Circle shape */
+    object-fit: cover;
+    margin-bottom: 24px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease;
+}
+
+.team-member:hover .team-photo {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+.team-member h3 {
+    font-size: 22px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.team-role {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.team-member p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 300px; /* Keeps text form getting too wide */
+}
+
+@media(max-width: 900px) {
+    .team-grid { grid-template-columns: 1fr; gap: 60px; }
 }
 </style>
 </head>
 <body>
-  <div class="splash-screen">
+
+<div class="splash-screen">
     <div class="splash-content">
         <img src="logo.png" alt="DP Biotech Logo">
         <span class="splash-text">DP Biotech</span>
     </div>
 </div>
-  <div class="nav" id="main-nav">
-    <div class="container nav-inner">
+
+<nav class="nav" id="main-nav">
+  <div class="container nav-inner">
       <a href="#home" class="logo">
-        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
-        <span>DP Biotech</span>
+          <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRmNDZlNSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4=' " alt="Logo" style="height:28px; border-radius: 50%;">
+          <span>DP Biotech</span>
       </a>
       
-      <!-- Desktop Navigation -->
       <ul class="nav-links">
-        <li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
-        <li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
-        <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
-        <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
+          <li class="dropdown" data-menu="microscopes-menu">Microscopes</li>
+          <li><a href="stands.html">Stands</a></li> <li class="dropdown" data-menu="software-menu">Software</li>
+          <li class="dropdown" data-menu="support-menu">Support</li>
       </ul>
+
+      <div class="nav-actions">
+          <a href="licensing.html" class="btn btn-ghost desktop-btn">Licensing</a>
+          
+          <button class="cart-icon-btn" id="cart-btn">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              <span class="cart-badge" id="cart-count">0</span>
+          </button>
+          <button class="hamburger" id="menu-btn">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+      </div>
+  </div>
+
+  <div id="microscopes-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Shop Microscopes</li>
+                  <li><a href="DPMini.html">DP Mini</a></li>
+                  <li><a href="DPPro.html">DP Pro</a></li>
+              </ul>
+              <ul class="menu-link-column">
+                  <li>Quick Links</li>
+                  <li><a href="all-models.html">Compare Models</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+
+  <div id="software-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              
+              <ul class="menu-main-links">
+                  <li>Connect Suite</li>
+                  <li><a href="#">Med Connect Mini</a></li>
+                  <li><a href="#">Med Connect Pro</a></li>
+              </ul>
+
+              <ul class="menu-link-column">
+                  <li>Cloud & Services</li>
+                  <li><a href="#">Med Patient</a></li>
+                  <li><a href="#">Med Share</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+
+  <div id="support-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Get Support</li>
+                  <li><a href="contactus.html">Contact Us</a></li>
+                  <li><a href="#">Downloads & Manuals</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+</nav>
+<div class="menu-backdrop"></div>
+
+<div class="mobile-menu-overlay" id="mobile-menu">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <span class="logo">DP Biotech</span>
+        <button class="btn btn-ghost" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
+    </div>
+    <a href="DPMini.html" class="mobile-link">DP Mini</a>
+    <a href="DPPro.html" class="mobile-link">DP Pro</a>
+    <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="contactus.html" class="mobile-link">Support</a>
+    <a href="licensing.html" class="mobile-link">Licensing</a>
+</div>
+
+<section class="hero" id="home">
+    <div class="container">
+        <div style="opacity: 0; animation: fadeUp 0.8s 0.2s forwards;">
+            <span class="eyebrow" style="margin-bottom: 24px; border: 1px solid var(--divider); padding: 6px 16px; border-radius: 99px; display: inline-block;">New • Surgical Series</span>
+            <h1>Reinventing Microscopes <br><span class="gradient-text">one lens at a time.</span></h1>
+            <p class="lead">Optical performance, ergonomics and illumination designed for clinical workflows. Optional companion app available.</p>
+            <div class="hero-cta">
+                <a href="buy.html" class="btn btn-primary">Buy Now</a>
+                <a href="#dpmini" class="btn btn-ghost">Learn more</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-bg" id="dpmini">
+    <div class="container">
+        <div class="feature-row">
+            <div class="feature-text">
+                <span class="eyebrow">Mobile Series</span>
+                <h2>DP Mini</h2>
+                <p>The first system to turn a smartphone into a true stereoscopic microscope. Using an innovative optical architecture, it captures 3D images from a single mobile sensor.</p>
+                <ul class="feature-list">
+                    <li><span class="check-icon">✓</span> Active stereoscopic system</li>
+                    <li><span class="check-icon">✓</span> Compact, portable design</li>
+                    <li><span class="check-icon">✓</span> AR/MR Integration</li>
+                </ul>
+                <a href="DPMini.html" class="btn btn-primary">Discover DP Mini</a>
+            </div>
+            <div class="feature-visual mini-bg">
+                <model-viewer
+                    src="dpmini.glb"
+                    ios-src="dpmini.usdz"
+                    alt="DP Mini"
+                    camera-controls
+                    shadow-intensity="1"
+                    environment-image="neutral"
+                    camera-orbit="155deg 75deg 110%">
+                </model-viewer>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="dppro">
+    <div class="container">
+        <div class="feature-row reverse">
+            <div class="feature-text">
+                <span class="eyebrow">Digital Surgical Series</span>
+                <h2>DP Pro</h2>
+                <p>A revolutionary digital surgical microscope that redefines stability. The optical body moves independently on a gimbal stabilization system, offering unparalleled precision.</p>
+                <ul class="feature-list">
+                    <li><span class="check-icon">✓</span> 3-axis gimbal stabilization</li>
+                    <li><span class="check-icon">✓</span> Articulated extensible arm</li>
+                    <li><span class="check-icon">✓</span> AI Surgical Guidance</li>
+                </ul>
+                <a href="DPPro.html" class="btn btn-primary">Discover DP Pro</a>
+            </div>
+            <div class="feature-visual pro-bg">
+                 <model-viewer
+                    src="dppro.glb"
+                    ios-src="dppro.usdz"
+                    alt="DP Pro"
+                    camera-controls
+                    shadow-intensity="1"
+                    environment-image="neutral"
+                    camera-orbit="40deg 75deg 105%">
+                </model-viewer>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-bg" id="software">
+  <div class="container-wide">
+      <div class="section-header">
+          <span class="eyebrow">The Ecosystem</span>
+          <h2>Dedicated software</h2>
+      </div>
       
-      <div style="display:flex; gap:8px; align-items:center;">
-        <!-- Mobile Hamburger Button -->
-        <button id="hamburger-btn" class="hamburger-btn">
-          <div class="hamburger-line"></div>
-          <div class="hamburger-line"></div>
-          <div class="hamburger-line"></div>
-        </button>
-        
-        <!-- Desktop buttons -->
-        <a class="btn" href="licensing.html" style="display: none;">Licensing</a>
-        <button id="cart-btn" class="btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <path d="M16 10a4 4 0 0 1-8 0"></path>
-          </svg>
-          <span id="cart-count">0</span>
-        </button>
-      </div>
-    </div>
-    
-    <!-- Desktop Dropdown Menus -->
-    <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="all-models.html#compare">Compare Models</a></li></ul></div></div></div>
-    <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li></ul></div></div></div>
-    <div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Explore Software</li><li><a href="#">Imaging Suite</a></li><li><a href="#">Companion App</a></li></ul><ul class="menu-link-column"><li>For Developers</li><li><a href="#">API & SDK</a></li></ul></div></div></div>
-    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li></ul></div></div></div>
-  </div>
-  
-  <!-- Mobile Menu -->
-  <div class="mobile-menu" id="mobile-menu">
-    <div class="mobile-menu-section">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div class="mobile-menu-title">Microscopes</div>
-        <button id="close-mobile-menu" style="background: none; border: none; font-size: 30px; cursor: pointer; color: var(--text); padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
-      </div>
-      <ul class="mobile-menu-links">
-        <li><a href="DPMini.html">DP Mini</a></li>
-        <li><a href="DPPro.html">DP Pro</a></li>
-        <li><a href="all-models.html">All Models</a></li>
-        <li><a href="all-models.html#compare">Compare Models</a></li>
-      </ul>
-    </div>
-    
-    <div class="mobile-menu-section">
-      <div class="mobile-menu-title">Stands</div>
-      <ul class="mobile-menu-links">
-        <li><a href="#">Floor Stands</a></li>
-        <li><a href="#">Ceiling Mounts</a></li>
-        <li><a href="#">Wall Mounts</a></li>
-        <li><a href="#">Compatibility Guide</a></li>
-      </ul>
-    </div>
-    
-    <div class="mobile-menu-section">
-      <div class="mobile-menu-title">Software</div>
-      <ul class="mobile-menu-links">
-        <li><a href="#">Imaging Suite</a></li>
-        <li><a href="#">Companion App</a></li>
-        <li><a href="#">API & SDK</a></li>
-      </ul>
-    </div>
-    
-    <div class="mobile-menu-section">
-      <div class="mobile-menu-title">Support</div>
-      <ul class="mobile-menu-links">
-        <li><a href="contactus.html">Contact Us</a></li>
-      </ul>
-    </div>
-    
-    <div class="mobile-menu-cta">
-      <a href="licensing.html" class="btn" style="width: 100%; justify-content: center; margin-bottom: 12px;">Licensing</a>
-    </div>
-  </div>
-  
-  <div class="menu-backdrop"></div>
-  
-  <div class="cart-backdrop" id="cart-backdrop"></div>
-  <div class="cart-sidebar" id="cart-sidebar">
-    <div class="cart-header">
-      <h3 style="margin:0;">Your Cart</h3>
-      <button class="btn" id="close-cart-btn">Close</button>
-    </div>
-    <div id="cart-empty-state" class="cart-empty-state">
-      Your cart is empty.
-    </div>
-    <ul class="cart-items" id="cart-items">
-      </ul>
-    <div class="cart-footer">
-      <div class="cart-total">
-        <span>Total</span>
-        <span id="cart-total-price">€0,00</span>
-      </div>
-      <button id="checkout-btn" class="btn primary" style="width:100%; margin-top:1rem;">Checkout</button>
-      <button id="clear-cart-btn" class="btn" style="width:100%; margin-top:0.5rem;">Clear Cart</button>
-    </div>
-  </div>
-
-  <header class="hero snap-section" id="home">
-    <div class="container" style="text-align:center">
-      <div data-stagger-children>
-        <span class="eyebrow animate-item">New • Surgical Series</span>
-        <h1 class="h1 animate-item" style="--delay: 0.1s;">Reinventing Microscopes <div class="grad">one lense at a time</div></h1>
-        <p class="lead animate-item" style="--delay: 0.2s;">Optical performance, ergonomics and illumination designed for clinical workflows. Optional companion app available — microscope works standalone.</p>
-        <div class="hero-cta animate-item" style="--delay: 0.3s;">
-          <a href="buy.html" class="btn primary">Buy</a>
-          <a href="#features" class="btn">Learn more</a>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <section id="dpmini" class="snap-section">
-    <div class="container">
-      <div class="grid-2" style="align-items:center" data-stagger-children>
-        <div class="animate-item">
-          <span class="muted">Mobile Series</span>
-          <h3>DP Mini</h3>
-          <p class="muted">The first system to turn a smartphone into a true stereoscopic microscope. Using an innovative optical architecture, it captures 3D images from a single mobile sensor, offering unprecedented portability and quality.</p>
-          <ul class="product-list">
-            <li>Active stereoscopic system for true 3D imaging.</li>
-            <li>Compact, portable design for use anywhere.</li>
-            <li>Optional 90° viewing angle for ergonomic comfort.</li>
-            <li>Full integration with Augmented and Mixed Reality.</li>
-          </ul>
-          <div style="margin-top:24px"><a href="DPMini.html" class="btn primary">Learn More about DP Mini</a></div>
-        </div>
-        <div class="product-visual mini-bg animate-item">
-          <model-viewer
-              id="dpmini-viewer"
-              src="dpmini.glb"
-              ios-src="dpmini.usdz"
-              alt="DP Mini surgical microscope"
-              camera-controls
-              ar
-              environment-image="neutral"
-              shadow-intensity="1"
-              camera-orbit="120deg 50deg 110%"
-              data-final-orbit="140deg 70deg 105%">
-          </model-viewer>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="dppro" class="snap-section">
-    <div class="container">
-      <div class="grid-2" style="align-items:center" data-stagger-children>
-        <div class="product-visual pro-bg animate-item">
-            <model-viewer
-              id="dppro-viewer"
-              src="dppro.glb"
-              ios-src="dppro.usdz"
-              alt="DP Pro surgical microscope"
-              camera-controls
-              ar
-              environment-image="neutral"
-              shadow-intensity="1"
-              camera-orbit="10deg 75deg 105%"
-              data-final-orbit="35deg 75deg 105%">
-          </model-viewer>
-        </div>
-        <div class="animate-item">
-          <span class="muted">Digital Surgical Series</span>
-          <h3>DP Pro</h3>
-          <p class="muted">A revolutionary digital surgical microscope that redefines stability, control, and ergonomics. The optical body moves independently on a gimbal stabilization system, offering unparalleled precision.</p>
-          <ul class="product-list">
-            <li>Three-axis gimbal stabilization for a perfectly steady view.</li>
-            <li>Articulated, extensible arm for flexible positioning.</li>
-            <li>Intuitive control via joystick or pressure sensors.</li>
-            <li>Native integration with AI for surgical guidance.</li>
-          </ul>
-          <div style="margin-top:24px"><a href="DPPro.html" class="btn primary">Learn More about DP Pro</a></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="features" class="band snap-section">
-    <div class="container">
-      <div data-stagger-children>
-        <div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
-          <h2>Built for clinical use</h2>
-          <p class="muted">From glass to mechanics, every component is tuned for stability, visibility and comfort during long procedures.</p>
-        </div>
-      </div>
-      <div class="grid grid-4" data-stagger-children>
-        <div class="card animate-item"><div class="icon">OP</div><h3>Optics</h3><p class="muted">Plan‑apochromatic lenses, AR‑coated, neutral colorimetry. Zoom 1:6. Eyepieces 10× or 12.5×.</p></div>
-        <div class="card animate-item"><div class="icon">WD</div><h3>Working distance</h3><p class="muted">Objectives f=175 / 200 / 250 mm to match your specialty and posture.</p></div>
-        <div class="card animate-item"><div class="icon">CX</div><h3>Coaxial LED</h3><p class="muted">High‑intensity LED (80–120 W) with homogeneous field and low heat.</p></div>
-        <div class="card animate-item"><div class="icon">ER</div><h3>Ergonomics</h3><p class="muted">Balanced arms, smooth friction, sterile‑drape ready handles and controls.</p></div>
-        <div class="card animate-item"><div class="icon">SP</div><h3>Beam splitters</h3><p class="muted">20/80 or 50/50 with dual C‑mount ports for camera/teaching.</p></div>
-        <div class="card animate-item"><div class="icon">AS</div><h3>Assistant scope</h3><p class="muted">Assistant binocular module for training and hand‑offs.</p></div>
-        <div class="card animate-item"><div class="icon">MT</div><h3>Mounting</h3><p class="muted">Floor stand, ceiling mount or wall arm — same optical head.</p></div>
-        <div class="card animate-item"><div class="icon">ST</div><h3>Sterility</h3><p class="muted">Sterile handles and drapes available; easy to clean surfaces.</p></div>
-      </div>
-    </div>
-  </section>
-  
-  <section id="software" class="band snap-section">
-    <div class="container">
-      <div data-stagger-children>
-        <div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
-          <h2>Dedicated Software for Every Workflow and Device</h2>
-        </div>
-      </div>
-      <div class="grid-2" data-stagger-children>
-        <div class="card animate-item">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-              <div class="icon" style="margin-bottom: 0;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+      <div class="software-duo">
+          
+          <div class="duo-card">
+              <div class="duo-content">
+                  <h3>Med Connect Mini</h3>
+                  <p>Designed specifically for the DP Mini. Turn your smartphone into a surgical command center with real-time collaboration, encrypted cloud sync, and efficient workflow management.</p>
               </div>
-              <h3 style="margin: 0; font-size: 24px;">Med Connect Mini</h3>
-            </div>
-            <div class="app-visual" style="aspect-ratio: 2.5 / 1; margin: 12px 0; padding: 0; overflow: hidden; background-color: transparent;">
-              <img src="iphoneapp.png" alt="Med Connect Mini app screenshot" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-            <p class="muted">The perfect partner for the DP Mini. Capture true stereoscopic 3D images and video directly on your iPhone. Use augmented reality for procedural guides and collaborate with colleagues in real-time, from anywhere.</p>
-        </div>
-        <div class="card animate-item">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-              <div class="icon" style="margin-bottom: 0;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="12" rx="2" ry="2"></rect><line x1="2" y1="21" x2="22" y2="21"></line><line x1="12" y1="15" x2="12" y2="21"></line></svg>
+              <div class="duo-visual visual-mini">
+                  <img src="iphoneapp.png" 
+                       onerror="this.src='https://via.placeholder.com/300x500/fff/ccc?text=Mobile+Interface'" 
+                       alt="Med Connect Mini Interface" 
+                       class="duo-img"
+                       style="width: 70%; border-radius: 24px; margin-bottom: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.12);"> 
               </div>
-              <h3 style="margin: 0; font-size: 24px;">Med Connect Pro</h3>
-            </div>
-            <div class="app-visual" style="aspect-ratio: 2.5 / 1; margin: 12px 0; padding: 0; overflow: hidden; background-color: transparent;">
-               <img src="macapp.png" alt="Med Connect Pro app screenshot" style="width: 100%; height: 100%; object-fit:contain;">
-            </div>
-            <p class="muted">Unleash the full power of the DP Pro. This desktop-class application provides advanced tools for image analysis, patient data management, and surgical planning. Integrate seamlessly with hospital records and export detailed reports.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+          </div>
 
-  <section id="stands" class="snap-section">
+          <div class="duo-card">
+              <div class="duo-content">
+                  <h3>Med Connect Pro</h3>
+                  <p>The powerhouse for the DP Pro system. Analyze patient data on a large canvas, utilize AI-driven tissue overlays, and plan complex surgeries on macOS and Windows.</p>
+              </div>
+              
+              <div class="duo-visual visual-pro">
+                  <div style="display: flex; gap: 20px; width: 95%; justify-content: center; align-items: flex-end; margin-bottom: 34px;">
+                      
+                      <img src="macapp.png" 
+                           onerror="this.src='https://via.placeholder.com/600x400/fff/ccc?text=Dashboard+Left'" 
+                           alt="Left Monitor" 
+                           class="duo-img"
+                           style="width: 45%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.12);"> 
+                           
+                      <img src="macapp.png" 
+                           onerror="this.src='https://via.placeholder.com/600x400/fff/ccc?text=Dashboard+Right'" 
+                           alt="Right Monitor" 
+                           class="duo-img"
+                           style="width: 45%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.12);"> 
+                  </div>
+              </div>
+          </div>
+
+      </div>
+  </div>
+</section>
+
+<section class="section" id="stands">
     <div class="container">
-      <div data-stagger-children>
-        <div class="animate-item" style="text-align: center; max-width: 760px; margin: 0 auto 40px auto;">
-          <h2>Versatile Mounting Solutions</h2>
-          <p class="muted">Stable, ergonomic, and space-efficient stands designed to integrate perfectly into any clinical environment.</p>
+        <div class="section-header">
+            <h2>Versatile Mounting</h2>
+            <p>Select the configuration that fits your OR.</p>
         </div>
-      </div>
-      <div class="grid-3" data-stagger-children>
-        <div class="card animate-item">
-            <div class="icon">FS</div>
-            <h3>Floor Stand</h3>
-            <p class="muted">Mobile and stable, the floor stand provides maximum flexibility with smooth-rolling, lockable casters and a long-reach, counterbalanced arm.</p>
-        </div>
-        <div class="card animate-item">
-            <div class="icon">CM</div>
-            <h3>Ceiling Mount</h3>
-            <p class="muted">Save valuable floor space and eliminate cable clutter. The ceiling mount offers exceptional stability and positioning freedom directly over the operating area.</p>
-        </div>
-        <div class="card animate-item">
-            <div class="icon">WM</div>
-            <h3>Wall Mount</h3>
-            <p class="muted">Ideal for compact rooms. The wall mount folds away when not in use, providing a sturdy, fixed-base solution without occupying floor or ceiling space.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
-      <div style="display:flex; gap:8px; align-items:center"><img src="logo.png" alt="DP Biotech Logo" style="height: 36px; border-radius: 50%;">DP Biotech</div>
-      <div style="display:flex; gap:18px"><a href="#" class="muted">Privacy</a><a href="#" class="muted">Terms</a></div>
-    </div>
-  </footer>
-  
-<script>
-  // --- SPLASH SCREEN SCRIPT ---
-    const splash = document.querySelector('.splash-screen');
-    window.addEventListener('load', () => {
-        if (splash) {
-            setTimeout(() => { splash.classList.add('hidden'); }, 2500); // Inizia a scomparire dopo 2.5s
-            setTimeout(() => { splash.remove(); }, 3500); // Rimosso dal DOM dopo 3.5s
-        }
-    });
-document.addEventListener('DOMContentLoaded', () => {
-    // --- MOBILE HAMBURGER MENU SCRIPT ---
-    const hamburgerBtn = document.getElementById('hamburger-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const closeMobileMenuBtn = document.getElementById('close-mobile-menu');
-    const body = document.body;
-
-    // Show desktop buttons on larger screens
-    function updateDesktopButtons() {
-        const licensingBtn = document.querySelector('a[href="licensing.html"]');
-        if (window.innerWidth >= 960) {
-            licensingBtn.style.display = 'inline-flex';
-            hamburgerBtn.style.display = 'none';
-        } else {
-            licensingBtn.style.display = 'none';
-            hamburgerBtn.style.display = 'flex';
-        }
-    }
-
-    function closeMobileMenu() {
-        hamburgerBtn.classList.remove('is-open');
-        mobileMenu.classList.remove('is-open');
-        body.style.overflow = '';
-    }
-
-    // Initial check and event listener for resize
-    updateDesktopButtons();
-    window.addEventListener('resize', updateDesktopButtons);
-
-    hamburgerBtn.addEventListener('click', () => {
-        hamburgerBtn.classList.toggle('is-open');
-        mobileMenu.classList.toggle('is-open');
-        
-        // Prevent body scrolling when menu is open
-        if (mobileMenu.classList.contains('is-open')) {
-            body.style.overflow = 'hidden';
-        } else {
-            body.style.overflow = '';
-        }
-    });
-
-    // Close button functionality
-    closeMobileMenuBtn.addEventListener('click', closeMobileMenu);
-
-    // Close mobile menu when clicking on links
-    mobileMenu.addEventListener('click', (e) => {
-        if (e.target.tagName === 'A') {
-            closeMobileMenu();
-        }
-    });
-
-    // Close mobile menu on window resize to desktop
-    window.addEventListener('resize', () => {
-        if (window.innerWidth >= 960) {
-            closeMobileMenu();
-        }
-    });
-
-    // --- DESKTOP MEGA MENU SCRIPT ---
-    const mainNav = document.getElementById('main-nav');
-    const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
-    const backdrop = document.querySelector('.menu-backdrop');
-    let activeMenu = null;
-    let closeTimeout;
-    
-    function openMenu(menuId) {
-        if (activeMenu) { activeMenu.classList.remove('is-open'); }
-        const menu = document.getElementById(menuId);
-        if (menu) {
-            menu.classList.add('is-open');
-            backdrop.classList.add('is-visible');
-            activeMenu = menu;
-        }
-    }
-    
-    function closeAllMenus() {
-        if (activeMenu) { activeMenu.classList.remove('is-open'); }
-        backdrop.classList.remove('is-visible');
-        activeMenu = null;
-    }
-    
-    // Only enable desktop menu behavior on larger screens
-    function enableDesktopMenu() {
-        if (window.innerWidth >= 960) {
-            triggers.forEach(trigger => {
-                trigger.addEventListener('mouseenter', () => {
-                    clearTimeout(closeTimeout);
-                    openMenu(trigger.dataset.menu);
-                });
-            });
-            
-            mainNav.addEventListener('mouseleave', () => { 
-                closeTimeout = setTimeout(closeAllMenus, 200); 
-            });
-            
-            mainNav.addEventListener('mouseenter', () => { 
-                clearTimeout(closeTimeout); 
-            });
-        }
-    }
-    
-    enableDesktopMenu();
-    window.addEventListener('resize', enableDesktopMenu);
-
-    // --- FADE-IN ANIMATION SCRIPT ---
-    const observerOptions = { rootMargin: '0px', threshold: 0.2 };
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                if (el.dataset.staggerChildren !== undefined) {
-                    const children = el.querySelectorAll('.animate-item');
-                    children.forEach((child, index) => {
-                        child.style.transitionDelay = `${index * 120}ms`;
-                        child.classList.add('is-visible');
-                    });
-                } else {
-                    el.classList.add('is-visible');
-                }
-                observer.unobserve(el);
-            }
-        });
-    }, observerOptions);
-    
-    const animatedContainers = document.querySelectorAll('[data-stagger-children]');
-    animatedContainers.forEach(container => observer.observe(container));
-    
-    const heroItems = document.querySelector('.hero').querySelectorAll('.animate-item');
-    heroItems.forEach(item => {
-        setTimeout(() => item.classList.add('is-visible'), 100);
-    });
-
-    // --- 3D MODEL SCROLL ANIMATION SCRIPT ---
-    const modelObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const modelViewer = entry.target;
-                modelViewer.cameraOrbit = modelViewer.dataset.finalOrbit;
-                observer.unobserve(modelViewer); 
-            }
-        });
-    }, { threshold: 0.5 }); 
-
-    const dpminiViewer = document.querySelector('#dpmini-viewer');
-    const dpproViewer = document.querySelector('#dppro-viewer');
-    if (dpminiViewer) modelObserver.observe(dpminiViewer);
-    if (dpproViewer) modelObserver.observe(dpproViewer);
-
-    // --- 3D MODEL TOUCH/SCROLL PREVENTION ---
-    const productVisuals = document.querySelectorAll('.product-visual');
-    productVisuals.forEach(visual => {
-        visual.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
-        }, { passive: true });
-        
-        visual.addEventListener('touchmove', (e) => {
-            e.stopPropagation();
-        }, { passive: true });
-        
-        visual.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-        }, { passive: true });
-    });
-
-    // --- CART SCRIPT ---
-    const cartBtn = document.getElementById('cart-btn');
-    const cartCountEl = document.getElementById('cart-count');
-    const cartSidebar = document.getElementById('cart-sidebar');
-    const cartBackdrop = document.getElementById('cart-backdrop');
-    const closeCartBtn = document.getElementById('close-cart-btn');
-    const cartItemsList = document.getElementById('cart-items');
-    const cartEmptyState = document.getElementById('cart-empty-state');
-    const cartTotalPriceEl = document.getElementById('cart-total-price');
-    const checkoutBtn = document.getElementById('checkout-btn');
-    const clearCartBtn = document.getElementById('clear-cart-btn');
-    let cart = [];
-    
-    function initCart() {
-        const savedCart = sessionStorage.getItem('shoppingCart');
-        if (savedCart) {
-            cart = JSON.parse(savedCart);
-        }
-        updateCartUI();
-    }
-
-    function saveCart() {
-        sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
-        updateCartUI();
-    }
-
-    function formatOptions(options) {
-        if (typeof options === 'object' && options !== null) {
-            return Object.values(options).filter(val => val).join(', ');
-        }
-        return options || '';
-    }
-
-    function changeQuantity(itemId, amount) {
-        if (amount > 0) {
-            const itemToAdd = cart.find(item => item.id === itemId);
-            if (itemToAdd) {
-                cart.push({...itemToAdd});
-            }
-        } else if (amount < 0) {
-            const itemIndexToRemove = cart.findIndex(item => item.id === itemId);
-            if (itemIndexToRemove > -1) {
-                cart.splice(itemIndexToRemove, 1);
-            }
-        }
-        saveCart();
-    }
-
-    function removeItem(itemId) {
-        cart = cart.filter(item => item.id !== itemId);
-        saveCart();
-    }
-
-    function updateCartUI() {
-        const consolidatedCart = {};
-        cart.forEach(item => {
-            if (consolidatedCart[item.id]) {
-                consolidatedCart[item.id].quantity++;
-            } else {
-                consolidatedCart[item.id] = { ...item, quantity: 1 };
-            }
-        });
-        const displayCart = Object.values(consolidatedCart);
-
-        cartItemsList.innerHTML = '';
-        
-        let total = 0;
-        cart.forEach(item => { total += item.price; });
-        const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
-
-        if (displayCart.length === 0) {
-            cartEmptyState.style.display = 'block';
-            checkoutBtn.disabled = true;
-            clearCartBtn.disabled = true;
-        } else {
-            cartEmptyState.style.display = 'none';
-            checkoutBtn.disabled = false;
-            clearCartBtn.disabled = false;
-
-            displayCart.forEach((item) => {
-                const li = document.createElement('li');
-                li.className = 'cart-item';
-                const baseName = item.name.split('(')[0].trim();
-                const formattedOptions = formatOptions(item.options);
-                
-                li.innerHTML = `
-                    <div class="cart-product-card">
-                        <div class="cart-product-header">
-                            <h4 class="cart-product-title">${baseName}</h4>
-                            <button class="cart-product-remove-btn" data-action="remove" data-id="${item.id}">&times;</button>
-                        </div>
-                        <p class="cart-product-subtitle">${formattedOptions}</p>
-                        <div class="cart-item-actions">
-                            <div class="quantity-control">
-                                <button class="btn quantity-btn" data-action="decrease" data-id="${item.id}">-</button>
-                                <input type="number" class="quantity-input" value="${item.quantity}" min="1" readonly>
-                                <button class="btn quantity-btn" data-action="increase" data-id="${item.id}">+</button>
-                            </div>
-                            <div class="cart-product-price">${EUR.format(item.price)}</div>
-                        </div>
+        <div class="stands-grid">
+             <div class="tech-card">
+                <div class="tech-inner">
+                    <span class="tech-spec">Ref: FS-100</span>
+                    <div class="tech-icon-box">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 3v14" stroke-linecap="round"/>
+                            <path d="M8 21h8" stroke-linecap="round"/>
+                            <path d="M5 21l3-4" stroke-linecap="round"/>
+                            <path d="M19 21l-3-4" stroke-linecap="round"/>
+                            <circle cx="12" cy="10" r="1"/>
+                        </svg>
                     </div>
-                `;
-                cartItemsList.appendChild(li);
-            });
-        }
+                    <h3>Floor Stand</h3>
+                    <p style="font-size:14px;">High-friction lockable casters with counter-weighted base for maximum mobility.</p>
+                </div>
+            </div>
 
-        cartCountEl.textContent = cart.length;
-        cartTotalPriceEl.textContent = EUR.format(total);
-    }
-    
-    cartBtn.addEventListener('click', () => {
-        cartSidebar.classList.add('is-open');
-        cartBackdrop.classList.add('is-visible');
-        body.style.overflow = 'hidden';
-    });
+             <div class="tech-card">
+                <div class="tech-inner">
+                    <span class="tech-spec">Ref: CM-200</span>
+                    <div class="tech-icon-box">
+                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 2v8" stroke-linecap="round"/>
+                            <path d="M12 10l-4 4" stroke-linecap="round"/>
+                            <path d="M12 10l4 4" stroke-linecap="round"/>
+                            <path d="M8 14v4" stroke-linecap="round"/>
+                            <path d="M16 14v4" stroke-linecap="round"/>
+                            <rect x="7" y="2" width="10" height="2" fill="currentColor" fill-opacity="0.1"/>
+                        </svg>
+                    </div>
+                    <h3>Ceiling Mount</h3>
+                    <p style="font-size:14px;">Fixed overhead installation. Clears floor space and reduces vibration.</p>
+                </div>
+            </div>
 
-    closeCartBtn.addEventListener('click', () => {
-        cartSidebar.classList.remove('is-open');
-        cartBackdrop.classList.remove('is-visible');
-        body.style.overflow = '';
-    });
+             <div class="tech-card">
+                <div class="tech-inner">
+                    <span class="tech-spec">Ref: WM-300</span>
+                    <div class="tech-icon-box">
+                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M2 4h4v16H2z" fill="currentColor" fill-opacity="0.1"/>
+                            <path d="M6 8h6" stroke-linecap="round"/>
+                            <path d="M12 8l4 4" stroke-linecap="round"/>
+                            <path d="M16 12l-4 4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3>Wall Mount</h3>
+                    <p style="font-size:14px;">Extensible articulated arm. Folds flush against the wall when inactive.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-    cartBackdrop.addEventListener('click', () => {
-        cartSidebar.classList.remove('is-open');
-        cartBackdrop.classList.remove('is-visible');
-        body.style.overflow = '';
-    });
-    
-    cartItemsList.addEventListener('click', (e) => {
-        const target = e.target.closest('button');
-        if (!target) return;
+<section class="section section-bg" id="team">
+  <div class="container">
+      <div class="section-header">
+          <span class="eyebrow">Family Driven Innovation</span>
+          <h2>The Minds Behind DP Biotech</h2>
+          <p>A family heritage of engineering excellence, bridging mechanics and digital intelligence.</p>
+      </div>
 
-        const action = target.dataset.action;
-        const id = target.dataset.id;
-        
-        if (!id) return;
+      <div class="team-grid">
+          
+          <div class="team-member">
+              
+              <img src="franco.jpg" 
+                   onerror="this.src='papa.png'" 
+                   alt="Franco Dal Pont" 
+                   class="team-photo">
+              <h3>Franco Dal Pont</h3>
+              <span class="team-role">R&D & Patent Manager</span>
+              <p>The architect of our mechanics. Franco leads 3D modeling and manages the intellectual property that drives our optical innovations.</p>
+          </div>
 
-        if (action === 'increase') {
-            changeQuantity(id, 1);
-        } else if (action === 'decrease') {
-            changeQuantity(id, -1);
-        } else if (action === 'remove') {
-            removeItem(id);
-        }
-    });
+          <div class="team-member">
+              
+              <img src="giorgio.jpg" 
+                   onerror="this.src='giorgio.png'" 
+                   alt="Giorgio Dal Pont" 
+                   class="team-photo">
+              <h3>Giorgio Dal Pont</h3>
+              <span class="team-role">Software & Workflow Design</span>
+              <p>Bridging the gap between user and machine. Giorgio architects the software ecosystem and defines clinical workflows.</p>
+          </div>
 
-    clearCartBtn.addEventListener('click', () => {
-        cart = [];
-        saveCart();
-    });
+          <div class="team-member">
+              
+              <img src="marco.jpg" 
+                   onerror="this.src='marco.png'" 
+                   alt="Marco Dal Pont" 
+                   class="team-photo">
+              <h3>Marco Dal Pont</h3>
+              <span class="team-role">Software & Product Design</span>
+              <p>Designing the digital experience. Marco oversees the interface design and software logic that powers the Med Connect suite.</p>
+          </div>
 
-    checkoutBtn.addEventListener('click', () => {
-        window.location.href = 'checkout.html';
-    });
-    
-    window.onbeforeunload = function(event) {
-        if (cart.length > 0) {
-            const message = "You have items in your cart. Are you sure you want to leave?";
-            event.returnValue = message; 
-            return message;
-        }
-    };
-    
-    initCart();
-});
-</script>
+      </div>
+  </div>
+</section>
+
+<footer>
+    <div class="container footer-content">
+        <div class="logo">
+             <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:24px; margin-right:8px;">
+             <span>DP Biotech &copy; 2025</span>
+        </div>
+        <div class="footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="contactus.html">Contact</a>
+        </div>
+    </div>
+</footer>
+
+<div class="cart-backdrop" id="cart-backdrop"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button class="btn btn-ghost" id="close-cart">Close</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div id="cart-empty" style="padding:40px; text-align:center; color:var(--text-secondary);">Cart is empty</div>
+    <div class="cart-footer">
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
+            <span>Total</span><span id="cart-total">€0,00</span>
+        </div>
+        <button id="checkout-btn" class="btn btn-primary" style="width:100%;">Checkout</button>
+        <button id="clear-cart" class="btn btn-ghost" style="width:100%; margin-top:8px; font-size:12px;">Clear Cart</button>
+    </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+      // --- SPLASH SCREEN SCRIPT ---
+      const splash = document.querySelector('.splash-screen');
+      const body = document.body;
+      body.classList.add('no-scroll');
+      
+      window.addEventListener('load', () => {
+          if (splash) {
+              setTimeout(() => { 
+                  splash.classList.add('hidden'); 
+                  body.classList.remove('no-scroll');
+              }, 3000); 
+              setTimeout(() => { splash.remove(); }, 5500);
+          }
+      });
+  
+      // --- MOBILE MENU ---
+      const menuBtn = document.getElementById('menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if(menuBtn && mobileMenu){
+          menuBtn.addEventListener('click', () => {
+              mobileMenu.classList.add('is-open');
+          });
+      }
+  
+      // --- MEGA MENU LOGIC (FIXED) ---
+      const mainNav = document.getElementById('main-nav');
+      const navItems = mainNav.querySelectorAll('.nav-links li'); // Select ALL items, not just dropdowns
+      const dropdowns = document.querySelectorAll('.dropdown-menu'); // Select the actual menu boxes
+      const backdrop = document.querySelector('.menu-backdrop');
+      let activeMenu = null, closeTimeout;
+  
+      function openMenu(id){
+          if(activeMenu && activeMenu.id !== id){ activeMenu.classList.remove('is-open'); }
+          const menu = document.getElementById(id);
+          if(menu){ 
+              menu.classList.add('is-open'); 
+              backdrop.classList.add('is-visible'); 
+              activeMenu = menu; 
+          }
+      }
+  
+      function closeAll(){
+          if(activeMenu){ activeMenu.classList.remove('is-open'); }
+          backdrop.classList.remove('is-visible'); 
+          activeMenu = null;
+      }
+  
+      if(window.innerWidth >= 960) {
+          // 1. Handle hovering over Nav Items
+          navItems.forEach(item => {
+              item.addEventListener('mouseenter', () => { 
+                  clearTimeout(closeTimeout); 
+                  
+                  // If this item has a menu, open it
+                  if (item.dataset.menu) {
+                      openMenu(item.dataset.menu);
+                  } else {
+                      // If it's a regular link (like Stands), close any open menus
+                      closeAll();
+                  }
+              });
+          });
+  
+          // 2. Handle leaving the main nav bar
+          mainNav.addEventListener('mouseleave', () => { 
+              closeTimeout = setTimeout(closeAll, 200); 
+          });
+          mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+  
+          // 3. Handle hovering the Dropdown Menus themselves (So they don't close while using them)
+          dropdowns.forEach(menu => {
+              menu.addEventListener('mouseenter', () => {
+                  clearTimeout(closeTimeout);
+              });
+              menu.addEventListener('mouseleave', () => {
+                  closeTimeout = setTimeout(closeAll, 200);
+              });
+          });
+      }
+      backdrop.addEventListener('click', closeAll);
+  
+      // --- CART LOGIC ---
+      const cartBtn = document.getElementById('cart-btn');
+      const cartSidebar = document.getElementById('cart-sidebar');
+      const cartBackdrop = document.getElementById('cart-backdrop');
+      const closeCart = document.getElementById('close-cart');
+      const cartCount = document.getElementById('cart-count');
+      const cartItemsList = document.getElementById('cart-items');
+      const cartTotal = document.getElementById('cart-total');
+      const cartEmpty = document.getElementById('cart-empty');
+      const clearCartBtn = document.getElementById('clear-cart');
+      const checkoutBtn = document.getElementById('checkout-btn');
+      
+      let cart = JSON.parse(sessionStorage.getItem('shoppingCart') || '[]');
+  
+      function saveCart() {
+          sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+          updateCartUI();
+      }
+  
+      function formatOptions(options) {
+          if (typeof options === 'object' && options !== null) { 
+              return Object.values(options).filter(val => val).join(', '); 
+          }
+          return options || '';
+      }
+  
+      function updateCartUI() {
+          const consolidatedCart = {};
+          cart.forEach(item => {
+              const key = item.id + JSON.stringify(item.options);
+              if (consolidatedCart[key]) { 
+                  consolidatedCart[key].quantity++; 
+              } else { 
+                  consolidatedCart[key] = { ...item, quantity: 1, uniqueKey: key }; 
+              }
+          });
+  
+          const displayCart = Object.values(consolidatedCart);
+          cartItemsList.innerHTML = '';
+          let total = 0;
+          cart.forEach(item => { total += (item.price || 0); });
+          
+          const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+  
+          if (displayCart.length === 0) {
+              cartEmpty.style.display = 'block';
+              checkoutBtn.disabled = true;
+              clearCartBtn.disabled = true;
+          } else {
+              cartEmpty.style.display = 'none';
+              checkoutBtn.disabled = false;
+              clearCartBtn.disabled = false;
+              
+              displayCart.forEach((item) => {
+                  const li = document.createElement('div');
+                  li.className = 'cart-item';
+                  const baseName = item.name ? item.name.split('(')[0].trim() : 'Product';
+                  const formattedOptions = formatOptions(item.options);
+                  
+                  li.innerHTML = `
+                      <div class="cart-product-card">
+                          <div class="cart-product-header">
+                              <h4 class="cart-product-title">${baseName}</h4>
+                              <button class="btn btn-ghost" style="padding:2px 8px; font-size:16px; border:none;" onclick="removeItem('${item.uniqueKey}')">&times;</button>
+                          </div>
+                          <p class="cart-product-subtitle">${formattedOptions}</p>
+                          <div class="cart-item-actions">
+                              <div class="quantity-control">
+                                  <button class="quantity-btn" onclick="changeQuantity('${item.uniqueKey}', -1)">-</button>
+                                  <span class="quantity-input">${item.quantity}</span>
+                                  <button class="quantity-btn" onclick="changeQuantity('${item.uniqueKey}', 1)">+</button>
+                              </div>
+                              <div style="font-weight:600; font-size:14px;">${EUR.format(item.price)}</div>
+                          </div>
+                      </div>
+                  `;
+                  cartItemsList.appendChild(li);
+              });
+          }
+          
+          if(cartCount) cartCount.innerText = cart.length;
+          if(cartTotal) cartTotal.innerText = EUR.format(total);
+      }
+  
+      window.changeQuantity = (uniqueKey, amount) => {
+          if (amount > 0) {
+              const itemToClone = cart.find(item => (item.id + JSON.stringify(item.options)) === uniqueKey);
+              if (itemToClone) { cart.push({ ...itemToClone }); }
+          } else {
+              const index = cart.findIndex(item => (item.id + JSON.stringify(item.options)) === uniqueKey);
+              if (index > -1) { cart.splice(index, 1); }
+          }
+          saveCart();
+      };
+  
+      window.removeItem = (uniqueKey) => {
+          cart = cart.filter(item => (item.id + JSON.stringify(item.options)) !== uniqueKey);
+          saveCart();
+      };
+  
+      // Events
+      const openCart = () => {
+          cartSidebar.classList.add('is-open');
+          cartBackdrop.classList.add('is-visible');
+          body.style.overflow = 'hidden';
+      };
+      const closeCartFunc = () => {
+          cartSidebar.classList.remove('is-open');
+          cartBackdrop.classList.remove('is-visible');
+          body.style.overflow = '';
+      };
+  
+      if(cartBtn) cartBtn.addEventListener('click', openCart);
+      if(closeCart) closeCart.addEventListener('click', closeCartFunc);
+      if(cartBackdrop) cartBackdrop.addEventListener('click', closeCartFunc);
+      if(clearCartBtn) clearCartBtn.addEventListener('click', () => { cart = []; saveCart(); });
+      if(checkoutBtn) checkoutBtn.addEventListener('click', () => { window.location.href = 'checkout.html'; });
+  
+      saveCart();
+  });
+  </script>
 </body>
-</html>
+</html> 
