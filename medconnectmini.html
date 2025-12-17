@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Med Connect Mini — Surgical Command Center</title>
+<script>
+    // Authentication check placeholder
+    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
+      // window.location.href = 'login.html';
+    }
+</script>
+<meta name="description" content="The dedicated companion app for DP Mini. Control optics, broadcast procedures, and manage patient data securely." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================
+   DESIGN SYSTEM
+   ========================================= */
+:root {
+    --bg-body: #ffffff;
+    --bg-secondary: #f5f5f7;
+    --bg-card: #ffffff;
+    --text-primary: #1d1d1f;
+    --text-secondary: #86868b;
+    --accent: #4f46e5; /* Software Blue branding */
+    --accent-gradient: linear-gradient(135deg, #4f46e5, #8b5cf6);
+    --divider: rgba(0, 0, 0, 0.08);
+    
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --nav-height: 52px;
+    --container-width: 1080px;
+    
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 12px 24px rgba(0,0,0,0.06);
+}
+/* =========================
+   CLEAN LAYOUT UTILITIES (From DP Mini Code)
+   ========================= */
+
+/* 1. The Container (Gray box, rounded, no fake phone borders) */
+.feature-image-wrapper {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--divider);
+    position: relative; /* Ensure images stay inside */
+}
+
+/* 2. Image fit (Cover the whole box cleanly) */
+.feature-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 3. Single Vertical Card (For Profile & AI) */
+.feature-image-wrapper.vertical-card {
+    flex: 0.5; /* Narrower than text */
+    height: 690px; /* Tall portrait height */
+    width: 60%;
+}
+
+/* 4. The Stack Column (For sections with 2 images stacked vertically) */
+.image-stack-column {
+    flex: 1; /* Larghezza bilanciata */
+    display: flex;
+    flex-direction: column; /* Impila le immagini verticalmente */
+    gap: 24px; /* Spazio tra le due immagini */
+    height: 100%;
+    justify-content: center;
+}
+
+/* Le singole schede dentro la colonna verticale */
+.feature-image-wrapper.split-card {
+    width: 100%;
+    height: 240px; /* Altezza fissa per ogni metà */
+    flex: none;
+    /* Mantieni lo stile standard */
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--divider);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    position: relative;
+}
+@media(max-width: 900px) {
+    .image-stack-column {
+        width: 100%;
+        flex: auto;
+    }
+}
+/* === NEW STYLES FOR SIDE-BY-SIDE PHONES === */
+
+/* 6. New container for two images next to each other horizontally */
+.image-side-by-side-container {
+    flex: 1.3; /* Give it more width than the text block to fit two phones */
+    display: flex;
+    gap: 24px; /* Space between the phones */
+    justify-content: center;
+    align-items: center;
+}
+
+/* 7. The individual vertical phone image inside the side-by-side container */
+/* It inherits base styling from .feature-image-wrapper */
+.feature-image-wrapper.phone-portrait {
+    flex: 1; /* Share available width equally */
+    height: 550px; /* Tall height for portrait look */
+    width: auto; /* Let flex dictate width */
+}
+
+
+/* Mobile Fixes */
+@media(max-width: 900px) {
+    .feature-image-wrapper.vertical-card { height: 400px; flex: auto; }
+    .image-stack-column { width: 100%; flex: auto; }
+    
+    /* Stack the side-by-side images on mobile */
+    .image-side-by-side-container { 
+        flex-direction: column;
+        width: 100%;
+        flex: auto;
+    }
+    .feature-image-wrapper.phone-portrait {
+        width: 100%; /* Full width when stacked */
+        height: 400px; /* Slightly shorter on mobile */
+    }
+}
+
+
+/* Add this to your <style> section */
+    .dual-image-container {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        padding: 0 20px;
+    }
+    .phone-mockup {
+        width: 45%; /* Fits two side by side */
+        height: 85%;
+        background: #000;
+        border-radius: 20px;
+        border: 4px solid #333;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 12px;
+    }
+    .phone-mockup.single {
+        width: 60%; /* Slightly larger for single image sections */
+    }
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #000000;
+        --bg-secondary: #121212;
+        --bg-card: #1c1c1e;
+        --text-primary: #f5f5f7;
+        --text-secondary: #86868b;
+        --divider: rgba(255, 255, 255, 0.12);
+    }
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-primary); overflow-x: hidden; }
+body.no-scroll { overflow: hidden; height: 100vh; }
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+p { line-height: 1.5; color: var(--text-secondary); margin: 0; }
+a { text-decoration: none; color: inherit; transition: opacity 0.2s; }
+a:hover { opacity: 0.7; }
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+
+/* =========================
+   NAVIGATION & CART (Standardized)
+   ========================= */
+.nav { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height); background: rgba(255, 255, 255, 0.7); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); z-index: 100; border-bottom: 1px solid var(--divider); }
+@media (prefers-color-scheme: dark) { .nav { background: rgba(0,0,0,0.7); } }
+.nav-inner { height: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
+.nav-links { display: none; list-style: none; gap: 32px; margin: 0; padding: 0; font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+@media(min-width: 960px) { .nav-links { display: flex; } }
+.nav-links li { cursor: pointer; transition: color 0.2s; }
+.nav-links li:hover { color: var(--text-primary); }
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; transition: all 0.3s; cursor: pointer; border: none; }
+.btn-primary { background: var(--text-primary); color: var(--bg-body); }
+.btn-primary:hover { transform: scale(1.02); }
+.btn-ghost { background: transparent; color: var(--text-primary); }
+.btn-ghost:hover { background: var(--bg-secondary); }
+.cart-icon-btn { position: relative; background: none; border: none; color: var(--text-primary); cursor: pointer; }
+.cart-badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: white; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.dropdown-menu { opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; position: absolute; top: var(--nav-height); left: 0; right: 0; background: var(--bg-body); border-top: 1px solid var(--divider); box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 90; }
+.dropdown-menu.is-open { opacity: 1; visibility: visible; }
+.menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 40px 0; }
+.menu-main-links, .menu-link-column { list-style: none; padding: 0; margin: 0; }
+.menu-main-links a { font-size: 24px; font-weight: 600; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-main-links a:hover { background: var(--bg-secondary); }
+.menu-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; visibility: hidden; }
+.menu-backdrop.is-visible { opacity: 1; visibility: visible; }
+.cart-sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 400px; background: var(--bg-card); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 201; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
+.cart-sidebar.is-open { transform: translateX(0); }
+
+/* =========================
+   HERO SECTION
+   ========================= */
+.hero {
+    padding-top: 180px; padding-bottom: 120px; text-align: center;
+    background: radial-gradient(circle at 50% 0%, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+}
+.hero h1 { font-size: clamp(42px, 7vw, 84px); line-height: 1.05; margin-bottom: 24px; }
+.gradient-text { background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero p.lead { font-size: clamp(18px, 3vw, 22px); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+.app-store-badge {
+    background: #000; color: #fff; border-radius: 8px; padding: 10px 20px;
+    display: inline-flex; align-items: center; gap: 10px; font-weight: 600;
+    transition: transform 0.2s;
+}
+.app-store-badge:hover { transform: translateY(-2px); }
+
+/* =========================
+   LAYOUTS & SECTIONS
+   ========================= */
+.section { padding: 100px 0; }
+.section-bg { background-color: var(--bg-secondary); }
+.eyebrow { font-size: 13px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 12px; }
+.section-header { text-align: center; max-width: 700px; margin: 0 auto 60px; }
+.section-header h2 { font-size: 42px; margin-bottom: 16px; }
+
+/* Standard Feature Row (Left/Right) */
+.feature-row { display: flex; align-items: center; gap: 60px; }
+.feature-row.reverse { flex-direction: row-reverse; }
+.feature-text { flex: 1; }
+.feature-text h2 { font-size: 42px; margin-bottom: 24px; }
+.feature-text p { font-size: 18px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 32px; }
+.feature-image-wrapper {
+    flex: 1; background: var(--bg-card); border-radius: var(--radius-lg);
+    border: 1px solid var(--divider); overflow: hidden;
+    box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: center;
+    height: 500px; position: relative;
+}
+
+/* NEW: Full Width Split Layout (Two Pieces - Edge to Edge) */
+.split-layout {
+    display: flex; min-height: 600px;
+    border-top: 1px solid var(--divider); border-bottom: 1px solid var(--divider);
+}
+.split-text-side {
+    flex: 1; padding: 80px; display: flex; flex-direction: column; justify-content: center;
+    background: var(--bg-body);
+}
+.split-visual-side {
+    flex: 1; background: var(--bg-secondary); position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+}
+/* Placeholder style for the split visual */
+.placeholder-split-ui {
+    width: 80%; height: 80%; background: #e0e7ff; border-radius: 24px;
+    border: 2px dashed var(--accent); display: grid; place-items: center;
+    color: var(--accent); font-weight: 600;
+}
+
+/* NEW: 2-Column Grid Layout (Two Pieces - Side by Side Cards) */
+.grid-2-column { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+.feature-card {
+    background: var(--bg-card); padding: 48px; border-radius: var(--radius-lg);
+    border: 1px solid var(--divider);
+}
+.feature-card h3 { font-size: 28px; margin-bottom: 16px; }
+.feature-card p { font-size: 17px; line-height: 1.6; }
+
+/* UI Feature Lists */
+.ui-feature-list { list-style: none; padding: 0; margin-top: 32px; }
+.ui-feature-item { display: flex; gap: 16px; margin-bottom: 24px; }
+.ui-icon {
+    width: 40px; height: 40px; background: var(--bg-secondary);
+    border-radius: 10px; display: grid; place-items: center;
+    color: var(--accent); flex-shrink: 0; font-weight: 700;
+}
+
+@media(max-width: 900px) {
+    .feature-row, .feature-row.reverse, .split-layout, .grid-2-column { flex-direction: column; grid-template-columns: 1fr; gap: 40px; }
+    .feature-image-wrapper { width: 100%; height: 400px; }
+    .split-text-side { padding: 60px 24px; }
+    .split-visual-side { height: 400px; }
+}
+/* --- AI BADGES STYLING --- */
+/* --- SPLIT LAYOUT IMAGE STACK --- */
+
+.split-image-stack {
+    display: flex;
+    flex-direction: column; /* Stacks images vertically */
+    width: 100%;
+    height: 100%;
+}
+
+.split-image-half {
+    flex: 1; /* Each image takes exactly 50% height */
+    position: relative;
+    overflow: hidden;
+    /* Optional: Subtle separator line between images */
+    border-bottom: 4px solid var(--bg-body); 
+}
+
+.split-image-half:last-child {
+    border-bottom: none;
+}
+
+.split-image-half img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image fills the rectangle without stretching */
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+/* Hover Effect: Gentle zoom on hover */
+.split-image-half:hover img {
+    transform: scale(1.03);
+}
+
+/* Optional: Label Overlay Styling */
+.split-label {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 99px;
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+}
+
+/* Mobile: Stack them properly if the section gets too short */
+@media(max-width: 900px) {
+    .split-image-stack {
+        min-height: 400px; /* Ensure images have height on mobile */
+    }
+}
+.ai-badge-container {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 99px; /* Pill shape */
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    border: 1px solid transparent;
+    cursor: default;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.ai-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+
+/* Gemini Theme (Blue/Purple) */
+.badge-gemini {
+    background: linear-gradient(135deg, #eff6ff, #f5f3ff); /* Very light blue to purple */
+    color: #4f46e5; /* Indigo text */
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+/* ChatGPT Theme (Teal/Green) */
+.badge-chatgpt {
+    background: linear-gradient(135deg, #ecfdf5, #f0fdf4); /* Very light teal */
+    color: #059669; /* Emerald text */
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Optional: Animation for the icons on hover */
+.ai-badge:hover .ai-sparkle {
+    display: inline-block;
+    animation: spin 2s linear infinite; /* Subtle spin */
+}
+.ai-badge:hover .ai-brain {
+    display: inline-block;
+    animation: pulse 1s infinite;
+}
+/* --- HORIZONTAL CARD STYLING --- */
+.feature-image-wrapper.horizontal-card {
+    flex: 1.2; /* Makes the image area wider than the text */
+    height: 250px; /* Standard Landscape height */
+    width: 100%;
+}
+/* --- SQUARE CARD STYLING --- */
+/* --- SQUARE CARD (Height-Based Sizing) --- */
+.feature-image-wrapper.square-card {
+    flex: 0.8; /* Disables width-based sizing */
+    height: 280px; /* <--- CONTROL SIZE HERE (e.g. 400px, 500px, 600px) */
+    width: 500px; /* Width will automatically match the height */
+    aspect-ratio: 1 / 1; /* Forces square shape */
+    margin: 0 auto;
+}
+
+/* Mobile Adjustment */
+@media(max-width: 900px) {
+    .feature-image-wrapper.square-card {
+        height: auto; /* Reset height constraint on mobile */
+        width: 100%; /* Fill screen width */
+        max-width: 400px; /* Optional: limit max size on phone */
+    }
+}
+/* Mobile Adjustment */
+@media(max-width: 900px) {
+    .feature-image-wrapper.horizontal-card {
+        flex: auto;
+        height: 300px; /* Smaller on phones */
+    }
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+/* Animation Utility */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="main-nav">
+  <div class="container nav-inner">
+      <a href="index.html" class="logo">
+          <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRmNDZlNSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4=' " alt="Logo" style="height:28px; border-radius: 50%;">
+          <span>DP Biotech</span>
+      </a>
+      
+      <ul class="nav-links">
+          <li class="dropdown" data-menu="microscopes-menu">Microscopes</li>
+          <li class="dropdown" data-menu="stands-menu">Stands</li>
+          <li class="dropdown" data-menu="software-menu">Software</li>
+          <li class="dropdown" data-menu="support-menu">Support</li>
+      </ul>
+
+      <div class="nav-actions">
+          <a href="licensing.html" class="btn btn-ghost">Licensing</a>
+          <button class="cart-icon-btn" id="cart-btn">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              <span class="cart-badge" id="cart-count">0</span>
+          </button>
+      </div>
+  </div>
+
+  <div id="microscopes-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Shop Microscopes</li>
+                  <li><a href="DPMini.html">DP Mini</a></li>
+                  <li><a href="DPPro.html">DP Pro</a></li>
+                  <li><a href="all-models.html">All Models</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+  <div id="software-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Connect Suite</li>
+                  <li><a href="medconnectmini.html">Med Connect Mini</a></li>
+                  <li><a href="medconnectpro.html">Med Connect Pro</a></li>
+              </ul>
+              <ul class="menu-link-column">
+                  <li>Cloud & Services</li>
+                  <li><a href="medpatient.html">Med Patient</a></li>
+                  <li><a href="medshare.html">Med Share</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+  <div id="support-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Get Support</li>
+                  <li><a href="contactus.html">Contact Us</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+</nav>
+<div class="menu-backdrop"></div>
+
+<section class="hero">
+    <div class="container">
+        <div style="opacity: 0; animation: fadeUp 0.8s 0.2s forwards;">
+            <span class="eyebrow" style="color:var(--text-secondary); border: 1px solid var(--divider); padding: 6px 16px; border-radius: 99px; display: inline-block; margin-bottom:24px;">DP Mini Companion App</span>
+            <h1>Your pocket-sized <br><span class="gradient-text">Surgical Command Center.</span></h1>
+            <p class="lead">Med Connect Mini unlocks the full potential of your smartphone's sensor. It's your monitor, your recorder, and your sterile controller.</p>
+            
+            <div style="display: flex; gap: 16px; justify-content: center; margin-top: 32px;">
+              
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section section-bg">
+    <div class="container">
+        <div class="feature-row">
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">Professional Portfolio</span>
+                <h2>Your Medical Legacy</h2>
+                <p>Manage your career highlights in one secure location. Edit your surgical recordings, upload new cases, and curate your professional profile.</p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">👤</div>
+                        <div>
+                            <strong>Granular Privacy</strong>
+                            <p style="font-size:14px; margin:0;">Decide exactly which cases are public to the community and which remain private records.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">✏️</div>
+                        <div>
+                            <strong>Case Management</strong>
+                            <p style="font-size:14px; margin:0;">Add metadata, patient notes, and tags to organize your surgical history.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="feature-image-wrapper vertical-card">
+                <img src="profilo.png" alt="Profile UI"> 
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="feature-row reverse align-top-mobile">
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">The Community</span>
+                <h2>Connect & Discover</h2>
+                <p>Stay on the cutting edge of surgical techniques. Explore a global feed of public cases, follow key opinion leaders, and never miss a moment.</p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">🔔</div>
+                        <div>
+                            <strong>Smart Notifications</strong>
+                            <p style="font-size:14px; margin:0;">Get instant alerts when your favorite surgeons go live or post new findings.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">🌍</div>
+                        <div>
+                            <strong>Explore Mode</strong>
+                            <p style="font-size:14px; margin:0;">Search profiles and discover trending procedures from around the world.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="image-side-by-side-container">
+                <div class="feature-image-wrapper phone-portrait">
+                    <img src="feed.png" alt="Main Feed">
+                </div>
+                <div class="feature-image-wrapper phone-portrait">
+                    <img src="explore.png" alt="Explore UI">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-bg">
+    <div class="container">
+        <div class="feature-row">
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">Bring your own AI Architecture</span>
+                <h2>Supercharged Intelligence</h2>
+                <p>We don't just give you tools; we give you a platform. Connect your own personal AI accounts directly into the Med Connect workflow via API.</p>
+                
+                <p style="margin-bottom: 24px;">Whether you use <strong>ChatGPT</strong> or Google's <strong>Gemini</strong>, integrate them to analyze surgical notes, summarize procedures, or assist in post-op reporting automatically.</p>
+                
+                <div class="ai-badge-container">
+                    <span class="ai-badge badge-gemini">
+                        <span class="ai-sparkle">✨</span> Gemini Integrated
+                    </span>
+                    <span class="ai-badge badge-chatgpt">
+                        <span class="ai-brain">🧠</span> ChatGPT Ready
+                    </span>
+                </div>
+            </div>
+
+            <div class="feature-image-wrapper vertical-card">
+                 <img src="impostazioni.png" alt="AI Integration">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="feature-row reverse align-top-mobile">
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">Universal Streaming</span>
+                <h2>Broadcast Anywhere.</h2>
+                <p>You don't always need the full OR setup. Go live directly from your phone to share lectures, rounds, or quick consultations.</p>
+                
+                <div class="feature-card" style="padding: 24px; margin-top:24px; background: #f9fafb;">
+                    <h4 style="margin-bottom:8px;">📱 Pocket Mode</h4>
+                    <p style="font-size:14px; margin-bottom:0;">Stream using your phone's native camera. While you won't get the DP Mini's stereoscopic 3D view, you get the full power of our low-latency broadcasting network.</p>
+                </div>
+
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">👀</div>
+                        <div>
+                            <strong>Watch Live</strong>
+                            <p style="font-size:14px; margin:0;">Join streams as a spectator with chat and reaction capabilities.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="image-side-by-side-container">
+                <div class="feature-image-wrapper phone-portrait">
+                    <img src="main.png" alt="Watching Stream">
+                </div>
+                <div class="feature-image-wrapper phone-portrait">
+                     <img src="streamer.png" alt="Going Live UI">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section section-bg" id="features">
+    <div class="container">
+        <div class="feature-row">
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">Computational Imaging</span>
+                <h2>Smart Filtration</h2>
+                <p>Go beyond standard optics. The app leverages the GPU to apply real-time <strong>Chroma and Luma keying</strong>, allowing you to isolate specific tissues or suppress background distractions instantly.</p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">🎨</div>
+                        <div>
+                            <strong>Chroma Key (Color Isolation)</strong>
+                            <p style="font-size:14px; margin:0;">Isolate specific color spectrums (e.g., hemoglobin red) to emphasize vascularity or highlight pathological markers while desaturating surrounding tissue.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">💡</div>
+                        <div>
+                            <strong>Luma Key (Brightness Filter)</strong>
+                            <p style="font-size:14px; margin:0;">Filter based on luminance to visualize depth and texture. Perfect for distinguishing nerve fibers or enhancing visibility in deep cavities.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="feature-image-wrapper horizontal-card">
+                <img src="key.png" alt="Chroma and Luma Key Interface">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="feature-row">
+            
+            <div class="image-stack-column">
+                
+                <div class="feature-image-wrapper split-card">
+                    <img src="stream.png" alt="Live Stream UI">
+                    <div style="position:absolute; bottom:12px; left:12px; background:rgba(0,0,0,0.6); color:white; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; backdrop-filter:blur(4px);">
+                        Live Broadcast
+                    </div>
+                </div>
+                
+                <div class="feature-image-wrapper split-card">
+                    <img src="editing.jpg" alt="Editing Timeline UI">
+                    <div style="position:absolute; bottom:12px; left:12px; background:rgba(0,0,0,0.6); color:white; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; backdrop-filter:blur(4px);">
+                        Timeline Editor
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">The Collaborative O.R.</span>
+                <h2>Stream, Record, and Done.</h2>
+                <p>Turn any procedure into a live, interactive session. Stream 4K video with low latency to colleagues, or capture clinical excellence and edit directly on the device.</p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">📡</div>
+                        <div><strong>Secure Streaming:</strong> Share a private access code for real-time remote consultation.</div>
+                    </li>
+                     <li class="ui-feature-item">
+                        <div class="ui-icon">🎬</div>
+                        <div><strong>On-Device Editing:</strong> Trim footage, annotate key moments, and save without transferring files.</div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="section section-bg">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow">Sterile Interface</span>
+            <h2>Total Control, Zero Touch.</h2>
+            <p>Two powerful ways to manage your workflow without breaking sterility.</p>
+        </div>
+        
+        <div class="grid-2-column">
+            <div class="feature-card">
+                <div class="ui-icon" style="margin-bottom:24px;">🎤</div>
+                <h3>Neural Voice Command</h3>
+                <p>Leveraging the power of the phone's Neural Engine, execute commands with sub-second latency. Simply say "Focus", "Zoom In", or "Capture" to control the app instantly.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="ui-icon" style="margin-bottom:24px;">🎮</div>
+                <h3>Smart Handle Integration</h3>
+                <p>The app seamlessly pairs with the DP Mini Smart Handle. Map physical buttons and the joystick to app functions like digital zoom, cycling overlays, or snapping photos.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="feature-row reverse">
+            <div class="feature-text">
+                <span class="eyebrow">Cloud Integration</span>
+                <h2>Powered by Med Patient</h2>
+                <p>Your smartphone is the capture tool; <strong>Med Patient</strong> is the vault. Media is instantly encrypted and offloaded to our secure cloud, keeping your personal camera roll separate and ensuring zero local footprint on your device.</p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">☁️</div>
+                        <div>
+                            <strong>Secure Offsite Storage</strong>
+                            <p style="font-size:14px; margin:0;">Automatic sync to HIPAA/GDPR-compliant servers ensures data is accessible anywhere, but never stored permanently on the phone.</p>
+                        </div>
+                    </li>
+                </ul>
+                <a href="medpatient.html" class="btn btn-ghost" style="border:1px solid var(--divider);">Explore Med Patient Cloud →</a>
+            </div>
+            
+            <div class="feature-image-wrapper square-card">
+                <img src="calendar.png" alt="Med Patient Cloud Interface">
+            </div>
+        </div>
+    </div>
+</section>
+<footer>
+    <div class="container footer-content" style="display: flex; justify-content: space-between; padding: 40px 0; color: var(--text-secondary); font-size: 13px; border-top: 1px solid var(--divider);">
+        <div class="logo">
+             <span style="color:var(--text-primary); font-weight:600;">DP Biotech &copy; 2025</span>
+        </div>
+        <div style="display:flex; gap:20px;">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="contactus.html">Contact</a>
+        </div>
+    </div>
+</footer>
+
+<div class="cart-backdrop" id="cart-backdrop"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+    <div style="padding: 20px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between;">
+        <h3>Your Cart</h3>
+        <button class="btn btn-ghost" id="close-cart">Close</button>
+    </div>
+    <div style="flex:1; padding:20px; text-align:center; color: var(--text-secondary);" id="cart-items">
+        Cart is empty
+    </div>
+    <div style="padding:20px; border-top: 1px solid var(--divider); background: var(--bg-secondary);">
+        <button class="btn btn-primary" style="width:100%;">Checkout</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- NAV & MOBILE MENU ---
+    const backdrop = document.querySelector('.menu-backdrop');
+    const mainNav = document.getElementById('main-nav');
+    const navItems = mainNav.querySelectorAll('.dropdown');
+
+    let activeMenu = null;
+    let closeTimeout;
+
+    // Dropdown Logic (Desktop)
+    navItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            clearTimeout(closeTimeout);
+            const menuId = item.dataset.menu;
+            const menu = document.getElementById(menuId);
+            
+            if(activeMenu && activeMenu !== menu) activeMenu.classList.remove('is-open');
+            
+            if(menu) {
+                menu.classList.add('is-open');
+                backdrop.classList.add('is-visible');
+                activeMenu = menu;
+            }
+        });
+    });
+
+    // Close logic
+    const closeAll = () => {
+        if(activeMenu) activeMenu.classList.remove('is-open');
+        backdrop.classList.remove('is-visible');
+        activeMenu = null;
+    };
+
+    mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
+    backdrop.addEventListener('click', closeAll);
+
+    // Dropdown hover persistence
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.addEventListener('mouseenter', () => clearTimeout(closeTimeout));
+        menu.addEventListener('mouseleave', () => closeTimeout = setTimeout(closeAll, 200));
+    });
+
+    // --- CART LOGIC ---
+    const cartBtn = document.getElementById('cart-btn');
+    const sidebar = document.getElementById('cart-sidebar');
+    const cartBackdrop = document.getElementById('cart-backdrop');
+    const closeCart = document.getElementById('close-cart');
+
+    function toggleCart() {
+        sidebar.classList.toggle('is-open');
+        cartBackdrop.classList.toggle('is-visible');
+    }
+
+    if(cartBtn) cartBtn.addEventListener('click', toggleCart);
+    if(closeCart) closeCart.addEventListener('click', toggleCart);
+    if(cartBackdrop) cartBackdrop.addEventListener('click', toggleCart);
+    
+    // Update Cart Count
+    const count = JSON.parse(sessionStorage.getItem('shoppingCart') || '[]').length;
+    const badge = document.getElementById('cart-count');
+    if(badge) badge.innerText = count;
+});
+</script>
+</body>
+</html>
