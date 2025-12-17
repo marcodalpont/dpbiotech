@@ -202,91 +202,7 @@ a:hover { opacity: 0.7; }
 /* =========================
    NEW SOFTWARE SECTION
    ========================= */
-.software-duo {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-    margin-top: 40px;
-}
 
-.duo-card {
-    background: var(--bg-card);
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-height: 520px;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
-}
-
-.duo-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
-}
-
-.duo-content {
-    padding: 48px 40px 0 40px;
-    z-index: 2;
-    text-align: center;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.duo-content h3 {
-    font-size: 28px;
-    margin-bottom: 16px;
-    color: var(--text-primary);
-}
-
-.duo-content p {
-    font-size: 17px;
-    color: var(--text-secondary);
-    line-height: 1.6;
-}
-
-.duo-visual {
-    flex: 1;
-    width: 100%;
-    margin-top: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    background: var(--bg-secondary);
-    position: relative;
-}
-
-/* Gradients behind screens */
-.duo-visual::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0; left: 0;
-    opacity: 0.5;
-    z-index: 0;
-}
-.visual-mini::before { background: radial-gradient(circle at bottom, #e0e7ff 0%, transparent 60%); }
-.visual-pro::before { background: radial-gradient(circle at bottom, #f3e8ff 0%, transparent 60%); }
-
-.duo-img {
-    height: auto;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    box-shadow: 0 -20px 60px rgba(0,0,0,0.15);
-    z-index: 1;
-    border: 1px solid rgba(0,0,0,0.05);
-    border-bottom: none;
-    background: white;
-    display: block;
-    margin-bottom: 0;
-}
-
-@media(max-width: 900px) {
-    .software-duo { grid-template-columns: 1fr; }
-    .duo-card { min-height: 450px; }
-}
 /* --- NEW SPLIT SOFTWARE SECTION --- */
 .software-split {
   display: grid;
@@ -496,6 +412,137 @@ model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
 @media(max-width: 900px) {
     .team-grid { grid-template-columns: 1fr; gap: 60px; }
 }
+/* =========================
+   SOFTWARE SECTION (Horizontal Scroll)
+   ========================= */
+/* =========================
+   SOFTWARE SECTION (Carousel Style)
+   ========================= */
+   .software-wrapper {
+    position: relative;
+    /* Ensure arrows can be positioned relative to this */
+}
+
+.software-duo {
+    display: flex;
+    gap: 32px;
+    margin-top: 40px;
+    padding-bottom: 40px; /* Space for shadow */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    
+    /* HIDE SCROLLBAR COMPLETELY */
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* IE */
+}
+.software-duo::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+/* Navigation Arrows */
+.scroll-arrow {
+    position: absolute;
+    top: 55%; /* Vertically centered relative to cards */
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 1px solid var(--divider);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    opacity: 0; /* Hidden by default */
+    visibility: hidden;
+}
+/* Add this to your CSS */
+.scroll-arrow.is-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Show arrows when hovering the section */
+.section:hover .scroll-arrow {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scroll-arrow:hover {
+    background: var(--bg-secondary);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.scroll-arrow.left { left: 0; }
+.scroll-arrow.right { right: 0; }
+
+/* Mobile: Hide arrows (swipe is better) */
+@media(max-width: 900px) {
+    .scroll-arrow { display: none; }
+}
+
+/* Card Styling */
+.duo-card {
+    flex: 0 0 85vw;
+    scroll-snap-align: center; /* Center snap feels better for carousel */
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 520px;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+}
+
+.duo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+@media(min-width: 900px) {
+    .duo-card {
+        flex: 0 0 calc(50% - 16px); 
+    }
+}
+
+/* Content Styles */
+.duo-content {
+    padding: 48px 40px 0 40px;
+    z-index: 2;
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+}
+.duo-content h3 { font-size: 28px; margin-bottom: 16px; color: var(--text-primary); }
+.duo-content p { font-size: 17px; color: var(--text-secondary); line-height: 1.6; }
+
+.duo-visual {
+    flex: 1; width: 100%; margin-top: 40px;
+    display: flex; justify-content: center; align-items: flex-end;
+    background: var(--bg-secondary); position: relative;
+}
+.duo-visual::before {
+    content: ''; position: absolute; width: 100%; height: 100%;
+    top: 0; left: 0; opacity: 0.5; z-index: 0;
+}
+.visual-mini::before { background: radial-gradient(circle at bottom, #e0e7ff 0%, transparent 60%); }
+.visual-pro::before { background: radial-gradient(circle at bottom, #f3e8ff 0%, transparent 60%); }
+
+.duo-img {
+    height: auto; border-top-left-radius: 16px; border-top-right-radius: 16px;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.15); z-index: 1;
+    border: 1px solid rgba(0,0,0,0.05); border-bottom: none;
+    background: white; display: block; margin-bottom: 0;
+}
 </style>
 </head>
 <body>
@@ -548,24 +595,23 @@ model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
           </div>
       </div>
   </div>
-
   <div id="software-menu" class="dropdown-menu">
-      <div class="container">
-          <div class="menu-content">
-              
-              <ul class="menu-main-links">
-                  <li>Connect Suite</li>
-                  <li><a href="#">Med Connect Mini</a></li>
-                  <li><a href="#">Med Connect Pro</a></li>
-              </ul>
-
-              <ul class="menu-link-column">
-                  <li>Cloud & Services</li>
-                  <li><a href="#">Med Patient</a></li>
-                  <li><a href="#">Med Share</a></li>
-              </ul>
-          </div>
-      </div>
+    <div class="container">
+        <div class="menu-content">
+            
+            <ul class="menu-main-links">
+                <li>Connect Suite</li>
+                <li><a href="medconnectmini.html">Med Connect Mini</a></li>
+                <li><a href="medconnectpro.html">Med Connect Pro</a></li>
+            </ul>
+  
+            <ul class="menu-link-column">
+                <li>Cloud & Services</li>
+                <li><a href="medpatient.html">Med Patient</a></li>
+                <li><a href="medshare.html">Med Share</a></li>
+            </ul>
+        </div>
+    </div>
   </div>
 
   <div id="support-menu" class="dropdown-menu">
@@ -598,7 +644,7 @@ model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
     <div class="container">
         <div style="opacity: 0; animation: fadeUp 0.8s 0.2s forwards;">
             <span class="eyebrow" style="margin-bottom: 24px; border: 1px solid var(--divider); padding: 6px 16px; border-radius: 99px; display: inline-block;">New • Surgical Series</span>
-            <h1>Reinventing Microscopes <br><span class="gradient-text">one lens at a time.</span></h1>
+            <h1>Reinventing Microscopes <br><span class="gradient-text">one lense at a time.</span></h1>
             <p class="lead">Optical performance, ergonomics and illumination designed for clinical workflows. Optional companion app available.</p>
             <div class="hero-cta">
                 <a href="buy.html" class="btn btn-primary">Buy Now</a>
@@ -667,55 +713,82 @@ model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
 </section>
 
 <section class="section section-bg" id="software">
-  <div class="container-wide">
-      <div class="section-header">
-          <span class="eyebrow">The Ecosystem</span>
-          <h2>Dedicated software</h2>
-      </div>
-      
-      <div class="software-duo">
-          
-          <div class="duo-card">
-              <div class="duo-content">
-                  <h3>Med Connect Mini</h3>
-                  <p>Designed specifically for the DP Mini. Turn your smartphone into a surgical command center with real-time collaboration, encrypted cloud sync, and efficient workflow management.</p>
-              </div>
-              <div class="duo-visual visual-mini">
-                  <img src="iphoneapp.png" 
-                       onerror="this.src='https://via.placeholder.com/300x500/fff/ccc?text=Mobile+Interface'" 
-                       alt="Med Connect Mini Interface" 
-                       class="duo-img"
-                       style="width: 70%; border-radius: 24px; margin-bottom: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.12);"> 
-              </div>
-          </div>
-
-          <div class="duo-card">
-              <div class="duo-content">
-                  <h3>Med Connect Pro</h3>
-                  <p>The powerhouse for the DP Pro system. Analyze patient data on a large canvas, utilize AI-driven tissue overlays, and plan complex surgeries on macOS and Windows.</p>
-              </div>
-              
-              <div class="duo-visual visual-pro">
-                  <div style="display: flex; gap: 20px; width: 95%; justify-content: center; align-items: flex-end; margin-bottom: 34px;">
-                      
-                      <img src="macapp.png" 
-                           onerror="this.src='https://via.placeholder.com/600x400/fff/ccc?text=Dashboard+Left'" 
-                           alt="Left Monitor" 
-                           class="duo-img"
-                           style="width: 45%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.12);"> 
-                           
-                      <img src="macapp.png" 
-                           onerror="this.src='https://via.placeholder.com/600x400/fff/ccc?text=Dashboard+Right'" 
-                           alt="Right Monitor" 
-                           class="duo-img"
-                           style="width: 45%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.12);"> 
-                  </div>
-              </div>
-          </div>
-
-      </div>
-  </div>
-</section>
+    <div class="container-wide">
+        <div class="section-header">
+            <span class="eyebrow">The Ecosystem</span>
+            <h2>Dedicated Software</h2>
+            <p class="lead" style="font-size: 15px; margin-top: 8px;">Explore the suite</p>
+        </div>
+        
+        <div class="software-wrapper">
+            
+            <button class="scroll-arrow left" id="scroll-left">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+  
+            <div class="software-duo" id="software-container">
+    
+                <a href="medconnectmini.html" class="duo-card">
+                    <div class="duo-content">
+                        <h3>Med Connect Mini</h3>
+                        <p>Designed specifically for the DP Mini. Turn your smartphone into a surgical command center.</p>
+                    </div>
+                    <div class="duo-visual visual-mini">
+                        <img src="iphoneapp.png" onerror="this.src='https://via.placeholder.com/300x500/e0e7ff/4f46e5?text=App'" alt="Mini" class="duo-img" style="width: 70%; border-radius: 24px; margin-bottom: 40px;"> 
+                    </div>
+                </a>
+            
+                <a href="medconnectpro.html" class="duo-card">
+                    <div class="duo-content">
+                        <h3>Med Connect Pro</h3>
+                        <p>The powerhouse for the DP Pro system. Analyze patient data on a large canvas.</p>
+                    </div>
+                    <div class="duo-visual visual-pro">
+                        <div style="display: flex; gap: 20px; width: 95%; justify-content: center; align-items: flex-end; margin-bottom: 34px;">
+                            <img src="macapp.png" onerror="this.src='https://via.placeholder.com/600x400/f3e8ff/a21caf?text=Mac'" alt="Mac" class="duo-img" style="width: 45%; border-radius: 12px;"> 
+                            <img src="macapp.png" onerror="this.src='https://via.placeholder.com/600x400/f3e8ff/a21caf?text=Mac'" alt="Mac" class="duo-img" style="width: 45%; border-radius: 12px;"> 
+                        </div>
+                    </div>
+                </a>
+            
+                <a href="medpatient.html" class="duo-card">
+                    <div class="duo-content">
+                        <h3>Med Patient</h3>
+                        <p>Centralize your clinical data. Collect radiographs and beam them to the HUD.</p>
+                    </div>
+                    <div class="duo-visual visual-pro">
+                        <div style="display: flex; gap: 20px; width: 95%; justify-content: center; align-items: flex-end; margin-bottom: 50px;">
+                          <img src="case.png" onerror="this.src='case.png'" alt="Left" class="duo-img" style="width: 45%; border-radius: 12px;"> 
+                          <img src="calendar.png" onerror="this.src='calendar.png'" alt="Right" class="duo-img" style="width: 45%; border-radius: 12px;"> 
+                        </div>
+                    </div>
+                </a>
+            
+                <a href="medshare.html" class="duo-card">
+                    <div class="duo-content">
+                        <h3>Med Share</h3>
+                        <p>Seamlessly bridge desktop and mobile with intelligent auto-sorting.</p>
+                    </div>
+                    <div class="duo-visual visual-mini">
+                        <div style="display: flex; gap: 20px; width: 95%; justify-content: center; align-items: flex-end; margin-bottom: 50px;">
+                            <img src="share1.png" onerror="this.src='https://via.placeholder.com/400x300/e0e7ff/4f46e5?text=Desk'" alt="Desk" class="duo-img" style="width: 45%; border-radius: 12px;"> 
+                            <img src="share2.png" onerror="this.src='https://via.placeholder.com/200x400/e0e7ff/4f46e5?text=Mob'" alt="Mob" class="duo-img" style="width: 40%; border-radius: 12px;"> 
+                        </div>
+                    </div>
+                </a>
+            
+            </div>
+  
+            <button class="scroll-arrow right" id="scroll-right">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+  </section>
 
 <section class="section" id="stands">
     <div class="container">
@@ -1059,6 +1132,55 @@ model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
   
       saveCart();
   });
+  const container = document.getElementById('software-container');
+    const leftBtn = document.getElementById('scroll-left');
+    const rightBtn = document.getElementById('scroll-right');
+
+    if(container && leftBtn && rightBtn) {
+        
+        // Function to check scroll position and hide/show arrows
+        const updateArrows = () => {
+            // Tolerance buffer (pixels) to handle sub-pixel rendering differences
+            const buffer = 5; 
+            
+            // 1. Check Left Side (Start)
+            if (container.scrollLeft <= buffer) {
+                leftBtn.classList.add('is-hidden');
+            } else {
+                leftBtn.classList.remove('is-hidden');
+            }
+
+            // 2. Check Right Side (End)
+            // We check if (scrolled amount + visible width) >= total width
+            const maxScroll = container.scrollWidth - container.clientWidth;
+            
+            if (container.scrollLeft >= maxScroll - buffer) {
+                rightBtn.classList.add('is-hidden');
+            } else {
+                rightBtn.classList.remove('is-hidden');
+            }
+        };
+
+        // Scroll Logic
+        leftBtn.addEventListener('click', () => {
+            const cardWidth = container.querySelector('.duo-card').offsetWidth;
+            container.scrollBy({ left: -(cardWidth + 32), behavior: 'smooth' });
+        });
+
+        rightBtn.addEventListener('click', () => {
+            const cardWidth = container.querySelector('.duo-card').offsetWidth;
+            container.scrollBy({ left: (cardWidth + 32), behavior: 'smooth' });
+        });
+
+        // Listen for scroll events to update arrows in real-time
+        container.addEventListener('scroll', updateArrows);
+        
+        // Update on window resize (in case cards resize)
+        window.addEventListener('resize', updateArrows);
+
+        // Run once on load to initialize state
+        updateArrows();
+    }
   </script>
 </body>
 </html> 
