@@ -186,78 +186,47 @@ height: 100%;
 overflow: hidden;
 }
 
-.product-card::before {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--primary) 3%, transparent) 0%, transparent 70%);
-opacity: 0;
-transition: opacity 0.4s ease;
-pointer-events: none;
-}
-
 .product-card:hover {
 transform: translateY(-8px) scale(1.02);
 box-shadow: var(--shadow-xl);
 border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
 }
 
-.product-card:hover::before {
-opacity: 1;
-}
-
+/* --- UPDATED VISUAL STYLES START --- */
 .product-visual {
-aspect-ratio: 2/1;
+aspect-ratio: 2/1.2;
 border-radius: var(--radius-lg);
 margin-bottom: 24px;
 display: grid;
 place-items: center;
-font-weight: 800;
-font-size: 20px;
-letter-spacing: -0.02em;
-color: white;
 position: relative;
 overflow: hidden;
-box-shadow: var(--shadow-md);
+border: 1px solid var(--border-subtle);
 transition: all 0.3s ease;
 }
 
-.product-visual::before {
-content: '';
-position: absolute;
-inset: 0;
-background:
-radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08) 0%, transparent 70%);
-z-index: 2;
+/* Stronger Warm Sun from top-right for DP Mini */
+.product-visual.dp-mini {
+background: radial-gradient(
+    circle at 80% 40%,
+    color-mix(in srgb, var(--accent-orange) 25%, var(--surface)) 0%, 
+    var(--surface) 60%
+);
 }
 
-.product-visual::after {
-content: '';
-position: absolute;
-inset: 0;
-background: linear-gradient(135deg, transparent 0%, rgba(0,0,0,0.05) 100%);
-z-index: 2;
+/* Stronger Cool Sun from top-right for DP Pro */
+.product-visual.dp-pro {
+background: radial-gradient(
+    circle at 80% 40%,
+    color-mix(in srgb, var(--primary) 25%, var(--surface)) 0%, 
+    var(--surface) 60%
+);
 }
 
 .product-card:hover .product-visual {
-transform: scale(1.02);
-box-shadow: var(--shadow-lg);
+border-color: var(--border);
 }
-
-.product-visual.dp-mini {
-background: linear-gradient(135deg, 
-color-mix(in srgb, var(--accent-orange) 80%, var(--accent-orange)), 
-color-mix(in srgb, var(--accent-red) 80%, var(--accent-red)));
-}
-
-.product-visual.dp-pro {
-background: linear-gradient(135deg, 
-color-mix(in srgb, var(--primary) 80%, var(--primary)), 
-color-mix(in srgb, var(--secondary) 80%, var(--secondary)));
-}
+/* --- UPDATED VISUAL STYLES END --- */
 
 model-viewer {
 width: 100%;
