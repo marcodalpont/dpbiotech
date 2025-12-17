@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>DP Biotech — Mounting Solutions</title>
+<script>
+    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
+      // window.location.href = 'login.html';
+    }
+</script>
+<meta name="description" content="Precision floor stands, ceiling mounts, and wall mounts for DP Biotech microscopes." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+
+<style>
+/* =========================================
+   DESIGN SYSTEM (Matches index.html)
+   ========================================= */
+:root {
+    --bg-body: #ffffff;
+    --bg-secondary: #f5f5f7;
+    --bg-card: #ffffff;
+    --text-primary: #1d1d1f;
+    --text-secondary: #86868b;
+    --accent: #4f46e5; /* Main Brand Purple */
+    --accent-dark: #3730a3;
+    --divider: rgba(0, 0, 0, 0.08);
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --nav-height: 52px;
+    --container-width: 1080px;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 12px 24px rgba(0,0,0,0.06);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #000000;
+        --bg-secondary: #121212;
+        --bg-card: #1c1c1e;
+        --text-primary: #f5f5f7;
+        --text-secondary: #a1a1aa;
+        --divider: rgba(255, 255, 255, 0.12);
+    }
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-primary); overflow-x: hidden; }
+body.no-scroll { overflow: hidden; height: 100vh; }
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+p { line-height: 1.5; color: var(--text-secondary); margin: 0; }
+a { text-decoration: none; color: inherit; transition: opacity 0.2s; }
+a:hover { opacity: 0.7; }
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+.container-wide { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+/* =========================
+   NAVBAR & MENU
+   ========================= */
+.nav {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height);
+    background: rgba(255, 255, 255, 0.8); backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    z-index: 100; border-bottom: 1px solid var(--divider);
+}
+.nav-inner { height: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+
+.nav-links { display: none; list-style: none; gap: 32px; margin: 0; padding: 0; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+@media(min-width: 960px) { .nav-links { display: flex; } }
+.nav-links li { cursor: pointer; transition: color 0.2s; height: 100%; display: flex; align-items: center; }
+.nav-links li:hover { color: var(--text-primary); }
+
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+.cart-icon-btn { position: relative; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+.cart-badge { position: absolute; top: 4px; right: 4px; background: var(--accent); color: white; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-primary); }
+@media(max-width: 960px) { .hamburger { display: block; } }
+
+/* Dropdowns */
+.dropdown-menu { 
+    opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; 
+    position: absolute; top: var(--nav-height); left: 0; right: 0; 
+    background: var(--bg-body); border-top: 1px solid var(--divider); 
+    box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 90; 
+    overflow-y: auto; max-height: calc(100vh - var(--nav-height)); 
+}
+.dropdown-menu.is-open { opacity: 1; visibility: visible; }
+.menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 40px 0; }
+.menu-main-links li:first-child, .menu-link-column li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-secondary); margin-bottom: 12px; }
+.menu-main-links, .menu-link-column { list-style: none; padding: 0; margin: 0; }
+.menu-main-links a { font-size: 24px; font-weight: 600; display: block; padding: 8px 0; }
+.menu-link-column a { font-size: 14px; font-weight: 500; display: block; padding: 6px 0; }
+.menu-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; visibility: hidden; transition: 0.3s; }
+.menu-backdrop.is-visible { opacity: 1; visibility: visible; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; transition: all 0.2s; cursor: pointer; border: none; text-decoration: none !important; }
+.btn-primary { background: var(--text-primary); color: var(--bg-body); }
+.btn-primary:hover { transform: scale(1.02); }
+.btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--divider); }
+.btn-ghost:hover { background: var(--bg-secondary); }
+
+/* =========================
+   PAGE SPECIFIC
+   ========================= */
+.hero-header {
+    /* INCREASED HEIGHT */
+    padding-top: 220px; 
+    padding-bottom: 140px; 
+    text-align: center;
+    background: radial-gradient(circle at 50% 100%, rgba(79, 70, 229, 0.05) 0%, transparent 50%);
+}
+.hero-header h1 { font-size: clamp(40px, 6vw, 72px); line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 24px; }
+.hero-header p { font-size: 20px; max-width: 600px; margin: 0 auto 40px; }
+
+/* Product Sections */
+.product-section { padding: 80px 0; border-bottom: 1px solid var(--divider); }
+.product-section:last-child { border-bottom: none; }
+
+/* Alternating Background Utilities */
+.bg-gray { background-color: var(--bg-secondary); }
+.bg-white { background-color: var(--bg-body); }
+
+.split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+@media(max-width: 900px) { .split-layout { grid-template-columns: 1fr; gap: 40px; } }
+
+.product-visual {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.product-visual img { max-width: 80%; max-height: 80%; object-fit: contain; mix-blend-mode: multiply; }
+@media (prefers-color-scheme: dark) { .product-visual img { mix-blend-mode: normal; } }
+
+.product-info h2 { font-size: 42px; margin-bottom: 16px; }
+.product-price { font-size: 24px; font-weight: 600; margin-bottom: 24px; display: block; color: var(--accent); }
+.spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 32px 0; }
+.spec-item { border-left: 2px solid var(--divider); padding-left: 16px; }
+.spec-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+.spec-value { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+
+/* Comparison Table */
+.tech-table-wrapper { overflow-x: auto; margin-top: 60px; background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--divider); }
+.tech-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+.tech-table th, .tech-table td { padding: 20px; text-align: left; border-bottom: 1px solid var(--divider); }
+.tech-table th { font-size: 14px; color: var(--text-secondary); font-weight: 500; width: 25%; }
+.tech-table td { font-size: 15px; font-weight: 500; }
+.tech-table tr:last-child th, .tech-table tr:last-child td { border-bottom: none; }
+
+/* Cart Drawer (Reused) */
+.cart-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 200; }
+.cart-backdrop.is-visible { opacity: 1; visibility: visible; }
+.cart-sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 400px; background: var(--bg-card); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 201; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
+.cart-sidebar.is-open { transform: translateX(0); }
+.cart-header { padding: 20px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
+.cart-items { flex: 1; overflow-y: auto; padding: 20px; list-style: none; margin: 0; }
+.cart-footer { padding: 24px; border-top: 1px solid var(--divider); background: var(--bg-secondary); }
+.cart-item { display: flex; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid var(--divider); padding-bottom: 16px; }
+
+/* Mobile Menu */
+.mobile-menu-overlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 150; padding: 80px 24px; transform: translateY(-100%); transition: transform 0.4s ease; display: flex; flex-direction: column; gap: 24px; }
+.mobile-menu-overlay.is-open { transform: translateY(0); }
+.mobile-link { font-size: 24px; font-weight: 600; border-bottom: 1px solid var(--divider); padding-bottom: 16px; }
+
+</style>
+</head>
+<body>
+
+<nav class="nav" id="main-nav">
+  <div class="container nav-inner">
+      <a href="index.html" class="logo">
+          <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRmNDZlNSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4=' " alt="Logo" style="height:28px; border-radius: 50%;">
+          <span>DP Biotech</span>
+      </a>
+      
+      <ul class="nav-links">
+          <li class="dropdown" data-menu="microscopes-menu">Microscopes</li>
+          <li class="dropdown" data-menu="stands-menu" style="color:var(--text-primary);">Stands</li> 
+          <li class="dropdown" data-menu="software-menu">Software</li>
+          <li class="dropdown" data-menu="support-menu">Support</li>
+      </ul>
+
+      <div class="nav-actions">
+          <button class="cart-icon-btn" id="cart-btn">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              <span class="cart-badge" id="cart-count">0</span>
+          </button>
+          <button class="hamburger" id="menu-btn">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+      </div>
+  </div>
+
+  <div id="microscopes-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Shop Microscopes</li>
+                  <li><a href="DPMini.html">DP Mini</a></li>
+                  <li><a href="DPPro.html">DP Pro</a></li>
+                  <li><a href="all-models.html">All Models</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+
+  <div id="stands-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Mounting Solutions</li>
+                  <li><a href="#floor-stand">Floor Stand</a></li>
+                  <li><a href="#ceiling-mount">Ceiling Mount</a></li>
+                  <li><a href="#wall-mount">Wall Mount</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+  
+  <div id="software-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Software</li>
+                  <li><a href="#">Med Connect Suite</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+
+   <div id="support-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Support</li>
+                  <li><a href="contactus.html">Contact Us</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+</nav>
+<div class="menu-backdrop"></div>
+
+<div class="mobile-menu-overlay" id="mobile-menu">
+    <a href="index.html" class="mobile-link">Home</a>
+    <a href="DPMini.html" class="mobile-link">Microscopes</a>
+    <a href="#" class="mobile-link">Stands</a>
+    <a href="contactus.html" class="mobile-link">Support</a>
+    <button class="btn btn-primary" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
+</div>
+
+<header class="hero-header">
+    <div class="container">
+        <h1>The Foundation of <br>Precision.</h1>
+        <p>Zero-vibration architecture engineered to keep your focus steady, no matter the environment.</p>
+    </div>
+</header>
+
+<section class="product-section" id="floor-stand">
+    <div class="container">
+        <div class="split-layout">
+            <div class="product-visual">
+                <div style="text-align:center;">
+                    <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="color:var(--text-secondary); margin-bottom:20px;">
+                        <path d="M12 3v16M8 21h8M12 19l-4 2M12 19l4 2M5 21l3-2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="5" r="2" />
+                    </svg>
+                    <p>Floor Stand Visual</p>
+                </div>
+            </div>
+            <div class="product-info">
+                <span style="font-size:13px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">Most Popular</span>
+                <h2>Floor Stand</h2>
+                <p style="font-size:18px; color:var(--text-secondary); margin-bottom:20px;">
+                    Maximum mobility meets absolute rigidity. The H-base design with lockable high-friction casters ensures the stand glides when you need it to, and anchors instantly when you don't.
+                </p>
+                <span class="product-price">€1.700,00</span>
+                
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <span class="spec-label">Max Reach</span>
+                        <span class="spec-value">1250 mm</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Balancing</span>
+                        <span class="spec-value">Gas Spring</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Base Size</span>
+                        <span class="spec-value">600 x 600 mm</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Weight</span>
+                        <span class="spec-value">7 kg</span>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px;">
+                    <button class="btn btn-primary" onclick="addToCart('Floor Stand', 'Floor Stand', 1700)">Add to Cart</button>
+                    <button class="btn btn-ghost">Download Specs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="product-section bg-gray" id="ceiling-mount">
+    <div class="container">
+        <div class="split-layout">
+            <div class="product-info">
+                <span style="font-size:13px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">Space Saving</span>
+                <h2>Ceiling Mount</h2>
+                <p style="font-size:18px; color:var(--text-secondary); margin-bottom:20px;">
+                    Reclaim your floor space. The CM-200 integrates directly into the OR infrastructure, offering 360° rotation and internal cabling for a clutter-free environment.
+                </p>
+                <span class="product-price">€5.700,00</span>
+                
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <span class="spec-label">Vertical Stroke</span>
+                        <span class="spec-value">800 mm</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Rotation</span>
+                        <span class="spec-value">360° Continuous</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Ceiling Height</span>
+                        <span class="spec-value">2.4m - 3.2m</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Install Type</span>
+                        <span class="spec-value">Concrete / Structure</span>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px;">
+                    <button class="btn btn-primary" onclick="addToCart('Ceiling Mount', 'Ceiling Mount', 5700)">Add to Cart</button>
+                    <button class="btn btn-ghost">Download Specs</button>
+                </div>
+            </div>
+            <div class="product-visual" style="background:var(--bg-card); border:1px solid var(--divider);">
+                <div style="text-align:center;">
+                    <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="color:var(--text-secondary); margin-bottom:20px; transform: rotate(180deg);">
+                         <path d="M12 3v16M8 21h8M12 19l-4 2M12 19l4 2M5 21l3-2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="5" r="2" />
+                    </svg>
+                    <p>Ceiling Mount Visual</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="product-section" id="wall-mount">
+    <div class="container">
+        <div class="split-layout">
+            <div class="product-visual">
+                <div style="text-align:center;">
+                     <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="color:var(--text-secondary); margin-bottom:20px;">
+                        <path d="M2 12h20M2 12l6-6M2 12l6 6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <p>Wall Mount Visual</p>
+                </div>
+            </div>
+            <div class="product-info">
+                <span style="font-size:13px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">Compact Clinics</span>
+                <h2>Wall Mount</h2>
+                <p style="font-size:18px; color:var(--text-secondary); margin-bottom:20px;">
+                    Ideal for ENT examination rooms and smaller dental operatories. The high-extension arm folds completely flush against the wall when not in use.
+                </p>
+                <span class="product-price">€1.200,00</span>
+                
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <span class="spec-label">Extension</span>
+                        <span class="spec-value">1500 mm</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Parked Depth</span>
+                        <span class="spec-value">250 mm</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Load Capacity</span>
+                        <span class="spec-value">3 kg</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Mounting</span>
+                        <span class="spec-value">4-Bolt Plate / Dental Unit support</span>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px;">
+                    <button class="btn btn-primary" onclick="addToCart('Wall Mount', 'Wall Mount', 1200)">Add to Cart</button>
+                    <button class="btn btn-ghost">Download Specs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-gray" style="padding: 100px 0;">
+    <div class="container">
+        <div style="text-align:center; margin-bottom:40px;">
+            <h2>Technical Specifications</h2>
+            <p>Compare fit and function.</p>
+        </div>
+        
+        <div class="tech-table-wrapper">
+            <table class="tech-table">
+                <tbody>
+                    <tr>
+                        <th>Model</th>
+                        <td>Floor Stand</td>
+                        <td>Ceiling Mount</td>
+                        <td>Wall/Unit Mount</td>
+                    </tr>
+                    <tr>
+                        <th>Arm Reach</th>
+                        <td>1250 mm</td>
+                        <td>1300 mm</td>
+                        <td>1500 mm</td>
+                    </tr>
+                    <tr>
+                        <th>Vertical Stroke</th>
+                        <td>600 mm</td>
+                        <td>800 mm</td>
+                        <td>600 mm</td>
+                    </tr>
+                    <tr>
+                        <th>Brakes</th>
+                        <td>Mechanical Friction</td>
+                        <td>Mechanical Friction</td>
+                        <td>Mechanical Friction</td>
+                    </tr>
+                    <tr>
+                        <th>Internal Cabling</th>
+                        <td>HDMI / Power / Ethernet</td>
+                        <td>HDMI / Power / Ethernet</td>
+                        <td>HDMI / Power / Ethernet</td>
+                    </tr>
+                     <tr>
+                        <th>Weight</th>
+                        <td>7 kg</td>
+                        <td>12 kg</td>
+                        <td>9 kg</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<footer style="padding:60px 0; border-top:1px solid var(--divider); color:var(--text-secondary); font-size:13px;">
+    <div class="container">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+             <div class="logo">
+                 <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:24px; margin-right:8px;">
+                 <span>DP Biotech &copy; 2025</span>
+            </div>
+            <div style="display:flex; gap:24px;">
+                <a href="#">Manuals</a>
+                <a href="contactus.html">Contact</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="cart-backdrop" id="cart-backdrop"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button class="btn btn-ghost" id="close-cart">Close</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div id="cart-empty" style="padding:40px; text-align:center; color:var(--text-secondary);">Cart is empty</div>
+    <div class="cart-footer">
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
+            <span>Total</span><span id="cart-total">€0,00</span>
+        </div>
+        <button id="checkout-btn" class="btn btn-primary" style="width:100%;">Checkout</button>
+        <button id="clear-cart" class="btn btn-ghost" style="width:100%; margin-top:8px; font-size:12px;">Clear Cart</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- MENU LOGIC (Fixed) ---
+    const mainNav = document.getElementById('main-nav');
+    if (mainNav) {
+        const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
+        const backdrop = document.querySelector('.menu-backdrop');
+        let activeMenu = null, closeTimeout;
+
+        function openMenu(id){
+            if(activeMenu && activeMenu.id !== id){ activeMenu.classList.remove('is-open'); }
+            const menu = document.getElementById(id);
+            if(menu){ 
+                menu.classList.add('is-open'); 
+                if(backdrop) backdrop.classList.add('is-visible'); 
+                activeMenu = menu; 
+            }
+        }
+        function closeAll(){
+            if(activeMenu){ activeMenu.classList.remove('is-open'); }
+            if(backdrop) backdrop.classList.remove('is-visible'); 
+            activeMenu = null;
+        }
+
+        triggers.forEach(t => t.addEventListener('mouseenter', () => { 
+            clearTimeout(closeTimeout); 
+            openMenu(t.dataset.menu); 
+        }));
+
+        mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+        mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
+        if(backdrop) backdrop.addEventListener('click', closeAll);
+    }
+    
+    // --- MOBILE MENU ---
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if(menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => { mobileMenu.classList.add('is-open'); });
+    }
+
+    // --- CART LOGIC ---
+    let cart = JSON.parse(sessionStorage.getItem('shoppingCart') || '[]');
+    const cartCount = document.getElementById('cart-count');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const cartBackdrop = document.getElementById('cart-backdrop');
+    const cartItemsList = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    const cartEmpty = document.getElementById('cart-empty');
+    const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+
+    function saveCart() {
+        sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        if(cartCount) cartCount.innerText = cart.length;
+        if(!cartItemsList) return;
+
+        cartItemsList.innerHTML = '';
+        let total = 0;
+        
+        // Group items logic could go here, simplified for brevity
+        if (cart.length === 0) {
+            cartEmpty.style.display = 'block';
+            document.getElementById('checkout-btn').disabled = true;
+        } else {
+            cartEmpty.style.display = 'none';
+            document.getElementById('checkout-btn').disabled = false;
+            
+            cart.forEach((item, index) => {
+                total += item.price;
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <div>
+                        <div style="font-weight:600;">${item.name}</div>
+                        <div style="font-size:12px; color:var(--text-secondary);">Ref: ${item.id}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div>${EUR.format(item.price)}</div>
+                        <button onclick="removeCartItem(${index})" style="background:none; border:none; color:red; font-size:12px; cursor:pointer;">Remove</button>
+                    </div>
+                `;
+                cartItemsList.appendChild(div);
+            });
+        }
+        if(cartTotal) cartTotal.innerText = EUR.format(total);
+    }
+
+    window.addToCart = (id, name, price) => {
+        cart.push({ id, name, price, options: {} });
+        saveCart();
+        // Open cart
+        cartSidebar.classList.add('is-open');
+        cartBackdrop.classList.add('is-visible');
+    };
+
+    window.removeCartItem = (index) => {
+        cart.splice(index, 1);
+        saveCart();
+    };
+
+    // Cart Events
+    document.getElementById('cart-btn').addEventListener('click', () => {
+        cartSidebar.classList.add('is-open');
+        cartBackdrop.classList.add('is-visible');
+    });
+    const closeCart = () => {
+        cartSidebar.classList.remove('is-open');
+        cartBackdrop.classList.remove('is-visible');
+    };
+    document.getElementById('close-cart').addEventListener('click', closeCart);
+    if(cartBackdrop) cartBackdrop.addEventListener('click', closeCart);
+    document.getElementById('clear-cart').addEventListener('click', () => {
+        cart = []; saveCart();
+    });
+    document.getElementById('checkout-btn').addEventListener('click', () => {
+        window.location.href = 'checkout.html';
+    });
+
+    saveCart(); // Init
+});
+</script>
+</body>
+</html>
