@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Med Connect Mini — Surgical Command Center</title>
 <script>
-    // Authentication check placeholder
     if (sessionStorage.getItem('isAuthenticated') !== 'true') {
       // window.location.href = 'login.html';
     }
@@ -17,7 +16,7 @@
 
 <style>
 /* =========================================
-   DESIGN SYSTEM
+   DESIGN SYSTEM (Matches Main Site)
    ========================================= */
 :root {
     --bg-body: #ffffff;
@@ -25,151 +24,24 @@
     --bg-card: #ffffff;
     --text-primary: #1d1d1f;
     --text-secondary: #86868b;
-    --accent: #4f46e5; /* Software Blue branding */
-    --accent-gradient: linear-gradient(135deg, #4f46e5, #8b5cf6);
+    --accent: #4f46e5;
+    --accent-gradient: linear-gradient(135deg, #4f46e5, #a21caf);
     --divider: rgba(0, 0, 0, 0.08);
-    
     --radius-lg: 28px;
     --radius-md: 18px;
     --nav-height: 52px;
     --container-width: 1080px;
-    
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
     --shadow-md: 0 12px 24px rgba(0,0,0,0.06);
 }
-/* =========================
-   CLEAN LAYOUT UTILITIES (From DP Mini Code)
-   ========================= */
 
-/* 1. The Container (Gray box, rounded, no fake phone borders) */
-.feature-image-wrapper {
-    background: var(--bg-secondary);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--divider);
-    position: relative; /* Ensure images stay inside */
-}
-
-/* 2. Image fit (Cover the whole box cleanly) */
-.feature-image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* 3. Single Vertical Card (For Profile & AI) */
-.feature-image-wrapper.vertical-card {
-    flex: 0.5; /* Narrower than text */
-    height: 690px; /* Tall portrait height */
-    width: 60%;
-}
-
-/* 4. The Stack Column (For sections with 2 images stacked vertically) */
-.image-stack-column {
-    flex: 1; /* Larghezza bilanciata */
-    display: flex;
-    flex-direction: column; /* Impila le immagini verticalmente */
-    gap: 24px; /* Spazio tra le due immagini */
-    height: 100%;
-    justify-content: center;
-}
-
-/* Le singole schede dentro la colonna verticale */
-.feature-image-wrapper.split-card {
-    width: 100%;
-    height: 240px; /* Altezza fissa per ogni metà */
-    flex: none;
-    /* Mantieni lo stile standard */
-    background: var(--bg-secondary);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--divider);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    position: relative;
-}
-@media(max-width: 900px) {
-    .image-stack-column {
-        width: 100%;
-        flex: auto;
-    }
-}
-/* === NEW STYLES FOR SIDE-BY-SIDE PHONES === */
-
-/* 6. New container for two images next to each other horizontally */
-.image-side-by-side-container {
-    flex: 1.3; /* Give it more width than the text block to fit two phones */
-    display: flex;
-    gap: 24px; /* Space between the phones */
-    justify-content: center;
-    align-items: center;
-}
-
-/* 7. The individual vertical phone image inside the side-by-side container */
-/* It inherits base styling from .feature-image-wrapper */
-.feature-image-wrapper.phone-portrait {
-    flex: 1; /* Share available width equally */
-    height: 550px; /* Tall height for portrait look */
-    width: auto; /* Let flex dictate width */
-}
-
-
-/* Mobile Fixes */
-@media(max-width: 900px) {
-    .feature-image-wrapper.vertical-card { height: 400px; flex: auto; }
-    .image-stack-column { width: 100%; flex: auto; }
-    
-    /* Stack the side-by-side images on mobile */
-    .image-side-by-side-container { 
-        flex-direction: column;
-        width: 100%;
-        flex: auto;
-    }
-    .feature-image-wrapper.phone-portrait {
-        width: 100%; /* Full width when stacked */
-        height: 400px; /* Slightly shorter on mobile */
-    }
-}
-
-
-/* Add this to your <style> section */
-    .dual-image-container {
-        display: flex;
-        gap: 20px;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        padding: 0 20px;
-    }
-    .phone-mockup {
-        width: 45%; /* Fits two side by side */
-        height: 85%;
-        background: #000;
-        border-radius: 20px;
-        border: 4px solid #333;
-        overflow: hidden;
-        position: relative;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-size: 12px;
-    }
-    .phone-mockup.single {
-        width: 60%; /* Slightly larger for single image sections */
-    }
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-body: #000000;
         --bg-secondary: #121212;
         --bg-card: #1c1c1e;
         --text-primary: #f5f5f7;
-        --text-secondary: #86868b;
+        --text-secondary: #a1a1aa;
         --divider: rgba(255, 255, 255, 0.12);
     }
 }
@@ -184,37 +56,84 @@ a:hover { opacity: 0.7; }
 .container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
 
 /* =========================
-   NAVIGATION & CART (Standardized)
+   NAVIGATION (Fixed from Main Code)
    ========================= */
-.nav { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height); background: rgba(255, 255, 255, 0.7); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); z-index: 100; border-bottom: 1px solid var(--divider); }
+.nav {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height);
+    background: rgba(255, 255, 255, 0.7); backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    z-index: 100; border-bottom: 1px solid var(--divider);
+}
 @media (prefers-color-scheme: dark) { .nav { background: rgba(0,0,0,0.7); } }
+
 .nav-inner { height: 100%; display: flex; justify-content: space-between; align-items: center; }
-.logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
-.nav-links { display: none; list-style: none; gap: 32px; margin: 0; padding: 0; font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+
+/* This hides the links on mobile and shows them on desktop */
+.nav-links { display: none; list-style: none; gap: 32px; margin: 0; padding: 0; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
 @media(min-width: 960px) { .nav-links { display: flex; } }
-.nav-links li { cursor: pointer; transition: color 0.2s; }
+
+.nav-links li { cursor: pointer; transition: color 0.2s; height: 100%; display: flex; align-items: center; }
 .nav-links li:hover { color: var(--text-primary); }
+
 .nav-actions { display: flex; gap: 12px; align-items: center; }
-.btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; transition: all 0.3s; cursor: pointer; border: none; }
+
+/* Buttons matching Main Site */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; border: none; text-decoration: none !important;
+}
 .btn-primary { background: var(--text-primary); color: var(--bg-body); }
-.btn-primary:hover { transform: scale(1.02); }
-.btn-ghost { background: transparent; color: var(--text-primary); }
+.btn-primary:hover { transform: scale(1.02); opacity: 0.95; }
+.btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--divider); }
 .btn-ghost:hover { background: var(--bg-secondary); }
-.cart-icon-btn { position: relative; background: none; border: none; color: var(--text-primary); cursor: pointer; }
-.cart-badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: white; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
-.dropdown-menu { opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; position: absolute; top: var(--nav-height); left: 0; right: 0; background: var(--bg-body); border-top: 1px solid var(--divider); box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 90; }
+
+/* Hide Desktop button on Mobile */
+.desktop-btn { display: none !important; }
+@media(min-width: 960px) { .desktop-btn { display: inline-flex !important; } }
+
+.cart-icon-btn {
+    position: relative; background: none; border: none; color: var(--text-primary); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
+}
+.cart-badge {
+    position: absolute; top: 4px; right: 4px; background: var(--accent); color: white;
+    font-size: 10px; width: 16px; height: 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+
+/* Hamburger - Hidden on Desktop */
+.hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-primary); }
+@media(max-width: 960px) { .hamburger { display: block; } }
+
+/* =========================
+   MEGA MENU
+   ========================= */
+.dropdown-menu { 
+    opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; 
+    position: absolute; top: var(--nav-height); left: 0; right: 0; 
+    background: var(--bg-body); border-top: 1px solid var(--divider); 
+    box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 90; 
+    overflow-y: auto; max-height: calc(100vh - var(--nav-height)); 
+}
 .dropdown-menu.is-open { opacity: 1; visibility: visible; }
 .menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 40px 0; }
 .menu-main-links, .menu-link-column { list-style: none; padding: 0; margin: 0; }
+.menu-main-links li:first-child, .menu-link-column li:first-child { 
+    font-size: 11px; text-transform: uppercase; letter-spacing: .05em; 
+    color: var(--text-secondary); margin-bottom: 12px; padding: 0 12px; 
+}
 .menu-main-links a { font-size: 24px; font-weight: 600; display: block; padding: 8px 12px; border-radius: 8px; }
-.menu-main-links a:hover { background: var(--bg-secondary); }
-.menu-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; visibility: hidden; }
+.menu-link-column a { font-size: 14px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-main-links a:hover, .menu-link-column a:hover { background: var(--bg-secondary); }
+.menu-backdrop { position: fixed; top: var(--nav-height); left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; visibility: hidden; transition: 0.3s; }
 .menu-backdrop.is-visible { opacity: 1; visibility: visible; }
 .cart-sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 400px; background: var(--bg-card); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 201; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
 .cart-sidebar.is-open { transform: translateX(0); }
 
 /* =========================
-   HERO SECTION
+   HERO & SECTIONS
    ========================= */
 .hero {
     padding-top: 180px; padding-bottom: 120px; text-align: center;
@@ -224,243 +143,120 @@ a:hover { opacity: 0.7; }
 .gradient-text { background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero p.lead { font-size: clamp(18px, 3vw, 22px); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
 
-.app-store-badge {
-    background: #000; color: #fff; border-radius: 8px; padding: 10px 20px;
-    display: inline-flex; align-items: center; gap: 10px; font-weight: 600;
-    transition: transform 0.2s;
-}
-.app-store-badge:hover { transform: translateY(-2px); }
-
-/* =========================
-   LAYOUTS & SECTIONS
-   ========================= */
+/* Utilities */
 .section { padding: 100px 0; }
 .section-bg { background-color: var(--bg-secondary); }
 .eyebrow { font-size: 13px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 12px; }
 .section-header { text-align: center; max-width: 700px; margin: 0 auto 60px; }
 .section-header h2 { font-size: 42px; margin-bottom: 16px; }
 
-/* Standard Feature Row (Left/Right) */
+/* Feature Layouts */
 .feature-row { display: flex; align-items: center; gap: 60px; }
 .feature-row.reverse { flex-direction: row-reverse; }
 .feature-text { flex: 1; }
 .feature-text h2 { font-size: 42px; margin-bottom: 24px; }
 .feature-text p { font-size: 18px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 32px; }
+
+/* Images */
 .feature-image-wrapper {
     flex: 1; background: var(--bg-card); border-radius: var(--radius-lg);
     border: 1px solid var(--divider); overflow: hidden;
     box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: center;
     height: 500px; position: relative;
 }
+.feature-image-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* NEW: Full Width Split Layout (Two Pieces - Edge to Edge) */
-.split-layout {
-    display: flex; min-height: 600px;
-    border-top: 1px solid var(--divider); border-bottom: 1px solid var(--divider);
-}
-.split-text-side {
-    flex: 1; padding: 80px; display: flex; flex-direction: column; justify-content: center;
-    background: var(--bg-body);
-}
-.split-visual-side {
-    flex: 1; background: var(--bg-secondary); position: relative; overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-}
-/* Placeholder style for the split visual */
-.placeholder-split-ui {
-    width: 80%; height: 80%; background: #e0e7ff; border-radius: 24px;
-    border: 2px dashed var(--accent); display: grid; place-items: center;
-    color: var(--accent); font-weight: 600;
-}
+/* Specific Image Variants */
+.feature-image-wrapper.vertical-card { flex: 0.5; height: 690px; width: 60%; }
+.feature-image-wrapper.split-card { width: 100%; height: 240px; flex: none; background: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--divider); overflow: hidden; box-shadow: var(--shadow-md); position: relative; }
+.feature-image-wrapper.phone-portrait { flex: 1; height: 550px; width: auto; }
+.feature-image-wrapper.horizontal-card { flex: 1.2; height: 250px; width: 100%; }
+.feature-image-wrapper.square-card { flex: 0.8; height: 280px; width: 500px; aspect-ratio: 1 / 1; margin: 0 auto; }
 
-/* NEW: 2-Column Grid Layout (Two Pieces - Side by Side Cards) */
+/* Layout Containers */
+.image-stack-column { flex: 1; display: flex; flex-direction: column; gap: 24px; height: 100%; justify-content: center; }
+.image-side-by-side-container { flex: 1.3; display: flex; gap: 24px; justify-content: center; align-items: center; }
 .grid-2-column { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-
-.feature-card {
-    background: var(--bg-card); padding: 48px; border-radius: var(--radius-lg);
-    border: 1px solid var(--divider);
-}
+.feature-card { background: var(--bg-card); padding: 48px; border-radius: var(--radius-lg); border: 1px solid var(--divider); }
 .feature-card h3 { font-size: 28px; margin-bottom: 16px; }
 .feature-card p { font-size: 17px; line-height: 1.6; }
 
-/* UI Feature Lists */
+/* Mobile Responsive */
+@media(max-width: 900px) {
+    .feature-row, .feature-row.reverse, .grid-2-column { flex-direction: column; grid-template-columns: 1fr; gap: 40px; }
+    .feature-image-wrapper, .feature-image-wrapper.vertical-card, .feature-image-wrapper.phone-portrait { width: 100%; height: 400px; flex: auto; }
+    .image-stack-column, .image-side-by-side-container { width: 100%; flex: auto; }
+    .image-side-by-side-container { flex-direction: column; }
+    .feature-image-wrapper.horizontal-card { flex: auto; height: 300px; }
+    .feature-image-wrapper.square-card { height: auto; width: 100%; max-width: 400px; }
+}
+
+/* UI Lists */
 .ui-feature-list { list-style: none; padding: 0; margin-top: 32px; }
 .ui-feature-item { display: flex; gap: 16px; margin-bottom: 24px; }
-.ui-icon {
-    width: 40px; height: 40px; background: var(--bg-secondary);
-    border-radius: 10px; display: grid; place-items: center;
-    color: var(--accent); flex-shrink: 0; font-weight: 700;
-}
+.ui-icon { width: 40px; height: 40px; background: var(--bg-secondary); border-radius: 10px; display: grid; place-items: center; color: var(--accent); flex-shrink: 0; font-weight: 700; }
 
-@media(max-width: 900px) {
-    .feature-row, .feature-row.reverse, .split-layout, .grid-2-column { flex-direction: column; grid-template-columns: 1fr; gap: 40px; }
-    .feature-image-wrapper { width: 100%; height: 400px; }
-    .split-text-side { padding: 60px 24px; }
-    .split-visual-side { height: 400px; }
-}
-/* --- AI BADGES STYLING --- */
-/* --- SPLIT LAYOUT IMAGE STACK --- */
+/* AI Badges */
+.ai-badge-container { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+.ai-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 99px; font-size: 13px; font-weight: 600; transition: all 0.3s; border: 1px solid transparent; cursor: default; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+.ai-badge:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.08); }
+.badge-gemini { background: linear-gradient(135deg, #eff6ff, #f5f3ff); color: #4f46e5; border-color: rgba(99, 102, 241, 0.2); }
+.badge-chatgpt { background: linear-gradient(135deg, #ecfdf5, #f0fdf4); color: #059669; border-color: rgba(16, 185, 129, 0.2); }
 
-.split-image-stack {
-    display: flex;
-    flex-direction: column; /* Stacks images vertically */
-    width: 100%;
-    height: 100%;
-}
-
-.split-image-half {
-    flex: 1; /* Each image takes exactly 50% height */
-    position: relative;
-    overflow: hidden;
-    /* Optional: Subtle separator line between images */
-    border-bottom: 4px solid var(--bg-body); 
-}
-
-.split-image-half:last-child {
-    border-bottom: none;
-}
-
-.split-image-half img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the image fills the rectangle without stretching */
-    display: block;
-    transition: transform 0.5s ease;
-}
-
-/* Hover Effect: Gentle zoom on hover */
-.split-image-half:hover img {
-    transform: scale(1.03);
-}
-
-/* Optional: Label Overlay Styling */
-.split-label {
-    position: absolute;
-    bottom: 12px;
-    left: 12px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 99px;
-    backdrop-filter: blur(4px);
-    pointer-events: none;
-}
-
-/* Mobile: Stack them properly if the section gets too short */
-@media(max-width: 900px) {
-    .split-image-stack {
-        min-height: 400px; /* Ensure images have height on mobile */
-    }
-}
-.ai-badge-container {
-    display: flex;
-    gap: 12px;
-    margin-top: 16px;
-    flex-wrap: wrap;
-}
-
-.ai-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border-radius: 99px; /* Pill shape */
-    font-size: 13px;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    border: 1px solid transparent;
-    cursor: default;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-}
-
-.ai-badge:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-}
-
-/* Gemini Theme (Blue/Purple) */
-.badge-gemini {
-    background: linear-gradient(135deg, #eff6ff, #f5f3ff); /* Very light blue to purple */
-    color: #4f46e5; /* Indigo text */
-    border-color: rgba(99, 102, 241, 0.2);
-}
-
-/* ChatGPT Theme (Teal/Green) */
-.badge-chatgpt {
-    background: linear-gradient(135deg, #ecfdf5, #f0fdf4); /* Very light teal */
-    color: #059669; /* Emerald text */
-    border-color: rgba(16, 185, 129, 0.2);
-}
-
-/* Optional: Animation for the icons on hover */
-.ai-badge:hover .ai-sparkle {
-    display: inline-block;
-    animation: spin 2s linear infinite; /* Subtle spin */
-}
-.ai-badge:hover .ai-brain {
-    display: inline-block;
-    animation: pulse 1s infinite;
-}
-/* --- HORIZONTAL CARD STYLING --- */
-.feature-image-wrapper.horizontal-card {
-    flex: 1.2; /* Makes the image area wider than the text */
-    height: 250px; /* Standard Landscape height */
-    width: 100%;
-}
-/* --- SQUARE CARD STYLING --- */
-/* --- SQUARE CARD (Height-Based Sizing) --- */
-.feature-image-wrapper.square-card {
-    flex: 0.8; /* Disables width-based sizing */
-    height: 280px; /* <--- CONTROL SIZE HERE (e.g. 400px, 500px, 600px) */
-    width: 500px; /* Width will automatically match the height */
-    aspect-ratio: 1 / 1; /* Forces square shape */
-    margin: 0 auto;
-}
-
-/* Mobile Adjustment */
-@media(max-width: 900px) {
-    .feature-image-wrapper.square-card {
-        height: auto; /* Reset height constraint on mobile */
-        width: 100%; /* Fill screen width */
-        max-width: 400px; /* Optional: limit max size on phone */
-    }
-}
-/* Mobile Adjustment */
-@media(max-width: 900px) {
-    .feature-image-wrapper.horizontal-card {
-        flex: auto;
-        height: 300px; /* Smaller on phones */
-    }
-}
+/* Animations */
 @keyframes spin { 100% { transform: rotate(360deg); } }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-/* Animation Utility */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.ai-badge:hover .ai-sparkle { display: inline-block; animation: spin 2s linear infinite; }
+.ai-badge:hover .ai-brain { display: inline-block; animation: pulse 1s infinite; }
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 150; padding: 80px 24px; transform: translateY(-100%); transition: transform 0.4s ease; display: flex; flex-direction: column; gap: 24px; }
+.mobile-menu-overlay.is-open { transform: translateY(0); }
+.mobile-link { font-size: 24px; font-weight: 600; border-bottom: 1px solid var(--divider); padding-bottom: 16px; }
+
+/* Footer */
+footer { padding: 60px 0; border-top: 1px solid var(--divider); font-size: 13px; color: var(--text-secondary); background: var(--bg-body); }
+.footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.footer-links { display: flex; gap: 24px; }
 </style>
 </head>
 <body>
 
+<div class="mobile-menu-overlay" id="mobile-menu">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <span class="logo">DP Biotech</span>
+        <button class="btn btn-ghost" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
+    </div>
+    <a href="DPMini.html" class="mobile-link">DP Mini</a>
+    <a href="DPPro.html" class="mobile-link">DP Pro</a>
+    <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="contactus.html" class="mobile-link">Support</a>
+    <a href="licensing.html" class="mobile-link">Licensing</a>
+</div>
+
 <nav class="nav" id="main-nav">
   <div class="container nav-inner">
-      <a href="index.html" class="logo">
-          <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRmNDZlNSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4=' " alt="Logo" style="height:28px; border-radius: 50%;">
-          <span>DP Biotech</span>
-      </a>
+    <a href="index.html" class="logo">
+        <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRmNDZlNSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4=' " alt="Logo" style="height:28px; border-radius: 50%;">
+        <span>DP Biotech</span>
+    </a>
       
       <ul class="nav-links">
           <li class="dropdown" data-menu="microscopes-menu">Microscopes</li>
-          <li class="dropdown" data-menu="stands-menu">Stands</li>
-          <li class="dropdown" data-menu="software-menu">Software</li>
+          <li><a href="stands.html">Stands</a></li> <li class="dropdown" data-menu="software-menu">Software</li>
           <li class="dropdown" data-menu="support-menu">Support</li>
       </ul>
 
       <div class="nav-actions">
-          <a href="licensing.html" class="btn btn-ghost">Licensing</a>
+          <a href="licensing.html" class="btn btn-ghost desktop-btn" style="border: none;">Licensing</a>
+          
           <button class="cart-icon-btn" id="cart-btn">
               <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
               <span class="cart-badge" id="cart-count">0</span>
+          </button>
+          <button class="hamburger" id="menu-btn">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
       </div>
   </div>
@@ -472,33 +268,40 @@ a:hover { opacity: 0.7; }
                   <li>Shop Microscopes</li>
                   <li><a href="DPMini.html">DP Mini</a></li>
                   <li><a href="DPPro.html">DP Pro</a></li>
-                  <li><a href="all-models.html">All Models</a></li>
+              </ul>
+              <ul class="menu-link-column">
+                  <li>Quick Links</li>
+                  <li><a href="all-models.html">Compare Models</a></li>
               </ul>
           </div>
       </div>
   </div>
   <div id="software-menu" class="dropdown-menu">
-      <div class="container">
-          <div class="menu-content">
-              <ul class="menu-main-links">
-                  <li>Connect Suite</li>
-                  <li><a href="medconnectmini.html">Med Connect Mini</a></li>
-                  <li><a href="medconnectpro.html">Med Connect Pro</a></li>
-              </ul>
-              <ul class="menu-link-column">
-                  <li>Cloud & Services</li>
-                  <li><a href="medpatient.html">Med Patient</a></li>
-                  <li><a href="medshare.html">Med Share</a></li>
-              </ul>
-          </div>
-      </div>
+    <div class="container">
+        <div class="menu-content">
+            
+            <ul class="menu-main-links">
+                <li>Connect Suite</li>
+                <li><a href="medconnectmini.html">Med Connect Mini</a></li>
+                <li><a href="medconnectpro.html">Med Connect Pro</a></li>
+            </ul>
+  
+            <ul class="menu-link-column">
+                <li>Cloud & Services</li>
+                <li><a href="medpatient.html">Med Patient</a></li>
+                <li><a href="medshare.html">Med Share</a></li>
+            </ul>
+        </div>
+    </div>
   </div>
+
   <div id="support-menu" class="dropdown-menu">
       <div class="container">
           <div class="menu-content">
               <ul class="menu-main-links">
                   <li>Get Support</li>
                   <li><a href="contactus.html">Contact Us</a></li>
+                  <li><a href="#">Downloads & Manuals</a></li>
               </ul>
           </div>
       </div>
@@ -506,20 +309,15 @@ a:hover { opacity: 0.7; }
 </nav>
 <div class="menu-backdrop"></div>
 
-<section class="hero">
+<section class="hero" id="home">
     <div class="container">
         <div style="opacity: 0; animation: fadeUp 0.8s 0.2s forwards;">
             <span class="eyebrow" style="color:var(--text-secondary); border: 1px solid var(--divider); padding: 6px 16px; border-radius: 99px; display: inline-block; margin-bottom:24px;">DP Mini Companion App</span>
             <h1>Your pocket-sized <br><span class="gradient-text">Surgical Command Center.</span></h1>
             <p class="lead">Med Connect Mini unlocks the full potential of your smartphone's sensor. It's your monitor, your recorder, and your sterile controller.</p>
-            
-            <div style="display: flex; gap: 16px; justify-content: center; margin-top: 32px;">
-              
-            </div>
         </div>
     </div>
 </section>
-
 
 <section class="section section-bg">
     <div class="container">
@@ -527,21 +325,28 @@ a:hover { opacity: 0.7; }
             <div class="feature-text text-content-padded">
                 <span class="eyebrow">Professional Portfolio</span>
                 <h2>Your Medical Legacy</h2>
-                <p>Manage your career highlights in one secure location. Edit your surgical recordings, upload new cases, and curate your professional profile.</p>
+                <p>Manage your career highlights in one secure location. Edit your surgical recordings, upload new cases, and curate your professional profile. <strong>Transform your raw clinical data into a dynamic digital CV that showcases your expertise to peers, institutions, and patients worldwide.</strong></p>
                 
                 <ul class="ui-feature-list">
                     <li class="ui-feature-item">
                         <div class="ui-icon">👤</div>
                         <div>
                             <strong>Granular Privacy</strong>
-                            <p style="font-size:14px; margin:0;">Decide exactly which cases are public to the community and which remain private records.</p>
+                            <p style="font-size:14px; margin:0;">Complete control over your data. Decide exactly which cases are broadcast to the community and which remain encrypted private records for personal review.</p>
                         </div>
                     </li>
                     <li class="ui-feature-item">
                         <div class="ui-icon">✏️</div>
                         <div>
                             <strong>Case Management</strong>
-                            <p style="font-size:14px; margin:0;">Add metadata, patient notes, and tags to organize your surgical history.</p>
+                            <p style="font-size:14px; margin:0;">A searchable archive of your work. Add ICD-10 codes, patient notes, procedural tags, and pre-op/post-op imaging to organize your surgical history.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">📊</div>
+                        <div>
+                            <strong>Impact Analytics</strong>
+                            <p style="font-size:14px; margin:0;">Measure your influence. Track views, saves, and engagement stats to see how your techniques are helping the global surgical community.</p>
                         </div>
                     </li>
                 </ul>
@@ -560,21 +365,28 @@ a:hover { opacity: 0.7; }
             <div class="feature-text text-content-padded">
                 <span class="eyebrow">The Community</span>
                 <h2>Connect & Discover</h2>
-                <p>Stay on the cutting edge of surgical techniques. Explore a global feed of public cases, follow key opinion leaders, and never miss a moment.</p>
+                <p> Med Connect Mini connects you to a global network of surgical excellence. Stay on the cutting edge by accessing a curated feed of live surgeries, technique breakdowns, and clinical pearls from key opinion leaders worldwide.</p>
                 
                 <ul class="ui-feature-list">
                     <li class="ui-feature-item">
                         <div class="ui-icon">🔔</div>
                         <div>
                             <strong>Smart Notifications</strong>
-                            <p style="font-size:14px; margin:0;">Get instant alerts when your favorite surgeons go live or post new findings.</p>
+                            <p style="font-size:14px; margin:0;">Never miss a learning opportunity. Set customizable alerts to know the moment a mentor goes live or when a new case matching your specialty interests is published.</p>
                         </div>
                     </li>
                     <li class="ui-feature-item">
                         <div class="ui-icon">🌍</div>
                         <div>
-                            <strong>Explore Mode</strong>
-                            <p style="font-size:14px; margin:0;">Search profiles and discover trending procedures from around the world.</p>
+                            <strong>Global Search Engine</strong>
+                            <p style="font-size:14px; margin:0;">Find the exact reference you need. Filter the global feed by pathology or specific surgical technique to prepare for your next complex case.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">💬</div>
+                        <div>
+                            <strong>Peer Discussion</strong>
+                            <p style="font-size:14px; margin:0;">Engage in high-level clinical debate. Comment on specific video timestamps, ask technical questions, and verify techniques in a secure, professional environment.</p>
                         </div>
                     </li>
                 </ul>
@@ -598,10 +410,27 @@ a:hover { opacity: 0.7; }
             <div class="feature-text text-content-padded">
                 <span class="eyebrow">Bring your own AI Architecture</span>
                 <h2>Supercharged Intelligence</h2>
-                <p>We don't just give you tools; we give you a platform. Connect your own personal AI accounts directly into the Med Connect workflow via API.</p>
+                <p>We don't just give you tools; we give you a platform. Med Connect Mini is designed to be model-agnostic, allowing you to connect your personal or enterprise AI accounts (OpenAI, Google Cloud, Anthropic) directly into the surgical workflow via secure API keys.</p>
                 
-                <p style="margin-bottom: 24px;">Whether you use <strong>ChatGPT</strong> or Google's <strong>Gemini</strong>, integrate them to analyze surgical notes, summarize procedures, or assist in post-op reporting automatically.</p>
+                <p style="margin-bottom: 24px;">Whether you prefer the reasoning of <strong>ChatGPT</strong> or the multimodal capabilities of Google's <strong>Gemini</strong>, you can harness them to automate the administrative burden of surgery. Turn voice dictation into structured reports or analyze case data instantly.</p>
                 
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">📝</div>
+                        <div>
+                            <strong>Automated Op-Notes</strong>
+                            <p style="font-size:14px; margin:0;">The app listens to your intra-operative voice notes and uses your connected AI to format them into perfect, billing-ready surgical reports automatically.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">🔍</div>
+                        <div>
+                            <strong>Semantic Case Search</strong>
+                            <p style="font-size:14px; margin:0;">Forget keywords. Ask your library: <em>"Show me the last three times I treated a Class II furcation defect,"</em> and let the AI find the exact timestamps.</p>
+                        </div>
+                    </li>
+                </ul>
+
                 <div class="ai-badge-container">
                     <span class="ai-badge badge-gemini">
                         <span class="ai-sparkle">✨</span> Gemini Integrated
@@ -654,6 +483,7 @@ a:hover { opacity: 0.7; }
         </div>
     </div>
 </section>
+
 <section class="section section-bg" id="features">
     <div class="container">
         <div class="feature-row">
@@ -780,12 +610,13 @@ a:hover { opacity: 0.7; }
         </div>
     </div>
 </section>
+
 <footer>
-    <div class="container footer-content" style="display: flex; justify-content: space-between; padding: 40px 0; color: var(--text-secondary); font-size: 13px; border-top: 1px solid var(--divider);">
+    <div class="container footer-content">
         <div class="logo">
-             <span style="color:var(--text-primary); font-weight:600;">DP Biotech &copy; 2025</span>
+            <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:24px; margin-right:8px; border-radius: 50%;">             <span>DP Biotech &copy; 2025</span>
         </div>
-        <div style="display:flex; gap:20px;">
+        <div class="footer-links">
             <a href="#">Privacy</a>
             <a href="#">Terms</a>
             <a href="contactus.html">Contact</a>
@@ -811,45 +642,64 @@ a:hover { opacity: 0.7; }
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- NAV & MOBILE MENU ---
-    const backdrop = document.querySelector('.menu-backdrop');
-    const mainNav = document.getElementById('main-nav');
-    const navItems = mainNav.querySelectorAll('.dropdown');
-
-    let activeMenu = null;
-    let closeTimeout;
-
-    // Dropdown Logic (Desktop)
-    navItems.forEach(item => {
-        item.addEventListener('mouseenter', () => {
-            clearTimeout(closeTimeout);
-            const menuId = item.dataset.menu;
-            const menu = document.getElementById(menuId);
-            
-            if(activeMenu && activeMenu !== menu) activeMenu.classList.remove('is-open');
-            
-            if(menu) {
-                menu.classList.add('is-open');
-                backdrop.classList.add('is-visible');
-                activeMenu = menu;
-            }
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if(menuBtn && mobileMenu){
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('is-open');
         });
-    });
+    }
 
-    // Close logic
-    const closeAll = () => {
-        if(activeMenu) activeMenu.classList.remove('is-open');
-        backdrop.classList.remove('is-visible');
+    // --- MEGA MENU LOGIC (FIXED) ---
+    const mainNav = document.getElementById('main-nav');
+    const navItems = mainNav.querySelectorAll('.nav-links li');
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    const backdrop = document.querySelector('.menu-backdrop');
+    let activeMenu = null, closeTimeout;
+
+    function openMenu(id){
+        if(activeMenu && activeMenu.id !== id){ activeMenu.classList.remove('is-open'); }
+        const menu = document.getElementById(id);
+        if(menu){ 
+            menu.classList.add('is-open'); 
+            backdrop.classList.add('is-visible'); 
+            activeMenu = menu; 
+        }
+    }
+
+    function closeAll(){
+        if(activeMenu){ activeMenu.classList.remove('is-open'); }
+        backdrop.classList.remove('is-visible'); 
         activeMenu = null;
-    };
+    }
 
-    mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
+    if(window.innerWidth >= 960) {
+        navItems.forEach(item => {
+            item.addEventListener('mouseenter', () => { 
+                clearTimeout(closeTimeout); 
+                if (item.dataset.menu) {
+                    openMenu(item.dataset.menu);
+                } else {
+                    closeAll();
+                }
+            });
+        });
+
+        mainNav.addEventListener('mouseleave', () => { 
+            closeTimeout = setTimeout(closeAll, 200); 
+        });
+        mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+
+        dropdowns.forEach(menu => {
+            menu.addEventListener('mouseenter', () => {
+                clearTimeout(closeTimeout);
+            });
+            menu.addEventListener('mouseleave', () => {
+                closeTimeout = setTimeout(closeAll, 200);
+            });
+        });
+    }
     backdrop.addEventListener('click', closeAll);
-
-    // Dropdown hover persistence
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-        menu.addEventListener('mouseenter', () => clearTimeout(closeTimeout));
-        menu.addEventListener('mouseleave', () => closeTimeout = setTimeout(closeAll, 200));
-    });
 
     // --- CART LOGIC ---
     const cartBtn = document.getElementById('cart-btn');
