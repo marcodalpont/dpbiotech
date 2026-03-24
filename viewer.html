@@ -543,21 +543,7 @@ function initPeer() {
   });
 }
 
-function attachDataChannel(call) {
-  const tryAttach = () => {
-    if (!call.peerConnection) { setTimeout(tryAttach, 50); return; }
-    call.peerConnection.ondatachannel = e => {
-      const dc = e.channel;
-      dc.onmessage = ev => {
-        try {
-          const overlays = JSON.parse(ev.data);
-          renderOverlays(overlays);
-        } catch(_) {}
-      };
-    };
-  };
-  tryAttach();
-}
+
 
 function createSilentStream() {
   const ctx2 = new AudioContext();
@@ -575,6 +561,7 @@ const imgCache = {};
 
 function renderOverlays(overlays) {
   if (!Array.isArray(overlays)) return;
+  window.__latestOverlays = overlays; // keep latest for async onload re-renders
 
   // Paint everything onto the offscreen canvas first
   offCtx.clearRect(0, 0, offscreen.width, offscreen.height);
@@ -623,13 +610,8 @@ function renderOverlays(overlays) {
   ctx.drawImage(offscreen, 0, 0);
 }
 
-// Store latest overlays so async onload callbacks can re-render correctly
-const _origRenderOverlays = renderOverlays;
+// Track latest overlays so async onload callbacks can re-render correctly
 window.__latestOverlays = [];
-function renderOverlaysTracked(overlays) {
-  window.__latestOverlays = overlays;
-  _origRenderOverlays(overlays);
-}
 
 function drawImage(targetCtx, img, o) {
   const bx = o.x     * offscreen.width;
@@ -685,7 +667,6 @@ if (roomId) {
   });
 }
 
-// Wire the data channel to use the tracking wrapper
 function attachDataChannel(call) {
   const tryAttach = () => {
     if (!call.peerConnection) { setTimeout(tryAttach, 50); return; }
@@ -694,7 +675,7 @@ function attachDataChannel(call) {
       dc.onmessage = ev => {
         try {
           const overlays = JSON.parse(ev.data);
-          renderOverlaysTracked(overlays);
+          renderOverlays(overlays);
         } catch(_) {}
       };
     };
