@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Med Connect — Live</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #e8392a;
+      --bg:     #0a0a0a;
+      --surface:#111111;
+      --border: rgba(255,255,255,0.08);
+      --text:   #f0f0f0;
+      --muted:  #666;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── LOADING / ERROR SCREENS ── */
+    #screen-loading,
+    #screen-error,
+    #screen-ended {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; z-index: 100;
+      background: var(--bg);
+    }
+    #screen-error, #screen-ended { display: none; }
+
+    .pulse-ring {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: 2px solid var(--red);
+      animation: pulse-out 1.4s ease-out infinite;
+    }
+    @keyframes pulse-out {
+      0%   { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .dot-live {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--red);
+      position: absolute;
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    .loading-indicator {
+      position: relative;
+      width: 56px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .status-text {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .error-icon { font-size: 40px; }
+    .error-title { font-size: 20px; font-weight: 600; }
+    .error-msg   { font-size: 14px; color: var(--muted); text-align: center; max-width: 280px; line-height: 1.6; }
+
+    /* ── MAIN LAYOUT ── */
+    #screen-live {
+      display: none;
+      position: fixed; inset: 0;
+      flex-direction: column;
+    }
+    #screen-live.visible { display: flex; }
+
+    /* Video fills everything */
+    #videoWrap {
+      position: relative;
+      flex: 1;
+      background: #000;
+      overflow: hidden;
+    }
+    video {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    /* Overlay canvas sits on top */
+    #overlayCanvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    /* ── LIVE BADGE ── */
+    #liveBadge {
+      position: absolute;
+      top: 16px; left: 16px;
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(232,57,42,0.35);
+      border-radius: 6px;
+      padding: 5px 10px 5px 8px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    /* ── BOTTOM BAR ── */
+    #bar {
+      height: 60px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 20px;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    #muteBtn {
+      width: 40px; height: 40px; border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: #fff; font-size: 18px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    #muteBtn:hover { background: rgba(255,255,255,0.12); }
+    #muteBtn.muted { background: rgba(232,57,42,0.2); border-color: rgba(232,57,42,0.4); }
+
+    #barLabel {
+      font-size: 13px;
+      color: var(--muted);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #barLabel span {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ── CHAT ── */
+    #chatToggle {
+      width: 40px; height: 40px; border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: #fff; font-size: 18px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    #chatToggle:hover { background: rgba(255,255,255,0.12); }
+    #chatToggle.active { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.2); }
+
+    #chatPanel {
+      position: absolute;
+      bottom: 60px; right: 0;
+      width: min(320px, 100vw);
+      height: min(380px, 50vh);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    #chatPanel.open { transform: translateY(0); }
+
+    #chatMessages {
+      flex: 1; overflow-y: auto;
+      padding: 12px 14px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    #chatMessages::-webkit-scrollbar { width: 3px; }
+    #chatMessages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .chat-msg {
+      font-size: 13px; line-height: 1.5;
+    }
+    .chat-msg .name { font-weight: 600; color: var(--text); }
+    .chat-msg .body { color: #aaa; }
+
+    #chatInputRow {
+      display: flex; gap: 8px;
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
+    }
+    #chatInput {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 8px 10px;
+      outline: none;
+    }
+    #chatInput:focus { border-color: rgba(255,255,255,0.2); }
+    #chatSend {
+      background: var(--red);
+      border: none; border-radius: 6px;
+      color: #fff; font-size: 14px; font-weight: 500;
+      padding: 0 14px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: opacity 0.15s;
+    }
+    #chatSend:hover { opacity: 0.85; }
+
+    /* ── VIEWER NAME PROMPT ── */
+    #namePrompt {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200;
+    }
+    #nameCard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 24px;
+      width: min(340px, 90vw);
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    #nameCard h2 { font-size: 18px; font-weight: 600; }
+    #nameCard p  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    #nameField {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      padding: 11px 14px;
+      outline: none;
+      width: 100%;
+    }
+    #nameField:focus { border-color: rgba(255,255,255,0.25); }
+    #joinBtn {
+      background: var(--red);
+      border: none; border-radius: 8px;
+      color: #fff; font-size: 15px; font-weight: 600;
+      padding: 13px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: opacity 0.15s;
+    }
+    #joinBtn:hover { opacity: 0.88; }
+  </style>
+</head>
+<body>
+
+<!-- Name Prompt -->
+<div id="namePrompt">
+  <div id="nameCard">
+    <h2>Join Live Stream</h2>
+    <p>Enter your name so the streamer knows who's watching.</p>
+    <input id="nameField" type="text" placeholder="Your name" maxlength="40" autocomplete="off" />
+    <button id="joinBtn">Join</button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div id="screen-loading">
+  <div class="loading-indicator">
+    <div class="pulse-ring"></div>
+    <div class="dot-live"></div>
+  </div>
+  <p class="status-text" id="loadingText">Connecting…</p>
+</div>
+
+<!-- Error -->
+<div id="screen-error">
+  <div class="error-icon">📡</div>
+  <p class="error-title">Stream not found</p>
+  <p class="error-msg" id="errorMsg">This stream may have ended or the link is invalid.</p>
+</div>
+
+<!-- Ended -->
+<div id="screen-ended">
+  <div class="error-icon">🎬</div>
+  <p class="error-title">Stream ended</p>
+  <p class="error-msg">The streamer has ended this live session.</p>
+</div>
+
+<!-- Live screen -->
+<div id="screen-live">
+  <div id="videoWrap">
+    <video id="remoteVideo" autoplay playsinline muted></video>
+    <canvas id="overlayCanvas"></canvas>
+    <div id="liveBadge">
+      <div class="dot-live"></div>
+      LIVE
+    </div>
+    <div id="chatPanel">
+      <div id="chatMessages"></div>
+      <div id="chatInputRow">
+        <input id="chatInput" type="text" placeholder="Send a message…" maxlength="200" />
+        <button id="chatSend">Send</button>
+      </div>
+    </div>
+  </div>
+  <div id="bar">
+    <button id="muteBtn" title="Toggle mic">🎙</button>
+    <div id="barLabel">Watching <span id="streamerLabel">live stream</span></div>
+    <button id="chatToggle" title="Chat">💬</button>
+  </div>
+</div>
+
+<!-- Firebase + PeerJS -->
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, off, push } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+// ─── CONFIG — paste your own values here ───────────────────────────────────
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://flutter-webview-e59a8-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "APP_ID"
+};
+// ───────────────────────────────────────────────────────────────────────────
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+// ── Grab roomId from URL (?uid=XXX) ──────────────────────────────────────
+const params  = new URLSearchParams(location.search);
+const roomId  = params.get("uid");
+
+if (!roomId) {
+  showError("No stream ID in link. Please ask the streamer for a valid link.");
+}
+
+// ── DOM refs ──────────────────────────────────────────────────────────────
+const namePrompt    = document.getElementById("namePrompt");
+const nameField     = document.getElementById("nameField");
+const joinBtn       = document.getElementById("joinBtn");
+const screenLoading = document.getElementById("screen-loading");
+const screenError   = document.getElementById("screen-error");
+const screenEnded   = document.getElementById("screen-ended");
+const screenLive    = document.getElementById("screen-live");
+const loadingText   = document.getElementById("loadingText");
+const remoteVideo   = document.getElementById("remoteVideo");
+const overlayCanvas = document.getElementById("overlayCanvas");
+const ctx           = overlayCanvas.getContext("2d");
+const muteBtn       = document.getElementById("muteBtn");
+const chatToggle    = document.getElementById("chatToggle");
+const chatPanel     = document.getElementById("chatPanel");
+const chatMessages  = document.getElementById("chatMessages");
+const chatInput     = document.getElementById("chatInput");
+const chatSend      = document.getElementById("chatSend");
+const streamerLabel = document.getElementById("streamerLabel");
+const barLabel      = document.getElementById("barLabel");
+
+// ── State ─────────────────────────────────────────────────────────────────
+let viewerName = "Guest";
+let myPeerId   = null;
+let localStream = null;
+let isMuted    = true;
+let chatOpen   = false;
+let streamExistenceRef = null;
+
+// ── Canvas resize ─────────────────────────────────────────────────────────
+function resizeCanvas() {
+  overlayCanvas.width  = overlayCanvas.offsetWidth;
+  overlayCanvas.height = overlayCanvas.offsetHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function showError(msg) {
+  screenLoading.style.display = "none";
+  namePrompt.style.display    = "none";
+  screenError.style.display   = "flex";
+  document.getElementById("errorMsg").textContent = msg || "Stream not found.";
+}
+
+function showEnded() {
+  screenLive.classList.remove("visible");
+  screenLoading.style.display = "none";
+  screenEnded.style.display   = "flex";
+}
+
+function setLoadingText(t) { loadingText.textContent = t; }
+
+// ── Name prompt ───────────────────────────────────────────────────────────
+nameField.focus();
+nameField.addEventListener("keydown", e => { if (e.key === "Enter") startJoin(); });
+joinBtn.addEventListener("click", startJoin);
+
+function startJoin() {
+  const v = nameField.value.trim();
+  if (!v) { nameField.focus(); return; }
+  viewerName = v;
+  namePrompt.style.display = "none";
+  screenLoading.style.display = "flex";
+  setLoadingText("Checking stream…");
+  checkStreamThenConnect();
+}
+
+// ── Check Firebase that stream is live ───────────────────────────────────
+async function checkStreamThenConnect() {
+  if (!roomId) return;
+  try {
+    const snap = await get(ref(db, `streams/${roomId}`));
+    if (!snap.exists()) {
+      showError("This stream isn't live right now. The link may have expired.");
+      return;
+    }
+    // Load streamer name for the bar
+    const nameSnap = await get(ref(db, `users/${roomId}/name`));
+    if (nameSnap.exists()) {
+      const n = nameSnap.val();
+      if (n) streamerLabel.textContent = n;
+    }
+    setLoadingText("Joining…");
+    initPeer();
+  } catch(e) {
+    showError("Could not reach the server. Check your connection.");
+  }
+}
+
+// ── PeerJS viewer logic ───────────────────────────────────────────────────
+function initPeer() {
+  // Use a random ID so multiple tabs don't clash
+  const randomId = "web-" + Math.random().toString(36).slice(2, 10);
+  myPeerId = randomId;
+
+  const peer = new Peer(randomId, {
+    debug: 0,
+    config: {
+      iceServers: [
+        {
+          urls: "turn:relay1.expressturn.com:3478",
+          username: "efEMJJ29G402WRU4RM",
+          credential: "OdRMwByZ9vXjnJ8b",
+        }
+      ]
+    }
+  });
+
+  peer.on("open", async () => {
+    // Register viewer in Firebase
+    set(ref(db, `rooms/${roomId}/viewers/${randomId}`), { name: viewerName });
+    set(ref(db, `users/${randomId}/name`), viewerName);
+
+    setLoadingText("Getting mic…");
+
+    // Dummy video + real audio (same pattern as viewer_test.html)
+    try {
+      const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      localStream = audioStream;
+
+      const dummyCanvas = document.createElement("canvas");
+      dummyCanvas.width = 1; dummyCanvas.height = 1;
+      const dummyVideoTrack = dummyCanvas.captureStream().getVideoTracks()[0];
+      const dummyStream = new MediaStream([...audioStream.getAudioTracks(), dummyVideoTrack]);
+
+      // Start muted by default
+      audioStream.getAudioTracks().forEach(t => t.enabled = false);
+
+      setLoadingText("Dialing streamer…");
+      const call = peer.call(roomId, dummyStream);
+
+      attachDataChannel(call);
+
+      call.on("stream", stream => {
+        setLoadingText("Starting…");
+        remoteVideo.srcObject = stream;
+        remoteVideo.muted = false;
+        remoteVideo.play().catch(() => { remoteVideo.muted = true; remoteVideo.play(); });
+
+        screenLoading.style.display = "none";
+        screenLive.classList.add("visible");
+        resizeCanvas();
+      });
+
+      call.on("error", () => showError("Connection failed. The stream may have ended."));
+      call.on("close", () => showEnded());
+
+    } catch(err) {
+      // If mic denied, still try with a silent track
+      console.warn("Mic denied, joining silently:", err);
+      const silentStream = createSilentStream();
+      setLoadingText("Dialing streamer…");
+      const call = peer.call(roomId, silentStream);
+      attachDataChannel(call);
+      call.on("stream", stream => {
+        remoteVideo.srcObject = stream;
+        remoteVideo.muted = false;
+        remoteVideo.play().catch(() => { remoteVideo.muted = true; remoteVideo.play(); });
+        screenLoading.style.display = "none";
+        screenLive.classList.add("visible");
+        resizeCanvas();
+      });
+      call.on("close", () => showEnded());
+    }
+  });
+
+  peer.on("error", err => {
+    if (err.type === "peer-unavailable") {
+      showError("Streamer is not reachable. The live may have ended.");
+    } else {
+      showError("Connection error: " + err.message);
+    }
+  });
+
+  // Watch Firebase for stream removal (stream ended)
+  streamExistenceRef = ref(db, `streams/${roomId}`);
+  onValue(streamExistenceRef, snap => {
+    if (!snap.exists() && screenLive.classList.contains("visible")) {
+      showEnded();
+    }
+  });
+}
+
+function attachDataChannel(call) {
+  const tryAttach = () => {
+    if (!call.peerConnection) { setTimeout(tryAttach, 50); return; }
+    call.peerConnection.ondatachannel = e => {
+      const dc = e.channel;
+      dc.onmessage = ev => {
+        try {
+          const overlays = JSON.parse(ev.data);
+          renderOverlays(overlays);
+        } catch(_) {}
+      };
+    };
+  };
+  tryAttach();
+}
+
+function createSilentStream() {
+  const ctx2 = new AudioContext();
+  const dest  = ctx2.createMediaStreamDestination();
+  const dummyCanvas = document.createElement("canvas");
+  dummyCanvas.width = 1; dummyCanvas.height = 1;
+  const videoTrack = dummyCanvas.captureStream().getVideoTracks()[0];
+  return new MediaStream([dest.stream.getAudioTracks()[0], videoTrack]);
+}
+
+// ── Overlay rendering ─────────────────────────────────────────────────────
+const imgCache = {};
+
+function renderOverlays(overlays) {
+  if (!Array.isArray(overlays)) return;
+  ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+  overlays.forEach(o => {
+    if (o.type === "pointer") {
+      ctx.beginPath();
+      ctx.arc(o.x * overlayCanvas.width, o.y * overlayCanvas.height, 14, 0, 2 * Math.PI);
+      ctx.fillStyle = "rgba(232,57,42,0.9)";
+      ctx.fill();
+    } else if (o.type === "image" && o.base64) {
+      const key = o.base64.slice(-32);
+      const draw = img => {
+        const bx = o.x * overlayCanvas.width, by = o.y * overlayCanvas.height;
+        const bw = o.width * overlayCanvas.width, bh = o.height * overlayCanvas.height;
+        const angle = o.rotation || 0;
+        ctx.save();
+        ctx.translate(bx + bw/2, by + bh/2);
+        ctx.rotate(angle);
+        ctx.drawImage(img, -bw/2, -bh/2, bw, bh);
+        ctx.restore();
+      };
+      if (imgCache[key]) { draw(imgCache[key]); }
+      else {
+        const img = new Image();
+        img.onload = () => { imgCache[key] = img; draw(img); };
+        img.src = o.base64;
+      }
+    } else if (o.type === "drawing" && o.base64) {
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 0, 0, overlayCanvas.width, overlayCanvas.height);
+      img.src = o.base64;
+    }
+  });
+}
+
+// ── Mute toggle ───────────────────────────────────────────────────────────
+muteBtn.addEventListener("click", () => {
+  isMuted = !isMuted;
+  if (localStream) localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
+  muteBtn.textContent = isMuted ? "🎙" : "🔊";
+  muteBtn.classList.toggle("muted", isMuted);
+});
+
+// ── Chat ──────────────────────────────────────────────────────────────────
+chatToggle.addEventListener("click", () => {
+  chatOpen = !chatOpen;
+  chatPanel.classList.toggle("open", chatOpen);
+  chatToggle.classList.toggle("active", chatOpen);
+  if (chatOpen) chatInput.focus();
+});
+
+function sendChat() {
+  const text = chatInput.value.trim();
+  if (!text || !roomId) return;
+  chatInput.value = "";
+  push(ref(db, `streams/${roomId}/chat`), { name: viewerName, text });
+}
+chatSend.addEventListener("click", sendChat);
+chatInput.addEventListener("keydown", e => { if (e.key === "Enter") sendChat(); });
+
+// Listen for incoming chat
+if (roomId) {
+  onValue(ref(db, `streams/${roomId}/chat`), snap => {
+    chatMessages.innerHTML = "";
+    snap.forEach(child => {
+      const { name, text } = child.val() || {};
+      if (!name || !text) return;
+      const el = document.createElement("div");
+      el.className = "chat-msg";
+      el.innerHTML = `<span class="name">${escHtml(name)}</span> <span class="body">${escHtml(text)}</span>`;
+      chatMessages.appendChild(el);
+    });
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+</script>
+</body>
+</html>
