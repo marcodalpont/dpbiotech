@@ -373,6 +373,10 @@ const chatSend      = document.getElementById("chatSend");
 const streamerLabel = document.getElementById("streamerLabel");
 const barLabel      = document.getElementById("barLabel");
 
+// ── Offscreen canvas for double-buffering (eliminates blank frames) ───────
+const offscreen = document.createElement("canvas");
+const offCtx    = offscreen.getContext("2d");
+
 // ── State ─────────────────────────────────────────────────────────────────
 let viewerName = "Guest";
 let myPeerId   = null;
@@ -385,6 +389,9 @@ let streamExistenceRef = null;
 function resizeCanvas() {
   overlayCanvas.width  = overlayCanvas.offsetWidth;
   overlayCanvas.height = overlayCanvas.offsetHeight;
+  // Keep offscreen in sync
+  offscreen.width  = overlayCanvas.width;
+  offscreen.height = overlayCanvas.height;
 }
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
@@ -562,41 +569,79 @@ function createSilentStream() {
 }
 
 // ── Overlay rendering ─────────────────────────────────────────────────────
+// Keyed by overlay id when present, otherwise by the start of the base64
+// string (more unique than the end, which is often just padding).
 const imgCache = {};
 
 function renderOverlays(overlays) {
   if (!Array.isArray(overlays)) return;
-  ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+
+  // Paint everything onto the offscreen canvas first
+  offCtx.clearRect(0, 0, offscreen.width, offscreen.height);
+
   overlays.forEach(o => {
     if (o.type === "pointer") {
-      ctx.beginPath();
-      ctx.arc(o.x * overlayCanvas.width, o.y * overlayCanvas.height, 14, 0, 2 * Math.PI);
-      ctx.fillStyle = "rgba(232,57,42,0.9)";
-      ctx.fill();
+      offCtx.beginPath();
+      offCtx.arc(o.x * offscreen.width, o.y * offscreen.height, 14, 0, 2 * Math.PI);
+      offCtx.fillStyle = "rgba(232,57,42,0.9)";
+      offCtx.fill();
+
     } else if (o.type === "image" && o.base64) {
-      const key = o.base64.slice(-32);
-      const draw = img => {
-        const bx = o.x * overlayCanvas.width, by = o.y * overlayCanvas.height;
-        const bw = o.width * overlayCanvas.width, bh = o.height * overlayCanvas.height;
-        const angle = o.rotation || 0;
-        ctx.save();
-        ctx.translate(bx + bw/2, by + bh/2);
-        ctx.rotate(angle);
-        ctx.drawImage(img, -bw/2, -bh/2, bw, bh);
-        ctx.restore();
-      };
-      if (imgCache[key]) { draw(imgCache[key]); }
-      else {
+      // Use stable overlay id as cache key; fall back to start of base64
+      const key = o.id || o.base64.slice(0, 64);
+
+      if (imgCache[key] && imgCache[key].complete) {
+        // Already decoded — draw synchronously onto offscreen, no flash
+        drawImage(offCtx, imgCache[key], o);
+      } else if (!imgCache[key]) {
+        // Not cached yet — start loading but keep the current frame visible.
+        // Re-render once the image is ready instead of clearing to blank.
         const img = new Image();
-        img.onload = () => { imgCache[key] = img; draw(img); };
+        imgCache[key] = img;
+        img.onload = () => renderOverlays(window.__latestOverlays || []);
         img.src = o.base64;
       }
+      // If cached but still loading (.complete === false): skip silently this frame
+
     } else if (o.type === "drawing" && o.base64) {
+      // Drawings are always new blobs — decode async and flip when ready
       const img = new Image();
-      img.onload = () => ctx.drawImage(img, 0, 0, overlayCanvas.width, overlayCanvas.height);
+      img.onload = () => {
+        offCtx.drawImage(img, 0, 0, offscreen.width, offscreen.height);
+        // Atomic flip only after drawing is fully painted
+        ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+        ctx.drawImage(offscreen, 0, 0);
+      };
       img.src = o.base64;
+      return; // async path — skip the synchronous flip below
     }
   });
+
+  // Single atomic flip: one clearRect + one drawImage on the visible canvas,
+  // so there is never a blank frame between clearing and painting.
+  ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+  ctx.drawImage(offscreen, 0, 0);
+}
+
+// Store latest overlays so async onload callbacks can re-render correctly
+const _origRenderOverlays = renderOverlays;
+window.__latestOverlays = [];
+function renderOverlaysTracked(overlays) {
+  window.__latestOverlays = overlays;
+  _origRenderOverlays(overlays);
+}
+
+function drawImage(targetCtx, img, o) {
+  const bx = o.x     * offscreen.width;
+  const by = o.y     * offscreen.height;
+  const bw = o.width * offscreen.width;
+  const bh = o.height * offscreen.height;
+  const angle = o.rotation || 0;
+  targetCtx.save();
+  targetCtx.translate(bx + bw / 2, by + bh / 2);
+  targetCtx.rotate(angle);
+  targetCtx.drawImage(img, -bw / 2, -bh / 2, bw, bh);
+  targetCtx.restore();
 }
 
 // ── Mute toggle ───────────────────────────────────────────────────────────
@@ -638,6 +683,23 @@ if (roomId) {
     });
     chatMessages.scrollTop = chatMessages.scrollHeight;
   });
+}
+
+// Wire the data channel to use the tracking wrapper
+function attachDataChannel(call) {
+  const tryAttach = () => {
+    if (!call.peerConnection) { setTimeout(tryAttach, 50); return; }
+    call.peerConnection.ondatachannel = e => {
+      const dc = e.channel;
+      dc.onmessage = ev => {
+        try {
+          const overlays = JSON.parse(ev.data);
+          renderOverlaysTracked(overlays);
+        } catch(_) {}
+      };
+    };
+  };
+  tryAttach();
 }
 
 function escHtml(s) {
