@@ -575,8 +575,7 @@ function renderOverlays(overlays) {
 
     } else if (o.type === "image" && o.base64) {
       // Use stable overlay id as cache key; fall back to start of base64
-      const key = o.id || o.base64.slice(0, 64);
-
+const key = o.id || o.base64.slice(-64);
       if (imgCache[key] && imgCache[key].complete) {
         // Already decoded — draw synchronously onto offscreen, no flash
         drawImage(offCtx, imgCache[key], o);
