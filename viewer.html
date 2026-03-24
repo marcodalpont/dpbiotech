@@ -329,7 +329,7 @@
 import { initializeApp }  from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, off, push } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-// ─── CONFIG — paste your own values here ───────────────────────────────────
+// ─── CONFIG ────────────────────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyAPZC_sUOYnwJdW3SG6uEoRKSDVXfcqjdg",
   authDomain: "flutter-webview-e59a8.firebaseapp.com",
@@ -344,7 +344,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 
-// ── Grab roomId from URL (?uid=XXX) ──────────────────────────────────────
 const params  = new URLSearchParams(location.search);
 const roomId  = params.get("uid");
 
@@ -371,9 +370,8 @@ const chatMessages  = document.getElementById("chatMessages");
 const chatInput     = document.getElementById("chatInput");
 const chatSend      = document.getElementById("chatSend");
 const streamerLabel = document.getElementById("streamerLabel");
-const barLabel      = document.getElementById("barLabel");
 
-// ── Offscreen canvas for double-buffering (eliminates blank frames) ───────
+// ── Offscreen canvas for double-buffering ─────────────────────────────────
 const offscreen = document.createElement("canvas");
 const offCtx    = offscreen.getContext("2d");
 
@@ -383,15 +381,17 @@ let myPeerId   = null;
 let localStream = null;
 let isMuted    = true;
 let chatOpen   = false;
-let streamExistenceRef = null;
 
 // ── Canvas resize ─────────────────────────────────────────────────────────
 function resizeCanvas() {
   overlayCanvas.width  = overlayCanvas.offsetWidth;
   overlayCanvas.height = overlayCanvas.offsetHeight;
-  // Keep offscreen in sync
   offscreen.width  = overlayCanvas.width;
   offscreen.height = overlayCanvas.height;
+  // Re-render with updated dimensions
+  if (window.__latestOverlays && window.__latestOverlays.length) {
+    renderOverlays(window.__latestOverlays);
+  }
 }
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
@@ -427,7 +427,7 @@ function startJoin() {
   checkStreamThenConnect();
 }
 
-// ── Check Firebase that stream is live ───────────────────────────────────
+// ── Check Firebase that stream is live ────────────────────────────────────
 async function checkStreamThenConnect() {
   if (!roomId) return;
   try {
@@ -436,7 +436,6 @@ async function checkStreamThenConnect() {
       showError("This stream isn't live right now. The link may have expired.");
       return;
     }
-    // Load streamer name for the bar
     const nameSnap = await get(ref(db, `users/${roomId}/name`));
     if (nameSnap.exists()) {
       const n = nameSnap.val();
@@ -451,7 +450,6 @@ async function checkStreamThenConnect() {
 
 // ── PeerJS viewer logic ───────────────────────────────────────────────────
 function initPeer() {
-  // Use a random ID so multiple tabs don't clash
   const randomId = "web-" + Math.random().toString(36).slice(2, 10);
   myPeerId = randomId;
 
@@ -469,13 +467,11 @@ function initPeer() {
   });
 
   peer.on("open", async () => {
-    // Register viewer in Firebase
     set(ref(db, `rooms/${roomId}/viewers/${randomId}`), { name: viewerName });
     set(ref(db, `users/${randomId}/name`), viewerName);
 
     setLoadingText("Getting mic…");
 
-    // Dummy video + real audio (same pattern as viewer_test.html)
     try {
       const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       localStream = audioStream;
@@ -485,7 +481,6 @@ function initPeer() {
       const dummyVideoTrack = dummyCanvas.captureStream().getVideoTracks()[0];
       const dummyStream = new MediaStream([...audioStream.getAudioTracks(), dummyVideoTrack]);
 
-      // Start muted by default
       audioStream.getAudioTracks().forEach(t => t.enabled = false);
 
       setLoadingText("Dialing streamer…");
@@ -498,17 +493,15 @@ function initPeer() {
         remoteVideo.srcObject = stream;
         remoteVideo.muted = false;
         remoteVideo.play().catch(() => { remoteVideo.muted = true; remoteVideo.play(); });
-
         screenLoading.style.display = "none";
         screenLive.classList.add("visible");
         resizeCanvas();
       });
 
       call.on("error", () => showError("Connection failed. The stream may have ended."));
-      call.on("close", () => showEnded());
+      call.on("close",  () => showEnded());
 
     } catch(err) {
-      // If mic denied, still try with a silent track
       console.warn("Mic denied, joining silently:", err);
       const silentStream = createSilentStream();
       setLoadingText("Dialing streamer…");
@@ -534,41 +527,63 @@ function initPeer() {
     }
   });
 
-  // Watch Firebase for stream removal (stream ended)
-  streamExistenceRef = ref(db, `streams/${roomId}`);
-  onValue(streamExistenceRef, snap => {
+  onValue(ref(db, `streams/${roomId}`), snap => {
     if (!snap.exists() && screenLive.classList.contains("visible")) {
       showEnded();
     }
   });
 }
 
-
-
 function createSilentStream() {
-  const ctx2 = new AudioContext();
-  const dest  = ctx2.createMediaStreamDestination();
-  const dummyCanvas = document.createElement("canvas");
-  dummyCanvas.width = 1; dummyCanvas.height = 1;
-  const videoTrack = dummyCanvas.captureStream().getVideoTracks()[0];
-  return new MediaStream([dest.stream.getAudioTracks()[0], videoTrack]);
+  const actx  = new AudioContext();
+  const dest   = actx.createMediaStreamDestination();
+  const dummy  = document.createElement("canvas");
+  dummy.width  = 1; dummy.height = 1;
+  const vTrack = dummy.captureStream().getVideoTracks()[0];
+  return new MediaStream([dest.stream.getAudioTracks()[0], vTrack]);
+}
+
+// ── Overlay coordinate helpers ────────────────────────────────────────────
+
+// Returns the letterbox/pillarbox rect {x,y,w,h} where the video actually
+// sits inside the canvas. Mirrors CSS object-fit:contain on the <video>.
+function videoRect(cw, ch, videoAR) {
+  const canvasAR = cw / ch;
+  let w, h;
+  if (videoAR >= canvasAR) { w = cw;           h = cw / videoAR; }
+  else                      { h = ch;           w = ch * videoAR; }
+  return { x: (cw - w) / 2, y: (ch - h) / 2, w, h };
+}
+
+// Maps a normalised point (0-1 within the stream frame) to canvas pixels.
+function mapToCanvas(nx, ny, r) {
+  return { x: r.x + nx * r.w, y: r.y + ny * r.h };
 }
 
 // ── Overlay rendering ─────────────────────────────────────────────────────
-const imgCache    = {};   // key → fully loaded Image
-const imgLoading  = {};   // key → in-flight Image (prevents duplicate loads)
-const imgLastGood = {};   // stableId → last successfully decoded Image
+const imgCache    = {};
+const imgLoading  = {};
+const imgLastGood = {};
+
+window.__latestOverlays = [];
+window.__latestVideoAR  = 16 / 9;   // updated by each incoming packet
 
 function renderOverlays(overlays) {
   if (!Array.isArray(overlays)) return;
   window.__latestOverlays = overlays;
 
+  // Compute where the 1280×720 stream frame sits on this canvas
+  const videoAR = window.__latestVideoAR || (16 / 9);
+  const vRect   = videoRect(offscreen.width, offscreen.height, videoAR);
+
   offCtx.clearRect(0, 0, offscreen.width, offscreen.height);
 
   overlays.forEach((o, i) => {
+
     if (o.type === "pointer") {
+      const pt = mapToCanvas(o.x, o.y, vRect);
       offCtx.beginPath();
-      offCtx.arc(o.x * offscreen.width, o.y * offscreen.height, 14, 0, 2 * Math.PI);
+      offCtx.arc(pt.x, pt.y, 14, 0, 2 * Math.PI);
       offCtx.fillStyle = "rgba(232,57,42,0.9)";
       offCtx.fill();
 
@@ -577,16 +592,12 @@ function renderOverlays(overlays) {
       const stableId = o.id || "ov_" + i;
 
       if (imgCache[key]) {
-        // Fully decoded — draw and remember as last-good
         imgLastGood[stableId] = imgCache[key];
-        drawImage(offCtx, imgCache[key], o);
-
+        drawImage(offCtx, imgCache[key], o, vRect);
       } else {
-        // Not ready yet — hold the previous frame to avoid flash
         if (imgLastGood[stableId]) {
-          drawImage(offCtx, imgLastGood[stableId], o);
+          drawImage(offCtx, imgLastGood[stableId], o, vRect);
         }
-        // Kick off decode only once
         if (!imgLoading[key]) {
           const img = new Image();
           imgLoading[key] = img;
@@ -602,7 +613,8 @@ function renderOverlays(overlays) {
     } else if (o.type === "drawing" && o.base64) {
       const img = new Image();
       img.onload = () => {
-        offCtx.drawImage(img, 0, 0, offscreen.width, offscreen.height);
+        // Drawings cover the full video rect, not the full canvas
+        offCtx.drawImage(img, vRect.x, vRect.y, vRect.w, vRect.h);
         ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
         ctx.drawImage(offscreen, 0, 0);
       };
@@ -615,19 +627,58 @@ function renderOverlays(overlays) {
   ctx.drawImage(offscreen, 0, 0);
 }
 
-window.__latestOverlays = [];
-
-function drawImage(targetCtx, img, o) {
-  const bx = o.x     * offscreen.width;
-  const by = o.y     * offscreen.height;
-  const bw = o.width * offscreen.width;
-  const bh = o.height * offscreen.height;
+// Draws an overlay image mapped through vRect with rotation and aspect-correct scaling.
+function drawImage(targetCtx, img, o, vRect) {
+  const r   = vRect || { x: 0, y: 0, w: offscreen.width, h: offscreen.height };
+  // Box position and size in canvas pixels
+  const bx  = r.x + o.x     * r.w;
+  const by  = r.y + o.y     * r.h;
+  const bw  = o.width  * r.w;
+  const bh  = o.height * r.h;
   const angle = o.rotation || 0;
+
+  // Scale image to fit the (rotated) box while preserving its aspect ratio
+  const sin = Math.abs(Math.sin(angle));
+  const cos = Math.abs(Math.cos(angle));
+  const rotW = img.width  * cos + img.height * sin;
+  const rotH = img.width  * sin + img.height * cos;
+  const scale = Math.min(bw / rotW, bh / rotH);
+  const dw  = img.width  * scale;
+  const dh  = img.height * scale;
+
+  const radius = 12;
   targetCtx.save();
   targetCtx.translate(bx + bw / 2, by + bh / 2);
   targetCtx.rotate(angle);
-  targetCtx.drawImage(img, -bw / 2, -bh / 2, bw, bh);
+  targetCtx.beginPath();
+  if (targetCtx.roundRect) {
+    targetCtx.roundRect(-dw / 2, -dh / 2, dw, dh, radius);
+  } else {
+    targetCtx.rect(-dw / 2, -dh / 2, dw, dh);
+  }
+  targetCtx.clip();
+  targetCtx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
   targetCtx.restore();
+}
+
+// ── Data channel ──────────────────────────────────────────────────────────
+function attachDataChannel(call) {
+  const tryAttach = () => {
+    if (!call.peerConnection) { setTimeout(tryAttach, 50); return; }
+    call.peerConnection.ondatachannel = e => {
+      const dc = e.channel;
+      dc.onmessage = ev => {
+        try {
+          const packet = JSON.parse(ev.data);
+          // Support wrapped {videoAR, overlays} from peer_streamer, or legacy plain array
+          const overlays = Array.isArray(packet) ? packet : (packet.overlays || []);
+          window.__latestVideoAR = Array.isArray(packet) ? (16 / 9) : (packet.videoAR || (16 / 9));
+          renderOverlays(overlays);
+        } catch(_) {}
+      };
+    };
+  };
+  tryAttach();
 }
 
 // ── Mute toggle ───────────────────────────────────────────────────────────
@@ -655,7 +706,6 @@ function sendChat() {
 chatSend.addEventListener("click", sendChat);
 chatInput.addEventListener("keydown", e => { if (e.key === "Enter") sendChat(); });
 
-// Listen for incoming chat
 if (roomId) {
   onValue(ref(db, `streams/${roomId}/chat`), snap => {
     chatMessages.innerHTML = "";
@@ -669,22 +719,6 @@ if (roomId) {
     });
     chatMessages.scrollTop = chatMessages.scrollHeight;
   });
-}
-
-function attachDataChannel(call) {
-  const tryAttach = () => {
-    if (!call.peerConnection) { setTimeout(tryAttach, 50); return; }
-    call.peerConnection.ondatachannel = e => {
-      const dc = e.channel;
-      dc.onmessage = ev => {
-        try {
-          const overlays = JSON.parse(ev.data);
-          renderOverlays(overlays);
-        } catch(_) {}
-      };
-    };
-  };
-  tryAttach();
 }
 
 function escHtml(s) {
