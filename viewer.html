@@ -545,19 +545,47 @@ function createSilentStream() {
 
 // ── Overlay coordinate helpers ────────────────────────────────────────────
 
-// Returns the letterbox/pillarbox rect {x,y,w,h} where the video actually
-// sits inside the canvas. Mirrors CSS object-fit:contain on the <video>.
-function videoRect(cw, ch, videoAR) {
-  const canvasAR = cw / ch;
+// Returns the aspect-fit rect {x,y,w,h} of content with aspect ratio contentAR
+// fitted inside a box of size (bw x bh). Mirrors object-fit:contain / scaleAspectFit.
+function aspectFitRect(bw, bh, contentAR) {
+  const boxAR = bw / bh;
   let w, h;
-  if (videoAR >= canvasAR) { w = cw;           h = cw / videoAR; }
-  else                      { h = ch;           w = ch * videoAR; }
-  return { x: (cw - w) / 2, y: (ch - h) / 2, w, h };
+  if (contentAR >= boxAR) { w = bw; h = bw / contentAR; }
+  else                     { h = bh; w = bh * contentAR; }
+  return { x: (bw - w) / 2, y: (bh - h) / 2, w, h };
 }
 
-// Maps a normalised point (0-1 within the stream frame) to canvas pixels.
-function mapToCanvas(nx, ny, r) {
-  return { x: r.x + nx * r.w, y: r.y + ny * r.h };
+// Maps a normalised overlay coord (0-1 of cameraContainer) to a canvas pixel,
+// accounting for:
+//   1. Camera content only occupies part of cameraContainer (scaleAspectFit on iOS)
+//   2. The video (stream canvas) occupies part of the viewer canvas (object-fit:contain)
+function overlayToCanvas(nx, ny, canvasW, canvasH, videoAR, containerAR, cameraAR) {
+  // Step 1: where does the camera content sit inside cameraContainer (normalised 0-1)?
+  //   iOS uses scaleAspectFit, so camera content is aspect-fit inside containerAR box.
+  //   We work in a 1×1 normalised container.
+  let camRect;
+  if (containerAR && cameraAR) {
+    // aspectFit of a (cameraAR / containerAR) × 1 box into 1×1
+    const relW = cameraAR / containerAR; // width of camera in container-height units
+    if (relW <= 1) {
+      // camera is narrower than container → pillar bars on left/right
+      camRect = { x: (1 - relW) / 2, y: 0, w: relW, h: 1 };
+    } else {
+      // camera is wider than container → letter bars top/bottom
+      const relH = 1 / relW;
+      camRect = { x: 0, y: (1 - relH) / 2, w: 1, h: relH };
+    }
+  } else {
+    camRect = { x: 0, y: 0, w: 1, h: 1 }; // fallback: assume container = camera
+  }
+
+  // Step 2: remap overlay coord from cameraContainer space to camera-content space
+  const cx = (nx - camRect.x) / camRect.w;
+  const cy = (ny - camRect.y) / camRect.h;
+
+  // Step 3: map camera-content coords through the video rect on this canvas
+  const vRect = aspectFitRect(canvasW, canvasH, videoAR);
+  return { x: vRect.x + cx * vRect.w, y: vRect.y + cy * vRect.h };
 }
 
 // ── Overlay rendering ─────────────────────────────────────────────────────
@@ -572,16 +600,20 @@ function renderOverlays(overlays) {
   if (!Array.isArray(overlays)) return;
   window.__latestOverlays = overlays;
 
-  // Compute where the 1280×720 stream frame sits on this canvas
-  const videoAR = window.__latestVideoAR || (16 / 9);
-  const vRect   = videoRect(offscreen.width, offscreen.height, videoAR);
+  const videoAR     = window.__latestVideoAR     || (16 / 9);
+  const containerAR = window.__latestContainerAR || null;
+  const cameraAR    = window.__latestCameraAR    || null;
+  const cw = offscreen.width, ch = offscreen.height;
 
-  offCtx.clearRect(0, 0, offscreen.width, offscreen.height);
+  // Video rect on canvas (for drawings and as the coordinate target)
+  const vRect = aspectFitRect(cw, ch, videoAR);
+
+  offCtx.clearRect(0, 0, cw, ch);
 
   overlays.forEach((o, i) => {
 
     if (o.type === "pointer") {
-      const pt = mapToCanvas(o.x, o.y, vRect);
+      const pt = overlayToCanvas(o.x, o.y, cw, ch, videoAR, containerAR, cameraAR);
       offCtx.beginPath();
       offCtx.arc(pt.x, pt.y, 14, 0, 2 * Math.PI);
       offCtx.fillStyle = "rgba(232,57,42,0.9)";
@@ -593,10 +625,10 @@ function renderOverlays(overlays) {
 
       if (imgCache[key]) {
         imgLastGood[stableId] = imgCache[key];
-        drawImage(offCtx, imgCache[key], o, vRect);
+        drawImage(offCtx, imgCache[key], o, cw, ch, videoAR, containerAR, cameraAR);
       } else {
         if (imgLastGood[stableId]) {
-          drawImage(offCtx, imgLastGood[stableId], o, vRect);
+          drawImage(offCtx, imgLastGood[stableId], o, cw, ch, videoAR, containerAR, cameraAR);
         }
         if (!imgLoading[key]) {
           const img = new Image();
@@ -613,7 +645,6 @@ function renderOverlays(overlays) {
     } else if (o.type === "drawing" && o.base64) {
       const img = new Image();
       img.onload = () => {
-        // Drawings cover the full video rect, not the full canvas
         offCtx.drawImage(img, vRect.x, vRect.y, vRect.w, vRect.h);
         ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
         ctx.drawImage(offscreen, 0, 0);
@@ -627,24 +658,24 @@ function renderOverlays(overlays) {
   ctx.drawImage(offscreen, 0, 0);
 }
 
-// Draws an overlay image mapped through vRect with rotation and aspect-correct scaling.
-function drawImage(targetCtx, img, o, vRect) {
-  const r   = vRect || { x: 0, y: 0, w: offscreen.width, h: offscreen.height };
-  // Box position and size in canvas pixels
-  const bx  = r.x + o.x     * r.w;
-  const by  = r.y + o.y     * r.h;
-  const bw  = o.width  * r.w;
-  const bh  = o.height * r.h;
+// Draws an overlay image at the correct position, accounting for the full
+// coordinate chain: cameraContainer → camera content → stream canvas → viewer canvas.
+function drawImage(targetCtx, img, o, cw, ch, videoAR, containerAR, cameraAR) {
+  // Map the overlay's top-left and bottom-right corners through the full chain
+  const tl = overlayToCanvas(o.x,           o.y,            cw, ch, videoAR, containerAR, cameraAR);
+  const br = overlayToCanvas(o.x + o.width, o.y + o.height, cw, ch, videoAR, containerAR, cameraAR);
+  const bx = tl.x, by = tl.y;
+  const bw = br.x - tl.x, bh = br.y - tl.y;
   const angle = o.rotation || 0;
 
   // Scale image to fit the (rotated) box while preserving its aspect ratio
-  const sin = Math.abs(Math.sin(angle));
-  const cos = Math.abs(Math.cos(angle));
-  const rotW = img.width  * cos + img.height * sin;
-  const rotH = img.width  * sin + img.height * cos;
+  const sin   = Math.abs(Math.sin(angle));
+  const cos   = Math.abs(Math.cos(angle));
+  const rotW  = img.width  * cos + img.height * sin;
+  const rotH  = img.width  * sin + img.height * cos;
   const scale = Math.min(bw / rotW, bh / rotH);
-  const dw  = img.width  * scale;
-  const dh  = img.height * scale;
+  const dw    = img.width  * scale;
+  const dh    = img.height * scale;
 
   const radius = 12;
   targetCtx.save();
@@ -671,8 +702,10 @@ function attachDataChannel(call) {
         try {
           const packet = JSON.parse(ev.data);
           // Support wrapped {videoAR, overlays} from peer_streamer, or legacy plain array
-          const overlays = Array.isArray(packet) ? packet : (packet.overlays || []);
-          window.__latestVideoAR = Array.isArray(packet) ? (16 / 9) : (packet.videoAR || (16 / 9));
+          const overlays     = Array.isArray(packet) ? packet : (packet.overlays || []);
+          window.__latestVideoAR    = Array.isArray(packet) ? (16 / 9) : (packet.videoAR    || (16 / 9));
+          window.__latestContainerAR = Array.isArray(packet) ? null      : (packet.containerAR || null);
+          window.__latestCameraAR    = Array.isArray(packet) ? null      : (packet.cameraAR    || null);
           renderOverlays(overlays);
         } catch(_) {}
       };
