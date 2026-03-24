@@ -555,18 +555,17 @@ function createSilentStream() {
 }
 
 // ── Overlay rendering ─────────────────────────────────────────────────────
-// Keyed by overlay id when present, otherwise by the start of the base64
-// string (more unique than the end, which is often just padding).
-const imgCache = {};
+const imgCache    = {};   // key → fully loaded Image
+const imgLoading  = {};   // key → in-flight Image (prevents duplicate loads)
+const imgLastGood = {};   // stableId → last successfully decoded Image
 
 function renderOverlays(overlays) {
   if (!Array.isArray(overlays)) return;
-  window.__latestOverlays = overlays; // keep latest for async onload re-renders
+  window.__latestOverlays = overlays;
 
-  // Paint everything onto the offscreen canvas first
   offCtx.clearRect(0, 0, offscreen.width, offscreen.height);
 
-  overlays.forEach(o => {
+  overlays.forEach((o, i) => {
     if (o.type === "pointer") {
       offCtx.beginPath();
       offCtx.arc(o.x * offscreen.width, o.y * offscreen.height, 14, 0, 2 * Math.PI);
@@ -574,42 +573,48 @@ function renderOverlays(overlays) {
       offCtx.fill();
 
     } else if (o.type === "image" && o.base64) {
-      // Use stable overlay id as cache key; fall back to start of base64
-const key = o.id || o.base64.slice(-64);
-      if (imgCache[key] && imgCache[key].complete) {
-        // Already decoded — draw synchronously onto offscreen, no flash
+      const key      = o.id || (o.base64.slice(0, 32) + o.base64.slice(-32));
+      const stableId = o.id || "ov_" + i;
+
+      if (imgCache[key]) {
+        // Fully decoded — draw and remember as last-good
+        imgLastGood[stableId] = imgCache[key];
         drawImage(offCtx, imgCache[key], o);
-      } else if (!imgCache[key]) {
-        // Not cached yet — start loading but keep the current frame visible.
-        // Re-render once the image is ready instead of clearing to blank.
-        const img = new Image();
-        imgCache[key] = img;
-        img.onload = () => renderOverlays(window.__latestOverlays || []);
-        img.src = o.base64;
+
+      } else {
+        // Not ready yet — hold the previous frame to avoid flash
+        if (imgLastGood[stableId]) {
+          drawImage(offCtx, imgLastGood[stableId], o);
+        }
+        // Kick off decode only once
+        if (!imgLoading[key]) {
+          const img = new Image();
+          imgLoading[key] = img;
+          img.onload = () => {
+            imgCache[key] = img;
+            delete imgLoading[key];
+            renderOverlays(window.__latestOverlays || []);
+          };
+          img.src = o.base64;
+        }
       }
-      // If cached but still loading (.complete === false): skip silently this frame
 
     } else if (o.type === "drawing" && o.base64) {
-      // Drawings are always new blobs — decode async and flip when ready
       const img = new Image();
       img.onload = () => {
         offCtx.drawImage(img, 0, 0, offscreen.width, offscreen.height);
-        // Atomic flip only after drawing is fully painted
         ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
         ctx.drawImage(offscreen, 0, 0);
       };
       img.src = o.base64;
-      return; // async path — skip the synchronous flip below
+      return;
     }
   });
 
-  // Single atomic flip: one clearRect + one drawImage on the visible canvas,
-  // so there is never a blank frame between clearing and painting.
   ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
   ctx.drawImage(offscreen, 0, 0);
 }
 
-// Track latest overlays so async onload callbacks can re-render correctly
 window.__latestOverlays = [];
 
 function drawImage(targetCtx, img, o) {
