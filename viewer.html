@@ -172,19 +172,20 @@
       width: 38px; height: 38px; border-radius: 50%;
       border: none;
       background: var(--surface2);
-      color: #fff; font-size: 16px;
+      color: #fff;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: background 0.15s, transform 0.1s;
       flex-shrink: 0;
     }
+    .bar-btn svg { display: block; }
     .bar-btn:active { transform: scale(0.93); }
     .bar-btn:hover  { background: rgba(72, 72, 74, 0.9); }
 
-    #muteBtn.muted {
-      background: rgba(255, 59, 48, 0.18);
-      color: var(--red);
-    }
+    #muteBtn.muted { background: rgba(255, 59, 48, 0.18); }
+    #muteBtn.muted svg { color: var(--red); }
+
+    #chatToggle.active { background: rgba(255,255,255,0.16); }
 
     #barLabel {
       font-size: 14px;
@@ -204,31 +205,54 @@
     /* ── CHAT PANEL ── */
     #chatPanel {
       position: absolute;
-      bottom: 64px; right: 0;
-      width: min(320px, 100vw);
-      height: min(360px, 52vh);
-      background: var(--surface);
+      /* sits above the bar (64px) + safe area */
+      bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+      right: 12px;
+      width: min(340px, calc(100vw - 24px));
+      height: min(420px, 55vh);
+      background: rgba(22, 22, 24, 0.97);
       backdrop-filter: var(--blur);
       -webkit-backdrop-filter: var(--blur);
-      border-top: 0.5px solid var(--border);
-      border-left: 0.5px solid var(--border);
-      border-top-left-radius: var(--radius);
+      border: 0.5px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
       display: flex; flex-direction: column;
-      transform: translateY(calc(100% + 1px));
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      /* translate down by full height + a gap so it's completely off-screen */
+      transform: translateY(calc(100% + 80px));
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity  0.25s ease;
+      opacity: 0;
       overflow: hidden;
+      z-index: 10;
+      pointer-events: none;
     }
-    #chatPanel.open { transform: translateY(0); }
+    #chatPanel.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
 
     #chatHeader {
-      padding: 12px 16px 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 16px 12px;
       border-bottom: 0.5px solid var(--border2);
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-sec);
-      letter-spacing: 0.01em;
       flex-shrink: 0;
     }
+    #chatHeaderTitle {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    #chatClose {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: var(--text-sec);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    #chatClose:hover { background: rgba(255,255,255,0.16); }
 
     #chatMessages {
       flex: 1; overflow-y: auto;
@@ -412,21 +436,44 @@
       <div class="dot-live"></div>
       LIVE
     </div>
+  </div>
 
-    <div id="chatPanel">
-      <div id="chatHeader">Chat</div>
-      <div id="chatMessages"></div>
-      <div id="chatInputRow">
-        <input id="chatInput" type="text" placeholder="Message…" maxlength="200" />
-        <button id="chatSend">↑</button>
-      </div>
+  <div id="chatPanel">
+    <div id="chatHeader">
+      <span id="chatHeaderTitle">Chat</span>
+      <button id="chatClose">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="1" y1="1" x2="11" y2="11"/>
+          <line x1="11" y1="1" x2="1" y2="11"/>
+        </svg>
+      </button>
+    </div>
+    <div id="chatMessages"></div>
+    <div id="chatInputRow">
+      <input id="chatInput" type="text" placeholder="Message…" maxlength="200" />
+      <button id="chatSend">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 4l8 16H4L12 4z"/>
+        </svg>
+      </button>
     </div>
   </div>
 
   <div id="bar">
-    <button id="muteBtn" class="bar-btn" title="Toggle mic">🎙</button>
+    <button id="muteBtn" class="bar-btn" title="Toggle mic">
+      <svg id="micIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="2" width="6" height="12" rx="3"/>
+        <path d="M5 10a7 7 0 0 0 14 0"/>
+        <line x1="12" y1="19" x2="12" y2="22"/>
+        <line x1="9" y1="22" x2="15" y2="22"/>
+      </svg>
+    </button>
     <div id="barLabel">Watching <strong id="streamerLabel">live stream</strong></div>
-    <button id="chatToggle" class="bar-btn" title="Chat">💬</button>
+    <button id="chatToggle" class="bar-btn" title="Chat">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    </button>
   </div>
 </div>
 
@@ -800,20 +847,31 @@ function attachDataChannel(call) {
 }
 
 // ── Mute toggle ───────────────────────────────────────────────────────────
+const MIC_SVG = `<svg id="micIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/></svg>`;
+const MIC_OFF_SVG = `<svg id="micIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/><line x1="3" y1="3" x2="21" y2="21"/></svg>`;
+
 muteBtn.addEventListener("click", () => {
   isMuted = !isMuted;
   if (localStream) localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
-  muteBtn.textContent = isMuted ? "🎙" : "🔊";
+  muteBtn.innerHTML = isMuted ? MIC_SVG : MIC_OFF_SVG;
   muteBtn.classList.toggle("muted", isMuted);
 });
 
 // ── Chat ──────────────────────────────────────────────────────────────────
-chatToggle.addEventListener("click", () => {
-  chatOpen = !chatOpen;
-  chatPanel.classList.toggle("open", chatOpen);
-  chatToggle.classList.toggle("active", chatOpen);
-  if (chatOpen) chatInput.focus();
-});
+function openChat() {
+  chatOpen = true;
+  chatPanel.classList.add("open");
+  chatToggle.classList.add("active");
+  chatInput.focus();
+}
+function closeChat() {
+  chatOpen = false;
+  chatPanel.classList.remove("open");
+  chatToggle.classList.remove("active");
+}
+
+chatToggle.addEventListener("click", () => { chatOpen ? closeChat() : openChat(); });
+document.getElementById("chatClose").addEventListener("click", closeChat);
 
 function sendChat() {
   const text = chatInput.value.trim();
