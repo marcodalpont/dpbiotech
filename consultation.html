@@ -2,759 +2,840 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Schedule a Consultation - DP Biotech</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="favicon-192.png"><title>Schedule a Consultation — DP Biotech</title>
 <script>
     if (sessionStorage.getItem('isAuthenticated') !== 'true') {
       window.location.href = 'login.html';
     }
-  </script>
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* =========================================
+   DESIGN SYSTEM — aligned with index.html
+   ========================================= */
 :root {
---bg: #fafafa;
---surface: #ffffff;
---text: #0f0f0f;
---text-muted: #525252;
---text-subtle: #a1a1aa;
---border: #e4e4e7;
---primary: #0070f3;
---primary-dark: #0051cc;
---primary-light: #3291ff;
---secondary: #7c3aed;
---success: #10b981;
---error: #ef4444;
---warning: #f59e0b;
---shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
---shadow-md: 0 4px 16px 0 rgb(0 0 0 / 0.08);
---shadow-lg: 0 20px 40px -12px rgb(0 0 0 / 0.15);
---shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
---radius-sm: 8px;
---radius-md: 12px;
---radius-lg: 16px;
---radius-xl: 20px;
---blur: blur(16px);
---gradient-bg: linear-gradient(135deg,
- color-mix(in srgb, var(--primary) 2%, var(--bg)) 0%,
- color-mix(in srgb, var(--secondary) 1%, var(--bg)) 50%,
- var(--bg) 100%);
+    --bg-body: #fafafa;
+    --bg-secondary: #f2f2f4;
+    --bg-card: #ffffff;
+    --text-primary: #0a0a0f;
+    --text-secondary: #6b6b78;
+    --accent: #0f766e;
+    --accent-2: #1e293b;
+    --accent-gradient: linear-gradient(135deg, #1e293b 0%, #0f766e 100%);
+    --divider: rgba(10, 10, 15, 0.06);
+    --divider-strong: rgba(10, 10, 15, 0.1);
+    --radius-lg: 32px;
+    --radius-md: 20px;
+    --radius-sm: 12px;
+    --nav-height: 60px;
+    --container-width: 1120px;
+    --shadow-sm: 0 1px 2px rgba(10,10,15,0.04), 0 2px 8px rgba(10,10,15,0.04);
+    --shadow-md: 0 4px 12px rgba(10,10,15,0.04), 0 20px 40px -12px rgba(15,23,42,0.08);
+    --shadow-lg: 0 8px 24px rgba(10,10,15,0.06), 0 32px 64px -16px rgba(15,23,42,0.12);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
-
 @media (prefers-color-scheme: dark) {
-:root {
---bg: #0a0a0a;
---surface: #111111;
---text: #fafafa;
---text-muted: #a1a1aa;
---text-subtle: #71717a;
---border: #27272a;
---shadow-sm: 0 1px 3px 0 rgb(255 255 255 / 0.05);
---shadow-md: 0 4px 16px 0 rgb(255 255 255 / 0.08);
---shadow-lg: 0 20px 40px -12px rgb(255 255 255 / 0.12);
---shadow-xl: 0 25px 50px -12px rgb(255 255 255 / 0.2);
---gradient-bg: linear-gradient(135deg,
- color-mix(in srgb, var(--primary) 3%, var(--bg)) 0%,
- color-mix(in srgb, var(--secondary) 2%, var(--bg)) 50%,
- var(--bg) 100%);
-}
+    :root {
+        --bg-body: #0a0a0f;
+        --bg-secondary: #13131a;
+        --bg-card: #1a1a24;
+        --text-primary: #f5f5f7;
+        --text-secondary: #9ca3af;
+        --divider: rgba(255, 255, 255, 0.08);
+        --divider-strong: rgba(255, 255, 255, 0.14);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 20px 40px -12px rgba(0,0,0,0.3);
+        --shadow-lg: 0 8px 24px rgba(0,0,0,0.5), 0 32px 64px -16px rgba(0,0,0,0.4);
+    }
 }
 
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-}
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-primary); padding-top: var(--nav-height); }
+body.no-scroll { overflow: hidden; height: 100vh; }
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+p { line-height: 1.5; color: var(--text-secondary); margin: 0; }
+a { text-decoration: none; color: inherit; transition: opacity 0.2s; }
+a:hover { opacity: 0.7; }
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
 
-body {
-font-family: Inter, system-ui, -apple-system, sans-serif;
-background: var(--gradient-bg);
-color: var(--text);
-line-height: 1.5;
--webkit-font-smoothing: antialiased;
--moz-osx-font-smoothing: grayscale;
-height: 100vh;
-overflow: hidden;
-}
+/* =========================
+   NAV
+   ========================= */
+.nav { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height); background: rgba(255, 255, 255, 0.7); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); z-index: 100; border-bottom: 1px solid var(--divider); }
+@media (prefers-color-scheme: dark) { .nav { background: rgba(0,0,0,0.7); } }
+.nav-inner { height: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+.nav-links { display: none; list-style: none; gap: 32px; margin: 0; padding: 0; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+@media(min-width: 960px) { .nav-links { display: flex; } }
+.nav-links li { cursor: pointer; transition: color 0.2s; height: 100%; display: flex; align-items: center; }
+.nav-links li:hover { color: var(--text-primary); }
+.nav-actions { display: flex; gap: 12px; align-items: center; }
 
-.container {
-max-width: 1400px;
-margin: 0 auto;
-padding: 0 24px;
-height: 100%;
-}
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; border: none; text-decoration: none !important; }
+.btn-primary { background: var(--text-primary); color: var(--bg-body); }
+.btn-primary:hover { transform: scale(1.02); opacity: 0.95; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--divider); }
+.btn-ghost:hover { background: var(--bg-secondary); }
+.desktop-btn { display: none !important; }
+@media(min-width: 960px) { .desktop-btn { display: inline-flex !important; } }
 
-.nav {
-position: sticky;
-top: 0;
-z-index: 100;
-background: color-mix(in srgb, var(--bg) 85%, transparent);
-backdrop-filter: var(--blur);
-border-bottom: 1px solid var(--border);
-}
+.cart-icon-btn { position: relative; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+.cart-badge { position: absolute; top: 4px; right: 4px; background: var(--accent); color: white; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-primary); }
+@media(max-width: 960px) { .hamburger { display: block; } }
 
-.nav-inner {
-height: 60px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-}
+.dropdown-menu { opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; position: absolute; top: var(--nav-height); left: 0; right: 0; background: var(--bg-body); border-top: 1px solid var(--divider); box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 90; overflow-y: auto; max-height: calc(100vh - var(--nav-height)); }
+.dropdown-menu.is-open { opacity: 1; visibility: visible; }
+.menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 40px 0; }
+.menu-main-links, .menu-link-column { list-style: none; padding: 0; margin: 0; }
+.menu-main-links li:first-child, .menu-link-column li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-secondary); margin-bottom: 12px; padding: 0 12px; }
+.menu-main-links a { font-size: 24px; font-weight: 600; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-link-column a { font-size: 14px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-main-links a:hover, .menu-link-column a:hover { background: var(--bg-secondary); }
+.menu-backdrop { position: fixed; top: var(--nav-height); left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; visibility: hidden; transition: 0.3s; }
+.menu-backdrop.is-visible { opacity: 1; visibility: visible; }
+.mobile-menu-overlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 150; padding: 80px 24px; transform: translateY(-100%); transition: transform 0.4s ease; display: flex; flex-direction: column; gap: 24px; }
+.mobile-menu-overlay.is-open { transform: translateY(0); }
+.mobile-link { font-size: 24px; font-weight: 600; border-bottom: 1px solid var(--divider); padding-bottom: 16px; }
 
-.logo {
-display: flex;
-gap: 12px;
-align-items: center;
-font-weight: 700;
-font-size: 18px;
-text-decoration: none;
+/* =========================
+   CONSULTATION PAGE
+   ========================= */
+.consultation-hero {
+    padding: 80px 0 32px;
+    background: radial-gradient(circle at 50% 0%, rgba(15, 118, 110, 0.06) 0%, transparent 60%);
 }
-
-.back-btn {
-display: inline-flex;
-align-items: center;
-gap: 8px;
-padding: 8px 16px;
-border-radius: var(--radius-md);
-color: var(--text-muted);
-text-decoration: none;
-transition: all 0.2s ease;
-font-size: 14px;
-}
-
-.back-btn:hover {
-color: var(--text);
-background: color-mix(in srgb, var(--text) 5%, transparent);
-}
-
-.main {
-height: calc(100vh - 60px);
-display: flex;
-align-items: center;
-padding: 20px 0;
-}
+.consultation-hero .eyebrow { display: block; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.consultation-hero h1 { font-size: clamp(36px, 5vw, 56px); line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 12px; }
+.consultation-hero p.lead { font-size: 17px; max-width: 560px; color: var(--text-secondary); }
 
 .consultation-layout {
-display: grid;
-grid-template-columns: auto 1fr;
-gap: 40px;
-height: 100%;
-max-height: calc(100vh - 100px);
+    display: grid; grid-template-columns: 1.6fr 1fr;
+    gap: 32px; align-items: start;
+    padding: 32px 0 96px;
 }
+@media(max-width: 920px) { .consultation-layout { grid-template-columns: 1fr; } }
 
-.info-panel {
-background: var(--surface);
-border: 1px solid var(--border);
-border-radius: var(--radius-xl);
-padding: 24px;
-box-shadow: var(--shadow-md);
-position: relative;
-overflow: hidden;
-width: 320px;
-height: fit-content;
-align-self: start;
+.consultation-section {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
 }
+.consultation-section h2 { font-size: 20px; letter-spacing: -0.01em; margin-bottom: 4px; }
+.consultation-section .section-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
 
-.info-panel::before {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-height: 4px;
-background: linear-gradient(135deg, var(--primary), var(--secondary));
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid .full { grid-column: 1 / -1; }
+@media(max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.form-field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+.req { color: #dc2626; font-weight: 700; margin-left: 3px; }
+
+.text-input {
+    width: 100%; padding: 12px 14px;
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    background: var(--bg-body);
+    color: var(--text-primary);
+    font-family: inherit; font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+.text-input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+.text-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+.text-input.has-error { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+textarea.text-input { resize: vertical; min-height: 100px; font-family: inherit; }
+select.text-input { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b6b78' stroke-width='2'><path stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/></svg>"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 40px; }
+.error-message { color: #dc2626; font-size: 12px; margin-top: 4px; display: none; }
+.error-message.is-visible { display: block; }
 
-.info-header {
-margin-bottom: 20px;
-}
-
-.info-title {
-font-size: 20px;
-font-weight: 800;
-letter-spacing: -0.02em;
-margin-bottom: 6px;
-background: linear-gradient(135deg, var(--primary), var(--secondary));
--webkit-background-clip: text;
-background-clip: text;
--webkit-text-fill-color: transparent;
-}
-
-.info-subtitle {
-color: var(--text-muted);
-font-size: 13px;
-line-height: 1.4;
-}
-
-.consultation-info {
-background: color-mix(in srgb, var(--primary) 5%, var(--surface));
-border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
-border-radius: var(--radius-lg);
-padding: 16px;
-}
-
-.consultation-info h3 {
-font-size: 14px;
-font-weight: 700;
-margin-bottom: 10px;
-color: var(--text);
-}
-
-.consultation-info ul {
-list-style: none;
-margin: 0;
-}
-
-.consultation-info li {
-display: flex;
-align-items: center;
-gap: 8px;
-margin-bottom: 6px;
-color: var(--text-muted);
-font-size: 12px;
-}
-
-.consultation-info li::before {
-content: '✓';
-color: var(--success);
-font-weight: 800;
-font-size: 11px;
-}
-
-.form-container {
-background: var(--surface);
-border: 1px solid var(--border);
-border-radius: var(--radius-xl);
-padding: 24px;
-box-shadow: var(--shadow-lg);
-position: relative;
-overflow: hidden;
-display: flex;
-flex-direction: column;
-height: 100%;
-}
-
-.form-container::before {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-height: 4px;
-background: linear-gradient(135deg, var(--primary), var(--secondary));
-}
-
-.form-header {
-text-align: center;
-margin-bottom: 20px;
-}
-
-.form-title {
-font-size: 24px;
-font-weight: 800;
-letter-spacing: -0.02em;
-margin-bottom: 6px;
-background: linear-gradient(135deg, var(--primary), var(--secondary));
--webkit-background-clip: text;
-background-clip: text;
--webkit-text-fill-color: transparent;
-}
-
-.form-subtitle {
-color: var(--text-muted);
-font-size: 13px;
-}
-
-.form-content {
-flex: 1;
-}
-
-.form-grid {
-display: grid;
-gap: 14px;
-grid-template-columns: repeat(4, 1fr);
-grid-template-rows: auto auto auto auto;
-height: 100%;
-max-height: 400px;
-}
-
-.form-group {
-display: flex;
-flex-direction: column;
-gap: 4px;
-}
-
-.form-group.span-2 {
-grid-column: span 2;
-}
-
-.form-group.span-3 {
-grid-column: span 3;
-}
-
-.form-group.span-4 {
-grid-column: span 4;
-}
-
-.form-label {
-font-weight: 600;
-font-size: 12px;
-color: var(--text);
-}
-
-.form-input, .form-select, .form-textarea {
-padding: 10px 12px;
-border: 2px solid var(--border);
-border-radius: var(--radius-md);
-font-size: 13px;
-font-family: inherit;
-background: var(--surface);
-color: var(--text);
-transition: all 0.2s ease;
-}
-
-.form-input:focus, .form-select:focus, .form-textarea:focus {
-outline: none;
-border-color: var(--primary);
-box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
-}
-
-.form-textarea {
-resize: vertical;
-min-height: 50px;
-max-height: 60px;
-}
-
+/* Time slots */
 .time-slots {
-display: grid;
-gap: 6px;
-grid-template-columns: repeat(6, 1fr);
-margin-top: 4px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
 }
-
+@media(max-width: 480px) { .time-slots { grid-template-columns: repeat(2, 1fr); } }
 .time-slot {
-padding: 8px 6px;
-border: 2px solid var(--border);
-border-radius: var(--radius-md);
-background: var(--surface);
-color: var(--text-muted);
-text-align: center;
-cursor: pointer;
-transition: all 0.2s ease;
-font-weight: 500;
-font-size: 11px;
+    padding: 12px 10px;
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    background: var(--bg-body);
+    color: var(--text-primary);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    font-weight: 600;
+    font-size: 14px;
+    user-select: none;
 }
-
-.time-slot:hover {
-border-color: var(--primary-light);
-color: var(--text);
-}
-
+.time-slot:hover { border-color: var(--divider-strong); background: var(--bg-secondary); }
 .time-slot.selected {
-border-color: var(--primary);
-background: var(--primary);
-color: white;
+    border-color: var(--accent);
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
 }
+.time-slot.unavailable { opacity: 0.4; cursor: not-allowed; }
+.time-slot.unavailable:hover { background: var(--bg-body); border-color: var(--divider); }
 
-.time-slot.unavailable {
-opacity: 0.5;
-cursor: not-allowed;
-background: color-mix(in srgb, var(--text-subtle) 10%, var(--surface));
-}
+/* Consents */
+.consent-list { display: flex; flex-direction: column; gap: 14px; }
+.consent-item { display: flex; gap: 12px; align-items: flex-start; }
+.consent-item input[type="checkbox"] { flex-shrink: 0; margin-top: 2px; width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
+.consent-item label { font-size: 13px; line-height: 1.5; color: var(--text-secondary); cursor: pointer; }
+.consent-item label strong { color: var(--text-primary); font-weight: 600; }
+.consent-item label a { text-decoration: underline; color: var(--text-primary); }
+.consent-item .required { color: #dc2626; font-weight: 700; }
 
-.form-actions {
-padding-top: 16px;
-border-top: 1px solid var(--border);
-margin-top: 16px;
+/* Aside info panel */
+.info-aside { position: sticky; top: calc(var(--nav-height) + 24px); }
+.info-box {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    padding: 28px;
+    box-shadow: var(--shadow-md);
 }
+.info-box h2 { font-size: 18px; margin-bottom: 8px; letter-spacing: -0.01em; }
+.info-box p.info-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
+.info-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.info-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--text-primary); line-height: 1.4; }
+.info-list li svg { flex-shrink: 0; color: var(--accent); margin-top: 2px; }
+.info-divider { height: 1px; background: var(--divider); margin: 24px 0; }
+.info-meta { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+.info-meta strong { color: var(--text-primary); font-weight: 600; }
 
 .submit-btn {
-width: 100%;
-padding: 14px 24px;
-background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-color: white;
-border: none;
-border-radius: var(--radius-md);
-font-size: 14px;
-font-weight: 700;
-cursor: pointer;
-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-position: relative;
-overflow: hidden;
+    width: 100%; padding: 14px;
+    background: var(--text-primary); color: var(--bg-body);
+    border: none; border-radius: 999px;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 0 1px 2px rgba(10,10,15,0.1), 0 8px 24px -8px rgba(10,10,15,0.3);
+    margin-top: 8px;
 }
+.submit-btn:hover { transform: scale(1.01); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.submit-btn::before {
-content: '';
-position: absolute;
-top: 0;
-left: -100%;
-width: 100%;
-height: 100%;
-background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-transition: left 0.5s;
+/* Success modal */
+.success-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10, 10, 15, 0.5);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 300; padding: 24px;
 }
-
-.submit-btn:hover {
-transform: translateY(-2px);
-box-shadow: var(--shadow-lg);
-}
-
-.submit-btn:hover::before {
-left: 100%;
-}
-
-.submit-btn:disabled {
-opacity: 0.6;
-cursor: not-allowed;
-transform: none;
-}
-
+.success-overlay.is-visible { display: flex; }
 .success-message {
-display: none;
-text-align: center;
-padding: 40px 32px;
-background: color-mix(in srgb, var(--success) 10%, var(--surface));
-border: 2px solid var(--success);
-border-radius: var(--radius-lg);
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-z-index: 1000;
-width: 400px;
-box-shadow: var(--shadow-xl);
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    padding: 40px 32px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    max-width: 420px; width: 100%;
 }
-
 .success-icon {
-width: 50px;
-height: 50px;
-background: var(--success);
-border-radius: 50%;
-margin: 0 auto 16px;
-display: flex;
-align-items: center;
-justify-content: center;
-color: white;
-font-size: 20px;
-font-weight: bold;
+    width: 56px; height: 56px;
+    background: var(--accent);
+    border-radius: 999px;
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
 }
+.success-message h3 { font-size: 22px; margin-bottom: 12px; color: var(--text-primary); }
+.success-message p { font-size: 14px; color: var(--text-secondary); margin: 0; }
 
-.error-message {
-color: var(--error);
-font-size: 12px;
-margin-top: 4px;
-display: none;
-}
+/* Footer */
+footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background: var(--bg-body); font-size: 13px; color: var(--text-secondary); }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+@media(max-width: 860px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+@media(max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
+.footer-brand .logo { margin-bottom: 16px; }
+.footer-brand p { font-size: 13px; max-width: 320px; margin-bottom: 16px; line-height: 1.5; color: var(--text-secondary); }
+.footer-address { font-size: 12px; color: var(--text-secondary); line-height: 1.6; font-style: normal; }
+.footer-address strong { color: var(--text-primary); font-weight: 600; }
+.footer-col-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-primary); font-weight: 700; margin-bottom: 16px; }
+.footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { font-size: 13px; color: var(--text-secondary); transition: color 0.2s; text-decoration: none; }
+.footer-col a:hover { color: var(--text-primary); opacity: 1; }
+.footer-bottom { padding-top: 24px; border-top: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--text-secondary); }
+.footer-regulatory { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+.footer-regulatory-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--divider); font-size: 11px; font-weight: 600; color: var(--text-secondary); }
 
-.loading .submit-btn {
-background: var(--text-muted);
-cursor: wait;
+/* Cart sidebar */
+.cart-backdrop { position: fixed; inset: 0; background: rgba(10,10,15,0.32); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s ease; z-index: 200; }
+.cart-backdrop.is-visible { opacity: 1; visibility: visible; }
+.cart-sidebar { position: fixed; top: 16px; right: 16px; bottom: 16px; width: calc(100% - 32px); max-width: 400px; background: var(--bg-card); border-radius: 22px; transform: translateX(calc(100% + 32px)); transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); z-index: 201; display: flex; flex-direction: column; box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 24px 60px rgba(10,10,15,0.22), 0 6px 16px rgba(10,10,15,0.08); overflow: hidden; border: 1px solid rgba(10,10,15,0.06); }
+.cart-sidebar.is-open { transform: translateX(0); }
+.cart-header { padding: 20px 22px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
+.cart-header h3 { margin: 0; font-size: 18px; font-weight: 700; }
+.cart-items { flex: 1; overflow-y: auto; padding: 20px 22px; list-style: none; margin: 0; }
+.cart-footer { padding: 22px; border-top: 1px solid var(--divider); background: var(--bg-secondary); }
+@media(max-width: 480px) { .cart-sidebar { top: 12px; right: 12px; bottom: 12px; width: calc(100% - 24px); border-radius: 20px; } }
+.cart-product-card { border: 1px solid var(--divider); border-radius: 12px; padding: 16px; background: var(--bg-card); margin-bottom: 12px; }
+.cart-product-header { display: flex; justify-content: space-between; }
+.cart-product-title { font-size: 15px; font-weight: 600; margin: 0; }
+</style>
+<style>
+/* Apple-style cart card (universal override) */
+.cart-sidebar .cart-product-card {
+    background: var(--bg-card, var(--card, #ffffff)) !important;
+    border: 1px solid var(--divider, var(--line, rgba(0,0,0,0.08))) !important;
+    border-radius: 18px !important;
+    padding: 18px 18px 16px !important;
+    margin-bottom: 12px !important;
+    box-shadow: none !important;
+    transition: border-color 0.25s ease;
 }
-
-@media (max-width: 1200px) {
-.consultation-layout {
-grid-template-columns: 350px 1fr;
-gap: 32px;
+.cart-sidebar .cart-product-card:hover { border-color: rgba(10,10,15,0.12) !important; }
+.cart-sidebar .cart-product-header {
+    display: flex !important; justify-content: space-between !important;
+    align-items: center !important; gap: 12px !important;
+    margin: 0 0 8px 0 !important;
 }
-
-.info-panel, .form-container {
-padding: 24px;
+.cart-sidebar .cart-product-title {
+    font-size: 15px !important; font-weight: 600 !important;
+    letter-spacing: -0.01em; line-height: 1.3;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    margin: 0 !important;
 }
+.cart-sidebar .cart-product-subtitle {
+    font-size: 12px !important;
+    color: var(--text-secondary, var(--muted, #6b6b78)) !important;
+    margin: 0 0 12px 0 !important;
+    font-weight: 400 !important; line-height: 1.45;
 }
-
-@media (max-width: 1024px) {
-.consultation-layout {
-grid-template-columns: 1fr;
-gap: 0;
+.cart-sidebar .cart-product-price {
+    font-size: 15px !important; font-weight: 600 !important;
+    letter-spacing: -0.01em;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
 }
-
-.info-panel {
-display: none;
+/* Remove button — covers .cart-product-remove-btn AND any header button (e.g. .btn ghost used in index.html) */
+.cart-sidebar .cart-product-remove-btn,
+.cart-sidebar .cart-product-header > button,
+.cart-sidebar .cart-product-header .btn {
+    flex-shrink: 0 !important;
+    width: 26px !important; height: 26px !important;
+    min-width: 26px !important;
+    border: none !important; background: transparent !important;
+    color: var(--text-secondary, var(--muted, #6b6b78)) !important;
+    font-size: 18px !important; font-weight: 400 !important;
+    line-height: 1 !important; padding: 0 !important; margin: 0 !important;
+    cursor: pointer; border-radius: 50% !important;
+    display: grid !important; place-items: center !important;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    box-shadow: none !important;
 }
-
-.form-container {
-height: calc(100vh - 100px);
+.cart-sidebar .cart-product-remove-btn:hover,
+.cart-sidebar .cart-product-header > button:hover,
+.cart-sidebar .cart-product-header .btn:hover {
+    background: rgba(255, 59, 48, 0.1) !important;
+    color: #ff3b30 !important;
+    transform: none !important;
 }
-
-.form-row {
-grid-template-columns: 1fr;
+.cart-sidebar .cart-item-actions {
+    display: flex !important; justify-content: space-between !important;
+    align-items: center !important; gap: 12px !important;
+    margin-top: 0 !important;
 }
-
-.time-slots {
-grid-template-columns: repeat(2, 1fr);
+.cart-sidebar .quantity-control {
+    display: inline-flex !important; align-items: center !important;
+    background: var(--bg-secondary, #f2f2f4) !important;
+    border-radius: 999px !important; padding: 2px !important;
+    gap: 0 !important;
+    border: none !important;
 }
+.cart-sidebar .quantity-btn {
+    width: 28px !important; height: 28px !important;
+    min-width: 28px !important;
+    border: none !important; background: transparent !important;
+    border-radius: 50% !important;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    font-size: 16px !important; font-weight: 500 !important;
+    line-height: 1 !important; padding: 0 !important;
+    cursor: pointer;
+    display: grid !important; place-items: center !important;
+    transition: background 0.2s ease;
+    box-shadow: none !important;
 }
-
-@media (max-width: 640px) {
-.container {
-padding: 0 16px;
+.cart-sidebar .quantity-btn:hover { background: rgba(0,0,0,0.06) !important; }
+.cart-sidebar .quantity-btn:active { background: rgba(0,0,0,0.1) !important; }
+.cart-sidebar .quantity-input,
+.cart-sidebar span.quantity-input,
+.cart-sidebar input.quantity-input {
+    display: inline-block !important; vertical-align: middle !important; line-height: 28px !important;
+    width: 28px !important; height: 28px !important; min-width: 28px !important;
+    border: none !important; background: transparent !important;
+    text-align: center !important; font-family: inherit !important;
+    font-size: 14px !important; font-weight: 600 !important;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    -moz-appearance: textfield; appearance: textfield;
+    pointer-events: none;
+    padding: 0 !important; margin: 0 !important;
+    box-shadow: none !important;
 }
-
-.nav-inner {
-height: 50px;
-}
-
-.main {
-height: calc(100vh - 50px);
-}
-
-.form-container {
-height: calc(100vh - 70px);
-padding: 20px;
-}
-
-.time-slots {
-grid-template-columns: 1fr;
-}
-}
+.cart-sidebar .quantity-input::-webkit-outer-spin-button,
+.cart-sidebar .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.cart-sidebar .cart-items { padding: 18px 22px !important; }
+.cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
 </style>
 </head>
 <body>
+<nav class="nav" id="main-nav">
+  <div class="container nav-inner">
+      <a href="index.html" class="logo">
+          <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRmNDZlNSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4=' " alt="Logo" style="height:28px; border-radius: 50%;">
+          <span>DP Biotech</span>
+      </a>
 
-<nav class="nav">
-<div class="container nav-inner">
-<a href="index.html" class="logo">
-<img src="logo.png" alt="DP Biotech" style="height: 36px; border-radius: 50%;">
-<span>DP Biotech</span>
-</a>
-<a href="javascript:history.back()" class="back-btn">
-← Back
-</a>
-</div>
+      <ul class="nav-links">
+          <li class="dropdown" data-menu="microscopes-menu">Microscopes</li>
+          <li class="dropdown" data-menu="software-menu">Software</li>
+          <li class="dropdown" data-menu="support-menu">Company &amp; Support</li>
+      </ul>
+
+      <div class="nav-actions">
+          <a href="licensing.html" class="btn btn-ghost desktop-btn" style="border: none;">Licensing</a>
+          <button class="cart-icon-btn" id="cart-btn">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              <span class="cart-badge" id="cart-count">0</span>
+          </button>
+          <button class="hamburger" id="menu-btn">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+      </div>
+  </div>
+
+  <div id="microscopes-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Shop Microscopes</li>
+                  <li><a href="DPMini.html">DP Mini</a></li>
+                  <li><a href="DPPro.html">DP Pro</a></li>
+              </ul>
+              <ul class="menu-link-column">
+                  <li>Quick Links</li>
+                  <li><a href="all-models.html">Compare Models</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+  <div id="software-menu" class="dropdown-menu">
+    <div class="container">
+        <div class="menu-content">
+            <ul class="menu-main-links">
+                <li>Connect Suite</li>
+                <li><a href="medconnectmini.html">Med Connect Mini</a></li>
+                <li><a href="medconnectpro.html">Med Connect Pro</a></li>
+            </ul>
+            <ul class="menu-link-column">
+                <li>Cloud &amp; Services</li>
+                <li><a href="medpatient.html">Med Patient</a></li>
+                <li><a href="medshare.html">Med Share</a></li>
+            </ul>
+        </div>
+    </div>
+  </div>
+  <div id="support-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Get Support</li>
+                  <li><a href="contactus.html">Contact Us</a></li>
+                  <li><a href="consultation.html">Schedule a consultation</a></li>
+              </ul>
+              <ul class="menu-link-column">
+                  <li>Documents</li>
+                  <li><a href="#">User Manuals (IFU)</a></li>
+                  <li><a href="#">Declaration of Conformity</a></li>
+                  <li><a href="#">Field Safety Notices</a></li>
+                  <li><a href="#">EUDAMED Registration</a></li>
+              </ul>
+              <ul class="menu-link-column">
+                  <li>Training</li>
+                  <li><a href="#">Onboarding &amp; Setup</a></li>
+                  <li><a href="#">Webinars</a></li>
+                  <li><a href="#">Report an Incident</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
 </nav>
+<div class="menu-backdrop"></div>
 
-<main class="main">
+<div class="mobile-menu-overlay" id="mobile-menu">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <span class="logo">DP Biotech</span>
+        <button class="btn btn-ghost" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
+    </div>
+    <a href="DPMini.html" class="mobile-link">DP Mini</a>
+    <a href="DPPro.html" class="mobile-link">DP Pro</a>
+    <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
+    <a href="licensing.html" class="mobile-link">Licensing</a>
+</div>
+
 <div class="container">
-<div class="consultation-layout">
+    <div class="consultation-hero">
+        <span class="eyebrow">Schedule a session</span>
+        <h1>Book your expert consultation</h1>
+        <p class="lead">Connect with our specialists to find the surgical microscope solution that fits your clinic. 30-minute personalized session, free of charge.</p>
+    </div>
 
-<div class="info-panel">
-<div class="info-header">
-<h2 class="info-title">Expert Consultation</h2>
-<p class="info-subtitle">Connect with our specialists to find the perfect microscope solution</p>
+    <div class="consultation-layout">
+        <main>
+            <form id="consultationForm" novalidate>
+                <section class="consultation-section">
+                    <h2>Your details</h2>
+                    <p class="section-sub">Tell us who we'll be speaking with.</p>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="firstName">First name<span class="req">*</span></label>
+                            <input type="text" id="firstName" name="firstName" class="text-input" placeholder="Maria" required autocomplete="given-name">
+                            <div class="error-message" id="firstNameError">First name is required.</div>
+                        </div>
+                        <div class="form-field">
+                            <label for="lastName">Last name<span class="req">*</span></label>
+                            <input type="text" id="lastName" name="lastName" class="text-input" placeholder="Rossi" required autocomplete="family-name">
+                            <div class="error-message" id="lastNameError">Last name is required.</div>
+                        </div>
+                        <div class="form-field">
+                            <label for="email">Email address<span class="req">*</span></label>
+                            <input type="email" id="email" name="email" class="text-input" placeholder="you@example.com" required autocomplete="email">
+                            <div class="error-message" id="emailError">Please enter a valid email address.</div>
+                        </div>
+                        <div class="form-field">
+                            <label for="phone">Phone number<span class="req">*</span></label>
+                            <input type="tel" id="phone" name="phone" class="text-input" placeholder="+39 ..." required autocomplete="tel">
+                            <div class="error-message" id="phoneError">Phone number is required.</div>
+                        </div>
+                        <div class="form-field full">
+                            <label for="organization">Organization / Hospital<span class="req">*</span></label>
+                            <input type="text" id="organization" name="organization" class="text-input" placeholder="Studio Medico Dr. Rossi" required autocomplete="organization">
+                            <div class="error-message" id="organizationError">Organization is required.</div>
+                        </div>
+                        <div class="form-field">
+                            <label for="interest">Primary interest<span class="req">*</span></label>
+                            <select id="interest" name="interest" class="text-input" required>
+                                <option value="">Select product…</option>
+                                <option value="DP Mini">DP Mini — Mobile</option>
+                                <option value="DP Pro">DP Pro — Digital Surgery</option>
+                                <option value="Both">Both products</option>
+                                <option value="General">General information</option>
+                            </select>
+                            <div class="error-message" id="interestError">Please choose an option.</div>
+                        </div>
+                        <div class="form-field">
+                            <label for="timezone">Timezone<span class="req">*</span></label>
+                            <select id="timezone" name="timezone" class="text-input" required>
+                                <option value="">Select timezone…</option>
+                                <option value="CET">Central European (CET)</option>
+                                <option value="GMT">United Kingdom (GMT)</option>
+                                <option value="EST">Eastern (EST)</option>
+                                <option value="CST">Central (CST)</option>
+                                <option value="MST">Mountain (MST)</option>
+                                <option value="PST">Pacific (PST)</option>
+                            </select>
+                            <div class="error-message" id="timezoneError">Please select your timezone.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="consultation-section">
+                    <h2>Preferred date &amp; time</h2>
+                    <p class="section-sub">We'll confirm availability and send a calendar invite within 24 hours.</p>
+                    <div class="form-grid">
+                        <div class="form-field full">
+                            <label for="consultationDate">Preferred date<span class="req">*</span></label>
+                            <input type="date" id="consultationDate" name="consultationDate" class="text-input" required>
+                            <div class="error-message" id="dateError">Please choose a date.</div>
+                        </div>
+                        <div class="form-field full">
+                            <label>Preferred time<span class="req">*</span></label>
+                            <div class="time-slots" id="time-slots">
+                                <div class="time-slot" data-time="09:00">9:00</div>
+                                <div class="time-slot" data-time="10:00">10:00</div>
+                                <div class="time-slot" data-time="11:00">11:00</div>
+                                <div class="time-slot" data-time="14:00">14:00</div>
+                                <div class="time-slot" data-time="15:00">15:00</div>
+                                <div class="time-slot" data-time="16:00">16:00</div>
+                            </div>
+                            <div class="error-message" id="timeError">Please pick a time slot.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="consultation-section">
+                    <h2>Anything else?</h2>
+                    <p class="section-sub">Tell us about your current setup, specific clinical needs, or questions.</p>
+                    <div class="form-grid">
+                        <div class="form-field full">
+                            <label for="message">Additional information <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
+                            <textarea id="message" name="message" class="text-input" placeholder="Specific needs, current setup, questions..."></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="consultation-section">
+                    <h2>Privacy &amp; consent</h2>
+                    <p class="section-sub">Required by GDPR (Reg. UE 2016/679) before submitting your request.</p>
+                    <div class="consent-list">
+                        <div class="consent-item">
+                            <input type="checkbox" id="consent-privacy" required>
+                            <label for="consent-privacy">I have read and accept the <a href="#">Privacy Policy</a> and consent to the processing of my personal data for the purpose of scheduling and conducting this consultation. <span class="required">*</span></label>
+                        </div>
+                        <div class="consent-item">
+                            <input type="checkbox" id="consent-marketing">
+                            <label for="consent-marketing">I agree to receive product updates, clinical content and offers from DP Biotech by email. <em>(Optional — you can unsubscribe any time.)</em></label>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn" id="submitBtn">Schedule consultation</button>
+                </section>
+            </form>
+        </main>
+
+        <aside class="info-aside">
+            <div class="info-box">
+                <h2>What to expect</h2>
+                <p class="info-sub">Every consultation is tailored to your clinical workflow.</p>
+                <ul class="info-list">
+                    <li>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>30-minute personalized session</span>
+                    </li>
+                    <li>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Product recommendations matched to your specialty</span>
+                    </li>
+                    <li>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.5-4.5M15 10l4.5 4.5M15 10H4a1 1 0 00-1 1v8a1 1 0 001 1h11"/></svg>
+                        <span>Live demonstration available on request</span>
+                    </li>
+                    <li>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg>
+                        <span>Custom pricing &amp; bundle options</span>
+                    </li>
+                    <li>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                        <span>Technical specifications &amp; compatibility</span>
+                    </li>
+                    <li>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span>Implementation &amp; training guidance</span>
+                    </li>
+                </ul>
+
+                <div class="info-divider"></div>
+
+                <p class="info-meta">
+                    <strong>Need urgent support?</strong><br>
+                    Email <a href="mailto:support@dpbiotech.com" style="text-decoration:underline;">support@dpbiotech.com</a> or use our <a href="contactus.html" style="text-decoration:underline;">contact form</a> for non-scheduling enquiries.
+                </p>
+            </div>
+        </aside>
+    </div>
 </div>
 
-<div class="consultation-info">
-<h3>What to Expect</h3>
-<ul>
-<li>30-minute personalized session</li>
-<li>Product recommendations</li>
-<li>Live demonstration available</li>
-<li>Custom pricing options</li>
-<li>Technical specifications</li>
-<li>Implementation guidance</li>
-</ul>
-</div>
+<div class="success-overlay" id="successOverlay">
+    <div class="success-message">
+        <div class="success-icon">
+            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h3>Consultation scheduled</h3>
+        <p>We've received your request. Our team will reach out within 24 hours to confirm the appointment.</p>
+    </div>
 </div>
 
-<div class="form-container">
-<div class="form-header">
-<h1 class="form-title">Schedule Your Session</h1>
-<p class="form-subtitle">Fill out the details below to book your consultation</p>
-</div>
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:28px; border-radius:50%; margin-right:8px;">
+                    <span style="font-weight:600;">DP Biotech</span>
+                </div>
+                <p>High-performance surgical microscopes engineered in Italy. Designed for clinical workflows; built around optical precision and modern digital ergonomics.</p>
+                <address class="footer-address">
+                    <strong>Dal Pont Medical S.r.l.s</strong><br>
+                    Piazza San Vito 12<br>
+                    31100 Treviso — Italia<br><br>
+                    VAT / C.F.: 05355480269<br>
+                    REA: 437837<br>
+                    EUDAMED SRN: IT-MF-000052836
+                </address>
+            </div>
+            <div class="footer-col">
+                <div class="footer-col-title">Products</div>
+                <ul>
+                    <li><a href="DPMini.html">DP Mini</a></li>
+                    <li><a href="DPPro.html">DP Pro</a></li>
+                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="all-models.html">Compare Models</a></li>
+                    <li><a href="index.html#specs">Specifications</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <div class="footer-col-title">Support &amp; Service</div>
+                <ul>
+                    <li><a href="contactus.html">Sales Enquiries</a></li>
+                    <li><a href="contactus.html">Clinical Support</a></li>
+                    <li><a href="contactus.html">Service &amp; Repair (RMA)</a></li>
+                    <li><a href="#">Downloads &amp; Manuals</a></li>
+                    <li><a href="#">Instructions for Use (IFU)</a></li>
+                    <li><a href="index.html#faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <div class="footer-col-title">Regulatory &amp; Legal</div>
+                <ul>
+                    <li><a href="#">EU Declaration of Conformity</a></li>
+                    <li><a href="#">Vigilance &amp; Incident Reporting</a></li>
+                    <li><a href="#">UDI Information</a></li>
+                    <li><a href="#">Warranty</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Terms of Sale</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>© 2026 Dal Pont Medical S.r.l.s — All rights reserved.</div>
+            <div class="footer-regulatory">
+                <span class="footer-regulatory-badge">CE</span>
+                <span class="footer-regulatory-badge">MDR Class I</span>
+                <span class="footer-regulatory-badge">Made in Italy</span>
+            </div>
+        </div>
+    </div>
+</footer>
 
-<div class="form-content">
-<form id="consultationForm" class="form-grid">
-<!-- Row 1: Name fields -->
-<div class="form-group">
-<label class="form-label" for="firstName">First Name</label>
-<input type="text" id="firstName" name="firstName" class="form-input" required>
-<div class="error-message" id="firstNameError">Required</div>
-</div>
-<div class="form-group">
-<label class="form-label" for="lastName">Last Name</label>
-<input type="text" id="lastName" name="lastName" class="form-input" required>
-<div class="error-message" id="lastNameError">Required</div>
-</div>
-<div class="form-group">
-<label class="form-label" for="email">Email Address</label>
-<input type="email" id="email" name="email" class="form-input" required>
-<div class="error-message" id="emailError">Valid email required</div>
-</div>
-<div class="form-group">
-<label class="form-label" for="phone">Phone Number</label>
-<input type="tel" id="phone" name="phone" class="form-input" required>
-<div class="error-message" id="phoneError">Required</div>
-</div>
-
-<!-- Row 2: Organization and Interest -->
-<div class="form-group span-2">
-<label class="form-label" for="organization">Organization/Hospital</label>
-<input type="text" id="organization" name="organization" class="form-input" required>
-<div class="error-message" id="organizationError">Required</div>
-</div>
-<div class="form-group">
-<label class="form-label" for="interest">Primary Interest</label>
-<select id="interest" name="interest" class="form-select" required>
-<option value="">Select product...</option>
-<option value="DP Mini">DP Mini - Mobile</option>
-<option value="DP Pro">DP Pro - Digital Surgery</option>
-<option value="Both">Both Products</option>
-<option value="General">General Info</option>
-</select>
-<div class="error-message" id="interestError">Required</div>
-</div>
-<div class="form-group">
-<label class="form-label" for="timezone">Timezone</label>
-<select id="timezone" name="timezone" class="form-select" required>
-<option value="">Select timezone...</option>
-<option value="EST">Eastern (EST)</option>
-<option value="CST">Central (CST)</option>
-<option value="MST">Mountain (MST)</option>
-<option value="PST">Pacific (PST)</option>
-<option value="GMT">GMT</option>
-<option value="CET">CET</option>
-</select>
-<div class="error-message" id="timezoneError">Required</div>
-</div>
-
-<!-- Row 3: Date and Time -->
-<div class="form-group">
-<label class="form-label" for="consultationDate">Preferred Date</label>
-<input type="date" id="consultationDate" name="consultationDate" class="form-input" required>
-<div class="error-message" id="dateError">Required</div>
-</div>
-<div class="form-group span-3">
-<label class="form-label">Preferred Time</label>
-<div class="time-slots">
-<div class="time-slot" data-time="09:00">9:00 AM</div>
-<div class="time-slot" data-time="10:00">10:00 AM</div>
-<div class="time-slot" data-time="11:00">11:00 AM</div>
-<div class="time-slot" data-time="14:00">2:00 PM</div>
-<div class="time-slot" data-time="15:00">3:00 PM</div>
-<div class="time-slot" data-time="16:00">4:00 PM</div>
-</div>
-<div class="error-message" id="timeError">Time required</div>
-</div>
-
-<!-- Row 4: Additional Information -->
-<div class="form-group span-4">
-<label class="form-label" for="message">Additional Information (Optional)</label>
-<textarea id="message" name="message" class="form-textarea" placeholder="Specific needs, current setup, questions..."></textarea>
-</div>
-</form>
-</div>
-
-<div class="form-actions">
-<button type="submit" class="submit-btn" id="submitBtn" form="consultationForm">
-Schedule Consultation
-</button>
-</div>
-</div>
-
-</div>
-</div>
-</main>
-
-<div class="success-message" id="successMessage">
-<div class="success-icon">✓</div>
-<h3 style="margin-bottom: 12px; color: var(--success); font-size: 18px;">Consultation Scheduled!</h3>
-<p style="color: var(--text-muted); font-size: 14px; line-height: 1.4;">We've received your request and will send confirmation shortly. Our team will reach out within 24 hours.</p>
+<div class="cart-backdrop" id="cart-backdrop"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button class="btn btn-ghost" id="close-cart">Close</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div id="cart-empty" style="padding:40px; text-align:center; color:var(--text-secondary);">Cart is empty</div>
+    <div class="cart-footer">
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
+            <span>Total</span><span id="cart-total">€0,00</span>
+        </div>
+        <button id="checkout-btn" class="btn btn-primary" style="width:100%;">Checkout</button>
+        <button id="clear-cart" class="btn btn-ghost" style="width:100%; margin-top:8px; font-size:12px;">Clear Cart</button>
+    </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-const form = document.getElementById('consultationForm');
-const submitBtn = document.getElementById('submitBtn');
-const successMessage = document.getElementById('successMessage');
-let selectedTime = '';
+    const form = document.getElementById('consultationForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const successOverlay = document.getElementById('successOverlay');
+    let selectedTime = '';
 
-// Set minimum date to today
-const dateInput = document.getElementById('consultationDate');
-const today = new Date().toISOString().split('T')[0];
-dateInput.min = today;
+    // Set minimum date to today
+    const dateInput = document.getElementById('consultationDate');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
 
-// Time slot selection
-document.querySelectorAll('.time-slot').forEach(slot => {
-slot.addEventListener('click', function() {
-if (!this.classList.contains('unavailable')) {
-document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-this.classList.add('selected');
-selectedTime = this.dataset.time;
-document.getElementById('timeError').style.display = 'none';
-}
-});
-});
+    // Time slot selection
+    document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.addEventListener('click', function() {
+            if (this.classList.contains('unavailable')) return;
+            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedTime = this.dataset.time;
+            document.getElementById('timeError').classList.remove('is-visible');
+        });
+    });
 
-// Form validation
-function validateField(fieldId, errorId, customValidation = null) {
-const field = document.getElementById(fieldId);
-const error = document.getElementById(errorId);
-const isValid = customValidation ? customValidation(field.value) : field.value.trim() !== '';
+    function showError(fieldId, errorId) {
+        const field = document.getElementById(fieldId);
+        const error = document.getElementById(errorId);
+        if (field) field.classList.add('has-error');
+        if (error) error.classList.add('is-visible');
+    }
+    function clearError(fieldId, errorId) {
+        const field = document.getElementById(fieldId);
+        const error = document.getElementById(errorId);
+        if (field) field.classList.remove('has-error');
+        if (error) error.classList.remove('is-visible');
+    }
 
-if (!isValid) {
-error.style.display = 'block';
-field.style.borderColor = 'var(--error)';
-} else {
-error.style.display = 'none';
-field.style.borderColor = 'var(--border)';
-}
-return isValid;
-}
+    function validateField(fieldId, errorId, customValidation = null) {
+        const field = document.getElementById(fieldId);
+        const isValid = customValidation ? customValidation(field.value) : field.value.trim() !== '';
+        if (!isValid) showError(fieldId, errorId);
+        else clearError(fieldId, errorId);
+        return isValid;
+    }
 
-function validateEmail(email) {
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-return emailRegex.test(email);
-}
+    function validateEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
 
-function validateForm() {
-let isValid = true;
-isValid = validateField('firstName', 'firstNameError') && isValid;
-isValid = validateField('lastName', 'lastNameError') && isValid;
-isValid = validateField('email', 'emailError', validateEmail) && isValid;
-isValid = validateField('phone', 'phoneError') && isValid;
-isValid = validateField('organization', 'organizationError') && isValid;
-isValid = validateField('interest', 'interestError') && isValid;
-isValid = validateField('consultationDate', 'dateError') && isValid;
-isValid = validateField('timezone', 'timezoneError') && isValid;
+    function validateForm() {
+        let ok = true;
+        ok = validateField('firstName', 'firstNameError') && ok;
+        ok = validateField('lastName', 'lastNameError') && ok;
+        ok = validateField('email', 'emailError', validateEmail) && ok;
+        ok = validateField('phone', 'phoneError') && ok;
+        ok = validateField('organization', 'organizationError') && ok;
+        ok = validateField('interest', 'interestError') && ok;
+        ok = validateField('timezone', 'timezoneError') && ok;
+        ok = validateField('consultationDate', 'dateError') && ok;
+        if (!selectedTime) { document.getElementById('timeError').classList.add('is-visible'); ok = false; }
+        if (!document.getElementById('consent-privacy').checked) {
+            alert('You must accept the Privacy Policy to continue.');
+            ok = false;
+        }
+        return ok;
+    }
 
-if (!selectedTime) {
-document.getElementById('timeError').style.display = 'block';
-isValid = false;
-}
+    // Real-time validation on blur
+    ['firstName', 'lastName', 'email', 'phone', 'organization', 'interest', 'consultationDate', 'timezone'].forEach(fieldId => {
+        document.getElementById(fieldId).addEventListener('blur', function() {
+            if (fieldId === 'email') validateField(fieldId, fieldId + 'Error', validateEmail);
+            else validateField(fieldId, fieldId + 'Error');
+        });
+    });
 
-return isValid;
-}
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!validateForm()) return;
 
-// Add real-time validation
-['firstName', 'lastName', 'email', 'phone', 'organization', 'interest', 'consultationDate', 'timezone'].forEach(fieldId => {
-document.getElementById(fieldId).addEventListener('blur', function() {
-if (fieldId === 'email') {
-validateField(fieldId, fieldId + 'Error', validateEmail);
-} else {
-validateField(fieldId, fieldId + 'Error');
-}
-});
-});
+        submitBtn.textContent = 'Scheduling…';
+        submitBtn.disabled = true;
 
-// Form submission
-form.addEventListener('submit', function(e) {
-e.preventDefault();
-if (!validateForm()) return;
+        const data = new FormData(form);
+        const consultationData = {
+            firstName: data.get('firstName'),
+            lastName: data.get('lastName'),
+            email: data.get('email'),
+            phone: data.get('phone'),
+            organization: data.get('organization'),
+            interest: data.get('interest'),
+            date: data.get('consultationDate'),
+            time: selectedTime,
+            timezone: data.get('timezone'),
+            message: data.get('message') || 'No additional information provided',
+            marketingConsent: document.getElementById('consent-marketing').checked,
+            consentTimestamp: new Date().toISOString()
+        };
 
-// Show loading state
-submitBtn.textContent = 'Scheduling...';
-submitBtn.disabled = true;
-document.body.classList.add('loading');
-
-// Collect form data
-const formData = new FormData(form);
-const consultationData = {
-firstName: formData.get('firstName'),
-lastName: formData.get('lastName'),
-email: formData.get('email'),
-phone: formData.get('phone'),
-organization: formData.get('organization'),
-interest: formData.get('interest'),
-date: formData.get('consultationDate'),
-time: selectedTime,
-timezone: formData.get('timezone'),
-message: formData.get('message') || 'No additional information provided'
-};
-
-// Create email content
-const emailSubject = `New Consultation Request - ${consultationData.firstName} ${consultationData.lastName}`;
-const emailBody = `
-New consultation request received:
+        const emailSubject = `New Consultation Request — ${consultationData.firstName} ${consultationData.lastName}`;
+        const emailBody = `New consultation request received:
 
 Name: ${consultationData.firstName} ${consultationData.lastName}
 Email: ${consultationData.email}
@@ -769,55 +850,187 @@ Timezone: ${consultationData.timezone}
 Additional Information:
 ${consultationData.message}
 
-Please follow up within 24 hours to confirm the appointment.
-`.trim();
+Marketing consent: ${consultationData.marketingConsent ? 'YES' : 'NO'}
+Privacy consent timestamp: ${consultationData.consentTimestamp}
 
-// Simulate API call
-setTimeout(() => {
-// Create mailto link
-const mailtoLink = `mailto:support@dpbiotech.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+Please follow up within 24 hours to confirm the appointment.`;
 
-// Open email client
-window.location.href = mailtoLink;
+        setTimeout(() => {
+            const mailtoLink = `mailto:support@dpbiotech.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+            window.location.href = mailtoLink;
+            successOverlay.classList.add('is-visible');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Schedule consultation';
+            setTimeout(() => { successOverlay.classList.remove('is-visible'); }, 5000);
+        }, 600);
+    });
 
-// Show success message
-successMessage.style.display = 'block';
+    // Auto-detect timezone
+    (function detectTimezone() {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const map = {
+            'America/New_York': 'EST',
+            'America/Chicago': 'CST',
+            'America/Denver': 'MST',
+            'America/Los_Angeles': 'PST',
+            'Europe/London': 'GMT',
+            'Europe/Berlin': 'CET',
+            'Europe/Rome': 'CET',
+            'Europe/Paris': 'CET',
+            'Europe/Madrid': 'CET'
+        };
+        const select = document.getElementById('timezone');
+        if (map[tz]) select.value = map[tz];
+    })();
 
-// Reset loading state
-document.body.classList.remove('loading');
-submitBtn.disabled = false;
-submitBtn.textContent = 'Schedule Consultation';
-
-// Hide success message after 5 seconds
-setTimeout(() => {
-successMessage.style.display = 'none';
-}, 5000);
-}, 1000);
-});
-
-// Auto-detect timezone
-function detectTimezone() {
-const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-const timezoneSelect = document.getElementById('timezone');
-
-const timezoneMap = {
-'America/New_York': 'EST',
-'America/Chicago': 'CST', 
-'America/Denver': 'MST',
-'America/Los_Angeles': 'PST',
-'Europe/London': 'GMT',
-'Europe/Berlin': 'CET'
-};
-
-const mappedTimezone = timezoneMap[timezone];
-if (mappedTimezone) {
-timezoneSelect.value = mappedTimezone;
-}
-}
-
-detectTimezone();
+    successOverlay.addEventListener('click', () => successOverlay.classList.remove('is-visible'));
 });
 </script>
 
+<script>
+// Canonical nav + mobile menu + cart sidebar
+document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (menuBtn && mobileMenu) menuBtn.addEventListener('click', () => mobileMenu.classList.add('is-open'));
+
+    const mainNav = document.getElementById('main-nav');
+    const navItems = mainNav.querySelectorAll('.nav-links li');
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    const backdrop = document.querySelector('.menu-backdrop');
+    let activeMenu = null, closeTimeout;
+    function openMenu(id) {
+        if (activeMenu && activeMenu.id !== id) activeMenu.classList.remove('is-open');
+        const menu = document.getElementById(id);
+        if (menu) { menu.classList.add('is-open'); backdrop.classList.add('is-visible'); activeMenu = menu; }
+    }
+    function closeAll() { if (activeMenu) activeMenu.classList.remove('is-open'); backdrop.classList.remove('is-visible'); activeMenu = null; }
+    if (window.innerWidth >= 960) {
+        navItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                clearTimeout(closeTimeout);
+                if (item.dataset.menu) openMenu(item.dataset.menu); else closeAll();
+            });
+        });
+        mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
+        mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+        dropdowns.forEach(menu => {
+            menu.addEventListener('mouseenter', () => clearTimeout(closeTimeout));
+            menu.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
+        });
+    }
+    if (backdrop) backdrop.addEventListener('click', closeAll);
+
+    // Cart sidebar
+    const cartBtn = document.getElementById('cart-btn');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const cartBackdrop = document.getElementById('cart-backdrop');
+    const closeCart = document.getElementById('close-cart');
+    const cartCount = document.getElementById('cart-count');
+    const cartItemsEl = document.getElementById('cart-items');
+    const cartTotalEl = document.getElementById('cart-total');
+    const cartEmptyEl = document.getElementById('cart-empty');
+    const clearCartBtn = document.getElementById('clear-cart');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    function openCart() { cartSidebar.classList.add('is-open'); cartBackdrop.classList.add('is-visible'); body.style.overflow = 'hidden'; }
+    function hideCart() { cartSidebar.classList.remove('is-open'); cartBackdrop.classList.remove('is-visible'); body.style.overflow = ''; }
+    if (cartBtn) cartBtn.addEventListener('click', () => { renderCart(); openCart(); });
+    if (closeCart) closeCart.addEventListener('click', hideCart);
+    if (cartBackdrop) cartBackdrop.addEventListener('click', hideCart);
+
+    const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+    function formatOptions(options) {
+        if (typeof options === 'object' && options !== null) {
+            return Object.values(options).filter(v => v).join(', ');
+        }
+        return options || '';
+    }
+    let _displayCart = [];
+    function renderCart() {
+        let cart = [];
+        try { cart = JSON.parse(sessionStorage.getItem('shoppingCart') || '[]'); } catch (e) { cart = []; }
+
+        const consolidated = {};
+        cart.forEach(item => {
+            const key = (item.id || item.name || 'item') + JSON.stringify(item.options || {});
+            if (consolidated[key]) consolidated[key].quantity++;
+            else consolidated[key] = { ...item, quantity: 1, uniqueKey: key };
+        });
+        _displayCart = Object.values(consolidated);
+
+        if (cartCount) cartCount.textContent = cart.length;
+        if (!cartItemsEl) return;
+        let total = 0;
+        cart.forEach(item => { total += (item.price || 0); });
+
+        if (_displayCart.length === 0) {
+            cartItemsEl.innerHTML = '';
+            if (cartEmptyEl) cartEmptyEl.style.display = 'block';
+            if (cartTotalEl) cartTotalEl.textContent = EUR.format(0);
+            if (checkoutBtn) checkoutBtn.disabled = true;
+            return;
+        }
+        if (cartEmptyEl) cartEmptyEl.style.display = 'none';
+        if (checkoutBtn) checkoutBtn.disabled = false;
+        cartItemsEl.innerHTML = _displayCart.map((item, idx) => {
+            const baseName = item.name ? String(item.name).split('(')[0].trim() : (item.id || 'Product');
+            const formattedOptions = formatOptions(item.options);
+            return `
+                <div class="cart-item">
+                    <div class="cart-product-card">
+                        <div class="cart-product-header">
+                            <h4 class="cart-product-title">${baseName}</h4>
+                            <button class="cart-product-remove-btn" data-cart-action="rm" data-cart-idx="${idx}">&times;</button>
+                        </div>
+                        ${formattedOptions ? `<p class="cart-product-subtitle">${formattedOptions}</p>` : ''}
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn" data-cart-action="dec" data-cart-idx="${idx}">−</button>
+                                <span class="quantity-input">${item.quantity}</span>
+                                <button class="quantity-btn" data-cart-action="inc" data-cart-idx="${idx}">+</button>
+                            </div>
+                            <div class="cart-product-price">${EUR.format(item.price || 0)}</div>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('');
+        if (cartTotalEl) cartTotalEl.textContent = EUR.format(total);
+    }
+
+    function applyCartAction(action, idx) {
+        const entry = _displayCart[idx];
+        if (!entry) return;
+        let cart = [];
+        try { cart = JSON.parse(sessionStorage.getItem('shoppingCart') || '[]'); } catch (e) { cart = []; }
+        const matches = i => ((i.id || i.name || 'item') + JSON.stringify(i.options || {})) === entry.uniqueKey;
+        if (action === 'inc') {
+            const item = cart.find(matches);
+            if (item) cart.push({ ...item });
+        } else if (action === 'dec') {
+            const i = cart.findIndex(matches);
+            if (i > -1) cart.splice(i, 1);
+        } else if (action === 'rm') {
+            cart = cart.filter(i => !matches(i));
+        }
+        sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+        renderCart();
+    }
+
+    if (cartItemsEl) {
+        cartItemsEl.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-cart-action]');
+            if (!btn) return;
+            applyCartAction(btn.dataset.cartAction, parseInt(btn.dataset.cartIdx, 10));
+        });
+    }
+
+    if (clearCartBtn) clearCartBtn.addEventListener('click', () => { sessionStorage.removeItem('shoppingCart'); renderCart(); });
+    if (checkoutBtn) checkoutBtn.addEventListener('click', () => { window.location.href = 'checkout.html'; });
+    renderCart();
+});
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
 </body>
 </html>

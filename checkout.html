@@ -2,102 +2,838 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Checkout - DP Biotech</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="favicon-192.png"><title>Checkout — DP Biotech</title>
 <script>
     if (sessionStorage.getItem('isAuthenticated') !== 'true') {
       window.location.href = 'login.html';
     }
-  </script>
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { 
-    --bg:#ffffff; --text:#0a0a0a; --muted:#525252; --line:#e5e5e5; --card:#fafafa; 
-    --a1:#0ea5e9; --a2:#6366f1; --a3:#8b5cf6;
-    /* Mini Colors */
+/* =========================================
+   DESIGN SYSTEM — aligned with index.html
+   ========================================= */
+:root {
+    --bg-body: #fafafa;
+    --bg-secondary: #f2f2f4;
+    --bg-card: #ffffff;
+    --text-primary: #0a0a0f;
+    --text-secondary: #6b6b78;
+    --accent: #0f766e;
+    --accent-2: #1e293b;
+    --accent-gradient: linear-gradient(135deg, #1e293b 0%, #0f766e 100%);
+    --divider: rgba(10, 10, 15, 0.06);
+    --divider-strong: rgba(10, 10, 15, 0.1);
+    --radius-lg: 32px;
+    --radius-md: 20px;
+    --radius-sm: 12px;
+    --nav-height: 60px;
+    --container-width: 1120px;
+    --shadow-sm: 0 1px 2px rgba(10,10,15,0.04), 0 2px 8px rgba(10,10,15,0.04);
+    --shadow-md: 0 4px 12px rgba(10,10,15,0.04), 0 20px 40px -12px rgba(15,23,42,0.08);
+    --shadow-lg: 0 8px 24px rgba(10,10,15,0.06), 0 32px 64px -16px rgba(15,23,42,0.12);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Product accent colors */
     --mini-1:#f97316; --mini-2:#ef4444;
-    /* Pro Colors */
     --pro-1:#2563eb; --pro-2:#059669;
-  }
-  @media (prefers-color-scheme: dark){ 
-    :root { --bg:#0a0a0a; --text:#fafafa; --muted:#a1a1aa; --line:#262626; --card:#18181b; } 
-  }
-  body{
-    margin:0; 
-    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-    background:var(--card); 
-    color:var(--text);
-  }
-  .container{max-width:1200px; margin:0 auto; padding:0 20px}
-  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
-  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
-  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size: 18px;}
-  .nav a{color:inherit; text-decoration:none}
-  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; border-radius:12px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
-  .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
-  .btn.primary:hover{opacity:0.9}
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .checkout-layout { display: grid; grid-template-columns: 3fr 2fr; gap: 32px; align-items: start; }
-  @media(max-width: 900px) { .checkout-layout { grid-template-columns: 1fr; } }
-  .page-header { padding: 48px 0 24px 0; }
-  h1 { font-size: 32px; letter-spacing: -0.02em; margin: 0; }
-  .order-items { display: flex; flex-direction: column; gap: 16px; }
-  .product-card { display: flex; gap: 16px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 16px; position: relative; }
-  .product-info { flex-grow: 1; }
-  .product-title { font-size: 16px; font-weight: 600; margin: 0; }
-  .product-subtitle { font-size: 13px; color: var(--muted); margin: 4px 0 0 0; }
-  .product-price { font-size: 15px; font-weight: 500; margin-top: 12px; }
-  .title-dp-mini { background: linear-gradient(90deg, var(--mini-1), var(--mini-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .title-dp-pro { background: linear-gradient(90deg, var(--pro-1), var(--pro-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .quantity-control { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
-  .quantity-btn { width: 32px; height: 32px; border-radius: 8px; font-size: 20px; line-height: 1; }
-  .quantity-input { width: 40px; height: 32px; text-align: center; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-weight: 600; -moz-appearance: textfield; background: var(--card); color: var(--text); }
-  .quantity-input::-webkit-outer-spin-button, .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .remove-btn { position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 24px; line-height: 1; padding: 0; cursor: pointer; color: var(--muted); transition: color .2s ease; }
-  .remove-btn:hover { color: var(--text); }
-  .summary-box { background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 24px; position: sticky; top: calc(57px + 24px); }
-  .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 15px; }
-  .summary-row.total { font-size: 18px; font-weight: 700; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); }
-  .summary-box .btn.primary { width: 100%; padding: 14px; font-size: 16px; margin-top: 24px; }
-  .empty-cart-container { text-align: center; padding: 80px 20px; margin-top: 48px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; }
-  
-  /* MODIFICA 1: Stile per il campo di input dell'email */
-  .form-group { margin-bottom: 16px; margin-top: 24px; }
-  .text-input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--card);
-      color: var(--text);
-      font-family: inherit;
-      font-size: 15px;
-      box-sizing: border-box;
-  }
-  .text-input:focus {
-      outline: none;
-      border-color: var(--a2);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--a2) 20%, transparent);
-  }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #0a0a0f;
+        --bg-secondary: #13131a;
+        --bg-card: #1a1a24;
+        --text-primary: #f5f5f7;
+        --text-secondary: #9ca3af;
+        --divider: rgba(255, 255, 255, 0.08);
+        --divider-strong: rgba(255, 255, 255, 0.14);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 20px 40px -12px rgba(0,0,0,0.3);
+        --shadow-lg: 0 8px 24px rgba(0,0,0,0.5), 0 32px 64px -16px rgba(0,0,0,0.4);
+    }
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-primary); padding-top: var(--nav-height); }
+body.no-scroll { overflow: hidden; height: 100vh; }
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+p { line-height: 1.5; color: var(--text-secondary); margin: 0; }
+a { text-decoration: none; color: inherit; transition: opacity 0.2s; }
+a:hover { opacity: 0.7; }
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+
+/* =========================
+   NAVIGATION
+   ========================= */
+.nav {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height);
+    background: rgba(255, 255, 255, 0.7); backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    z-index: 100; border-bottom: 1px solid var(--divider);
+}
+@media (prefers-color-scheme: dark) { .nav { background: rgba(0,0,0,0.7); } }
+.nav-inner { height: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+.nav-links { display: none; list-style: none; gap: 32px; margin: 0; padding: 0; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+@media(min-width: 960px) { .nav-links { display: flex; } }
+.nav-links li { cursor: pointer; transition: color 0.2s; height: 100%; display: flex; align-items: center; }
+.nav-links li:hover { color: var(--text-primary); }
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+
+.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; border: none; text-decoration: none !important;
+}
+.btn-primary { background: var(--text-primary); color: var(--bg-body); }
+.btn-primary:hover { transform: scale(1.02); opacity: 0.95; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--divider); }
+.btn-ghost:hover { background: var(--bg-secondary); }
+.desktop-btn { display: none !important; }
+@media(min-width: 960px) { .desktop-btn { display: inline-flex !important; } }
+
+.cart-icon-btn { position: relative; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+.cart-badge { position: absolute; top: 4px; right: 4px; background: var(--accent); color: white; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-primary); }
+@media(max-width: 960px) { .hamburger { display: block; } }
+
+/* Mega menu */
+.dropdown-menu { opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; position: absolute; top: var(--nav-height); left: 0; right: 0; background: var(--bg-body); border-top: 1px solid var(--divider); box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 90; overflow-y: auto; max-height: calc(100vh - var(--nav-height)); }
+.dropdown-menu.is-open { opacity: 1; visibility: visible; }
+.menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 40px 0; }
+.menu-main-links, .menu-link-column { list-style: none; padding: 0; margin: 0; }
+.menu-main-links li:first-child, .menu-link-column li:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-secondary); margin-bottom: 12px; padding: 0 12px; }
+.menu-main-links a { font-size: 24px; font-weight: 600; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-link-column a { font-size: 14px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-main-links a:hover, .menu-link-column a:hover { background: var(--bg-secondary); }
+.menu-backdrop { position: fixed; top: var(--nav-height); left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; visibility: hidden; transition: 0.3s; }
+.menu-backdrop.is-visible { opacity: 1; visibility: visible; }
+.mobile-menu-overlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 150; padding: 80px 24px; transform: translateY(-100%); transition: transform 0.4s ease; display: flex; flex-direction: column; gap: 24px; }
+.mobile-menu-overlay.is-open { transform: translateY(0); }
+.mobile-link { font-size: 24px; font-weight: 600; border-bottom: 1px solid var(--divider); padding-bottom: 16px; }
+
+/* =========================
+   CHECKOUT PAGE
+   ========================= */
+.checkout-hero {
+    padding: 80px 0 32px;
+    background: radial-gradient(circle at 50% 0%, rgba(15, 118, 110, 0.06) 0%, transparent 60%);
+}
+.checkout-hero .eyebrow {
+    display: block;
+    font-size: 12px; font-weight: 700;
+    color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 12px;
+}
+.checkout-hero h1 {
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+}
+.checkout-hero p.lead {
+    font-size: 17px;
+    max-width: 560px;
+    color: var(--text-secondary);
+}
+
+.checkout-stepper {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 32px; flex-wrap: wrap;
+    font-size: 13px; color: var(--text-secondary);
+}
+.checkout-stepper .step { display: inline-flex; align-items: center; gap: 8px; }
+.checkout-stepper .step-num {
+    width: 22px; height: 22px; border-radius: 999px;
+    background: var(--bg-secondary); color: var(--text-secondary);
+    display: grid; place-items: center; font-size: 11px; font-weight: 700;
+    border: 1px solid var(--divider);
+}
+.checkout-stepper .step.active .step-num { background: var(--text-primary); color: var(--bg-body); border-color: transparent; }
+.checkout-stepper .step.active { color: var(--text-primary); font-weight: 600; }
+.checkout-stepper .sep { width: 24px; height: 1px; background: var(--divider-strong); }
+
+.checkout-layout {
+    display: grid; grid-template-columns: 1.6fr 1fr;
+    gap: 32px; align-items: start;
+    padding: 32px 0 96px;
+}
+@media(max-width: 920px) {
+    .checkout-layout { grid-template-columns: 1fr; }
+}
+
+.checkout-section {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+}
+.checkout-section h2 {
+    font-size: 20px; letter-spacing: -0.01em;
+    margin-bottom: 4px;
+}
+.checkout-section .section-sub {
+    font-size: 14px; color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+/* Order items */
+.order-items { display: flex; flex-direction: column; gap: 12px; }
+.product-card {
+    display: flex; gap: 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    padding: 16px 56px 16px 16px;
+    position: relative;
+    transition: border-color 0.2s ease;
+}
+.product-card:hover { border-color: var(--divider-strong); }
+.product-info { flex-grow: 1; min-width: 0; }
+.product-title { font-size: 16px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+.product-subtitle { font-size: 13px; color: var(--text-secondary); margin: 4px 0 0 0; }
+.product-price { font-size: 15px; font-weight: 600; margin-top: 12px; color: var(--text-primary); }
+.title-dp-mini { background: linear-gradient(90deg, var(--mini-1), var(--mini-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.title-dp-pro { background: linear-gradient(90deg, var(--pro-1), var(--pro-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.quantity-control { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
+.quantity-btn {
+    width: 30px; height: 30px;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: 8px;
+    cursor: pointer;
+    display: grid; place-items: center;
+    font-size: 16px; font-weight: 600; color: var(--text-primary);
+    transition: background 0.15s ease;
+}
+.quantity-btn:hover { background: var(--divider); }
+.quantity-input {
+    width: 40px; height: 30px; text-align: center;
+    border: 1px solid var(--divider); border-radius: 8px;
+    font-family: inherit; font-weight: 600;
+    background: var(--bg-card); color: var(--text-primary);
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.remove-btn {
+    position: absolute; top: 12px; right: 12px;
+    width: 30px; height: 30px;
+    background: transparent; border: 1px solid var(--divider);
+    border-radius: 999px; font-size: 16px; line-height: 1;
+    cursor: pointer; color: var(--text-secondary);
+    transition: color .2s ease, background .2s ease, border-color .2s ease;
+    display: grid; place-items: center;
+}
+.remove-btn:hover { color: var(--text-primary); background: var(--bg-secondary); border-color: var(--divider-strong); }
+
+/* Form fields */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid .full { grid-column: 1 / -1; }
+@media(max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.form-field label {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.04em;
+}
+.text-input {
+    width: 100%; padding: 12px 14px;
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    background: var(--bg-body);
+    color: var(--text-primary);
+    font-family: inherit; font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.text-input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+.text-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* Customer type toggle */
+.type-toggle {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: var(--bg-secondary);
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--divider);
+}
+.type-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.type-toggle label {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px; font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+}
+.type-toggle input:checked + label {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+}
+.type-toggle label svg { flex-shrink: 0; }
+
+.conditional-block { display: none; margin-top: 18px; }
+.conditional-block.is-visible { display: block; }
+
+.field-helper {
+    font-size: 12px; color: var(--text-secondary);
+    margin-top: 4px;
+}
+.einvoice-toggle {
+    display: flex; gap: 8px;
+    margin-bottom: 12px;
+}
+.einvoice-toggle button {
+    flex: 1; padding: 10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.einvoice-toggle button.active {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--divider-strong);
+    box-shadow: var(--shadow-sm);
+}
+
+.section-divider {
+    height: 1px; background: var(--divider);
+    margin: 24px 0;
+}
+
+.subsection-title {
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+/* Consent / checkbox rows */
+.consent-list { display: flex; flex-direction: column; gap: 14px; }
+.consent-item { display: flex; gap: 12px; align-items: flex-start; }
+.consent-item input[type="checkbox"] {
+    flex-shrink: 0; margin-top: 2px;
+    width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent);
+}
+.consent-item label { font-size: 13px; line-height: 1.5; color: var(--text-secondary); cursor: pointer; }
+.consent-item label strong { color: var(--text-primary); font-weight: 600; }
+.consent-item label a { text-decoration: underline; color: var(--text-primary); }
+.consent-item .required { color: #dc2626; font-weight: 700; }
+.req { color: #dc2626; font-weight: 700; margin-left: 3px; }
+.text-input:invalid:not(:placeholder-shown) {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.checkbox-row {
+    display: flex; gap: 12px; align-items: center;
+    padding: 14px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: border-color 0.2s ease;
+}
+.checkbox-row:hover { border-color: var(--divider-strong); }
+.checkbox-row input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+.checkbox-row label { font-size: 14px; font-weight: 500; cursor: pointer; flex: 1; color: var(--text-primary); }
+
+.inline-check {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 0; margin: 0;
+}
+.inline-check input { width: 16px; height: 16px; accent-color: var(--accent); margin-top: 2px; flex-shrink: 0; }
+.inline-check span { font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+.inline-check strong { color: var(--text-primary); font-weight: 600; }
+
+/* Payment methods */
+.payment-methods { display: flex; flex-direction: column; gap: 10px; }
+.payment-method {
+    display: flex; gap: 14px; align-items: center;
+    padding: 16px 18px;
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    background: var(--bg-card);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.payment-method:hover { border-color: var(--divider-strong); }
+.payment-method input[type="radio"] {
+    flex-shrink: 0;
+    width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer;
+}
+.payment-method.is-selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.payment-method-info { flex: 1; }
+.payment-method-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.payment-method-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; }
+
+/* Promo code */
+.promo-code-row { display: flex; gap: 8px; }
+.promo-code-row .text-input { flex: 1; }
+.promo-code-row button {
+    padding: 0 20px;
+    border: 1px solid var(--divider);
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    font-family: inherit; font-weight: 600; font-size: 14px;
+    color: var(--text-primary); cursor: pointer;
+    transition: background 0.15s ease;
+}
+.promo-code-row button:hover { background: var(--bg-secondary); }
+
+textarea.text-input { resize: vertical; min-height: 80px; font-family: inherit; }
+select.text-input { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b6b78' stroke-width='2'><path stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/></svg>"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 40px; }
+
+/* Payment handover note */
+.payment-note {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+}
+.payment-note .icon {
+    flex-shrink: 0; width: 36px; height: 36px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+    display: grid; place-items: center;
+}
+.payment-note p {
+    font-size: 13px; line-height: 1.5; color: var(--text-secondary); margin: 0;
+}
+.payment-note strong { color: var(--text-primary); font-weight: 600; }
+
+/* Summary aside */
+.summary-aside { position: sticky; top: calc(var(--nav-height) + 24px); }
+.summary-box {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    padding: 28px;
+    box-shadow: var(--shadow-md);
+}
+.summary-box h2 {
+    font-size: 18px; margin-bottom: 4px;
+    letter-spacing: -0.01em;
+}
+.summary-box .summary-sub {
+    font-size: 13px; color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+.summary-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);
+}
+.summary-row span:last-child { color: var(--text-primary); font-weight: 500; }
+.summary-row.total {
+    font-size: 18px; font-weight: 700;
+    margin-top: 20px; padding-top: 16px;
+    border-top: 1px solid var(--divider);
+    color: var(--text-primary);
+}
+.summary-row.total span:last-child { font-weight: 700; }
+.summary-box .btn-primary {
+    width: 100%; padding: 14px;
+    font-size: 15px;
+    margin-top: 20px;
+    box-shadow: 0 1px 2px rgba(10,10,15,0.1), 0 8px 24px -8px rgba(10,10,15,0.3);
+}
+.summary-trust {
+    display: flex; gap: 8px; align-items: center; justify-content: center;
+    margin-top: 14px;
+    font-size: 12px; color: var(--text-secondary);
+}
+.summary-trust svg { color: var(--accent); }
+
+/* Empty cart */
+.empty-cart-container {
+    text-align: center; padding: 80px 32px;
+    margin: 48px 0;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+.empty-cart-container .empty-icon {
+    width: 72px; height: 72px;
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    display: grid; place-items: center;
+    margin: 0 auto 20px;
+}
+.empty-cart-container h1 { font-size: 28px; margin-bottom: 12px; }
+.empty-cart-container p { margin-bottom: 28px; max-width: 420px; margin-left: auto; margin-right: auto; }
+
+/* =========================
+   CART SIDEBAR (canonical)
+   ========================= */
+.cart-backdrop { position: fixed; inset: 0; background: rgba(10,10,15,0.32); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s ease; z-index: 200; }
+.cart-backdrop.is-visible { opacity: 1; visibility: visible; }
+.cart-sidebar {
+    position: fixed; top: 16px; right: 16px; bottom: 16px;
+    width: calc(100% - 32px); max-width: 400px;
+    background: var(--bg-card);
+    border-radius: 22px;
+    transform: translateX(calc(100% + 32px));
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 201;
+    display: flex; flex-direction: column;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 24px 60px rgba(10,10,15,0.22), 0 6px 16px rgba(10,10,15,0.08);
+    overflow: hidden;
+    border: 1px solid rgba(10,10,15,0.06);
+}
+.cart-sidebar.is-open { transform: translateX(0); }
+.cart-header { padding: 20px 22px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
+.cart-header h3 { margin: 0; font-size: 18px; font-weight: 700; }
+.cart-items { flex: 1; overflow-y: auto; padding: 20px 22px; list-style: none; margin: 0; }
+.cart-footer { padding: 22px; border-top: 1px solid var(--divider); background: var(--bg-secondary); }
+@media(max-width: 480px) { .cart-sidebar { top: 12px; right: 12px; bottom: 12px; width: calc(100% - 24px); border-radius: 20px; } }
+.cart-sidebar .cart-item { margin-bottom: 16px; }
+.cart-product-card { border: 1px solid var(--divider); border-radius: 12px; padding: 16px; background: var(--bg-card); }
+.cart-product-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.cart-product-title { font-size: 15px; font-weight: 600; margin: 0; }
+.cart-item-actions { display: flex; justify-content: space-between; align-items: center; }
+.cart-sidebar .quantity-control { display: flex; gap: 8px; align-items: center; margin-top: 0; }
+.cart-sidebar .quantity-btn { width: 24px; height: 24px; background: var(--bg-secondary); border: none; border-radius: 4px; cursor: pointer; display: grid; place-items: center; padding: 0; font-size: 14px; }
+.cart-sidebar .quantity-input { width: 30px; height: auto; text-align: center; border: none; font-weight: 600; background: transparent; padding: 0; }
+
+/* =========================
+   FOOTER
+   ========================= */
+footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background: var(--bg-body); font-size: 13px; color: var(--text-secondary); }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+@media(max-width: 860px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+@media(max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
+.footer-brand .logo { margin-bottom: 16px; }
+.footer-brand p { font-size: 13px; max-width: 320px; margin-bottom: 16px; line-height: 1.5; color: var(--text-secondary); }
+.footer-address { font-size: 12px; color: var(--text-secondary); line-height: 1.6; font-style: normal; }
+.footer-address strong { color: var(--text-primary); font-weight: 600; }
+.footer-col-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-primary); font-weight: 700; margin-bottom: 16px; }
+.footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { font-size: 13px; color: var(--text-secondary); transition: color 0.2s; text-decoration: none; }
+.footer-col a:hover { color: var(--text-primary); opacity: 1; }
+.footer-bottom { padding-top: 24px; border-top: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--text-secondary); }
+.footer-regulatory { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+.footer-regulatory-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--divider); font-size: 11px; font-weight: 600; color: var(--text-secondary); }
+</style>
+<style>
+/* Apple-style cart card (universal override) */
+.cart-sidebar .cart-product-card {
+    background: var(--bg-card, var(--card, #ffffff)) !important;
+    border: 1px solid var(--divider, var(--line, rgba(0,0,0,0.08))) !important;
+    border-radius: 18px !important;
+    padding: 18px 18px 16px !important;
+    margin-bottom: 12px !important;
+    box-shadow: none !important;
+    transition: border-color 0.25s ease;
+}
+.cart-sidebar .cart-product-card:hover { border-color: rgba(10,10,15,0.12) !important; }
+.cart-sidebar .cart-product-header {
+    display: flex !important; justify-content: space-between !important;
+    align-items: center !important; gap: 12px !important;
+    margin: 0 0 8px 0 !important;
+}
+.cart-sidebar .cart-product-title {
+    font-size: 15px !important; font-weight: 600 !important;
+    letter-spacing: -0.01em; line-height: 1.3;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    margin: 0 !important;
+}
+.cart-sidebar .cart-product-subtitle {
+    font-size: 12px !important;
+    color: var(--text-secondary, var(--muted, #6b6b78)) !important;
+    margin: 0 0 12px 0 !important;
+    font-weight: 400 !important; line-height: 1.45;
+}
+.cart-sidebar .cart-product-price {
+    font-size: 15px !important; font-weight: 600 !important;
+    letter-spacing: -0.01em;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+}
+/* Remove button — covers .cart-product-remove-btn AND any header button (e.g. .btn ghost used in index.html) */
+.cart-sidebar .cart-product-remove-btn,
+.cart-sidebar .cart-product-header > button,
+.cart-sidebar .cart-product-header .btn {
+    flex-shrink: 0 !important;
+    width: 26px !important; height: 26px !important;
+    min-width: 26px !important;
+    border: none !important; background: transparent !important;
+    color: var(--text-secondary, var(--muted, #6b6b78)) !important;
+    font-size: 18px !important; font-weight: 400 !important;
+    line-height: 1 !important; padding: 0 !important; margin: 0 !important;
+    cursor: pointer; border-radius: 50% !important;
+    display: grid !important; place-items: center !important;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    box-shadow: none !important;
+}
+.cart-sidebar .cart-product-remove-btn:hover,
+.cart-sidebar .cart-product-header > button:hover,
+.cart-sidebar .cart-product-header .btn:hover {
+    background: rgba(255, 59, 48, 0.1) !important;
+    color: #ff3b30 !important;
+    transform: none !important;
+}
+.cart-sidebar .cart-item-actions {
+    display: flex !important; justify-content: space-between !important;
+    align-items: center !important; gap: 12px !important;
+    margin-top: 0 !important;
+}
+.cart-sidebar .quantity-control {
+    display: inline-flex !important; align-items: center !important;
+    background: var(--bg-secondary, #f2f2f4) !important;
+    border-radius: 999px !important; padding: 2px !important;
+    gap: 0 !important;
+    border: none !important;
+}
+.cart-sidebar .quantity-btn {
+    width: 28px !important; height: 28px !important;
+    min-width: 28px !important;
+    border: none !important; background: transparent !important;
+    border-radius: 50% !important;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    font-size: 16px !important; font-weight: 500 !important;
+    line-height: 1 !important; padding: 0 !important;
+    cursor: pointer;
+    display: grid !important; place-items: center !important;
+    transition: background 0.2s ease;
+    box-shadow: none !important;
+}
+.cart-sidebar .quantity-btn:hover { background: rgba(0,0,0,0.06) !important; }
+.cart-sidebar .quantity-btn:active { background: rgba(0,0,0,0.1) !important; }
+.cart-sidebar .quantity-input,
+.cart-sidebar span.quantity-input,
+.cart-sidebar input.quantity-input {
+    display: inline-block !important; vertical-align: middle !important; line-height: 28px !important;
+    width: 28px !important; height: 28px !important; min-width: 28px !important;
+    border: none !important; background: transparent !important;
+    text-align: center !important; font-family: inherit !important;
+    font-size: 14px !important; font-weight: 600 !important;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    -moz-appearance: textfield; appearance: textfield;
+    pointer-events: none;
+    padding: 0 !important; margin: 0 !important;
+    box-shadow: none !important;
+}
+.cart-sidebar .quantity-input::-webkit-outer-spin-button,
+.cart-sidebar .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.cart-sidebar .cart-items { padding: 18px 22px !important; }
+.cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
 </style>
 </head>
 <body>
-  <div class="nav">
-    <div class="container nav-inner">
+<nav class="nav" id="main-nav">
+  <div class="container nav-inner">
       <a href="index.html" class="logo">
-        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
-        <span>DP Biotech</span>
+          <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRmNDZlNSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4=' " alt="Logo" style="height:28px; border-radius: 50%;">
+          <span>DP Biotech</span>
       </a>
-      <a href="index.html" class="btn">Back to Shop</a>
+
+      <ul class="nav-links">
+          <li class="dropdown" data-menu="microscopes-menu">Microscopes</li>
+          <li class="dropdown" data-menu="software-menu">Software</li>
+          <li class="dropdown" data-menu="support-menu">Company &amp; Support</li>
+      </ul>
+
+      <div class="nav-actions">
+          <a href="licensing.html" class="btn btn-ghost desktop-btn" style="border: none;">Licensing</a>
+
+          <button class="cart-icon-btn" id="cart-btn">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              <span class="cart-badge" id="cart-count">0</span>
+          </button>
+          <button class="hamburger" id="menu-btn">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+      </div>
+  </div>
+
+  <div id="microscopes-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Shop Microscopes</li>
+                  <li><a href="DPMini.html">DP Mini</a></li>
+                  <li><a href="DPPro.html">DP Pro</a></li>
+              </ul>
+              <ul class="menu-link-column">
+                  <li>Quick Links</li>
+                  <li><a href="all-models.html">Compare Models</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+  <div id="software-menu" class="dropdown-menu">
+    <div class="container">
+        <div class="menu-content">
+            <ul class="menu-main-links">
+                <li>Connect Suite</li>
+                <li><a href="medconnectmini.html">Med Connect Mini</a></li>
+                <li><a href="medconnectpro.html">Med Connect Pro</a></li>
+            </ul>
+            <ul class="menu-link-column">
+                <li>Cloud & Services</li>
+                <li><a href="medpatient.html">Med Patient</a></li>
+                <li><a href="medshare.html">Med Share</a></li>
+            </ul>
+        </div>
     </div>
   </div>
 
-  <div class="container">
-    <div id="checkout-content">
+  <div id="support-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Get Support</li>
+                  <li><a href="contactus.html">Contact Us</a></li>
+                  <li><a href="consultation.html">Schedule a consultation</a></li>
+              </ul>
+              <ul class="menu-link-column">
+                  <li>Documents</li>
+                  <li><a href="#">User Manuals (IFU)</a></li>
+                  <li><a href="#">Declaration of Conformity</a></li>
+                  <li><a href="#">Field Safety Notices</a></li>
+                  <li><a href="#">EUDAMED Registration</a></li>
+              </ul>
+              <ul class="menu-link-column">
+                  <li>Training</li>
+                  <li><a href="#">Onboarding &amp; Setup</a></li>
+                  <li><a href="#">Webinars</a></li>
+                  <li><a href="#">Report an Incident</a></li>
+              </ul>
+          </div>
       </div>
   </div>
+</nav>
+<div class="menu-backdrop"></div>
+
+<div class="mobile-menu-overlay" id="mobile-menu">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <span class="logo">DP Biotech</span>
+        <button class="btn btn-ghost" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
+    </div>
+    <a href="DPMini.html" class="mobile-link">DP Mini</a>
+    <a href="DPPro.html" class="mobile-link">DP Pro</a>
+    <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
+    <a href="licensing.html" class="mobile-link">Licensing</a>
+</div>
+
+<div class="container">
+  <div id="checkout-content"></div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:28px; border-radius:50%; margin-right:8px;">
+                    <span style="font-weight:600;">DP Biotech</span>
+                </div>
+                <p>High-performance surgical microscopes engineered in Italy. Designed for clinical workflows; built around optical precision and modern digital ergonomics.</p>
+                <address class="footer-address">
+                    <strong>Dal Pont Medical S.r.l.s</strong><br>
+                    Piazza San Vito 12<br>
+                    31100 Treviso — Italia<br><br>
+                    VAT / C.F.: 05355480269<br>
+                    REA: 437837<br>
+                    EUDAMED SRN: IT-MF-000052836
+                </address>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Products</div>
+                <ul>
+                    <li><a href="DPMini.html">DP Mini</a></li>
+                    <li><a href="DPPro.html">DP Pro</a></li>
+                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="all-models.html">Compare Models</a></li>
+                    <li><a href="index.html#specs">Specifications</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Support &amp; Service</div>
+                <ul>
+                    <li><a href="contactus.html">Sales Enquiries</a></li>
+                    <li><a href="contactus.html">Clinical Support</a></li>
+                    <li><a href="contactus.html">Service &amp; Repair (RMA)</a></li>
+                    <li><a href="#">Downloads &amp; Manuals</a></li>
+                    <li><a href="#">Instructions for Use (IFU)</a></li>
+                    <li><a href="index.html#faq">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Regulatory &amp; Legal</div>
+                <ul>
+                    <li><a href="#">EU Declaration of Conformity</a></li>
+                    <li><a href="#">Vigilance &amp; Incident Reporting</a></li>
+                    <li><a href="#">UDI Information</a></li>
+                    <li><a href="#">Warranty</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Terms of Sale</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>© 2026 Dal Pont Medical S.r.l.s — All rights reserved.</div>
+            <div class="footer-regulatory">
+                <span class="footer-regulatory-badge">CE</span>
+                <span class="footer-regulatory-badge">MDR Class I</span>
+                <span class="footer-regulatory-badge">Made in Italy</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="cart-backdrop" id="cart-backdrop"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button class="btn btn-ghost" id="close-cart">Close</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div id="cart-empty" style="padding:40px; text-align:center; color:var(--text-secondary);">Cart is empty</div>
+    <div class="cart-footer">
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
+            <span>Total</span><span id="cart-total">€0,00</span>
+        </div>
+        <button id="cart-checkout-btn" class="btn btn-primary" style="width:100%;">Checkout</button>
+        <button id="clear-cart" class="btn btn-ghost" style="width:100%; margin-top:8px; font-size:12px;">Clear Cart</button>
+    </div>
+</div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -124,7 +860,7 @@
         }
         return options || '';
     }
-    
+
     function changeQuantity(itemId, amount) {
         if (amount > 0) {
             const itemToAdd = cart.find(item => item.id === itemId);
@@ -149,9 +885,12 @@
       if (cart.length === 0) {
         checkoutContent.innerHTML = `
           <div class="empty-cart-container">
-            <h1>Your Cart is Empty</h1>
-            <p style="margin-bottom: 24px;">Looks like you haven't added anything to your cart yet.</p>
-            <a href="index.html" class="btn primary">Start Shopping</a>
+            <div class="empty-icon">
+                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            </div>
+            <h1>Your cart is empty</h1>
+            <p>Looks like you haven't added a microscope or accessory yet. Browse our models to get started.</p>
+            <a href="index.html" class="btn btn-primary">Continue Shopping</a>
           </div>
         `;
         return;
@@ -170,19 +909,20 @@
       let subtotal = 0;
       cart.forEach(item => { subtotal += item.price; });
       const shipping = 49.90;
-      const total = subtotal + shipping;
+      const taxRate = 0.22;
+      const tax = subtotal * taxRate;
+      const total = subtotal + shipping + tax;
+      const itemCount = cart.length;
 
       let itemsHTML = '';
       displayCart.forEach((item) => {
         const baseName = item.name.split('(')[0].trim();
         const formattedOptions = formatOptions(item.options);
-        
+
         let titleClass = '';
-        if (baseName.toLowerCase().includes('dp mini')) {
-            titleClass = 'title-dp-mini';
-        } else if (baseName.toLowerCase().includes('DP Pro')) {
-            titleClass = 'title-dp-pro';
-        }
+        const lower = baseName.toLowerCase();
+        if (lower.includes('dp mini')) titleClass = 'title-dp-mini';
+        else if (lower.includes('dp pro')) titleClass = 'title-dp-pro';
 
         itemsHTML += `
           <div class="product-card">
@@ -191,73 +931,702 @@
               <p class="product-subtitle">${formattedOptions}</p>
               <p class="product-price">${EUR.format(item.price)}</p>
               <div class="quantity-control">
-                <button class="btn quantity-btn" data-action="decrease" data-id="${item.id}">-</button>
+                <button class="quantity-btn" data-action="decrease" data-id="${item.id}" aria-label="Decrease quantity">−</button>
                 <input type="number" class="quantity-input" value="${item.quantity}" min="1" readonly>
-                <button class="btn quantity-btn" data-action="increase" data-id="${item.id}">+</button>
+                <button class="quantity-btn" data-action="increase" data-id="${item.id}" aria-label="Increase quantity">+</button>
               </div>
             </div>
-            <button class="remove-btn" data-action="remove" data-id="${item.id}">&times;</button>
+            <button class="remove-btn" data-action="remove" data-id="${item.id}" aria-label="Remove item">&times;</button>
           </div>
         `;
       });
-      
+
       checkoutContent.innerHTML = `
-        <div class="page-header">
-            <h1>Your Order</h1>
+        <div class="checkout-hero">
+            <span class="eyebrow">Checkout</span>
+            <h1>Review &amp; complete your order</h1>
+            <p class="lead">Confirm your details below. Payment and shipping address will be securely collected on the next step.</p>
+            <div class="checkout-stepper">
+                <div class="step active"><span class="step-num">1</span><span>Review</span></div>
+                <div class="sep"></div>
+                <div class="step"><span class="step-num">2</span><span>Payment</span></div>
+                <div class="sep"></div>
+                <div class="step"><span class="step-num">3</span><span>Confirmation</span></div>
+            </div>
         </div>
+
         <div class="checkout-layout">
           <main>
-            <div class="order-items">${itemsHTML}</div>
+            <section class="checkout-section">
+                <h2>Your items</h2>
+                <p class="section-sub">${itemCount} item${itemCount === 1 ? '' : 's'} in your cart</p>
+                <div class="order-items">${itemsHTML}</div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Customer type</h2>
+                <p class="section-sub">Select whether you're purchasing as a private individual or on behalf of a business.</p>
+                <div class="type-toggle">
+                    <input type="radio" name="customer-type" id="type-private" value="private" checked>
+                    <label for="type-private">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        Private individual
+                    </label>
+                    <input type="radio" name="customer-type" id="type-business" value="business">
+                    <label for="type-business">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0v-5a1 1 0 00-1-1h-2a1 1 0 00-1 1v5M9 7h1m-1 4h1m4-4h1m-1 4h1"/></svg>
+                        Business / Clinic
+                    </label>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Contact information</h2>
+                <p class="section-sub">We'll send your order confirmation and tracking updates here.</p>
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="email-input">Email address<span class="req">*</span></label>
+                        <input type="email" id="email-input" class="text-input" placeholder="you@example.com" required autocomplete="email">
+                    </div>
+                    <div class="form-field">
+                        <label for="first-name">First name<span class="req">*</span></label>
+                        <input type="text" id="first-name" class="text-input" placeholder="Maria" required autocomplete="given-name">
+                    </div>
+                    <div class="form-field">
+                        <label for="last-name">Last name<span class="req">*</span></label>
+                        <input type="text" id="last-name" class="text-input" placeholder="Rossi" required autocomplete="family-name">
+                    </div>
+                    <div class="form-field full">
+                        <label for="phone">Phone number<span class="req">*</span></label>
+                        <input type="tel" id="phone" class="text-input" placeholder="+39 ..." required autocomplete="tel">
+                    </div>
+                </div>
+            </section>
+
+            <section class="checkout-section" id="billing-section">
+                <h2>Billing &amp; invoice details</h2>
+                <p class="section-sub" id="billing-sub">For receipts and tax-deductible invoices (fattura).</p>
+
+                <!-- Private: optional Codice Fiscale -->
+                <div class="conditional-block is-visible" id="private-block">
+                    <div class="form-grid">
+                        <div class="form-field full">
+                            <label for="cf-private">Codice Fiscale <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional — for tax-deductible receipt)</span></label>
+                            <input type="text" id="cf-private" class="text-input" placeholder="RSSMRA85M01H501Z" maxlength="16" style="text-transform:uppercase;" autocomplete="off">
+                            <span class="field-helper">16-character Italian tax code. Required only if you need a fiscal receipt for tax deduction.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business: full invoicing details -->
+                <div class="conditional-block" id="business-block">
+                    <div class="subsection-title">Company details</div>
+                    <div class="form-grid">
+                        <div class="form-field full">
+                            <label for="ragione-sociale">Ragione sociale (legal company name)<span class="req">*</span></label>
+                            <input type="text" id="ragione-sociale" class="text-input" placeholder="Dal Pont Medical S.r.l.s" autocomplete="organization">
+                        </div>
+                        <div class="form-field">
+                            <label for="partita-iva">Partita IVA / VAT number<span class="req">*</span></label>
+                            <input type="text" id="partita-iva" class="text-input" placeholder="IT05355480269" style="text-transform:uppercase;" autocomplete="off">
+                            <span class="field-helper">Include country prefix (e.g. IT) for EU VAT.</span>
+                        </div>
+                        <div class="form-field">
+                            <label for="cf-business">Codice Fiscale</label>
+                            <input type="text" id="cf-business" class="text-input" placeholder="05355480269" maxlength="16" style="text-transform:uppercase;" autocomplete="off">
+                            <span class="field-helper">May match Partita IVA for SRL/SPA.</span>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <div class="subsection-title">Electronic invoicing (fatturazione elettronica)</div>
+                    <p class="field-helper" style="margin: -4px 0 14px;">For Italian companies, provide either a 7-character SDI code or a PEC address. The invoice will be transmitted via SDI.</p>
+                    <div class="einvoice-toggle">
+                        <button type="button" data-einvoice="sdi" class="active">Codice SDI</button>
+                        <button type="button" data-einvoice="pec">PEC</button>
+                        <button type="button" data-einvoice="foreign">Foreign / EU</button>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-field full" id="sdi-field">
+                            <label for="codice-sdi">Codice destinatario (SDI)<span class="req">*</span></label>
+                            <input type="text" id="codice-sdi" class="text-input" placeholder="ABCDE12" maxlength="7" style="text-transform:uppercase;" autocomplete="off">
+                            <span class="field-helper">7-character recipient code assigned by your accountant. Use 0000000 if unknown — invoice will be available on Agenzia delle Entrate.</span>
+                        </div>
+                        <div class="form-field full" id="pec-field" style="display:none;">
+                            <label for="pec-address">PEC (certified email)<span class="req">*</span></label>
+                            <input type="email" id="pec-address" class="text-input" placeholder="azienda@pec.it" autocomplete="email">
+                            <span class="field-helper">Posta Elettronica Certificata used to deliver the electronic invoice.</span>
+                        </div>
+                        <div class="form-field full" id="foreign-field" style="display:none;">
+                            <label for="foreign-tax-id">EU VAT / Tax ID<span class="req">*</span></label>
+                            <input type="text" id="foreign-tax-id" class="text-input" placeholder="DE123456789" style="text-transform:uppercase;" autocomplete="off">
+                            <span class="field-helper">For non-Italian businesses. Include the country prefix.</span>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <div class="subsection-title">Sede legale (legal address)</div>
+                    <div class="form-grid">
+                        <div class="form-field full">
+                            <label for="bill-address">Address<span class="req">*</span></label>
+                            <input type="text" id="bill-address" class="text-input" placeholder="Via Roma 12" autocomplete="address-line1">
+                        </div>
+                        <div class="form-field">
+                            <label for="bill-city">City<span class="req">*</span></label>
+                            <input type="text" id="bill-city" class="text-input" placeholder="Treviso" autocomplete="address-level2">
+                        </div>
+                        <div class="form-field">
+                            <label for="bill-zip">Postal code<span class="req">*</span></label>
+                            <input type="text" id="bill-zip" class="text-input" placeholder="31100" autocomplete="postal-code">
+                        </div>
+                        <div class="form-field">
+                            <label for="bill-province">Province<span class="req">*</span></label>
+                            <input type="text" id="bill-province" class="text-input" placeholder="TV" maxlength="2" style="text-transform:uppercase;" autocomplete="address-level1">
+                        </div>
+                        <div class="form-field">
+                            <label for="bill-country">Country<span class="req">*</span></label>
+                            <select id="bill-country" class="text-input" autocomplete="country">
+                                <option value="IT" selected>Italy</option>
+                                <option value="AT">Austria</option>
+                                <option value="BE">Belgium</option>
+                                <option value="DE">Germany</option>
+                                <option value="ES">Spain</option>
+                                <option value="FR">France</option>
+                                <option value="GR">Greece</option>
+                                <option value="NL">Netherlands</option>
+                                <option value="PT">Portugal</option>
+                                <option value="CH">Switzerland</option>
+                                <option value="GB">United Kingdom</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Shipping address</h2>
+                <p class="section-sub">Where should we deliver your order?</p>
+
+                <div class="checkbox-row" id="same-as-billing-row" style="display:none;">
+                    <input type="checkbox" id="same-as-billing" checked>
+                    <label for="same-as-billing">Ship to legal address (same as sede legale)</label>
+                </div>
+
+                <div id="shipping-fields">
+                    <div class="form-grid">
+                        <div class="form-field full">
+                            <label for="ship-recipient">Recipient / Attention to<span class="req">*</span></label>
+                            <input type="text" id="ship-recipient" class="text-input" placeholder="Dr. Maria Rossi" autocomplete="name">
+                            <span class="field-helper">Name printed on the shipping label.</span>
+                        </div>
+                        <div class="form-field full">
+                            <label for="ship-address">Address<span class="req">*</span></label>
+                            <input type="text" id="ship-address" class="text-input" placeholder="Via Roma 12" autocomplete="shipping address-line1">
+                        </div>
+                        <div class="form-field full">
+                            <label for="ship-address2">Address line 2 <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
+                            <input type="text" id="ship-address2" class="text-input" placeholder="Building, floor, suite, room number" autocomplete="shipping address-line2">
+                        </div>
+                        <div class="form-field">
+                            <label for="ship-city">City<span class="req">*</span></label>
+                            <input type="text" id="ship-city" class="text-input" placeholder="Treviso" autocomplete="shipping address-level2">
+                        </div>
+                        <div class="form-field">
+                            <label for="ship-zip">Postal code<span class="req">*</span></label>
+                            <input type="text" id="ship-zip" class="text-input" placeholder="31100" autocomplete="shipping postal-code">
+                        </div>
+                        <div class="form-field">
+                            <label for="ship-province">Province<span class="req">*</span></label>
+                            <input type="text" id="ship-province" class="text-input" placeholder="TV" maxlength="2" style="text-transform:uppercase;" autocomplete="shipping address-level1">
+                        </div>
+                        <div class="form-field">
+                            <label for="ship-country">Country<span class="req">*</span></label>
+                            <select id="ship-country" class="text-input" autocomplete="shipping country">
+                                <option value="IT" selected>Italy</option>
+                                <option value="AT">Austria</option>
+                                <option value="BE">Belgium</option>
+                                <option value="DE">Germany</option>
+                                <option value="ES">Spain</option>
+                                <option value="FR">France</option>
+                                <option value="GR">Greece</option>
+                                <option value="NL">Netherlands</option>
+                                <option value="PT">Portugal</option>
+                                <option value="CH">Switzerland</option>
+                                <option value="GB">United Kingdom</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-field full">
+                            <label for="ship-phone">Delivery contact phone<span class="req">*</span></label>
+                            <input type="tel" id="ship-phone" class="text-input" placeholder="+39 ..." autocomplete="shipping tel">
+                            <span class="field-helper">Used by the courier on delivery day.</span>
+                        </div>
+                        <div class="form-field full">
+                            <label for="ship-notes">Delivery / installation notes <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
+                            <textarea id="ship-notes" class="text-input" placeholder="Loading bay access, business hours, contact person, special handling..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="checkout-section" id="business-extras" style="display:none;">
+                <h2>Business order details</h2>
+                <p class="section-sub">Helps match invoicing and shipping to your internal records.</p>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="po-number">PO / order reference</label>
+                        <input type="text" id="po-number" class="text-input" placeholder="PO-2026-0042">
+                        <span class="field-helper">Will appear on the invoice.</span>
+                    </div>
+                    <div class="form-field">
+                        <label for="cost-center">Cost center / department <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
+                        <input type="text" id="cost-center" class="text-input" placeholder="Reparto chirurgia">
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+                <div class="subsection-title">Tax regime</div>
+                <div style="display:flex; flex-direction:column; gap:14px;">
+                    <label class="inline-check">
+                        <input type="checkbox" id="reverse-charge">
+                        <span><strong>Apply reverse charge</strong> — non-Italian EU business with valid VAT number. Italian VAT (22%) is not charged; tax is accounted for in your country.<br><span class="field-helper">Subject to VIES validation by our team. If the VAT number is invalid, the order will be re-quoted with VAT.</span></span>
+                    </label>
+                    <label class="inline-check">
+                        <input type="checkbox" id="split-payment">
+                        <span><strong>Split payment (Scissione dei Pagamenti)</strong> — sale to Italian Pubblica Amministrazione under Art. 17-ter DPR 633/72.</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Medical-device qualification</h2>
+                <p class="section-sub">DP Mini and DP Pro are MDR Class I medical devices intended exclusively for use by qualified healthcare professionals.</p>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="profession">Profession / role<span class="req">*</span></label>
+                        <select id="profession" class="text-input" required>
+                            <option value="">— Select —</option>
+                            <option value="surgeon">Surgeon</option>
+                            <option value="dentist">Dentist</option>
+                            <option value="ophthalmologist">Ophthalmologist</option>
+                            <option value="ent">ENT specialist</option>
+                            <option value="neurosurgeon">Neurosurgeon</option>
+                            <option value="vet">Veterinary surgeon</option>
+                            <option value="researcher">Researcher / lab</option>
+                            <option value="institution">Healthcare facility / procurement</option>
+                            <option value="distributor">Authorized distributor</option>
+                            <option value="other">Other healthcare professional</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="license-number">License / Albo number <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
+                        <input type="text" id="license-number" class="text-input" placeholder="Ordine dei Medici n. 12345">
+                    </div>
+                </div>
+                <div class="consent-list" style="margin-top:18px;">
+                    <div class="consent-item">
+                        <input type="checkbox" id="consent-qualification">
+                        <label for="consent-qualification"><strong>I confirm I am a qualified healthcare professional</strong> or am purchasing on behalf of an authorized healthcare facility. <span class="required">*</span></label>
+                    </div>
+                    <div class="consent-item">
+                        <input type="checkbox" id="consent-intended-use">
+                        <label for="consent-intended-use"><strong>I will use this device only within its intended use</strong> as described in the Instructions for Use (IFU) and applicable clinical indications. <span class="required">*</span></label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Payment method</h2>
+                <p class="section-sub">Choose how you'd like to pay. Bank transfer is recommended for large business orders.</p>
+                <div class="payment-methods">
+                    <label class="payment-method is-selected">
+                        <input type="radio" name="payment-method" value="card" checked>
+                        <div class="payment-method-info">
+                            <div class="payment-method-name">Card payment (Stripe)</div>
+                            <div class="payment-method-desc">Visa, Mastercard, Amex, Apple Pay, Google Pay. PCI-compliant, encrypted. Order ships immediately on payment confirmation.</div>
+                        </div>
+                    </label>
+                    <label class="payment-method">
+                        <input type="radio" name="payment-method" value="bank_transfer">
+                        <div class="payment-method-info">
+                            <div class="payment-method-name">Bank transfer (Bonifico)</div>
+                            <div class="payment-method-desc">We'll email you our IBAN and order reference. Order ships once payment clears (typically 1–2 business days). Recommended for B2B orders over €5.000.</div>
+                        </div>
+                    </label>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Order notes</h2>
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="promo-code">Promo / discount code <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
+                        <div class="promo-code-row">
+                            <input type="text" id="promo-code" class="text-input" placeholder="ENTER CODE" style="text-transform:uppercase;">
+                            <button type="button" id="apply-promo">Apply</button>
+                        </div>
+                        <span class="field-helper" id="promo-status"></span>
+                    </div>
+                    <div class="form-field full">
+                        <label for="order-notes">Notes for our team <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
+                        <textarea id="order-notes" class="text-input" placeholder="Anything we should know about this order..."></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Confirmations &amp; consent</h2>
+                <p class="section-sub">Required by Italian and EU law before completing the purchase.</p>
+                <div class="consent-list">
+                    <div class="consent-item">
+                        <input type="checkbox" id="consent-terms">
+                        <label for="consent-terms">I have read and accept the <a href="#">Terms of Sale</a> and the <a href="#">Privacy Policy</a> (GDPR, Reg. UE 2016/679). <span class="required">*</span></label>
+                    </div>
+                    <div class="consent-item" id="withdrawal-consent">
+                        <input type="checkbox" id="consent-withdrawal">
+                        <label for="consent-withdrawal">I acknowledge my <strong>14-day right of withdrawal</strong> under Art. 52 of the Italian Consumer Code (Codice del Consumo). For sterile, custom-configured, or installed medical devices, the limits set out in the Terms of Sale apply. <span class="required">*</span></label>
+                    </div>
+                    <div class="consent-item">
+                        <input type="checkbox" id="consent-marketing">
+                        <label for="consent-marketing">I agree to receive product updates, clinical content and offers from DP Biotech by email. <em>(Optional — you can unsubscribe any time.)</em></label>
+                    </div>
+                </div>
+            </section>
           </main>
-          <aside>
+
+          <aside class="summary-aside">
             <div class="summary-box">
-              <h2>Summary</h2>
+              <h2>Order summary</h2>
+              <p class="summary-sub">Prices in EUR. Taxes shown for EU shipping.</p>
               <div class="summary-row">
-                <span>Subtotal</span>
+                <span>Subtotal (${itemCount} item${itemCount === 1 ? '' : 's'})</span>
                 <span>${EUR.format(subtotal)}</span>
               </div>
               <div class="summary-row">
                 <span>Shipping</span>
                 <span>${EUR.format(shipping)}</span>
               </div>
+              <div class="summary-row" id="summary-tax-row">
+                <span>VAT (22%)</span>
+                <span id="summary-tax-amount">${EUR.format(tax)}</span>
+              </div>
               <div class="summary-row total">
                 <span>Total</span>
-                <span>${EUR.format(total)}</span>
+                <span id="summary-total-amount">${EUR.format(total)}</span>
               </div>
-              
-              <div class="form-group">
-                <input type="email" id="email-input" class="text-input" placeholder="Your Email Address" required>
+              <button id="checkout-button" class="btn btn-primary">
+                Continue to payment
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-left:8px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              </button>
+              <div class="summary-trust">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-7a2 2 0 00-2-2H6a2 2 0 00-2 2v7a2 2 0 002 2zm10-12V7a4 4 0 10-8 0v4h8z"/></svg>
+                <span>Encrypted checkout · Powered by Stripe</span>
               </div>
-
-              <button id="checkout-button" class="btn primary">Proceed to Payment</button>
             </div>
           </aside>
         </div>
       `;
-      
+
+      // Customer type toggle (Private / Business)
+      const privateBlock = document.getElementById('private-block');
+      const businessBlock = document.getElementById('business-block');
+      const billingSub = document.getElementById('billing-sub');
+      const sameAsBillingRow = document.getElementById('same-as-billing-row');
+      const businessExtras = document.getElementById('business-extras');
+      const withdrawalConsent = document.getElementById('withdrawal-consent');
+      const shippingFields = document.getElementById('shipping-fields');
+      const sameAsBillingCheckbox = document.getElementById('same-as-billing');
+
+      const businessRequiredIds = ['ragione-sociale', 'partita-iva', 'bill-address', 'bill-city', 'bill-zip', 'bill-province'];
+      const shippingRequiredIds = ['ship-recipient', 'ship-address', 'ship-city', 'ship-zip', 'ship-province', 'ship-phone'];
+
+      function setRequired(ids, on) {
+          ids.forEach(id => {
+              const el = document.getElementById(id);
+              if (el) { if (on) el.setAttribute('required', ''); else el.removeAttribute('required'); }
+          });
+      }
+
+      function applyCustomerType() {
+          const value = document.querySelector('input[name="customer-type"]:checked').value;
+          const isBusiness = value === 'business';
+          privateBlock.classList.toggle('is-visible', !isBusiness);
+          businessBlock.classList.toggle('is-visible', isBusiness);
+          billingSub.textContent = isBusiness
+              ? 'Required by Italian law for electronic invoicing (fatturazione elettronica).'
+              : 'For receipts and tax-deductible invoices (fattura).';
+          sameAsBillingRow.style.display = isBusiness ? '' : 'none';
+          businessExtras.style.display = isBusiness ? '' : 'none';
+          // Right of withdrawal (Codice del Consumo) only applies to consumers (B2C)
+          withdrawalConsent.style.display = isBusiness ? 'none' : '';
+
+          setRequired(businessRequiredIds, isBusiness);
+
+          const shippingHidden = isBusiness && sameAsBillingCheckbox.checked;
+          shippingFields.style.display = shippingHidden ? 'none' : '';
+          setRequired(shippingRequiredIds, !shippingHidden);
+
+          // Required consents
+          document.getElementById('consent-withdrawal').required = !isBusiness;
+      }
+      document.querySelectorAll('input[name="customer-type"]').forEach(radio => {
+          radio.addEventListener('change', applyCustomerType);
+      });
+      // Mark always-required consents
+      document.getElementById('consent-qualification').required = true;
+      document.getElementById('consent-intended-use').required = true;
+      document.getElementById('consent-terms').required = true;
+      applyCustomerType();
+
+      // "Same as billing" toggle (business only)
+      sameAsBillingCheckbox.addEventListener('change', () => {
+          const hidden = sameAsBillingCheckbox.checked;
+          shippingFields.style.display = hidden ? 'none' : '';
+          setRequired(shippingRequiredIds, !hidden);
+      });
+
+      // E-invoicing channel tabs (SDI / PEC / Foreign)
+      let einvoiceMode = 'sdi';
+      function applyEinvoiceMode() {
+          document.getElementById('sdi-field').style.display = einvoiceMode === 'sdi' ? '' : 'none';
+          document.getElementById('pec-field').style.display = einvoiceMode === 'pec' ? '' : 'none';
+          document.getElementById('foreign-field').style.display = einvoiceMode === 'foreign' ? '' : 'none';
+          document.getElementById('codice-sdi').required = einvoiceMode === 'sdi';
+          document.getElementById('pec-address').required = einvoiceMode === 'pec';
+          document.getElementById('foreign-tax-id').required = einvoiceMode === 'foreign';
+      }
+      document.querySelectorAll('.einvoice-toggle button').forEach(btn => {
+          btn.addEventListener('click', () => {
+              einvoiceMode = btn.dataset.einvoice;
+              document.querySelectorAll('.einvoice-toggle button').forEach(b => b.classList.toggle('active', b === btn));
+              applyEinvoiceMode();
+          });
+      });
+      applyEinvoiceMode();
+
+      // Payment method visual selection
+      document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+          radio.addEventListener('change', () => {
+              document.querySelectorAll('.payment-method').forEach(pm => pm.classList.remove('is-selected'));
+              radio.closest('.payment-method').classList.add('is-selected');
+          });
+      });
+
+      // Reverse-charge toggle recomputes summary (no IT VAT for valid intra-EU B2B)
+      const reverseChargeBox = document.getElementById('reverse-charge');
+      const splitPaymentBox = document.getElementById('split-payment');
+      function recomputeSummary() {
+          const reverseCharge = reverseChargeBox && reverseChargeBox.checked;
+          const splitPayment = splitPaymentBox && splitPaymentBox.checked;
+          const taxApplies = !reverseCharge && !splitPayment;
+          const newTax = taxApplies ? subtotal * taxRate : 0;
+          const newTotal = subtotal + shipping + newTax;
+          const taxRow = document.getElementById('summary-tax-row');
+          const taxAmount = document.getElementById('summary-tax-amount');
+          const totalAmount = document.getElementById('summary-total-amount');
+          if (taxAmount) taxAmount.textContent = EUR.format(newTax);
+          if (totalAmount) totalAmount.textContent = EUR.format(newTotal);
+          if (taxRow) {
+              const label = taxRow.querySelector('span:first-child');
+              if (reverseCharge) label.textContent = 'VAT (reverse charge — 0%)';
+              else if (splitPayment) label.textContent = 'VAT (split payment)';
+              else label.textContent = 'VAT (22%)';
+          }
+      }
+      if (reverseChargeBox) reverseChargeBox.addEventListener('change', recomputeSummary);
+      if (splitPaymentBox) splitPaymentBox.addEventListener('change', recomputeSummary);
+
+      // Promo code (UI only — server validates the actual code)
+      const applyPromoBtn = document.getElementById('apply-promo');
+      const promoStatus = document.getElementById('promo-status');
+      if (applyPromoBtn) {
+          applyPromoBtn.addEventListener('click', () => {
+              const code = document.getElementById('promo-code').value.trim().toUpperCase();
+              if (!code) { promoStatus.textContent = ''; return; }
+              promoStatus.textContent = 'Code will be validated at the next step.';
+              promoStatus.style.color = 'var(--text-secondary)';
+          });
+      }
+
       const checkoutButton = document.getElementById('checkout-button');
       checkoutButton.addEventListener('click', async () => {
-          // MODIFICA 3: Leggi e valida l'email prima di inviare
           const emailInput = document.getElementById('email-input');
           const email = emailInput.value.trim();
 
-if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+          if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
               alert('Please enter a valid email address.');
               emailInput.focus();
               return;
           }
 
+          const customerType = document.querySelector('input[name="customer-type"]:checked').value;
+          const firstName = document.getElementById('first-name').value.trim();
+          const lastName = document.getElementById('last-name').value.trim();
+          const phone = document.getElementById('phone').value.trim();
+
+          if (!firstName || !lastName) { alert('Please enter your first and last name.'); document.getElementById('first-name').focus(); return; }
+          if (!phone) { alert('Please enter a phone number — needed for delivery contact.'); document.getElementById('phone').focus(); return; }
+
+          let billing = { type: customerType, firstName, lastName, phone };
+
+          if (customerType === 'private') {
+              const cf = document.getElementById('cf-private').value.trim().toUpperCase();
+              if (cf && !/^[A-Z0-9]{16}$/.test(cf)) {
+                  alert('Codice Fiscale must be exactly 16 alphanumeric characters, or leave it empty.');
+                  document.getElementById('cf-private').focus();
+                  return;
+              }
+              billing.codiceFiscale = cf || null;
+          } else {
+              const ragioneSociale = document.getElementById('ragione-sociale').value.trim();
+              const partitaIva = document.getElementById('partita-iva').value.trim().toUpperCase();
+              const cfBusiness = document.getElementById('cf-business').value.trim().toUpperCase();
+              const codiceSdi = document.getElementById('codice-sdi').value.trim().toUpperCase();
+              const pec = document.getElementById('pec-address').value.trim();
+              const foreignTaxId = document.getElementById('foreign-tax-id').value.trim().toUpperCase();
+              const address = document.getElementById('bill-address').value.trim();
+              const city = document.getElementById('bill-city').value.trim();
+              const zip = document.getElementById('bill-zip').value.trim();
+              const province = document.getElementById('bill-province').value.trim().toUpperCase();
+              const country = document.getElementById('bill-country').value;
+
+              if (!ragioneSociale) { alert('Please enter the legal company name (Ragione sociale).'); document.getElementById('ragione-sociale').focus(); return; }
+              if (!partitaIva) { alert('Please enter the Partita IVA / VAT number.'); document.getElementById('partita-iva').focus(); return; }
+              if (!address || !city || !zip) { alert('Please complete the legal billing address.'); return; }
+              if (country === 'IT' && (!province || province.length !== 2)) { alert('Please enter the 2-letter Italian province (e.g. TV, MI, RM).'); document.getElementById('bill-province').focus(); return; }
+
+              if (einvoiceMode === 'sdi') {
+                  if (!codiceSdi || codiceSdi.length !== 7) { alert('Codice SDI must be exactly 7 characters. Use 0000000 if unknown.'); document.getElementById('codice-sdi').focus(); return; }
+              } else if (einvoiceMode === 'pec') {
+                  if (!pec || !/^\S+@\S+\.\S+$/.test(pec)) { alert('Please enter a valid PEC address.'); document.getElementById('pec-address').focus(); return; }
+              } else if (einvoiceMode === 'foreign') {
+                  if (!foreignTaxId) { alert('Please enter the foreign VAT / Tax ID.'); document.getElementById('foreign-tax-id').focus(); return; }
+              }
+
+              billing.company = {
+                  ragioneSociale, partitaIva,
+                  codiceFiscale: cfBusiness || null,
+                  einvoiceChannel: einvoiceMode,
+                  codiceSdi: einvoiceMode === 'sdi' ? codiceSdi : null,
+                  pec: einvoiceMode === 'pec' ? pec : null,
+                  foreignTaxId: einvoiceMode === 'foreign' ? foreignTaxId : null
+              };
+              billing.address = { line1: address, city, zip, province, country };
+          }
+
+          // ----- Shipping address -----
+          const isBusiness = customerType === 'business';
+          const sameAsBilling = isBusiness && sameAsBillingCheckbox.checked;
+          let shipping;
+          if (sameAsBilling) {
+              shipping = {
+                  sameAsBilling: true,
+                  recipient: billing.company.ragioneSociale,
+                  line1: billing.address.line1,
+                  line2: null,
+                  city: billing.address.city,
+                  zip: billing.address.zip,
+                  province: billing.address.province,
+                  country: billing.address.country,
+                  phone: phone,
+                  notes: null
+              };
+          } else {
+              const recipient = document.getElementById('ship-recipient').value.trim();
+              const line1 = document.getElementById('ship-address').value.trim();
+              const line2 = document.getElementById('ship-address2').value.trim();
+              const city = document.getElementById('ship-city').value.trim();
+              const zip = document.getElementById('ship-zip').value.trim();
+              const province = document.getElementById('ship-province').value.trim().toUpperCase();
+              const country = document.getElementById('ship-country').value;
+              const shipPhone = document.getElementById('ship-phone').value.trim();
+              const notes = document.getElementById('ship-notes').value.trim();
+
+              if (!recipient) { alert('Please enter the recipient name for shipping.'); document.getElementById('ship-recipient').focus(); return; }
+              if (!line1 || !city || !zip) { alert('Please complete the shipping address.'); return; }
+              if (country === 'IT' && (!province || province.length !== 2)) { alert('Please enter the 2-letter shipping province (e.g. TV, MI, RM).'); document.getElementById('ship-province').focus(); return; }
+              if (!shipPhone) { alert('Please enter a delivery contact phone — required by the courier.'); document.getElementById('ship-phone').focus(); return; }
+
+              shipping = {
+                  sameAsBilling: false,
+                  recipient, line1, line2: line2 || null,
+                  city, zip, province, country,
+                  phone: shipPhone, notes: notes || null
+              };
+          }
+
+          // ----- Business extras -----
+          let businessOrder = null;
+          if (isBusiness) {
+              businessOrder = {
+                  poNumber: document.getElementById('po-number').value.trim() || null,
+                  costCenter: document.getElementById('cost-center').value.trim() || null,
+                  reverseCharge: document.getElementById('reverse-charge').checked,
+                  splitPayment: document.getElementById('split-payment').checked
+              };
+          }
+
+          // ----- Medical-device qualification -----
+          const profession = document.getElementById('profession').value;
+          const licenseNumber = document.getElementById('license-number').value.trim();
+          const consentQualification = document.getElementById('consent-qualification').checked;
+          const consentIntendedUse = document.getElementById('consent-intended-use').checked;
+          if (!profession) { alert('Please select your profession or role.'); document.getElementById('profession').focus(); return; }
+          if (!consentQualification) { alert('You must confirm you are a qualified healthcare professional or authorized facility.'); return; }
+          if (!consentIntendedUse) { alert('You must acknowledge the intended use of the device.'); return; }
+
+          // ----- Payment method -----
+          const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+
+          // ----- Order extras -----
+          const promoCode = document.getElementById('promo-code').value.trim().toUpperCase() || null;
+          const orderNotes = document.getElementById('order-notes').value.trim() || null;
+
+          // ----- Legal consents -----
+          const consentTerms = document.getElementById('consent-terms').checked;
+          const consentWithdrawal = document.getElementById('consent-withdrawal').checked;
+          const consentMarketing = document.getElementById('consent-marketing').checked;
+          if (!consentTerms) { alert('You must accept the Terms of Sale and Privacy Policy to continue.'); return; }
+          if (!isBusiness && !consentWithdrawal) { alert('You must acknowledge the 14-day right of withdrawal.'); return; }
+
+          const payload = {
+              cart: cart,
+              customerEmail: email,
+              billing: billing,
+              shipping: shipping,
+              businessOrder: businessOrder,
+              qualification: {
+                  profession,
+                  licenseNumber: licenseNumber || null,
+                  confirmedQualified: consentQualification,
+                  confirmedIntendedUse: consentIntendedUse
+              },
+              paymentMethod: paymentMethod,
+              promoCode: promoCode,
+              notes: orderNotes,
+              consents: {
+                  terms: consentTerms,
+                  withdrawal: isBusiness ? null : consentWithdrawal,
+                  marketing: consentMarketing,
+                  consentTimestamp: new Date().toISOString()
+              }
+          };
+
           checkoutButton.disabled = true;
-          checkoutButton.textContent = 'Redirecting to payment...';
+          checkoutButton.textContent = paymentMethod === 'bank_transfer'
+              ? 'Submitting order...'
+              : 'Redirecting to payment...';
 
           try {
               const response = await fetch(`${SERVER_URL}/create-checkout-session`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  // MODIFICA 4: Invia l'email insieme al carrello
-                  body: JSON.stringify({ cart: cart, customerEmail: email })
+                  body: JSON.stringify(payload)
               });
-              
+
               const session = await response.json();
 
               if (session.url) {
@@ -265,36 +1634,184 @@ if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
               } else {
                   alert('Error: ' + (session.error || 'Could not create payment session.'));
                   checkoutButton.disabled = false;
-                  checkoutButton.textContent = 'Proceed to Payment';
+                  checkoutButton.textContent = 'Continue to payment';
               }
 
           } catch (error) {
               console.error('Error:', error);
               alert('Could not contact the payment server. Please try again later.');
               checkoutButton.disabled = false;
-              checkoutButton.textContent = 'Proceed to Payment';
+              checkoutButton.textContent = 'Continue to payment';
           }
       });
     }
 
     checkoutContent.addEventListener('click', (event) => {
-        const target = event.target;
+        const target = event.target.closest('[data-action]');
+        if (!target) return;
         const action = target.dataset.action;
-        const id = target.dataset.id; 
-
+        const id = target.dataset.id;
         if (!id) return;
 
-        if (action === 'increase') {
-            changeQuantity(id, 1);
-        } else if (action === 'decrease') {
-            changeQuantity(id, -1);
-        } else if (action === 'remove') {
-            removeItem(id);
-        }
+        if (action === 'increase') changeQuantity(id, 1);
+        else if (action === 'decrease') changeQuantity(id, -1);
+        else if (action === 'remove') removeItem(id);
     });
-    
+
     loadCart();
   });
 </script>
+
+<script>
+// Canonical nav + mobile menu + cart sidebar
+document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => { mobileMenu.classList.add('is-open'); });
+    }
+
+    const mainNav = document.getElementById('main-nav');
+    const navItems = mainNav.querySelectorAll('.nav-links li');
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    const backdrop = document.querySelector('.menu-backdrop');
+    let activeMenu = null, closeTimeout;
+
+    function openMenu(id) {
+        if (activeMenu && activeMenu.id !== id) { activeMenu.classList.remove('is-open'); }
+        const menu = document.getElementById(id);
+        if (menu) { menu.classList.add('is-open'); backdrop.classList.add('is-visible'); activeMenu = menu; }
+    }
+    function closeAll() {
+        if (activeMenu) { activeMenu.classList.remove('is-open'); }
+        backdrop.classList.remove('is-visible');
+        activeMenu = null;
+    }
+
+    if (window.innerWidth >= 960) {
+        navItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                clearTimeout(closeTimeout);
+                if (item.dataset.menu) openMenu(item.dataset.menu);
+                else closeAll();
+            });
+        });
+        mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
+        mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+        dropdowns.forEach(menu => {
+            menu.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+            menu.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
+        });
+    }
+    if (backdrop) backdrop.addEventListener('click', closeAll);
+
+    // Cart sidebar
+    const cartBtn = document.getElementById('cart-btn');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const cartBackdrop = document.getElementById('cart-backdrop');
+    const closeCart = document.getElementById('close-cart');
+    const cartCount = document.getElementById('cart-count');
+    const cartItemsList = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    const cartEmpty = document.getElementById('cart-empty');
+    const clearCartBtn = document.getElementById('clear-cart');
+    const cartCheckoutBtn = document.getElementById('cart-checkout-btn');
+
+    function readCart() { return JSON.parse(sessionStorage.getItem('shoppingCart') || '[]'); }
+    function writeCart(c) { sessionStorage.setItem('shoppingCart', JSON.stringify(c)); }
+    function formatOptions(options) {
+        if (typeof options === 'object' && options !== null) {
+            return Object.values(options).filter(val => val).join(', ');
+        }
+        return options || '';
+    }
+    function refreshSidebar() {
+        const cart = readCart();
+        const consolidated = {};
+        cart.forEach(item => {
+            const key = item.id + JSON.stringify(item.options);
+            if (consolidated[key]) consolidated[key].quantity++;
+            else consolidated[key] = { ...item, quantity: 1, uniqueKey: key };
+        });
+        const display = Object.values(consolidated);
+        cartItemsList.innerHTML = '';
+        let total = 0;
+        cart.forEach(item => { total += (item.price || 0); });
+        const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+
+        if (display.length === 0) {
+            cartEmpty.style.display = 'block';
+            cartCheckoutBtn.disabled = true;
+            clearCartBtn.disabled = true;
+        } else {
+            cartEmpty.style.display = 'none';
+            cartCheckoutBtn.disabled = false;
+            clearCartBtn.disabled = false;
+            display.forEach(item => {
+                const li = document.createElement('div');
+                li.className = 'cart-item';
+                const baseName = item.name ? item.name.split('(')[0].trim() : 'Product';
+                const fmt = formatOptions(item.options);
+                li.innerHTML = `
+                    <div class="cart-product-card">
+                        <div class="cart-product-header">
+                            <h4 class="cart-product-title">${baseName}</h4>
+                            <button class="btn btn-ghost" style="padding:2px 8px; font-size:16px; border:none;" onclick="window.cartRemoveItem('${item.uniqueKey}')">&times;</button>
+                        </div>
+                        <p class="cart-product-subtitle" style="font-size:13px; color:var(--text-secondary); margin:0 0 8px 0;">${fmt}</p>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="window.cartChangeQty('${item.uniqueKey}', -1)">-</button>
+                                <span class="quantity-input">${item.quantity}</span>
+                                <button class="quantity-btn" onclick="window.cartChangeQty('${item.uniqueKey}', 1)">+</button>
+                            </div>
+                            <div style="font-weight:600; font-size:14px;">${EUR.format(item.price)}</div>
+                        </div>
+                    </div>`;
+                cartItemsList.appendChild(li);
+            });
+        }
+        if (cartCount) cartCount.innerText = cart.length;
+        if (cartTotal) cartTotal.innerText = EUR.format(total);
+    }
+    window.cartChangeQty = (uniqueKey, amount) => {
+        const cart = readCart();
+        if (amount > 0) {
+            const tpl = cart.find(i => (i.id + JSON.stringify(i.options)) === uniqueKey);
+            if (tpl) cart.push({ ...tpl });
+        } else {
+            const idx = cart.findIndex(i => (i.id + JSON.stringify(i.options)) === uniqueKey);
+            if (idx > -1) cart.splice(idx, 1);
+        }
+        writeCart(cart);
+        refreshSidebar();
+    };
+    window.cartRemoveItem = (uniqueKey) => {
+        const cart = readCart().filter(i => (i.id + JSON.stringify(i.options)) !== uniqueKey);
+        writeCart(cart);
+        refreshSidebar();
+    };
+    const openCart = () => {
+        cartSidebar.classList.add('is-open');
+        cartBackdrop.classList.add('is-visible');
+        body.style.overflow = 'hidden';
+        refreshSidebar();
+    };
+    const closeCartFunc = () => {
+        cartSidebar.classList.remove('is-open');
+        cartBackdrop.classList.remove('is-visible');
+        body.style.overflow = '';
+    };
+    if (cartBtn) cartBtn.addEventListener('click', openCart);
+    if (closeCart) closeCart.addEventListener('click', closeCartFunc);
+    if (cartBackdrop) cartBackdrop.addEventListener('click', closeCartFunc);
+    if (clearCartBtn) clearCartBtn.addEventListener('click', () => { writeCart([]); refreshSidebar(); window.location.reload(); });
+    if (cartCheckoutBtn) cartCheckoutBtn.addEventListener('click', () => { closeCartFunc(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    refreshSidebar();
+});
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
 </body>
 </html>

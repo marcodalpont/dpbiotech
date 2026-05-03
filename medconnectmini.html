@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Med Connect Mini — Surgical Command Center</title>
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="favicon-192.png"><title>Med Connect Mini — Surgical Command Center</title>
 <script>
     if (sessionStorage.getItem('isAuthenticated') !== 'true') {
       // window.location.href = 'login.html';
@@ -219,6 +223,133 @@ a:hover { opacity: 0.7; }
 footer { padding: 60px 0; border-top: 1px solid var(--divider); font-size: 13px; color: var(--text-secondary); background: var(--bg-body); }
 .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
 .footer-links { display: flex; gap: 24px; }
+
+/* === Canonical cart/footer === */
+footer {
+    border-top: 1px solid var(--divider);
+    padding: 64px 0 32px;
+    background: var(--bg-body);
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+}
+@media(max-width: 860px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+@media(max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; }
+}
+.footer-brand .logo { margin-bottom: 16px; }
+.footer-brand p {
+    font-size: 13px;
+    max-width: 320px;
+    margin-bottom: 16px;
+}
+.footer-address {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: normal;
+}
+.footer-address strong { color: var(--text-primary); font-weight: 600; }
+.footer-col-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+.footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--text-primary); opacity: 1; }
+.footer-bottom {
+    padding-top: 24px;
+    border-top: 1px solid var(--divider);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+.footer-regulatory {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.footer-regulatory-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid var(--divider);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.cart-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10,10,15,0.32);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+    z-index: 200;
+}
+.cart-backdrop.is-visible { opacity: 1; visibility: visible; }
+.cart-sidebar {
+    position: fixed;
+    top: 16px; right: 16px; bottom: 16px; left: auto;
+    width: calc(100% - 32px); max-width: 400px; height: auto;
+    background: var(--bg-card);
+    border-radius: 22px;
+    border: 1px solid rgba(10,10,15,0.06);
+    transform: translateX(calc(100% + 32px));
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 201;
+    display: flex; flex-direction: column;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.6) inset,
+        0 24px 60px rgba(10,10,15,0.22),
+        0 6px 16px rgba(10,10,15,0.08);
+    overflow: hidden;
+}
+.cart-sidebar.is-open { transform: translateX(0); }
+.cart-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--divider);
+    display: flex; justify-content: space-between; align-items: center;
+}
+.cart-items {
+    flex: 1; overflow-y: auto;
+    padding: 20px 22px;
+    list-style: none; margin: 0;
+}
+.cart-footer {
+    padding: 22px;
+    border-top: 1px solid var(--divider);
+    background: var(--bg-secondary);
+}
+@media(max-width: 480px) {
+    .cart-sidebar {
+        top: 12px; right: 12px; bottom: 12px;
+        width: calc(100% - 24px); max-width: calc(100% - 24px);
+        border-radius: 20px;
+    }
+}
+/* === End canonical === */
 </style>
 </head>
 <body>
@@ -231,7 +362,7 @@ footer { padding: 60px 0; border-top: 1px solid var(--divider); font-size: 13px;
     <a href="DPMini.html" class="mobile-link">DP Mini</a>
     <a href="DPPro.html" class="mobile-link">DP Pro</a>
     <a href="all-models.html" class="mobile-link">All Models</a>
-    <a href="contactus.html" class="mobile-link">Support</a>
+    <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
     <a href="licensing.html" class="mobile-link">Licensing</a>
 </div>
 
@@ -244,8 +375,8 @@ footer { padding: 60px 0; border-top: 1px solid var(--divider); font-size: 13px;
       
       <ul class="nav-links">
           <li class="dropdown" data-menu="microscopes-menu">Microscopes</li>
-          <li><a href="stands.html">Stands</a></li> <li class="dropdown" data-menu="software-menu">Software</li>
-          <li class="dropdown" data-menu="support-menu">Support</li>
+          <li class="dropdown" data-menu="software-menu">Software</li>
+          <li class="dropdown" data-menu="support-menu">Company &amp; Support</li>
       </ul>
 
       <div class="nav-actions">
@@ -612,29 +743,86 @@ footer { padding: 60px 0; border-top: 1px solid var(--divider); font-size: 13px;
 </section>
 
 <footer>
-    <div class="container footer-content">
-        <div class="logo">
-            <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:24px; margin-right:8px; border-radius: 50%;">             <span>DP Biotech &copy; 2025</span>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:28px; border-radius:50%; margin-right:8px;">
+                    <span style="font-weight:600;">DP Biotech</span>
+                </div>
+                <p>High-performance surgical microscopes engineered in Italy. Designed for clinical workflows; built around optical precision and modern digital ergonomics.</p>
+                <address class="footer-address">
+                    <strong>Dal Pont Medical S.r.l.s</strong><br>
+                    Piazza San Vito 12<br>
+                    31100 Treviso — Italia<br><br>
+                    VAT / C.F.: 05355480269<br>
+                    REA: 437837<br>
+                    EUDAMED SRN: IT-MF-000052836
+                </address>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Products</div>
+                <ul>
+                    <li><a href="DPMini.html">DP Mini</a></li>
+                    <li><a href="DPPro.html">DP Pro</a></li>
+                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="all-models.html">Compare Models</a></li>
+                    <li><a href="#specs">Specifications</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Support &amp; Service</div>
+                <ul>
+                    <li><a href="contactus.html">Sales Enquiries</a></li>
+                    <li><a href="contactus.html">Clinical Support</a></li>
+                    <li><a href="contactus.html">Service &amp; Repair (RMA)</a></li>
+                    <li><a href="#">Downloads &amp; Manuals</a></li>
+                    <li><a href="#">Instructions for Use (IFU)</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Regulatory &amp; Legal</div>
+                <ul>
+                    <li><a href="#">EU Declaration of Conformity</a></li>
+                    <li><a href="#">Vigilance &amp; Incident Reporting</a></li>
+                    <li><a href="#">UDI Information</a></li>
+                    <li><a href="#">Warranty</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Terms of Sale</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="footer-links">
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
-            <a href="contactus.html">Contact</a>
+
+        <div class="footer-bottom">
+            <div>© 2026 Dal Pont Medical S.r.l.s — All rights reserved.</div>
+            <div class="footer-regulatory">
+                <span class="footer-regulatory-badge">CE</span>
+                <span class="footer-regulatory-badge">MDR Class I</span>
+                <span class="footer-regulatory-badge">Made in Italy</span>
+            </div>
         </div>
     </div>
 </footer>
 
 <div class="cart-backdrop" id="cart-backdrop"></div>
 <div class="cart-sidebar" id="cart-sidebar">
-    <div style="padding: 20px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between;">
+    <div class="cart-header">
         <h3>Your Cart</h3>
         <button class="btn btn-ghost" id="close-cart">Close</button>
     </div>
-    <div style="flex:1; padding:20px; text-align:center; color: var(--text-secondary);" id="cart-items">
-        Cart is empty
-    </div>
-    <div style="padding:20px; border-top: 1px solid var(--divider); background: var(--bg-secondary);">
-        <button class="btn btn-primary" style="width:100%;">Checkout</button>
+    <div class="cart-items" id="cart-items"></div>
+    <div id="cart-empty" style="padding:40px; text-align:center; color:var(--text-secondary);">Cart is empty</div>
+    <div class="cart-footer">
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
+            <span>Total</span><span id="cart-total">€0,00</span>
+        </div>
+        <button id="checkout-btn" class="btn btn-primary" style="width:100%;">Checkout</button>
+        <button id="clear-cart" class="btn btn-ghost" style="width:100%; margin-top:8px; font-size:12px;">Clear Cart</button>
     </div>
 </div>
 
@@ -722,5 +910,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if(badge) badge.innerText = count;
 });
 </script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
 </body>
 </html>

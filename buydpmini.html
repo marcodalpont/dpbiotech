@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Buy DP Mini - DP Biotech</title>
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="favicon-192.png"><title>Buy DP Mini - DP Biotech</title>
 <script>
     if (sessionStorage.getItem('isAuthenticated') !== 'true') {
       window.location.href = 'login.html';
@@ -94,312 +98,1797 @@
   .total-price .label{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
   .total-price .amount{font-size:24px; font-weight:700; color:var(--text);}
 
-  /* --- MODIFICATION START: Updated Cart Styles --- */
-  .cart-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 90;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .3s ease, visibility .3s ease;
-  }
-  .cart-backdrop.is-visible {
-    opacity: 1;
-    visibility: visible;
-  }
-  .cart-sidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 100%;
-    max-width: 400px;
-    height: 100%;
-    background: var(--bg);
-    border-left: 1px solid var(--line);
-    z-index: 100;
-    transform: translateX(100%);
-    transition: transform .3s ease;
-    display: flex;
-    flex-direction: column;
-    box-shadow: -10px 0 20px rgba(0,0,0,0.1);
-    padding: 0; 
-  }
-  .cart-sidebar.is-open {
-    transform: translateX(0);
-  }
-  .cart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--line);
-    padding: 1rem 2rem;
-    flex-shrink: 0;
-  }
-  .cart-items {
-    list-style: none;
-    padding: 1rem 2rem;
-    margin: 0;
-    flex-grow: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .cart-item {
-    padding: 0;
-    border-bottom: none;
-  }
+  /* --- Apple-style cart card --- */
   .cart-product-card {
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 16px;
     background: var(--card);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    margin-bottom: 12px;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .cart-product-card:hover {
+    border-color: rgba(10, 10, 15, 0.12);
   }
   .cart-product-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 8px;
+    gap: 12px;
   }
   .cart-product-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--text);
     margin: 0;
   }
   .cart-product-subtitle {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--muted);
-    margin: 4px 0 12px 0;
+    margin: 4px 0 14px;
     font-weight: 400;
+    line-height: 1.45;
   }
   .cart-product-price {
     font-size: 15px;
-    font-weight: 500;
-  }
-  .cart-product-remove-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    line-height: 1;
-    padding: 0;
-    margin-left: 10px;
-    cursor: pointer;
-    color: var(--muted);
-    transition: color .2s ease;
-  }
-  .cart-product-remove-btn:hover {
+    font-weight: 600;
+    letter-spacing: -0.01em;
     color: var(--text);
   }
+  .cart-product-remove-btn {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border: none; background: transparent;
+    color: var(--muted);
+    font-size: 18px; line-height: 1;
+    padding: 0; cursor: pointer;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .cart-product-remove-btn:hover {
+    background: rgba(255, 59, 48, 0.1);
+    color: #ff3b30;
+  }
   .cart-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 18px;
-    font-weight: 600;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 18px; font-weight: 600;
   }
   .cart-empty-state {
-    text-align: center;
-    padding: 2rem;
-    color: var(--muted);
-    margin: auto 0;
+    text-align: center; padding: 2rem;
+    color: var(--muted); margin: auto 0;
   }
   .cart-footer {
     border-top: 1px solid var(--line);
     padding: 1rem 2rem 2rem 2rem;
-    margin-top: auto;
-    flex-shrink: 0;
+    margin-top: auto; flex-shrink: 0;
   }
 
+  .cart-item-actions {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px;
+  }
   .quantity-control {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: inline-flex; align-items: center;
+    background: var(--bg-secondary, #f2f2f4);
+    border-radius: 999px; padding: 2px;
   }
   .quantity-btn {
-    width: 28px; height: 28px; border-radius: 6px;
-    font-size: 18px; padding: 0;
-    display: grid;
-    place-items: center;
-    line-height: 0;
+    width: 28px; height: 28px;
+    border: none; background: transparent;
+    border-radius: 50%;
+    color: var(--text);
+    font-size: 16px; font-weight: 500;
+    line-height: 1; padding: 0;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: background 0.2s ease, opacity 0.2s ease;
   }
+  .quantity-btn:hover { background: rgba(0,0,0,0.06); }
+  .quantity-btn:active { background: rgba(0,0,0,0.1); }
   .quantity-input {
-    width: 32px;
-    height: 28px;
+    width: 28px; height: 28px;
+    border: none; background: transparent;
     text-align: center;
-    border: 1px solid var(--line);
-    border-radius: 6px;
     font-family: inherit;
-    font-weight: 600;
+    font-size: 14px; font-weight: 600;
+    color: var(--text);
     -moz-appearance: textfield;
     appearance: textfield;
+    pointer-events: none;
   }
   .quantity-input::-webkit-outer-spin-button,
   .quantity-input::-webkit-inner-spin-button {
     -webkit-appearance: none; margin: 0;
   }
-  .cart-item-actions {
+  /* --- MODIFICATION END --- */
+
+/* === Canonical nav/footer/cart === */
+:root {
+    --bg-body: #fafafa;
+    --bg-secondary: #f2f2f4;
+    --bg-card: #ffffff;
+    --text-primary: #0a0a0f;
+    --text-secondary: #6b6b78;
+    --accent: #0f766e;
+    --accent-2: #1e293b;
+    --accent-gradient: linear-gradient(135deg, #1e293b 0%, #0f766e 100%);
+    --divider: rgba(10, 10, 15, 0.06);
+    --divider-strong: rgba(10, 10, 15, 0.1);
+    --nav-height: 60px;
+    --shadow-md: 0 4px 12px rgba(10,10,15,0.04), 0 20px 40px -12px rgba(15,23,42,0.08);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #0a0a0f;
+        --bg-secondary: #13131a;
+        --bg-card: #1a1a24;
+        --text-primary: #f5f5f7;
+        --text-secondary: #9ca3af;
+        --divider: rgba(255, 255, 255, 0.08);
+        --divider-strong: rgba(255, 255, 255, 0.14);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 20px 40px -12px rgba(0,0,0,0.3);
+    }
+}
+
+.nav {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height);
+    background: rgba(255, 255, 255, 0.7); backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    z-index: 100; border-bottom: 1px solid var(--divider);
+}
+@media (prefers-color-scheme: dark) { .nav { background: rgba(0,0,0,0.7); } }
+
+.nav-inner { height: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+
+.nav-links { display: none; list-style: none; gap: 32px; margin: 0; padding: 0; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+@media(min-width: 960px) { .nav-links { display: flex; } }
+.nav-links li { cursor: pointer; transition: color 0.2s; height: 100%; display: flex; align-items: center; }
+.nav-links li:hover { color: var(--text-primary); }
+
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+
+.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; border: none; text-decoration: none !important;
+}
+.btn-primary { background: var(--text-primary); color: var(--bg-body); }
+.btn-primary:hover { transform: scale(1.02); opacity: 0.95; }
+.btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--divider); }
+.btn-ghost:hover { background: var(--bg-secondary); }
+
+.desktop-btn { display: none !important; }
+@media(min-width: 960px) { .desktop-btn { display: inline-flex !important; } }
+
+.cart-icon-btn {
+    position: relative; background: none; border: none; color: var(--text-primary); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
+}
+.cart-badge {
+    position: absolute; top: 4px; right: 4px; background: var(--accent); color: white;
+    font-size: 10px; width: 16px; height: 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+.hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-primary); }
+@media(max-width: 960px) { .hamburger { display: block; } }
+
+.dropdown-menu {
+    opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease;
+    position: absolute; top: var(--nav-height); left: 0; right: 0;
+    background: var(--bg-body); border-top: 1px solid var(--divider);
+    box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 90;
+    overflow-y: auto; max-height: calc(100vh - var(--nav-height));
+}
+.dropdown-menu.is-open { opacity: 1; visibility: visible; }
+.menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 40px 0; }
+.menu-main-links, .menu-link-column { list-style: none; padding: 0; margin: 0; }
+.menu-main-links li:first-child, .menu-link-column li:first-child {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--text-secondary); margin-bottom: 12px; padding: 0 12px;
+}
+.menu-main-links a { font-size: 24px; font-weight: 600; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-link-column a { font-size: 14px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-main-links a:hover, .menu-link-column a:hover { background: var(--bg-secondary); }
+.menu-backdrop { position: fixed; top: var(--nav-height); left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; visibility: hidden; transition: 0.3s; }
+.menu-backdrop.is-visible { opacity: 1; visibility: visible; }
+
+.mobile-menu-overlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 150; padding: 80px 24px; transform: translateY(-100%); transition: transform 0.4s ease; display: flex; flex-direction: column; gap: 24px; }
+.mobile-menu-overlay.is-open { transform: translateY(0); }
+.mobile-link { font-size: 24px; font-weight: 600; border-bottom: 1px solid var(--divider); padding-bottom: 16px; }
+
+.cart-backdrop { position: fixed; inset: 0; top: 0; left: 0; right: 0; bottom: 0; width: auto; height: auto; background: rgba(10,10,15,0.32); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s ease; z-index: 200; }
+.cart-backdrop.is-visible { opacity: 1; visibility: visible; }
+.cart-sidebar {
+    position: fixed; top: 16px; right: 16px; bottom: 16px;
+    left: auto;
+    width: calc(100% - 32px); max-width: 400px; height: auto;
+    background: var(--bg-card);
+    border: 1px solid rgba(10,10,15,0.06);
+    border-left: 1px solid rgba(10,10,15,0.06);
+    border-radius: 22px;
+    transform: translateX(calc(100% + 32px));
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 201;
+    display: flex; flex-direction: column;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.6) inset,
+        0 24px 60px rgba(10,10,15,0.22),
+        0 6px 16px rgba(10,10,15,0.08);
+    overflow: hidden;
+    padding: 0;
+}
+.cart-sidebar.is-open { transform: translateX(0); }
+.cart-header { padding: 20px 22px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
+.cart-items { flex: 1; overflow-y: auto; padding: 20px 22px; list-style: none; margin: 0; display: flex; flex-direction: column; gap: 1rem; }
+.cart-footer { padding: 22px; border-top: 1px solid var(--divider); background: var(--bg-secondary); }
+@media(max-width: 480px) {
+    .cart-sidebar { top: 12px; right: 12px; bottom: 12px; width: calc(100% - 24px); border-radius: 20px; }
+}
+
+footer {
+    border-top: 1px solid var(--divider);
+    padding: 64px 0 32px;
+    background: var(--bg-body);
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+}
+@media(max-width: 860px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+@media(max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; }
+}
+.footer-brand .logo { margin-bottom: 16px; }
+.footer-brand p {
+    font-size: 13px;
+    max-width: 320px;
+    margin-bottom: 16px;
+}
+.footer-address {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: normal;
+}
+.footer-address strong { color: var(--text-primary); font-weight: 600; }
+.footer-col-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+.footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a {
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--text-primary); opacity: 1; }
+.footer-bottom {
+    padding-top: 24px;
+    border-top: 1px solid var(--divider);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 12px;
-  }
-  /* --- MODIFICATION END --- */
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+.footer-regulatory {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.footer-regulatory-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid var(--divider);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+/* === End canonical === */
+
+/* =========================================
+   APPLE-STYLE CONFIGURATOR (DP Mini palette)
+   ========================================= */
+:root {
+    --mini-accent: #ff7a18;
+    --mini-accent-2: #ff3b30;
+    --mini-accent-soft: rgba(255, 122, 24, 0.045);
+    --mini-accent-ring: rgba(255, 122, 24, 0.10);
+    --apple-blue: #0071e3;
+    --apple-blue-soft: rgba(0, 113, 227, 0.05);
+    --apple-blue-ring: rgba(0, 113, 227, 0.18);
+}
+body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: var(--bg-body);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    padding-top: var(--nav-height);
+    padding-bottom: 120px;
+}
+
+/* Layout */
+.config-layout {
+    grid-template-columns: 1.05fr 1fr;
+    gap: 64px;
+    height: auto;
+    padding-top: 32px;
+    align-items: start;
+}
+@media(max-width: 999px) {
+    .config-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding-top: 16px;
+    }
+}
+
+/* Title */
+.viewer h1 {
+    font-size: clamp(28px, 3.4vw, 40px);
+    line-height: 1.06;
+    letter-spacing: -0.022em;
+    color: var(--text-primary);
+    font-weight: 600;
+    margin: 4px 0 6px;
+}
+.viewer .config-eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mini-accent);
+    margin-bottom: 4px;
+}
+.viewer .config-sub {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 0 24px;
+    max-width: 440px;
+}
+
+/* Viewer Frame */
+.viewer {
+    position: sticky;
+    top: calc(var(--nav-height) + 24px);
+    align-self: start;
+}
+.viewer-frame {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-height: calc(100vh - var(--nav-height) - 220px);
+    min-height: 380px;
+    border-radius: 24px;
+    border: 1px solid var(--divider);
+    background:
+        radial-gradient(ellipse 95% 75% at 50% 5%, rgba(255, 122, 24, 0.16) 0%, transparent 75%),
+        var(--bg-secondary);
+    box-shadow: 0 1px 3px rgba(10,10,15,0.04);
+    overflow: hidden;
+}
+@media(max-width: 999px) {
+    .viewer { position: static; }
+    .viewer-frame { aspect-ratio: auto; height: 50vh; min-height: 380px; max-height: none; }
+}
+
+/* Right column */
+aside {
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 24px;
+    overflow-y: visible;
+    height: auto;
+}
+
+/* Option groups */
+.option-group {
+    margin-bottom: 16px;
+    border: 1px solid var(--divider);
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--bg-card);
+    box-shadow: 0 1px 2px rgba(10,10,15,0.02);
+}
+.group-header {
+    padding: 18px 20px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--divider);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+.group-header strong {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+}
+.group-header small {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.option-list {
+    padding: 12px;
+    gap: 8px;
+    background: var(--bg-card);
+}
+
+.choice {
+    border: 1px solid var(--divider);
+    border-radius: 14px;
+    padding: 14px 16px;
+    background: var(--bg-card);
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+.choice:hover {
+    border-color: rgba(10,10,15,0.18);
+}
+.choice.selected {
+    border-color: var(--apple-blue);
+    background: var(--apple-blue-soft);
+    box-shadow: 0 0 0 1px var(--apple-blue);
+}
+.choice-details strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+}
+.choice-details small {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+}
+.price-delta {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+.choice.selected .price-delta { color: var(--text-primary); }
+
+/* Custom select */
+.select-wrapper { padding: 12px; background: var(--bg-card); }
+.select-wrapper::after {
+    right: 28px;
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+select.custom-select {
+    border: 1px solid var(--divider);
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: border-color 0.2s ease;
+}
+select.custom-select:focus {
+    outline: none;
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 3px var(--apple-blue-ring);
+}
+
+/* Sticky bottom bar */
+.sticky-bar {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-top: 1px solid var(--divider);
+}
+@media (prefers-color-scheme: dark) { .sticky-bar { background: rgba(10,10,15,0.85); } }
+.bar-inner {
+    padding: 18px 20px;
+}
+.total-price .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+.total-price .amount {
+    font-size: clamp(22px, 2.4vw, 28px);
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.018em;
+    margin-top: 2px;
+}
+
+#addToCartBtn {
+    background: var(--apple-blue);
+    color: #fff;
+    padding: 12px 28px !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    border-radius: 999px !important;
+    border: none !important;
+    box-shadow: none;
+    transition: background 0.2s ease, opacity 0.2s ease;
+}
+#addToCartBtn:hover {
+    background: #0077ed;
+    opacity: 1;
+}
+#addToCartBtn:active { background: #006edc; }
+
+/* Cart sidebar overrides for this page (kept consistent with Apple-style cart) */
+.cart-product-card {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    margin-bottom: 12px;
+    box-shadow: none;
+    transition: border-color 0.25s ease;
+}
+.cart-product-card:hover { border-color: rgba(10, 10, 15, 0.12); }
+aside { scroll-behavior: smooth; }
+
+/* === SECTION HEADERS within aside === */
+.config-section-header {
+    margin: 32px 0 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.config-section-header:first-child { margin-top: 0; }
+.config-section-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    color: var(--text-primary);
+    margin: 0;
+}
+.config-section-header p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.45;
+}
+
+.group-header { position: relative; }
+.group-tag {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mini-accent);
+    background: var(--mini-accent-soft);
+    padding: 4px 8px;
+    border-radius: 999px;
+}
+.group-tag.optional { color: var(--mini-accent); background: var(--mini-accent-soft); }
+
+/* Add-on (checkbox) choices */
+.addon-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--bg-card); }
+.addon-choice {
+    display: flex; align-items: center; gap: 16px;
+    border: 1px solid var(--divider);
+    border-radius: 14px;
+    padding: 14px 16px;
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+.addon-choice:hover { border-color: rgba(10,10,15,0.18); }
+.addon-choice.selected {
+    border-color: var(--apple-blue);
+    background: var(--apple-blue-soft);
+    box-shadow: 0 0 0 1px var(--apple-blue);
+}
+.addon-choice input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--divider-strong);
+    border-radius: 6px;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s, border-color 0.2s;
+    margin: 0;
+}
+.addon-choice input[type="checkbox"]:checked {
+    background: var(--apple-blue);
+    border-color: var(--apple-blue);
+}
+.addon-choice input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px; top: 1px;
+    width: 6px; height: 11px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.addon-choice .choice-details { flex: 1; min-width: 0; }
+.addon-choice .choice-details strong {
+    display: block; font-size: 14px; font-weight: 600;
+    color: var(--text-primary); letter-spacing: -0.005em;
+}
+.addon-choice .choice-details small {
+    display: block; font-size: 12px; color: var(--text-secondary);
+    margin-top: 3px; line-height: 1.4;
+}
+.addon-choice .price-delta { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; }
+
+/* Engraving inline summary in the addon row */
+.engraving-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 8px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--apple-blue);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.engraving-edit-btn:hover { text-decoration: underline; }
+.engraving-edit-btn[hidden] { display: none; }
+.has-engraving #engraving-summary { white-space: pre-line; }
+
+/* Engraving Modal */
+.engraving-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10,10,15,0.42);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 300;
+}
+.engraving-backdrop.is-visible { opacity: 1; visibility: visible; }
+
+.engraving-modal {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    z-index: 301;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.engraving-modal.is-open { opacity: 1; visibility: visible; }
+.engraving-card {
+    width: 100%;
+    max-width: 540px;
+    background: var(--bg-card);
+    border-radius: 24px;
+    padding: 36px 36px 28px;
+    box-shadow: 0 30px 80px rgba(10,10,15,0.30), 0 8px 24px rgba(10,10,15,0.10);
+    border: 1px solid var(--divider);
+    transform: translateY(12px) scale(0.98);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+}
+.engraving-modal.is-open .engraving-card { transform: translateY(0) scale(1); }
+@media(max-width: 600px) { .engraving-card { padding: 28px 22px 22px; border-radius: 20px; } }
+
+.engraving-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: background 0.2s;
+}
+.engraving-close:hover { background: rgba(10,10,15,0.08); }
+
+.engraving-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 0 12px;
+}
+.engraving-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+.engraving-header h3 {
+    font-size: clamp(22px, 2.6vw, 28px);
+    font-weight: 600;
+    letter-spacing: -0.018em;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+}
+.engraving-header p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Stage with metallic plate preview */
+.engraving-stage {
+    margin-bottom: 22px;
+    padding: 22px;
+    border-radius: 18px;
+    background:
+        radial-gradient(ellipse 90% 70% at 50% 5%, rgba(255, 122, 24, 0.05) 0%, transparent 70%),
+        var(--bg-secondary);
+    border: 1px solid var(--divider);
+}
+.engraving-plate {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 90px;
+    padding: 18px 24px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #f8f8fa 0%, #e9e9ee 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(10,10,15,0.06);
+    border: 1px solid rgba(10,10,15,0.08);
+}
+@media (prefers-color-scheme: dark) {
+    .engraving-plate {
+        background: linear-gradient(180deg, #2a2a30 0%, #1c1c20 100%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.4);
+        border-color: rgba(255,255,255,0.05);
+    }
+}
+.engraving-preview {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: clamp(20px, 2.2vw, 26px);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: rgba(10,10,15,0.55);
+    text-align: center;
+    word-break: break-word;
+    line-height: 1.3;
+    transition: color 0.2s;
+}
+@media (prefers-color-scheme: dark) {
+    .engraving-preview { color: rgba(245,245,247,0.55); }
+}
+.engraving-preview.is-empty { color: rgba(10,10,15,0.25); font-style: italic; font-weight: 400; }
+@media (prefers-color-scheme: dark) {
+    .engraving-preview.is-empty { color: rgba(245,245,247,0.25); }
+}
+
+/* Input */
+.engraving-input-wrap { margin-bottom: 24px; }
+#engraving-text {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--divider);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+#engraving-text:focus {
+    outline: none;
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.18);
+}
+.engraving-counter-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* Actions */
+.engraving-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+.engraving-btn {
+    padding: 11px 22px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s, transform 0.15s;
+    border: none;
+}
+.engraving-btn-ghost {
+    background: transparent;
+    color: var(--text-primary);
+}
+.engraving-btn-ghost:hover { background: var(--bg-secondary); }
+.engraving-btn-primary {
+    background: var(--apple-blue);
+    color: #fff;
+}
+.engraving-btn-primary:hover { background: #0077ed; }
+.engraving-btn-primary:active { transform: scale(0.98); }
+
+/* Align right column's "Configure your DP Mini" header with left column's H1 */
+aside .config-section-header:first-child {
+    padding-top: 26px;
+}
+@media(max-width: 999px) {
+    aside .config-section-header:first-child { padding-top: 0; }
+}
+
+/* License notice card */
+.license-notice {
+    display: flex;
+    gap: 14px;
+    padding: 18px 20px;
+    border: 1px solid var(--divider);
+    border-radius: 16px;
+    background: var(--bg-secondary);
+    margin-top: 16px;
+}
+.license-notice .license-icon {
+    width: 32px; height: 32px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    display: grid; place-items: center;
+    color: var(--text-primary);
+}
+.license-notice .license-icon svg { width: 16px; height: 16px; }
+.license-notice .license-text strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+}
+.license-notice .license-text p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* What's in the box */
+.box-contents { margin-top: 24px; }
+.box-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--divider);
+    border-radius: 18px;
+    background: var(--bg-card);
+    overflow: hidden;
+}
+.box-list li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--divider);
+}
+.box-list li:last-child { border-bottom: none; }
+.box-list .box-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    display: grid; place-items: center;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}
+.box-list .box-icon svg { width: 18px; height: 18px; }
+.box-list .box-text strong {
+    display: block; font-size: 14px; font-weight: 600;
+    color: var(--text-primary); letter-spacing: -0.005em;
+}
+.box-list .box-text small {
+    display: block; font-size: 12px; color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* Order summary card */
+.summary-card {
+    margin-top: 24px;
+    border: 1px solid var(--divider);
+    border-radius: 18px;
+    background: var(--bg-card);
+    padding: 20px 22px;
+}
+.summary-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    margin: 0 0 12px;
+}
+.summary-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13px;
+    padding: 6px 0;
+}
+.summary-row .label { color: var(--text-secondary); }
+.summary-row .value { color: var(--text-primary); font-weight: 500; }
+.summary-row.is-total {
+    border-top: 1px solid var(--divider);
+    margin-top: 8px;
+    padding-top: 14px;
+    font-size: 16px;
+}
+.summary-row.is-total .label { color: var(--text-primary); font-weight: 600; }
+.summary-row.is-total .value { font-weight: 600; font-size: 18px; letter-spacing: -0.01em; }
+
+/* Sticky bar refinements */
+.sticky-bar .total-price .label { display: none; }
+.sticky-bar .total-price .amount { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+.sticky-bar .total-price .amount strong { color: var(--text-primary); font-weight: 600; font-size: 22px; letter-spacing: -0.018em; margin-left: 8px; }
+
+.summary-note {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--divider);
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+.summary-note a { color: var(--apple-blue); text-decoration: none; }
+.summary-note a:hover { text-decoration: underline; }
+
+/* ===================================
+   BOTTOM SECTIONS — In the box / License
+   =================================== */
+.bottom-section {
+    padding: 110px 0;
+}
+.box-section { background: var(--bg-secondary); margin-top: 80px; }
+.license-section { background: var(--bg-body); }
+@media(max-width: 900px) {
+    .bottom-section { padding: 72px 0; }
+    .box-section { margin-top: 48px; }
+}
+
+.bottom-section-header {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 56px;
+}
+.bottom-section-header .bottom-info-eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+}
+.bottom-section-header h2 {
+    font-size: clamp(30px, 3.6vw, 44px);
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    color: var(--text-primary);
+    margin: 0 0 12px;
+    line-height: 1.06;
+}
+.bottom-section-header p {
+    font-size: clamp(16px, 1.3vw, 18px);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+/* In the box — 4-tile grid */
+.box-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+@media(max-width: 900px) { .box-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width: 600px) { .box-grid { grid-template-columns: 1fr; } }
+.box-tile {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: 22px;
+    padding: 32px 24px;
+    text-align: left;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+}
+.box-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(10,10,15,0.06), 0 3px 10px rgba(10,10,15,0.04);
+}
+.box-tile-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    background: var(--bg-secondary);
+    display: grid; place-items: center;
+    color: var(--text-primary);
+    margin-bottom: 22px;
+}
+.box-tile-icon svg { width: 28px; height: 28px; }
+.box-tile-title {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+.box-tile-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* License section */
+.license-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1fr;
+    gap: 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+    align-items: stretch;
+}
+@media(max-width: 900px) { .license-grid { grid-template-columns: 1fr; } }
+
+.license-pricing {
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    border-radius: 24px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+}
+.license-pricing-stats {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 24px;
+    padding: 4px 0 28px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--divider);
+}
+.license-pricing-stat { text-align: center; }
+.license-pricing-stat-value {
+    font-size: clamp(34px, 3.6vw, 44px);
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 6px;
+}
+.license-pricing-stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    line-height: 1.35;
+}
+.license-pricing-stat-divider {
+    width: 1px;
+    height: 36px;
+    background: var(--divider);
+    align-self: center;
+}
+
+.license-pricing-example {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+}
+.license-example-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.license-example-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+.license-example-row span:first-child { color: var(--text-secondary); }
+.license-example-total {
+    border-top: 1px solid var(--divider);
+    margin-top: 6px;
+    padding-top: 12px;
+    font-weight: 600;
+    font-size: 16px;
+}
+.license-example-total span:first-child { color: var(--text-primary); font-weight: 600; }
+.license-example-total span:last-child { color: var(--text-primary); font-weight: 600; letter-spacing: -0.01em; }
+.license-example-suffix { color: var(--text-secondary); font-weight: 400; font-size: 13px; margin-left: 2px; }
+
+.license-pricing-note {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+    margin-top: auto;
+}
+
+.license-features {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: 24px;
+    padding: 36px 32px;
+}
+.license-features-title {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin-bottom: 22px;
+}
+.license-feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.license-feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+.license-check {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    display: grid; place-items: center;
+    margin-top: 2px;
+}
+.license-check svg { width: 12px; height: 12px; }
+.license-feature-list li strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    margin-bottom: 2px;
+}
+.license-feature-list li small {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
+.license-foot-row {
+    max-width: 1080px;
+    margin: 32px auto 0;
+    text-align: center;
+}
+.license-foot {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 720px;
+    margin: 0 auto;
+}
+.license-foot strong { color: var(--text-primary); font-weight: 600; }
+.license-foot a { color: var(--apple-blue); text-decoration: none; }
+.license-foot a:hover { text-decoration: underline; }
+
+footer { display: block; }
+</style>
+<style>
+/* Apple-style cart card (universal override) */
+.cart-sidebar .cart-product-card {
+    background: var(--bg-card, var(--card, #ffffff)) !important;
+    border: 1px solid var(--divider, var(--line, rgba(0,0,0,0.08))) !important;
+    border-radius: 18px !important;
+    padding: 18px 18px 16px !important;
+    margin-bottom: 12px !important;
+    box-shadow: none !important;
+    transition: border-color 0.25s ease;
+}
+.cart-sidebar .cart-product-card:hover { border-color: rgba(10,10,15,0.12) !important; }
+.cart-sidebar .cart-product-header {
+    display: flex !important; justify-content: space-between !important;
+    align-items: center !important; gap: 12px !important;
+    margin: 0 0 8px 0 !important;
+}
+.cart-sidebar .cart-product-title {
+    font-size: 15px !important; font-weight: 600 !important;
+    letter-spacing: -0.01em; line-height: 1.3;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    margin: 0 !important;
+}
+.cart-sidebar .cart-product-subtitle {
+    font-size: 12px !important;
+    color: var(--text-secondary, var(--muted, #6b6b78)) !important;
+    margin: 0 0 12px 0 !important;
+    font-weight: 400 !important; line-height: 1.45;
+}
+.cart-sidebar .cart-product-price {
+    font-size: 15px !important; font-weight: 600 !important;
+    letter-spacing: -0.01em;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+}
+/* Remove button — covers .cart-product-remove-btn AND any header button (e.g. .btn ghost used in index.html) */
+.cart-sidebar .cart-product-remove-btn,
+.cart-sidebar .cart-product-header > button,
+.cart-sidebar .cart-product-header .btn {
+    flex-shrink: 0 !important;
+    width: 26px !important; height: 26px !important;
+    min-width: 26px !important;
+    border: none !important; background: transparent !important;
+    color: var(--text-secondary, var(--muted, #6b6b78)) !important;
+    font-size: 18px !important; font-weight: 400 !important;
+    line-height: 1 !important; padding: 0 !important; margin: 0 !important;
+    cursor: pointer; border-radius: 50% !important;
+    display: grid !important; place-items: center !important;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    box-shadow: none !important;
+}
+.cart-sidebar .cart-product-remove-btn:hover,
+.cart-sidebar .cart-product-header > button:hover,
+.cart-sidebar .cart-product-header .btn:hover {
+    background: rgba(255, 59, 48, 0.1) !important;
+    color: #ff3b30 !important;
+    transform: none !important;
+}
+.cart-sidebar .cart-item-actions {
+    display: flex !important; justify-content: space-between !important;
+    align-items: center !important; gap: 12px !important;
+    margin-top: 0 !important;
+}
+.cart-sidebar .quantity-control {
+    display: inline-flex !important; align-items: center !important;
+    background: var(--bg-secondary, #f2f2f4) !important;
+    border-radius: 999px !important; padding: 2px !important;
+    gap: 0 !important;
+    border: none !important;
+}
+.cart-sidebar .quantity-btn {
+    width: 28px !important; height: 28px !important;
+    min-width: 28px !important;
+    border: none !important; background: transparent !important;
+    border-radius: 50% !important;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    font-size: 16px !important; font-weight: 500 !important;
+    line-height: 1 !important; padding: 0 !important;
+    cursor: pointer;
+    display: grid !important; place-items: center !important;
+    transition: background 0.2s ease;
+    box-shadow: none !important;
+}
+.cart-sidebar .quantity-btn:hover { background: rgba(0,0,0,0.06) !important; }
+.cart-sidebar .quantity-btn:active { background: rgba(0,0,0,0.1) !important; }
+.cart-sidebar .quantity-input,
+.cart-sidebar span.quantity-input,
+.cart-sidebar input.quantity-input {
+    display: inline-block !important; vertical-align: middle !important; line-height: 28px !important;
+    width: 28px !important; height: 28px !important; min-width: 28px !important;
+    border: none !important; background: transparent !important;
+    text-align: center !important; font-family: inherit !important;
+    font-size: 14px !important; font-weight: 600 !important;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    -moz-appearance: textfield; appearance: textfield;
+    pointer-events: none;
+    padding: 0 !important; margin: 0 !important;
+    box-shadow: none !important;
+}
+.cart-sidebar .quantity-input::-webkit-outer-spin-button,
+.cart-sidebar .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.cart-sidebar .cart-items { padding: 18px 22px !important; }
+.cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
 </style>
 </head>
 <body>
-  <div class="nav">
+  <nav class="nav" id="main-nav">
     <div class="container nav-inner">
-      <a href="index.html" class="logo">
-        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
-        <span>DP Biotech</span>
-      </a>
-      <div style="display:flex; gap:8px;">
-        <a href="DPMini.html" class="btn">Cancel</a>
-        <button id="cart-btn" class="btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <path d="M16 10a4 4 0 0 1-8 0"></path>
-          </svg>
-          <span id="cart-count">0</span>
-        </button>
-      </div>
+        <a href="index.html" class="logo">
+            <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRmNDZlNSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4=' " alt="Logo" style="height:28px; border-radius: 50%;">
+            <span>DP Biotech</span>
+        </a>
+
+        <ul class="nav-links">
+            <li class="dropdown" data-menu="microscopes-menu">Microscopes</li>
+            <li class="dropdown" data-menu="software-menu">Software</li>
+            <li class="dropdown" data-menu="support-menu">Company &amp; Support</li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="licensing.html" class="btn btn-ghost desktop-btn" style="border: none;">Licensing</a>
+
+            <button class="cart-icon-btn" id="cart-btn">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <span class="cart-badge" id="cart-count">0</span>
+            </button>
+            <button class="hamburger" id="menu-btn">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+        </div>
     </div>
+
+    <div id="microscopes-menu" class="dropdown-menu">
+        <div class="container">
+            <div class="menu-content">
+                <ul class="menu-main-links">
+                    <li>Shop Microscopes</li>
+                    <li><a href="DPMini.html">DP Mini</a></li>
+                    <li><a href="DPPro.html">DP Pro</a></li>
+                </ul>
+                <ul class="menu-link-column">
+                    <li>Quick Links</li>
+                    <li><a href="all-models.html">Compare Models</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="software-menu" class="dropdown-menu">
+        <div class="container">
+            <div class="menu-content">
+                <ul class="menu-main-links">
+                    <li>Connect Suite</li>
+                    <li><a href="medconnectmini.html">Med Connect Mini</a></li>
+                    <li><a href="medconnectpro.html">Med Connect Pro</a></li>
+                </ul>
+                <ul class="menu-link-column">
+                    <li>Cloud & Services</li>
+                    <li><a href="medpatient.html">Med Patient</a></li>
+                    <li><a href="medshare.html">Med Share</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="support-menu" class="dropdown-menu">
+        <div class="container">
+            <div class="menu-content">
+                <ul class="menu-main-links">
+                    <li>Get Support</li>
+                    <li><a href="contactus.html">Contact Us</a></li>
+                    <li><a href="consultation.html">Schedule a consultation</a></li>
+                </ul>
+                <ul class="menu-link-column">
+                    <li>Documents</li>
+                    <li><a href="#">User Manuals (IFU)</a></li>
+                    <li><a href="#">Declaration of Conformity</a></li>
+                    <li><a href="#">Field Safety Notices</a></li>
+                    <li><a href="#">EUDAMED Registration</a></li>
+                </ul>
+                <ul class="menu-link-column">
+                    <li>Training</li>
+                    <li><a href="#">Onboarding &amp; Setup</a></li>
+                    <li><a href="#">Webinars</a></li>
+                    <li><a href="#">Report an Incident</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+  </nav>
+  <div class="menu-backdrop"></div>
+
+  <div class="mobile-menu-overlay" id="mobile-menu">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <span class="logo">DP Biotech</span>
+          <button class="btn btn-ghost" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
+      </div>
+      <a href="DPMini.html" class="mobile-link">DP Mini</a>
+      <a href="DPPro.html" class="mobile-link">DP Pro</a>
+      <a href="all-models.html" class="mobile-link">All Models</a>
+      <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
+      <a href="licensing.html" class="mobile-link">Licensing</a>
   </div>
-  
+
   <div class="cart-backdrop" id="cart-backdrop"></div>
   <div class="cart-sidebar" id="cart-sidebar">
     <div class="cart-header">
-      <h3 style="margin:0;">Your Cart</h3>
-      <button class="btn" id="close-cart-btn">Close</button>
+        <h3 style="margin:0;">Your Cart</h3>
+        <button class="btn btn-ghost" id="close-cart-btn">Close</button>
     </div>
     <div id="cart-empty-state" class="cart-empty-state">
-      Your cart is empty.
+        Your cart is empty.
     </div>
-    <ul class="cart-items" id="cart-items">
-      </ul>
+    <ul class="cart-items" id="cart-items"></ul>
     <div class="cart-footer">
-      <div class="cart-total">
-        <span>Total</span>
-        <span id="cart-total-price">€0,00</span>
-      </div>
-      <button id="checkout-btn" class="btn primary" style="width:100%; margin-top:1rem;">Checkout</button>
-      <button id="clear-cart-btn" class="btn" style="width:100%; margin-top:0.5rem;">Clear Cart</button>
-      </div>
+        <div class="cart-total" style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
+            <span>Total</span>
+            <span id="cart-total-price">€0,00</span>
+        </div>
+        <button id="checkout-btn" class="btn btn-primary" style="width:100%;">Checkout</button>
+        <button id="clear-cart-btn" class="btn btn-ghost" style="width:100%; margin-top:8px; font-size:12px;">Clear Cart</button>
+    </div>
   </div>
 
   <div class="container">
       <div class="config-layout">
         <section class="viewer">
-            <h1>Configure your DP Mini</h1>
+            <span class="config-eyebrow">DP Mini · Configure</span>
+            <h1>Build your DP Mini.</h1>
+            <p class="config-sub">Pick your phone, objective, eyepieces and mount — your choices update the model and price live.</p>
             <div class="viewer-frame">
-              <model-viewer id="product-viewer" src="75mm4K.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope" 
-                  camera-controls ar shadow-intensity="1" camera-orbit="230deg 80deg 1.5m" interaction-prompt="none">
+              <model-viewer id="product-viewer" src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope"
+                  camera-controls ar shadow-intensity="1" camera-orbit="150deg 75deg auto" bounds="tight" interaction-prompt="none">
               </model-viewer>
             </div>
         </section>
 
         <aside>
-            <div class="option-group">
-            <div class="group-header"><strong>Device</strong><small>Select your phone model</small></div>
-            <div class="select-wrapper">
-                <select class="custom-select" name="phone_model">
-                <option>iPhone 17 Pro Max</option>
-                <option>iPhone 17 Pro</option>
-                <option>iPhone 17 Plus</option>
-                <option>iPhone 17</option>
-                <option>iPhone 16 Pro Max</option>
-                <option>iPhone 16 Pro</option>
-                <option>iPhone 16 Plus</option>
-                <option>iPhone 16</option>
-                <option selected>iPhone 15 Pro Max</option>
-                <option>iPhone 15 Pro</option>
-                <option>iPhone 15 Plus</option>
-                <option>iPhone 15</option>
-                </select>
-            </div>
+            <div class="config-section-header">
+                <h2>Configure your DP Mini</h2>
+                <p>Two required choices below — they affect your final price.</p>
             </div>
 
             <div class="option-group">
-            <div class="group-header"><strong>Objective</strong><small>Select working distance</small></div>
-            <div class="option-list" id="objective-options">
-                <label class="choice" data-price="0"><input type="radio" name="objective" value="50mm"><div class="choice-details"><strong>50mm Standard Objective</strong><small>Ideal for close-up work, maximum magnification.</small></div><span class="price-delta">Included</span></label>
-                <label class="choice" data-price="290"><input type="radio" name="objective" value="60mm"><div class="choice-details"><strong>60mm Mid-Range Objective</strong><small>Balanced distance and magnification.</small></div><span class="price-delta">+ €290</span></label>
-                <label class="choice" data-price="540"><input type="radio" name="objective" value="75mm" checked><div class="choice-details"><strong>75mm Long-Range Objective</strong><small>Maximum working space for tools.</small></div><span class="price-delta">+ €540</span></label>
-            </div>
-            </div>
-
-            <div class="option-group">
-            <div class="group-header"><strong>Eyepieces</strong><small>Choose your viewing method</small></div>
-            <div class="option-list" id="eyepiece-options">
-                <label class="choice" data-price="0"><input type="radio" name="eyepiece" value="Screen"><div class="choice-details"><strong>Screen Only</strong><small>Use your smartphone screen for direct viewing.</small></div><span class="price-delta">Included</span></label>
-                <label class="choice" data-price="1540"><input type="radio" name="eyepiece" value="Full HD"><div class="choice-details"><strong>Full HD Eyepieces</strong><small>Immersive 1920x1080 resolution per eye.</small></div><span class="price-delta">+ €1540</span></label>
-                <label class="choice" data-price="2085"><input type="radio" name="eyepiece" value="4K UHD" checked><div class="choice-details"><strong>4K UHD Eyepieces</strong><small>Ultra-high resolution for critical detail.</small></div><span class="price-delta">+ €2085</span></label>
-            </div>
-            </div>
-
-            <div class="option-group">
-                <div class="group-header"><strong>Mounting</strong><small>Select your setup</small></div>
-                <div class="option-list" id="mount-options">
-                    <label class="choice" data-price="0"><input type="radio" name="mount" value="Desk Mount" checked><div class="choice-details"><strong>Desk Mount</strong><small>For stable positioning on a desk or workbench.</small></div><span class="price-delta">Included</span></label>
-                    <label class="choice" data-price="0"><input type="radio" name="mount" value="Floor Stand"><div class="choice-details"><strong>Floor Stand</strong><small>Provides a freestanding, adjustable setup.</small></div><span class="price-delta">Included</span></label>
-                    <label class="choice" data-price="0"><input type="radio" name="mount" value="Wall Mount"><div class="choice-details"><strong>Wall Mount</strong><small>For a fixed, space-saving installation.</small></div><span class="price-delta">Included</span></label>
-                    <label class="choice" data-price="0"><input type="radio" name="mount" value="Ceiling Mount"><div class="choice-details"><strong>Ceiling Mount</strong><small>Offers an overhead, unobstructed view.</small></div><span class="price-delta">Included</span></label>
+                <div class="group-header">
+                    <strong>Eyepieces</strong>
+                    <small>Pick your viewing method</small>
+                    <span class="group-tag">Required</span>
+                </div>
+                <div class="option-list" id="eyepiece-options">
+                    <label class="choice" data-price="0" data-model="dpmininooculars.glb"><input type="radio" name="eyepiece" value="No Eyepieces"><div class="choice-details"><strong>Screen Only</strong><small>Use your smartphone screen for direct viewing.</small></div><span class="price-delta">Included</span></label>
+                    <label class="choice" data-price="5450" data-model="dpmini.glb"><input type="radio" name="eyepiece" value="With Eyepieces" checked><div class="choice-details"><strong>With Eyepieces</strong><small>4K UHD per eye, immersive viewing.</small></div><span class="price-delta">+ €5.450</span></label>
                 </div>
             </div>
+
+            <div class="option-group">
+                <div class="group-header">
+                    <strong>Mounting</strong>
+                    <small>Select your setup</small>
+                    <span class="group-tag">Required</span>
+                </div>
+                <div class="option-list" id="mount-options">
+                    <label class="choice" data-price="0"><input type="radio" name="mount" value="Desk Mount" checked><div class="choice-details"><strong>Desk Mount</strong><small>For stable positioning on a desk or workbench.</small></div><span class="price-delta">Included</span></label>
+                    <label class="choice" data-price="1850"><input type="radio" name="mount" value="Floor Stand"><div class="choice-details"><strong>Floor Stand</strong><small>Provides a freestanding, adjustable setup.</small></div><span class="price-delta">+ €1.850</span></label>
+                    <label class="choice" data-price="2300"><input type="radio" name="mount" value="Wall Mount"><div class="choice-details"><strong>Wall Mount</strong><small>For a fixed, space-saving installation.</small></div><span class="price-delta">+ €2.300</span></label>
+                    <label class="choice" data-price="5700"><input type="radio" name="mount" value="Ceiling Mount"><div class="choice-details"><strong>Ceiling Mount</strong><small>Offers an overhead, unobstructed view.</small></div><span class="price-delta">+ €5.700</span></label>
+                </div>
+            </div>
+
+            <div class="config-section-header">
+                <h2>Optional add-ons</h2>
+                <p>Accessories and services to extend your DP Mini. None are required.</p>
+            </div>
+
+            <div class="option-group">
+                <div class="group-header">
+                    <strong>Accessories &amp; care</strong>
+                    <small>Pick any combination</small>
+                    <span class="group-tag optional">Optional</span>
+                </div>
+                <div class="addon-list" id="addon-options">
+                    <label class="addon-choice" data-price="290">
+                        <input type="checkbox" name="addon" value="Carrying Case">
+                        <div class="choice-details">
+                            <strong>Carrying Case</strong>
+                            <small>Reinforced travel case with custom-cut foam inserts.</small>
+                        </div>
+                        <span class="price-delta">+ €290</span>
+                    </label>
+                    <label class="addon-choice" data-price="120">
+                        <input type="checkbox" name="addon" value="Cleaning Kit">
+                        <div class="choice-details">
+                            <strong>Optics Cleaning Kit</strong>
+                            <small>Lens fluid, anti-static cloths and air blower.</small>
+                        </div>
+                        <span class="price-delta">+ €120</span>
+                    </label>
+                    <label class="addon-choice" data-price="1490">
+                        <input type="checkbox" name="addon" value="DP Care+">
+                        <div class="choice-details">
+                            <strong>DP Care+ (3 years)</strong>
+                            <small>Extended warranty, accidental damage cover and priority RMA.</small>
+                        </div>
+                        <span class="price-delta">+ €1.490</span>
+                    </label>
+                    <label class="addon-choice has-engraving" data-price="90">
+                        <input type="checkbox" name="addon" value="Custom Engraving">
+                        <div class="choice-details">
+                            <strong>Custom Engraving</strong>
+                            <small id="engraving-summary">Laser-engrave your name, hospital or department on the body. Up to 40 characters.</small>
+                            <button type="button" class="engraving-edit-btn" id="engraving-edit-btn" hidden>Edit engraving</button>
+                        </div>
+                        <span class="price-delta">+ €90</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <h3>Your DP Mini</h3>
+                <div class="summary-row"><span class="label">DP Mini base</span><span class="value" id="sum-base">€23.990</span></div>
+                <div class="summary-row"><span class="label" id="sum-eyepiece-label">Eyepieces — With Eyepieces</span><span class="value" id="sum-eyepiece">+ €5.450</span></div>
+                <div class="summary-row"><span class="label" id="sum-mount-label">Mount — Desk Mount</span><span class="value" id="sum-mount">Included</span></div>
+                <div class="summary-row" id="sum-addons-row" style="display:none;"><span class="label">Add-ons</span><span class="value" id="sum-addons">€0</span></div>
+                <div class="summary-row is-total"><span class="label">Total</span><span class="value" id="sum-total">€29.440</span></div>
+                <div class="summary-note">Software license billed separately on a yearly basis. <a href="#license-info">Learn more</a></div>
+            </div>
         </aside>
+    </div>
+  </div>
+
+  <!-- ========== WHAT'S IN THE BOX ========== -->
+  <section class="bottom-section box-section">
+    <div class="container">
+      <div class="bottom-section-header">
+        <span class="bottom-info-eyebrow">In the box</span>
+        <h2>Everything you need to get started.</h2>
+        <p>Each DP Mini ships ready for the OR. No surprises, no hidden extras.</p>
+      </div>
+      <div class="box-grid">
+        <div class="box-tile">
+          <div class="box-tile-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
+          </div>
+          <div class="box-tile-title">DP Mini Microscope</div>
+          <div class="box-tile-desc">Main optical assembly with smartphone mount, calibrated and tested.</div>
+        </div>
+        <div class="box-tile">
+          <div class="box-tile-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="9" width="12" height="12" rx="2"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><line x1="12" y1="13" x2="12" y2="17"/></svg>
+          </div>
+          <div class="box-tile-title">DP Mini Power Supply</div>
+          <div class="box-tile-desc">Proprietary medical-grade adapter and cable with EU plug. Specific to the DP Mini — third-party chargers are not supported.</div>
+        </div>
+        <div class="box-tile">
+          <div class="box-tile-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+          </div>
+          <div class="box-tile-title">User Manual &amp; IFU</div>
+          <div class="box-tile-desc">Quick-start guide and clinical Instructions For Use, compliant with EU MDR 2017/745.</div>
+        </div>
+        <div class="box-tile">
+          <div class="box-tile-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10"/><path d="M7 13h6"/></svg>
+          </div>
+          <div class="box-tile-title">Anti-Static Cloth</div>
+          <div class="box-tile-desc">Microfiber cleaning cloth for the optics and smartphone screen.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SOFTWARE LICENSE ========== -->
+  <section class="bottom-section license-section" id="license-info">
+    <div class="container">
+      <div class="bottom-section-header">
+        <span class="bottom-info-eyebrow">Software license</span>
+        <h2>Required to operate. Billed yearly.</h2>
+        <p>The DP Mini runs on a licensed firmware and the Med Connect Mini app. The license is purchased separately and renewed once a year — it's never bundled into the device price.</p>
+      </div>
+
+      <div class="license-grid">
+        <div class="license-pricing">
+          <div class="license-pricing-stats">
+            <div class="license-pricing-stat">
+              <div class="license-pricing-stat-value">10%</div>
+              <div class="license-pricing-stat-label">of the device price</div>
+            </div>
+            <div class="license-pricing-stat-divider"></div>
+            <div class="license-pricing-stat">
+              <div class="license-pricing-stat-value">Yearly</div>
+              <div class="license-pricing-stat-label">renewable, cancellable</div>
+            </div>
+          </div>
+          <div class="license-pricing-example">
+            <div class="license-example-title">For your DP Mini configuration</div>
+            <div class="license-example-row"><span>DP Mini base</span><span>€23.990</span></div>
+            <div class="license-example-row"><span>License rate</span><span>10%</span></div>
+            <div class="license-example-row license-example-total"><span>Yearly license</span><span>€2.399<span class="license-example-suffix">/yr</span></span></div>
+          </div>
+          <p class="license-pricing-note">Billed once per year on a separate invoice. Cancellable at any renewal date.</p>
+        </div>
+
+        <div class="license-features">
+          <div class="license-features-title">What's covered</div>
+          <ul class="license-feature-list">
+            <li>
+              <span class="license-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <div>
+                <strong>Device firmware activation</strong>
+                <small>Unlocks the optical engine, smart handle and OR-grade controls.</small>
+              </div>
+            </li>
+            <li>
+              <span class="license-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <div>
+                <strong>Med Connect Mini app</strong>
+                <small>Companion iOS app for streaming, recording, voice commands and AR overlays.</small>
+              </div>
+            </li>
+            <li>
+              <span class="license-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <div>
+                <strong>Software updates</strong>
+                <small>Continuous feature improvements and clinical workflow updates throughout the year.</small>
+              </div>
+            </li>
+            <li>
+              <span class="license-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <div>
+                <strong>Security &amp; regulatory patches</strong>
+                <small>Critical security fixes and EU MDR-tracked updates with full traceability.</small>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="license-foot-row">
+        <p class="license-foot">The license is <strong>not included</strong> in the device price shown above. It's invoiced separately, on a yearly basis, to the registered customer. <a href="contactus.html">Contact our team</a> to learn more about volume licensing.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="engraving-backdrop" id="engraving-backdrop"></div>
+  <div class="engraving-modal" id="engraving-modal" role="dialog" aria-labelledby="engraving-title" aria-hidden="true">
+    <div class="engraving-card">
+      <button type="button" class="engraving-close" id="engraving-close" aria-label="Close">&times;</button>
+      <div class="engraving-header">
+        <span class="engraving-eyebrow">Personalize</span>
+        <h3 id="engraving-title">Add your engraving.</h3>
+        <p>Inscribe your name, hospital or department on the body of your DP Mini. Up to 40 characters.</p>
+      </div>
+      <div class="engraving-stage">
+        <div class="engraving-plate">
+          <span class="engraving-preview" id="engraving-preview" data-placeholder="Your text">Your text</span>
+        </div>
+      </div>
+      <div class="engraving-input-wrap">
+        <input type="text" id="engraving-text" maxlength="40" placeholder="Type your engraving">
+        <div class="engraving-counter-row">
+          <span class="engraving-tip">Letters, numbers, spaces and basic punctuation.</span>
+          <span class="engraving-count"><span id="engraving-count">0</span> / 40</span>
+        </div>
+      </div>
+      <div class="engraving-actions">
+        <button type="button" class="engraving-btn engraving-btn-ghost" id="engraving-cancel">Cancel</button>
+        <button type="button" class="engraving-btn engraving-btn-primary" id="engraving-confirm">Save engraving</button>
+      </div>
     </div>
   </div>
 
   <div class="sticky-bar">
     <div class="bar-inner container">
       <div class="total-price">
-        <div class="label">Total Price</div>
-        <div class="amount" id="total-price-display">€14.900,00</div>
+        <div class="amount">Total <strong id="total-price-display">€29.440</strong></div>
       </div>
-      <button id="addToCartBtn" class="btn primary" style="padding: 14px 28px; font-size: 16px;">Add to Cart</button>
+      <button id="addToCartBtn" class="btn primary">Add to Bag</button>
     </div>
   </div>
 
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:28px; border-radius:50%; margin-right:8px;">
+                    <span style="font-weight:600;">DP Biotech</span>
+                </div>
+                <p>High-performance surgical microscopes engineered in Italy. Designed for clinical workflows; built around optical precision and modern digital ergonomics.</p>
+                <address class="footer-address">
+                    <strong>Dal Pont Medical S.r.l.s</strong><br>
+                    Piazza San Vito 12<br>
+                    31100 Treviso — Italia<br><br>
+                    VAT / C.F.: 05355480269<br>
+                    REA: 437837<br>
+                    EUDAMED SRN: IT-MF-000052836
+                </address>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Products</div>
+                <ul>
+                    <li><a href="DPMini.html">DP Mini</a></li>
+                    <li><a href="DPPro.html">DP Pro</a></li>
+                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="all-models.html">Compare Models</a></li>
+                    <li><a href="index.html#specs">Specifications</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Support &amp; Service</div>
+                <ul>
+                    <li><a href="contactus.html">Sales Enquiries</a></li>
+                    <li><a href="contactus.html">Clinical Support</a></li>
+                    <li><a href="contactus.html">Service &amp; Repair (RMA)</a></li>
+                    <li><a href="#">Downloads &amp; Manuals</a></li>
+                    <li><a href="#">Instructions for Use (IFU)</a></li>
+                    <li><a href="index.html#faq">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Regulatory &amp; Legal</div>
+                <ul>
+                    <li><a href="#">EU Declaration of Conformity</a></li>
+                    <li><a href="#">Vigilance &amp; Incident Reporting</a></li>
+                    <li><a href="#">UDI Information</a></li>
+                    <li><a href="#">Warranty</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Terms of Sale</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>© 2026 Dal Pont Medical S.r.l.s — All rights reserved.</div>
+            <div class="footer-regulatory">
+                <span class="footer-regulatory-badge">CE</span>
+                <span class="footer-regulatory-badge">MDR Class I</span>
+                <span class="footer-regulatory-badge">Made in Italy</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // --- MODIFICATION START: Model Viewer Script ---
+    // Swap the .glb when the eyepieces option changes.
     const modelViewer = document.getElementById('product-viewer');
-    
     function updateModelViewer() {
-        const objective = document.querySelector('input[name="objective"]:checked').value;
-        const eyepiece = document.querySelector('input[name="eyepiece"]:checked').value;
-
-        // Map eyepiece value to the string used in the filename
-        let eyepieceFilePart = '';
-        switch(eyepiece) {
-            case 'Full HD':
-                eyepieceFilePart = '1920x1080';
-                break;
-            case '4K UHD':
-                eyepieceFilePart = '4K';
-                break;
-            case 'Screen':
-                // Assuming a filename for "Screen Only", adjust if needed
-                eyepieceFilePart = 'Screen'; 
-                break;
+        const eyepieceInput = document.querySelector('input[name="eyepiece"]:checked');
+        if (!eyepieceInput || !modelViewer) return;
+        const newSrc = eyepieceInput.closest('.choice').dataset.model;
+        if (newSrc && modelViewer.getAttribute('src') !== newSrc) {
+            modelViewer.setAttribute('src', newSrc);
         }
-
-        const newModelSrc = `${objective}${eyepieceFilePart}.glb`;
-        modelViewer.src = newModelSrc;
     }
-    // --- MODIFICATION END: Model Viewer Script ---
 
-    const basePrice = 14900;
-    const choices = document.querySelectorAll('.choice');
+    const basePrice = 23990;
+    const LICENSE_RATE = 0.10;
+    const choices = document.querySelectorAll('.choice, .addon-choice');
     const totalPriceDisplay = document.getElementById('total-price-display');
-    const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+    const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+    const sumEyepieceLabel = document.getElementById('sum-eyepiece-label');
+    const sumEyepiece = document.getElementById('sum-eyepiece');
+    const sumMountLabel = document.getElementById('sum-mount-label');
+    const sumMount = document.getElementById('sum-mount');
+    const sumAddonsRow = document.getElementById('sum-addons-row');
+    const sumAddons = document.getElementById('sum-addons');
+    const sumTotal = document.getElementById('sum-total');
 
     const cartBtn = document.getElementById('cart-btn');
     const cartCountEl = document.getElementById('cart-count');
@@ -510,73 +1999,213 @@
       cartTotalPriceEl.textContent = EUR.format(total);
     }
     
-    function addToCart() {
-      const objective = document.querySelector('input[name="objective"]:checked').value;
-      const eyepiece = document.querySelector('input[name="eyepiece"]:checked').value;
-      const mount = document.querySelector('input[name="mount"]:checked').value;
-      const phone = document.querySelector('select[name="phone_model"]').value;
+    function getPricing() {
+      const eyepieceInput = document.querySelector('input[name="eyepiece"]:checked');
+      const eyepiecePrice = Number(eyepieceInput.closest('.choice').dataset.price);
+      const eyepieceValue = eyepieceInput.value;
 
-      let currentTotal = basePrice;
-      const selectedPrices = document.querySelectorAll('input[type="radio"]:checked');
-      selectedPrices.forEach(option => {
-        currentTotal += Number(option.closest('.choice').dataset.price);
+      const mountInput = document.querySelector('input[name="mount"]:checked');
+      const mountValue = mountInput.value;
+      const mountPrice = Number(mountInput.closest('.choice').dataset.price);
+
+      const devicePrice = basePrice + eyepiecePrice + mountPrice;
+      const yearlyLicense = Math.round(devicePrice * LICENSE_RATE);
+
+      const addonInputs = Array.from(document.querySelectorAll('input[name="addon"]:checked'));
+      const addons = addonInputs.map(i => {
+          const base = {
+              name: i.value,
+              price: Number(i.closest('.addon-choice').dataset.price)
+          };
+          if (i.value === 'Custom Engraving' && engravingSavedText) {
+              base.detail = engravingSavedText;
+          }
+          return base;
       });
+      const addonsTotal = addons.reduce((s, a) => s + a.price, 0);
+
+      const total = devicePrice + addonsTotal;
+      return { eyepieceValue, eyepiecePrice, mountValue, mountPrice, devicePrice, yearlyLicense, addons, addonsTotal, total };
+    }
+
+    function addToCart() {
+      const p = getPricing();
+      const addonNames = p.addons.length
+          ? p.addons.map(a => a.detail ? `${a.name} (“${a.detail}”)` : a.name).join(', ')
+          : 'No add-ons';
 
       const newItem = {
-        id: `dp-mini-${phone}-${objective}-${eyepiece}-${mount}`,
-        name: `DP Mini (${objective} Objective, ${eyepiece} Eyepiece, ${mount} Mount)`,
-        price: currentTotal,
-        options: { 
-            phone: phone,
-            objective: objective, 
-            eyepiece: eyepiece, 
-            mount: mount
+        id: `dp-mini-${p.eyepieceValue}-${p.mountValue}-${p.addons.map(a => a.name + (a.detail || '')).join('|') || 'base'}`,
+        name: `DP Mini (${p.eyepieceValue}, ${p.mountValue})`,
+        price: p.total,
+        options: {
+            eyepiece: p.eyepieceValue,
+            mount: p.mountValue,
+            addons: addonNames
         }
       };
-      
+
       cart.push(newItem);
       saveCart();
-      
+
       cartSidebar.classList.add('is-open');
       cartBackdrop.classList.add('is-visible');
     }
-    
+
     function calculateTotal() {
-      let currentTotal = basePrice;
-      const selectedOptions = document.querySelectorAll('input[type="radio"]:checked');
-      selectedOptions.forEach(option => {
-        currentTotal += Number(option.closest('.choice').dataset.price);
-      });
-      totalPriceDisplay.textContent = EUR.format(currentTotal);
+      const p = getPricing();
+      totalPriceDisplay.textContent = EUR.format(p.total);
+
+      // Update summary card
+      sumEyepieceLabel.textContent = `Eyepieces — ${p.eyepieceValue === 'No Eyepieces' ? 'Screen Only' : 'With Eyepieces'}`;
+      sumEyepiece.textContent = p.eyepiecePrice === 0 ? 'Included' : '+ ' + EUR.format(p.eyepiecePrice);
+      sumMountLabel.textContent = `Mount — ${p.mountValue}`;
+      sumMount.textContent = p.mountPrice === 0 ? 'Included' : '+ ' + EUR.format(p.mountPrice);
+
+      if (p.addonsTotal > 0) {
+        sumAddonsRow.style.display = 'flex';
+        sumAddons.textContent = '+ ' + EUR.format(p.addonsTotal);
+      } else {
+        sumAddonsRow.style.display = 'none';
+      }
+
+      sumTotal.textContent = EUR.format(p.total);
     }
 
     function updateSelectionUI() {
       choices.forEach(choice => {
-        const radio = choice.querySelector('input');
-        if (radio.checked) {
+        const input = choice.querySelector('input[type="radio"], input[type="checkbox"]');
+        if (input && input.checked) {
           choice.classList.add('selected');
         } else {
           choice.classList.remove('selected');
         }
       });
+      updateEngravingSummary();
     }
 
+    // ===== Engraving modal =====
+    const engravingCheckbox = document.querySelector('input[name="addon"][value="Custom Engraving"]');
+    const engravingModal = document.getElementById('engraving-modal');
+    const engravingBackdrop = document.getElementById('engraving-backdrop');
+    const engravingClose = document.getElementById('engraving-close');
+    const engravingCancel = document.getElementById('engraving-cancel');
+    const engravingConfirm = document.getElementById('engraving-confirm');
+    const engravingTextEl = document.getElementById('engraving-text');
+    const engravingCountEl = document.getElementById('engraving-count');
+    const engravingPreview = document.getElementById('engraving-preview');
+    const engravingSummary = document.getElementById('engraving-summary');
+    const engravingEditBtn = document.getElementById('engraving-edit-btn');
+    let engravingSavedText = '';
+    let engravingDraft = '';
+
+    function syncPreview(text) {
+      if (text && text.length > 0) {
+        engravingPreview.textContent = text;
+        engravingPreview.classList.remove('is-empty');
+      } else {
+        engravingPreview.textContent = engravingPreview.dataset.placeholder || 'Your text';
+        engravingPreview.classList.add('is-empty');
+      }
+      if (engravingCountEl) engravingCountEl.textContent = (text || '').length;
+    }
+
+    function openEngravingModal() {
+      engravingDraft = engravingSavedText;
+      engravingTextEl.value = engravingSavedText;
+      syncPreview(engravingSavedText);
+      engravingBackdrop.classList.add('is-visible');
+      engravingModal.classList.add('is-open');
+      engravingModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => engravingTextEl.focus(), 100);
+    }
+
+    function closeEngravingModal() {
+      engravingBackdrop.classList.remove('is-visible');
+      engravingModal.classList.remove('is-open');
+      engravingModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function updateEngravingSummary() {
+      if (!engravingCheckbox || !engravingSummary || !engravingEditBtn) return;
+      if (engravingCheckbox.checked) {
+        if (engravingSavedText) {
+          engravingSummary.innerHTML = 'Engraving: <strong style="color:var(--text-primary);">"' + engravingSavedText.replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])) + '"</strong>';
+        } else {
+          engravingSummary.textContent = 'Click "Edit engraving" to add your text.';
+        }
+        engravingEditBtn.hidden = false;
+      } else {
+        engravingSummary.textContent = 'Laser-engrave your name, hospital or department on the body. Up to 40 characters.';
+        engravingEditBtn.hidden = true;
+        engravingSavedText = '';
+      }
+    }
+
+    if (engravingCheckbox) {
+      engravingCheckbox.addEventListener('change', () => {
+        if (engravingCheckbox.checked) {
+          openEngravingModal();
+        }
+        updateEngravingSummary();
+      });
+    }
+    if (engravingEditBtn) {
+      engravingEditBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openEngravingModal();
+      });
+    }
+    if (engravingTextEl) {
+      engravingTextEl.addEventListener('input', () => {
+        engravingDraft = engravingTextEl.value;
+        syncPreview(engravingDraft);
+      });
+    }
+    if (engravingConfirm) {
+      engravingConfirm.addEventListener('click', () => {
+        engravingSavedText = engravingTextEl.value.trim();
+        closeEngravingModal();
+        updateEngravingSummary();
+      });
+    }
+    function cancelEngraving() {
+      closeEngravingModal();
+      // If they cancelled and never had text saved, untick the addon
+      if (!engravingSavedText && engravingCheckbox && engravingCheckbox.checked) {
+        engravingCheckbox.checked = false;
+        engravingCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
+    if (engravingCancel) engravingCancel.addEventListener('click', cancelEngraving);
+    if (engravingClose) engravingClose.addEventListener('click', cancelEngraving);
+    if (engravingBackdrop) engravingBackdrop.addEventListener('click', cancelEngraving);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && engravingModal.classList.contains('is-open')) cancelEngraving();
+    });
+
     choices.forEach(choice => {
-      choice.addEventListener('click', () => {
-        const radio = choice.querySelector('input');
-        radio.checked = true;
-        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      choice.addEventListener('click', (e) => {
+        const input = choice.querySelector('input[type="radio"], input[type="checkbox"]');
+        if (!input) return;
+        // Don't intercept clicks that originated on form fields inside the label
+        if (e.target !== choice && e.target.closest('input, textarea, select')) return;
+        if (input.type === 'radio') {
+          input.checked = true;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        // Checkboxes are toggled natively by the label/input; don't override.
       });
     });
 
     document.body.addEventListener('change', (event) => {
-      if (event.target.name === 'objective' || event.target.name === 'eyepiece') {
+      if (event.target.type === 'radio' || event.target.type === 'checkbox') {
         updateSelectionUI();
         calculateTotal();
-        updateModelViewer(); // Call the function to update the 3D model
-      } else if (event.target.type === 'radio') {
-        updateSelectionUI();
-        calculateTotal();
+        if (event.target.name === 'eyepiece') updateModelViewer();
       }
     });
 
@@ -635,7 +2264,45 @@
     initCart();
     updateSelectionUI();
     calculateTotal();
+    updateModelViewer();
+
+    // --- MEGA MENU LOGIC ---
+    const mainNav = document.getElementById('main-nav');
+    if (mainNav) {
+        const triggers = mainNav.querySelectorAll('.dropdown[data-menu]');
+        const backdrop = document.querySelector('.menu-backdrop');
+        let activeMenu = null, closeTimeout;
+
+        function openMenu(id) {
+            if (activeMenu) activeMenu.classList.remove('is-open');
+            const menu = document.getElementById(id);
+            if (menu) {
+                menu.classList.add('is-open');
+                if (backdrop) backdrop.classList.add('is-visible');
+                activeMenu = menu;
+            }
+        }
+        function closeAll() {
+            if (activeMenu) activeMenu.classList.remove('is-open');
+            if (backdrop) backdrop.classList.remove('is-visible');
+            activeMenu = null;
+        }
+
+        triggers.forEach(t => t.addEventListener('mouseenter', () => {
+            clearTimeout(closeTimeout);
+            openMenu(t.dataset.menu);
+        }));
+        mainNav.addEventListener('mouseleave', () => { closeTimeout = setTimeout(closeAll, 200); });
+        mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+        if (backdrop) backdrop.addEventListener('click', closeAll);
+    }
+
+    // Mobile menu
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (menuBtn && mobileMenu) menuBtn.addEventListener('click', () => mobileMenu.classList.add('is-open'));
   });
 </script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));if(window.caches){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}}</script>
 </body>
 </html>

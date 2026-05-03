@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Contact Us — DP Biotech</title>
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="favicon-192.png"><title>Contact Us — DP Biotech</title>
 <script>
     if (sessionStorage.getItem('isAuthenticated') !== 'true') {
       window.location.href = 'login.html';
@@ -16,6 +20,7 @@
   :root{
     --bg:#ffffff; --text:#0a0a0a; --muted:#525252; --line:#e5e5e5; --card:#ffffff;
     --a1:#0ea5e9; --a2:#6366f1; --a3:#8b5cf6;
+    --nav-height:60px;
     --shadow-md: 0 4px 6px -1px rgba(0,0,0,.07), 0 2px 4px -2px rgba(0,0,0,.07);
     --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.08), 0 4px 6px -4px rgba(0,0,0,.08);
   }
@@ -27,7 +32,7 @@
     }
   }
   html{scroll-behavior:smooth}
-  body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text); overflow-x: hidden;}
+  body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text); overflow-x: hidden; padding-top:var(--nav-height);}
   .container{max-width:1100px; margin:0 auto; padding:0 20px}
 
   @media(max-width:640px) {
@@ -37,15 +42,18 @@
   }
 
   /* NAV */
-  .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
-  .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
-  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size:18px}
+  .nav{position:fixed; top:0; left:0; right:0; height:var(--nav-height); z-index:100; background:rgba(255,255,255,0.7); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); border-bottom:1px solid var(--line)}
+  @media(prefers-color-scheme:dark){ .nav{ background:rgba(0,0,0,0.7); } }
+  .nav-inner{height:100%; display:flex; align-items:center; justify-content:space-between}
+  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size:15px}
+  .logo img{height:28px !important;}
   .nav a{color:inherit; text-decoration:none}
 
   /* Desktop navigation */
-  .nav-links{display:none; gap:24px; font-size:14px; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
+  .nav-links{display:none; gap:32px; font-size:13px; font-weight:500; color:var(--muted); list-style:none; margin:0; padding:0; height:100%}
   @media(min-width:960px){.nav-links{display:flex; align-items:center}}
-  .nav-links > li { height: 100%; display: flex; align-items: center; cursor:pointer; }
+  .nav-links > li { height: 100%; display: flex; align-items: center; cursor:pointer; transition: color 0.2s; }
+  .nav-links > li:hover { color: var(--text); }
 
   /* Mobile hamburger menu */
   .hamburger-btn {
@@ -365,16 +373,16 @@
   }
 
   /* --- Styles for components like Mega Menu and Cart --- */
-  .dropdown-menu{opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease; position:absolute; top:57px; left:0; right:0; background:var(--bg); border-top:1px solid var(--line); box-shadow:0 16px 50px rgba(0,0,0,.12); z-index:40; overflow-y:auto; max-height:calc(100vh - 57px)}
+  .dropdown-menu{opacity:0; visibility:hidden; transition:opacity .3s ease, visibility .3s ease; position:absolute; top:var(--nav-height); left:0; right:0; background:var(--bg); border-top:1px solid var(--line); box-shadow:0 20px 60px rgba(0,0,0,.15); z-index:90; overflow-y:auto; max-height:calc(100vh - var(--nav-height))}
   .dropdown-menu.is-open{opacity:1; visibility:visible}
-  .menu-content{display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; padding:28px 0}
+  .menu-content{display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; padding:40px 0}
   .menu-main-links, .menu-link-column{list-style:none; margin:0; padding:0}
-  .menu-main-links li:first-child, .menu-link-column li:first-child{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:10px; padding:0 12px}
-  .menu-main-links a{font-size:22px; font-weight:700; line-height:1.4; display:block; padding:6px 12px; border-radius:8px}
-  .menu-main-links a:hover{background:var(--card)}
-  .menu-link-column a{font-size:13px; font-weight:600; display:block; padding:8px 12px; border-radius:8px}
-  .menu-link-column a:hover{background:var(--card)}
-  .menu-backdrop{position:fixed; top:57px; left:0; right:0; bottom:0; background:rgba(0,0,0,.4); z-index:30; opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease}
+  .menu-main-links li:first-child, .menu-link-column li:first-child{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:12px; padding:0 12px}
+  .menu-main-links a{font-size:24px; font-weight:600; display:block; padding:8px 12px; border-radius:8px}
+  .menu-link-column a{font-size:14px; font-weight:500; display:block; padding:8px 12px; border-radius:8px}
+  .menu-main-links a:hover, .menu-link-column a:hover{background:#f5f5f7}
+  @media(prefers-color-scheme:dark){ .menu-main-links a:hover, .menu-link-column a:hover{ background:rgba(255,255,255,0.06); } }
+  .menu-backdrop{position:fixed; top:var(--nav-height); left:0; right:0; bottom:0; background:rgba(0,0,0,.4); z-index:80; opacity:0; visibility:hidden; transition:0.3s}
   .menu-backdrop.is-visible{opacity:1; visibility:visible}
   .cart-backdrop{position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:90; opacity:0; visibility:hidden; transition:opacity .3s ease, visibility .3s ease}
   .cart-backdrop.is-visible{opacity:1; visibility:visible}
@@ -412,6 +420,866 @@
       gap: 12px !important;
     }
   }
+
+  /* === Canonical cart/footer === */
+  footer {
+      border-top: 1px solid var(--divider, var(--line, #e5e5e5));
+      padding: 64px 0 32px;
+      background: var(--bg-body, var(--bg, #ffffff));
+      color: var(--text-secondary, var(--muted, #525252));
+  }
+  .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+  }
+  @media(max-width: 860px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  }
+  @media(max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+  }
+  .footer-brand .logo { margin-bottom: 16px; display: flex; align-items: center; }
+  .footer-brand p {
+      font-size: 13px;
+      max-width: 320px;
+      margin-bottom: 16px;
+      color: var(--text-secondary, var(--muted, #525252));
+  }
+  .footer-address {
+      font-size: 12px;
+      color: var(--text-secondary, var(--muted, #525252));
+      line-height: 1.6;
+      font-style: normal;
+  }
+  .footer-address strong { color: var(--text-primary, var(--text, #0a0a0a)); font-weight: 600; }
+  .footer-col-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-primary, var(--text, #0a0a0a));
+      font-weight: 700;
+      margin-bottom: 16px;
+  }
+  .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col a {
+      font-size: 13px;
+      color: var(--text-secondary, var(--muted, #525252));
+      text-decoration: none;
+      transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--text-primary, var(--text, #0a0a0a)); opacity: 1; }
+  .footer-bottom {
+      padding-top: 24px;
+      border-top: 1px solid var(--divider, var(--line, #e5e5e5));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-secondary, var(--muted, #525252));
+  }
+  .footer-regulatory {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+  }
+  .footer-regulatory-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid var(--divider, var(--line, #e5e5e5));
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary, var(--muted, #525252));
+  }
+
+  .cart-backdrop {
+      position: fixed; inset: 0;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(10,10,15,0.32);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+      z-index: 200;
+  }
+  .cart-backdrop.is-visible { opacity: 1; visibility: visible; }
+  .cart-sidebar {
+      position: fixed;
+      top: 16px; right: 16px; bottom: 16px; left: auto;
+      width: calc(100% - 32px); max-width: 400px; height: auto;
+      background: var(--bg-card, var(--card, #ffffff));
+      border-radius: 22px;
+      border: 1px solid rgba(10,10,15,0.06);
+      border-left: 1px solid rgba(10,10,15,0.06);
+      transform: translateX(calc(100% + 32px));
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 201;
+      display: flex; flex-direction: column;
+      box-shadow:
+          0 1px 0 rgba(255,255,255,0.6) inset,
+          0 24px 60px rgba(10,10,15,0.22),
+          0 6px 16px rgba(10,10,15,0.08);
+      overflow: hidden;
+      padding: 0;
+  }
+  .cart-sidebar.is-open { transform: translateX(0); }
+  .cart-header {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--divider, var(--line, #e5e5e5));
+      display: flex; justify-content: space-between; align-items: center;
+      flex-shrink: 0;
+  }
+  .cart-items {
+      flex: 1; overflow-y: auto;
+      padding: 20px 22px;
+      list-style: none; margin: 0;
+  }
+  .cart-footer {
+      padding: 22px;
+      border-top: 1px solid var(--divider, var(--line, #e5e5e5));
+      background: var(--bg-secondary, var(--bg, #f5f5f7));
+      margin-top: auto;
+      flex-shrink: 0;
+  }
+  @media(max-width: 480px) {
+      .cart-sidebar {
+          top: 12px; right: 12px; bottom: 12px;
+          width: calc(100% - 24px); max-width: calc(100% - 24px);
+          border-radius: 20px;
+          border-left: 1px solid rgba(10,10,15,0.06);
+      }
+  }
+  /* === Canonical nav buttons === */
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+  .cart-icon-btn {
+      position: relative; background: none; border: none;
+      color: var(--text-primary, var(--text, #0a0a0a)); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; padding: 0;
+  }
+  .cart-icon-btn:hover { transform: none; box-shadow: none; }
+  .cart-badge {
+      position: absolute; top: 4px; right: 4px;
+      background: var(--accent, #0071e3); color: #fff;
+      font-size: 10px; width: 16px; height: 16px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .nav .btn,
+  .nav a.btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 10px 20px !important;
+      border-radius: 999px !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+      cursor: pointer !important;
+      border: none !important;
+      text-decoration: none !important;
+      gap: 0 !important;
+      box-shadow: none !important;
+  }
+  .nav .btn-ghost {
+      background: transparent !important;
+      color: var(--text-primary, var(--text, #0a0a0a)) !important;
+      border: 1px solid var(--divider, var(--line, rgba(0,0,0,0.08))) !important;
+  }
+  .nav .btn-ghost[style*="border: none"],
+  .nav .btn-ghost[style*="border:none"] {
+      border: none !important;
+  }
+  .nav .btn-ghost:hover {
+      background: var(--bg-secondary, #f5f5f7) !important;
+      transform: none !important;
+      box-shadow: none !important;
+      opacity: 1 !important;
+  }
+  .nav .btn-ghost.desktop-btn { display: none !important; }
+  @media(min-width: 960px) {
+      .nav .btn-ghost.desktop-btn { display: inline-flex !important; }
+  }
+  /* === End canonical === */
+
+  /* =========================================
+     APPLE-STYLE PAGE CONTENT (matches index.html / DPMini.html)
+     ========================================= */
+  :root {
+      --bg-body: #ffffff;
+      --bg-secondary: #f5f5f7;
+      --bg-card: #ffffff;
+      --text-primary: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --divider: rgba(0, 0, 0, 0.08);
+      --accent: #0071e3;
+  }
+  @media (prefers-color-scheme: dark) {
+      :root {
+          --bg-body: #000000;
+          --bg-secondary: #1c1c1e;
+          --bg-card: #1c1c1e;
+          --text-primary: #f5f5f7;
+          --text-secondary: #a1a1aa;
+          --divider: rgba(255, 255, 255, 0.10);
+      }
+  }
+  body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+  }
+
+  /* HERO */
+  .hero {
+      padding: 130px 0 80px !important;
+      background: var(--bg-body);
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+  }
+  .hero::before {
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0, 113, 227, 0.06) 0%, transparent 60%) !important;
+      width: 100% !important;
+      height: 100% !important;
+      top: 0 !important;
+      left: 0 !important;
+      transform: none !important;
+      opacity: 1 !important;
+      z-index: 0 !important;
+  }
+  .hero .container { position: relative; z-index: 1; }
+  .hero-eyebrow {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      margin-bottom: 10px;
+  }
+  .hero h1 {
+      font-size: clamp(38px, 5.4vw, 60px) !important;
+      line-height: 1.04 !important;
+      letter-spacing: -0.024em !important;
+      font-weight: 600 !important;
+      color: var(--text-primary);
+      margin: 0 0 16px !important;
+  }
+  .hero .lead {
+      font-size: clamp(16px, 1.3vw, 18px) !important;
+      line-height: 1.5 !important;
+      color: var(--text-secondary) !important;
+      max-width: 580px !important;
+      margin: 0 auto 28px !important;
+      font-weight: 400 !important;
+  }
+  .hero-meta {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0;
+      padding: 10px 20px;
+      border: 1px solid var(--divider);
+      border-radius: 999px;
+      background: var(--bg-secondary);
+  }
+  .hero-meta-item { display: inline-flex; align-items: center; gap: 6px; }
+  .hero-meta-item svg { width: 13px; height: 13px; opacity: 0.7; }
+  .hero-meta-dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      opacity: 0.4;
+  }
+
+  /* CONTACT CARDS */
+  .grid { gap: 18px !important; }
+  .card {
+      background: var(--bg-card) !important;
+      border: 1px solid var(--divider) !important;
+      border-radius: 20px !important;
+      padding: 28px !important;
+      box-shadow: none !important;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, border-color 0.3s ease !important;
+  }
+  .card:hover {
+      transform: translateY(-4px) !important;
+      box-shadow: 0 20px 50px rgba(10,10,15,0.10), 0 4px 12px rgba(10,10,15,0.04) !important;
+      border-color: var(--divider) !important;
+  }
+  .card-header { gap: 14px !important; margin-bottom: 6px !important; }
+  .contact-icon {
+      width: 44px !important;
+      height: 44px !important;
+      border-radius: 14px !important;
+      background: var(--bg-secondary) !important;
+      border: 0 !important;
+      color: var(--text-primary) !important;
+  }
+  .contact-icon svg { width: 22px !important; height: 22px !important; }
+  .card h2 {
+      font-size: 22px !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.01em !important;
+      color: var(--text-primary) !important;
+      margin: 0 !important;
+  }
+  .card p {
+      color: var(--text-secondary) !important;
+      font-size: 15px !important;
+      line-height: 1.5 !important;
+      margin: 0 0 24px !important;
+  }
+  .contact-row {
+      border: 1px solid var(--divider) !important;
+      background: var(--bg-secondary) !important;
+      border-radius: 14px !important;
+      padding: 16px 18px !important;
+  }
+  .contact-info .label {
+      font-size: 15px !important;
+      font-weight: 600 !important;
+      color: var(--text-primary);
+      letter-spacing: -0.005em;
+  }
+  .contact-info .sublabel {
+      font-size: 12px !important;
+      color: var(--text-secondary) !important;
+      margin-top: 2px;
+  }
+
+  /* BUTTONS */
+  .btn {
+      border-radius: 999px !important;
+      border: 1px solid var(--divider) !important;
+      background: var(--bg-card) !important;
+      color: var(--text-primary) !important;
+      font-weight: 500 !important;
+      font-size: 14px !important;
+      padding: 9px 16px !important;
+      box-shadow: none !important;
+      transition: background 0.2s, opacity 0.2s, transform 0.2s !important;
+  }
+  .btn:hover {
+      transform: none !important;
+      box-shadow: none !important;
+      background: var(--bg-secondary) !important;
+  }
+  .btn.primary {
+      background: var(--accent) !important;
+      color: #fff !important;
+      border-color: transparent !important;
+  }
+  .btn.primary:hover {
+      background: #0077ed !important;
+      opacity: 1;
+  }
+
+  /* LOCATION */
+  .location-section {
+      padding: 80px 0 !important;
+      background: var(--bg-body) !important;
+      text-align: center;
+  }
+  .location-section h2 {
+      font-size: clamp(26px, 3.2vw, 38px) !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.02em !important;
+      color: var(--text-primary) !important;
+      margin: 0 0 10px !important;
+  }
+  .location-section p {
+      color: var(--text-secondary) !important;
+      font-size: clamp(15px, 1.2vw, 17px) !important;
+      max-width: 580px !important;
+      margin: 0 auto 32px !important;
+      line-height: 1.45 !important;
+  }
+  .map-container {
+      border: 1px solid var(--divider) !important;
+      border-radius: 22px !important;
+      box-shadow: 0 20px 50px rgba(10,10,15,0.08) !important;
+      max-width: 1080px;
+      margin: 0 auto;
+      overflow: hidden;
+  }
+  .map-container iframe { filter: grayscale(0.4) contrast(1.05) !important; }
+
+  /* HIDE the inline contactus.html footer block (the canonical one is later in the body) */
+
+  @media (max-width: 768px) {
+      .hero { padding: 120px 0 56px !important; }
+      .card { padding: 28px !important; }
+      .location-section { padding: 72px 0 !important; }
+  }
+
+  /* SECTION HEADERS */
+  .ap-section { padding: 96px 0; }
+  .ap-section-header { text-align: center; max-width: 720px; margin: 0 auto 40px; }
+  .ap-section-eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+  }
+  .ap-section-header h2 {
+      font-size: clamp(26px, 3.2vw, 38px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin: 0 0 10px;
+      line-height: 1.1;
+  }
+  .ap-section-header p {
+      font-size: clamp(15px, 1.2vw, 17px);
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin: 0;
+  }
+
+  /* QUICK STATS STRIP */
+  .ap-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 48px 0 72px;
+      border-top: 1px solid var(--divider);
+      border-bottom: 1px solid var(--divider);
+  }
+  .ap-stat { text-align: center; padding: 28px 16px; }
+  .ap-stat + .ap-stat { border-left: 1px solid var(--divider); }
+  .ap-stat-value {
+      font-size: clamp(28px, 3vw, 36px);
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.018em;
+      line-height: 1.1;
+      margin-bottom: 6px;
+  }
+  .ap-stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 400;
+  }
+  @media (max-width: 700px) {
+      .ap-stats { grid-template-columns: 1fr; padding: 24px 0; }
+      .ap-stat + .ap-stat { border-left: 0; border-top: 1px solid var(--divider); }
+  }
+
+  /* DEPARTMENT GRID */
+  .ap-departments {
+      background: var(--bg-body);
+      padding: 32px 0 96px !important;
+  }
+  .ap-departments .ap-section-header { margin-bottom: 32px; }
+  .ap-departments .ap-section-header h2 {
+      font-size: clamp(18px, 1.6vw, 22px);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      margin: 0 0 6px;
+  }
+  .ap-departments .ap-section-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+  }
+  .ap-departments .dept-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--divider);
+  }
+  .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      max-width: 1100px;
+      margin: 0 auto;
+  }
+  @media (max-width: 900px) { .dept-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .dept-grid { grid-template-columns: 1fr; } }
+  .dept-card {
+      background: var(--bg-card);
+      border: 1px solid var(--divider);
+      border-radius: 18px;
+      padding: 28px;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+  }
+  .dept-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(10,10,15,0.08), 0 4px 10px rgba(10,10,15,0.04);
+  }
+  .dept-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      display: grid; place-items: center;
+      color: var(--accent);
+      margin-bottom: 18px;
+  }
+  .dept-icon svg { width: 18px; height: 18px; }
+  .dept-name {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      margin: 0 0 4px;
+  }
+  .dept-role {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin: 0 0 14px;
+      min-height: 38px;
+      line-height: 1.4;
+  }
+  .dept-email {
+      display: inline-block;
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: 500;
+      word-break: break-all;
+  }
+  .dept-email:hover { text-decoration: underline; }
+
+  /* CONTACT FORM */
+  .ap-form-section { padding: 80px 0; background: var(--bg-secondary); }
+  .ap-form-grid {
+      display: grid;
+      grid-template-columns: 0.85fr 1fr;
+      gap: 56px;
+      max-width: 1080px;
+      margin: 0 auto;
+      align-items: start;
+  }
+  @media(max-width: 900px) {
+      .ap-form-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+  .ap-form-side {
+      padding-top: 8px;
+  }
+  .ap-form-side .ap-section-eyebrow { margin-bottom: 8px; }
+  .ap-form-side h2 {
+      font-size: clamp(26px, 3.2vw, 38px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin: 0 0 12px;
+      line-height: 1.1;
+  }
+  .ap-form-side > p {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.55;
+      margin: 0 0 28px;
+  }
+  .ap-form-tips {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+  }
+  .ap-form-tips li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.45;
+  }
+  .ap-form-tips li::before {
+      content: "";
+      flex-shrink: 0;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 2px;
+      mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center/12px no-repeat;
+      -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center/12px no-repeat;
+  }
+  .ap-form-quick {
+      padding: 18px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--divider);
+      border-radius: 14px;
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.45;
+  }
+  .ap-form-quick-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+  }
+  .ap-form-quick a { color: var(--accent); text-decoration: none; font-weight: 500; }
+  .ap-form-quick a:hover { text-decoration: underline; }
+
+  .ap-form {
+      background: var(--bg-card);
+      border: 1px solid var(--divider);
+      border-radius: 20px;
+      padding: 32px;
+  }
+  @media(max-width: 600px) { .ap-form { padding: 28px 22px; } }
+  .ap-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media(max-width: 600px) { .ap-form-row { grid-template-columns: 1fr; } }
+  .ap-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .ap-field label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0;
+  }
+  .ap-field input,
+  .ap-field select,
+  .ap-field textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--divider);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 15px;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+  }
+  .ap-field textarea { min-height: 130px; resize: vertical; }
+  .ap-field input:focus,
+  .ap-field select:focus,
+  .ap-field textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: var(--bg-card);
+  }
+  .ap-form-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      border-radius: 999px;
+      background: var(--text-primary);
+      color: var(--bg-body);
+      font-size: 15px;
+      font-weight: 500;
+      border: 0;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      width: 100%;
+  }
+  .ap-form-submit:hover { opacity: 0.92; transform: scale(1.01); }
+  .ap-form-disclaimer {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 16px 0 0;
+      text-align: center;
+  }
+
+  /* LOCATION RESTRUCTURE - 2 column with address card */
+  .location-section .container { display: block; }
+  .location-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 24px;
+      max-width: 1100px;
+      margin: 48px auto 0;
+      align-items: stretch;
+  }
+  @media(max-width: 900px) { .location-grid { grid-template-columns: 1fr; } }
+  .address-card {
+      background: var(--bg-card);
+      border: 1px solid var(--divider);
+      border-radius: 22px;
+      padding: 32px;
+      text-align: left;
+  }
+  .address-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: none;
+      margin: 0 0 8px;
+      letter-spacing: 0;
+  }
+  .address-card .address-line {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      line-height: 1.4;
+      margin-bottom: 24px;
+  }
+  .address-detail-group { margin-bottom: 20px; }
+  .address-detail-group:last-child { margin-bottom: 0; }
+  .address-detail-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-bottom: 6px;
+  }
+  .address-detail-value {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.5;
+  }
+  .address-detail-value a { color: var(--accent); text-decoration: none; }
+  .address-detail-value a:hover { text-decoration: underline; }
+  .location-section .map-container { margin: 0 !important; height: 100%; min-height: 380px; }
+
+  /* FAQ TEASER */
+  .ap-faq-teaser {
+      max-width: none;
+      margin: 0;
+      padding: 64px 22px;
+      text-align: center;
+      background: var(--bg-secondary);
+      border-top: 0;
+  }
+  .ap-faq-teaser h3 {
+      font-size: clamp(24px, 3vw, 32px);
+      font-weight: 600;
+      letter-spacing: -0.018em;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+  }
+  .ap-faq-teaser p {
+      color: var(--text-secondary);
+      margin: 0 0 24px;
+      font-size: 16px;
+      line-height: 1.5;
+  }
+  .ap-faq-teaser .ap-faq-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+  }
+  .ap-faq-teaser .ap-faq-link:hover { text-decoration: underline; }
+</style>
+<style>
+/* Apple-style cart card (universal override) */
+.cart-sidebar .cart-product-card {
+    background: var(--bg-card, var(--card, #ffffff)) !important;
+    border: 1px solid var(--divider, var(--line, rgba(0,0,0,0.08))) !important;
+    border-radius: 18px !important;
+    padding: 18px 18px 16px !important;
+    margin-bottom: 12px !important;
+    box-shadow: none !important;
+    transition: border-color 0.25s ease;
+}
+.cart-sidebar .cart-product-card:hover { border-color: rgba(10,10,15,0.12) !important; }
+.cart-sidebar .cart-product-header {
+    display: flex !important; justify-content: space-between !important;
+    align-items: center !important; gap: 12px !important;
+    margin: 0 0 8px 0 !important;
+}
+.cart-sidebar .cart-product-title {
+    font-size: 15px !important; font-weight: 600 !important;
+    letter-spacing: -0.01em; line-height: 1.3;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    margin: 0 !important;
+}
+.cart-sidebar .cart-product-subtitle {
+    font-size: 12px !important;
+    color: var(--text-secondary, var(--muted, #6b6b78)) !important;
+    margin: 0 0 12px 0 !important;
+    font-weight: 400 !important; line-height: 1.45;
+}
+.cart-sidebar .cart-product-price {
+    font-size: 15px !important; font-weight: 600 !important;
+    letter-spacing: -0.01em;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+}
+/* Remove button — covers .cart-product-remove-btn AND any header button (e.g. .btn ghost used in index.html) */
+.cart-sidebar .cart-product-remove-btn,
+.cart-sidebar .cart-product-header > button,
+.cart-sidebar .cart-product-header .btn {
+    flex-shrink: 0 !important;
+    width: 26px !important; height: 26px !important;
+    min-width: 26px !important;
+    border: none !important; background: transparent !important;
+    color: var(--text-secondary, var(--muted, #6b6b78)) !important;
+    font-size: 18px !important; font-weight: 400 !important;
+    line-height: 1 !important; padding: 0 !important; margin: 0 !important;
+    cursor: pointer; border-radius: 50% !important;
+    display: grid !important; place-items: center !important;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    box-shadow: none !important;
+}
+.cart-sidebar .cart-product-remove-btn:hover,
+.cart-sidebar .cart-product-header > button:hover,
+.cart-sidebar .cart-product-header .btn:hover {
+    background: rgba(255, 59, 48, 0.1) !important;
+    color: #ff3b30 !important;
+    transform: none !important;
+}
+.cart-sidebar .cart-item-actions {
+    display: flex !important; justify-content: space-between !important;
+    align-items: center !important; gap: 12px !important;
+    margin-top: 0 !important;
+}
+.cart-sidebar .quantity-control {
+    display: inline-flex !important; align-items: center !important;
+    background: var(--bg-secondary, #f2f2f4) !important;
+    border-radius: 999px !important; padding: 2px !important;
+    gap: 0 !important;
+    border: none !important;
+}
+.cart-sidebar .quantity-btn {
+    width: 28px !important; height: 28px !important;
+    min-width: 28px !important;
+    border: none !important; background: transparent !important;
+    border-radius: 50% !important;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    font-size: 16px !important; font-weight: 500 !important;
+    line-height: 1 !important; padding: 0 !important;
+    cursor: pointer;
+    display: grid !important; place-items: center !important;
+    transition: background 0.2s ease;
+    box-shadow: none !important;
+}
+.cart-sidebar .quantity-btn:hover { background: rgba(0,0,0,0.06) !important; }
+.cart-sidebar .quantity-btn:active { background: rgba(0,0,0,0.1) !important; }
+.cart-sidebar .quantity-input,
+.cart-sidebar span.quantity-input,
+.cart-sidebar input.quantity-input {
+    display: inline-block !important; vertical-align: middle !important; line-height: 28px !important;
+    width: 28px !important; height: 28px !important; min-width: 28px !important;
+    border: none !important; background: transparent !important;
+    text-align: center !important; font-family: inherit !important;
+    font-size: 14px !important; font-weight: 600 !important;
+    color: var(--text-primary, var(--text, #0a0a0f)) !important;
+    -moz-appearance: textfield; appearance: textfield;
+    pointer-events: none;
+    padding: 0 !important; margin: 0 !important;
+    box-shadow: none !important;
+}
+.cart-sidebar .quantity-input::-webkit-outer-spin-button,
+.cart-sidebar .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.cart-sidebar .cart-items { padding: 18px 22px !important; }
+.cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
 </style>
 </head>
 <body>
@@ -426,35 +1294,30 @@
       <!-- Desktop Navigation -->
       <ul class="nav-links">
         <li class="dropdown" data-menu="microscopes-menu"><a href="#">Microscopes</a></li>
-        <li class="dropdown" data-menu="stands-menu"><a href="#">Stands</a></li>
         <li class="dropdown" data-menu="software-menu"><a href="#">Software</a></li>
-        <li class="dropdown" data-menu="support-menu"><a href="#">Support</a></li>
+        <li class="dropdown" data-menu="support-menu"><a href="#">Company &amp; Support</a></li>
       </ul>
       
-      <div style="display:flex; gap:8px; align-items:center;">
-        <!-- Mobile Hamburger Button -->
+      <div class="nav-actions">
+        <a href="licensing.html" class="btn btn-ghost desktop-btn" style="border: none;">Licensing</a>
+
+        <button class="cart-icon-btn" id="cart-btn">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          <span class="cart-badge" id="cart-count">0</span>
+        </button>
+
         <button id="hamburger-btn" class="hamburger-btn">
           <div class="hamburger-line"></div>
           <div class="hamburger-line"></div>
           <div class="hamburger-line"></div>
         </button>
-        
-        <!-- Desktop buttons -->
-        <a class="btn" href="licensing.html" style="display: none;">Licensing</a>
-        <button id="cart-btn" class="btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>
-          </svg>
-          <span id="cart-count">0</span>
-        </button>
       </div>
     </div>
     
     <!-- Desktop Dropdown Menus -->
-    <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li><li><a href="all-models.html">All Models</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compare Models</a></li></ul></div></div></div>
-    <div id="stands-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Stands</li><li><a href="#">Floor Stands</a></li><li><a href="#">Ceiling Mounts</a></li><li><a href="#">Wall Mounts</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="#">Compatibility Guide</a></li><li><a href="#">Installation Service</a></li></ul></div></div></div>
-    <div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Explore Software</li><li><a href="#">Imaging Suite</a></li><li><a href="#">Companion App</a></li></ul><ul class="menu-link-column"><li>For Developers</li><li><a href="#">API & SDK</a></li><li><a href="#">Documentation</a></li></ul></div></div></div>
-    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li></ul></div></div></div>
+    <div id="microscopes-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Shop Microscopes</li><li><a href="DPMini.html">DP Mini</a></li><li><a href="DPPro.html">DP Pro</a></li></ul><ul class="menu-link-column"><li>Quick Links</li><li><a href="all-models.html">Compare Models</a></li></ul></div></div></div>
+    <div id="software-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Connect Suite</li><li><a href="medconnectmini.html">Med Connect Mini</a></li><li><a href="medconnectpro.html">Med Connect Pro</a></li></ul><ul class="menu-link-column"><li>Cloud &amp; Services</li><li><a href="medpatient.html">Med Patient</a></li><li><a href="medshare.html">Med Share</a></li></ul></div></div></div>
+    <div id="support-menu" class="dropdown-menu"><div class="container"><div class="menu-content"><ul class="menu-main-links"><li>Get Support</li><li><a href="contactus.html">Contact Us</a></li><li><a href="consultation.html">Schedule a consultation</a></li></ul><ul class="menu-link-column"><li>Documents</li><li><a href="#">User Manuals (IFU)</a></li><li><a href="#">Declaration of Conformity</a></li><li><a href="#">Field Safety Notices</a></li><li><a href="#">EUDAMED Registration</a></li></ul><ul class="menu-link-column"><li>Training</li><li><a href="#">Onboarding &amp; Setup</a></li><li><a href="#">Webinars</a></li><li><a href="#">Report an Incident</a></li></ul></div></div></div>
     <div class="menu-backdrop" id="menu-backdrop"></div>
   </div>
   
@@ -474,30 +1337,22 @@
     </div>
     
     <div class="mobile-menu-section">
-      <div class="mobile-menu-title">Stands</div>
-      <ul class="mobile-menu-links">
-        <li><a href="#">Floor Stands</a></li>
-        <li><a href="#">Ceiling Mounts</a></li>
-        <li><a href="#">Wall Mounts</a></li>
-        <li><a href="#">Compatibility Guide</a></li>
-        <li><a href="#">Installation Service</a></li>
-      </ul>
-    </div>
-    
-    <div class="mobile-menu-section">
       <div class="mobile-menu-title">Software</div>
       <ul class="mobile-menu-links">
-        <li><a href="#">Imaging Suite</a></li>
-        <li><a href="#">Companion App</a></li>
-        <li><a href="#">API & SDK</a></li>
-        <li><a href="#">Documentation</a></li>
+        <li><a href="medconnectmini.html">Med Connect Mini</a></li>
+        <li><a href="medconnectpro.html">Med Connect Pro</a></li>
+        <li><a href="medpatient.html">Med Patient</a></li>
+        <li><a href="medshare.html">Med Share</a></li>
       </ul>
     </div>
-    
+
     <div class="mobile-menu-section">
-      <div class="mobile-menu-title">Support</div>
+      <div class="mobile-menu-title">Company &amp; Support</div>
       <ul class="mobile-menu-links">
         <li><a href="contactus.html">Contact Us</a></li>
+        <li><a href="contactus.html">Service &amp; Repair (RMA)</a></li>
+        <li><a href="#">User Manuals (IFU)</a></li>
+        <li><a href="#">Declaration of Conformity</a></li>
       </ul>
     </div>
     
@@ -520,87 +1375,253 @@
 
   <section class="hero" id="home">
     <div class="container">
-      <h1>Get in Touch</h1>
-      <p class="lead">We're here to help with product questions, orders, and technical guidance. Choose your preferred way to connect and our team will get back to you promptly.</p>
-    </div>
-  </section>
-
-  <section style="padding:0 0 64px">
-    <div class="container grid">
-      
-      <div class="card">
-        <div class="card-header">
-          <div class="contact-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          </div>
-          <h2>Call or Message</h2>
-        </div>
-        <p>Talk directly with our support team or send a quick message via WhatsApp.</p>
-        <div class="contact-details">
-          <div class="contact-row">
-            <div class="contact-info">
-              <div class="label">+39 327 386 6293</div>
-              <div class="sublabel">Mobile / WhatsApp</div>
-            </div>
-            <div class="contact-actions">
-              <a class="btn" href="tel:+393273866293">Call</a> 
-              <a class="btn" href="https://wa.me/393273866293">Chat</a>
-            </div>
-          </div>
-          <div class="contact-row">
-            <div class="contact-info">
-              <div class="label">+39 391 472 7070</div>
-              <div class="sublabel">Mobile / WhatsApp</div>
-            </div>
-            <div class="contact-actions">
-              <a class="btn" href="tel:+393914727070">Call</a> 
-              <a class="btn" href="https://wa.me/393914727070">Chat</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="contact-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          <h2>Email Us</h2>
-        </div>
-        <p>Send us the details. We typically reply within one business day.</p>
-        <div class="contact-details">
-          <div class="contact-row">
-            <div class="contact-info">
-              <div class="label">support@dpbiotech.com</div>
-              <div class="sublabel">For all inquiries</div>
-            </div>
-            <div class="contact-actions">
-              <a class="btn primary" href="mailto:support@dpbiotech.com?subject=Support%20request%20—%20DP%20Biotech">Compose</a>
-            </div>
-          </div>
-        </div>
+      <span class="hero-eyebrow">Contact</span>
+      <h1>Get in touch.</h1>
+      <p class="lead">Product questions, orders, technical guidance — choose how you'd like to connect, and our team will get back to you promptly.</p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Reply within 24h
+        </span>
+        <span class="hero-meta-dot"></span>
+        <span class="hero-meta-item">Mon&ndash;Fri · 9:00&ndash;18:00 CET</span>
+        <span class="hero-meta-dot"></span>
+        <span class="hero-meta-item">EN · IT</span>
       </div>
     </div>
   </section>
+
   
+  <section class="ap-section ap-departments">
+    <div class="container">
+      <div class="ap-section-header">
+        <h2>Reach the right team.</h2>
+        <p>Skip the queue and write directly to the team that handles your request.</p>
+      </div>
+      <div class="dept-grid">
+        <div class="dept-card">
+          <div class="dept-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3 class="dept-name">Sales Enquiries</h3>
+          <p class="dept-role">Quotes, demo requests, distributor onboarding.</p>
+          <a class="dept-email" href="mailto:sales@dpbiotech.com">sales@dpbiotech.com</a>
+        </div>
+        <div class="dept-card">
+          <div class="dept-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h3 class="dept-name">Clinical Support</h3>
+          <p class="dept-role">In-OR setup, training, clinical workflow questions.</p>
+          <a class="dept-email" href="mailto:clinical@dpbiotech.com">clinical@dpbiotech.com</a>
+        </div>
+        <div class="dept-card">
+          <div class="dept-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <h3 class="dept-name">Service &amp; Repair</h3>
+          <p class="dept-role">RMA requests, on-site service, spare parts.</p>
+          <a class="dept-email" href="mailto:service@dpbiotech.com">service@dpbiotech.com</a>
+        </div>
+        <div class="dept-card">
+          <div class="dept-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h3 class="dept-name">Regulatory / PRRC</h3>
+          <p class="dept-role">EU MDR, Declaration of Conformity, vigilance reports.</p>
+          <a class="dept-email" href="mailto:regulatory@dpbiotech.com">regulatory@dpbiotech.com</a>
+        </div>
+        <div class="dept-card">
+          <div class="dept-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4z"/></svg>
+          </div>
+          <h3 class="dept-name">Press &amp; Media</h3>
+          <p class="dept-role">Interviews, image kits, embargoed announcements.</p>
+          <a class="dept-email" href="mailto:press@dpbiotech.com">press@dpbiotech.com</a>
+        </div>
+        <div class="dept-card">
+          <div class="dept-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>
+          </div>
+          <h3 class="dept-name">Careers</h3>
+          <p class="dept-role">Open positions, internships, clinical advisor roles.</p>
+          <a class="dept-email" href="mailto:careers@dpbiotech.com">careers@dpbiotech.com</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ap-form-section">
+    <div class="container">
+      <div class="ap-form-grid">
+        <div class="ap-form-side">
+          <span class="ap-section-eyebrow">Send a message</span>
+          <h2>Write to us directly.</h2>
+          <p>Tell us what you're looking for and we'll route it to the right team. Most replies go out within one business day.</p>
+          <ul class="ap-form-tips">
+            <li>Mention the device or topic — DP Mini, DP Pro, software, regulatory.</li>
+            <li>Add your specialty or clinical context if relevant.</li>
+            <li>Country, hospital or clinic name helps us route faster.</li>
+          </ul>
+          <div class="ap-form-quick">
+            <span class="ap-form-quick-label">In a hurry?</span>
+            Call <a href="tel:+393273866293">+39 327 386 6293</a> or message us on <a href="https://wa.me/393273866293">WhatsApp</a>.
+          </div>
+        </div>
+
+        <form class="ap-form" onsubmit="event.preventDefault(); alert('Thanks — we will be in touch shortly.');">
+          <div class="ap-form-row">
+            <div class="ap-field">
+              <label for="cf-name">Full name</label>
+              <input type="text" id="cf-name" name="name" required autocomplete="name">
+            </div>
+            <div class="ap-field">
+              <label for="cf-org">Organization</label>
+              <input type="text" id="cf-org" name="organization" autocomplete="organization">
+            </div>
+          </div>
+          <div class="ap-form-row">
+            <div class="ap-field">
+              <label for="cf-email">Email</label>
+              <input type="email" id="cf-email" name="email" required autocomplete="email">
+            </div>
+            <div class="ap-field">
+              <label for="cf-topic">Topic</label>
+              <select id="cf-topic" name="topic">
+                <option>Sales Enquiry</option>
+                <option>Clinical Support</option>
+                <option>Service &amp; Repair (RMA)</option>
+                <option>Regulatory / PRRC</option>
+                <option>Press &amp; Media</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="ap-field">
+            <label for="cf-message">Message</label>
+            <textarea id="cf-message" name="message" required placeholder="Tell us a bit about what you need&hellip;"></textarea>
+          </div>
+          <button type="submit" class="ap-form-submit">Send message</button>
+          <p class="ap-form-disclaimer">By submitting, you agree to our privacy policy. We will only use your details to respond.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <section class="location-section">
     <div class="container">
-      <h2>Our Location</h2>
-      <p class="lead">While we operate globally, our main office is located in the beautiful city of Treviso, Italy.</p>
-      <div class="map-container">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d89233.5513221948!2d12.162590637172728!3d45.67280800363297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477937a7185906b7%3A0x409ff4339994990!2sTreviso%2C%20Province%20of%20Treviso%2C%20Italy!5e0!3m2!1sen!2sus!4v1661801088463!5m2!1sen!2sus" 
-          width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="ap-section-header">
+        <span class="ap-section-eyebrow">Visit us</span>
+        <h2>Our location.</h2>
+        <p>While we operate globally, our main office is in Treviso, Italy.</p>
+      </div>
+      <div class="location-grid">
+        <div class="address-card">
+          <h3>Headquarters</h3>
+          <div class="address-line">Dal Pont Medical S.r.l.s<br>Piazza San Vito 12<br>31100 Treviso &mdash; Italia</div>
+
+          <div class="address-detail-group">
+            <div class="address-detail-label">Hours</div>
+            <div class="address-detail-value">Monday &ndash; Friday<br>09:00 &ndash; 18:00 CET</div>
+          </div>
+
+          <div class="address-detail-group">
+            <div class="address-detail-label">Phone &amp; WhatsApp</div>
+            <div class="address-detail-value">
+              <a href="tel:+393273866293">+39 327 386 6293</a> · <a href="https://wa.me/393273866293">Chat</a><br>
+              <a href="tel:+393914727070">+39 391 472 7070</a> · <a href="https://wa.me/393914727070">Chat</a>
+            </div>
+          </div>
+
+          <div class="address-detail-group">
+            <div class="address-detail-label">Email</div>
+            <div class="address-detail-value"><a href="mailto:support@dpbiotech.com">support@dpbiotech.com</a></div>
+          </div>
+
+          <div class="address-detail-group">
+            <div class="address-detail-label">Identifiers</div>
+            <div class="address-detail-value">VAT / C.F. 05355480269<br>REA 437837<br>EUDAMED SRN IT-MF-000052836</div>
+          </div>
+        </div>
+
+        <div class="map-container">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d89233.5513221948!2d12.162590637172728!3d45.67280800363297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477937a7185906b7%3A0x409ff4339994990!2sTreviso%2C%20Province%20of%20Treviso%2C%20Italy!5e0!3m2!1sen!2sus!4v1661801088463!5m2!1sen!2sus"
+            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
       </div>
     </div>
   </section>
 
+  <div class="ap-faq-teaser">
+    <h3>Looking for a quick answer?</h3>
+    <p>Check our frequently asked questions — most enquiries are covered there.</p>
+    <a href="index.html#faq" class="ap-faq-link">Browse the FAQ &rsaquo;</a>
+  </div>
+
   <footer>
-    <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap">
-      <a href="index.html" class="logo">
-        <img src="logo.png" alt="DP Biotech Logo" style="height:34px; border-radius:50%;">
-        <span>DP Biotech</span>
-      </a>
-      <div>© <span id="y"></span> DP Biotech — All rights reserved.</div>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:28px; border-radius:50%; margin-right:8px;">
+                    <span style="font-weight:600;">DP Biotech</span>
+                </div>
+                <p>High-performance surgical microscopes engineered in Italy. Designed for clinical workflows; built around optical precision and modern digital ergonomics.</p>
+                <address class="footer-address">
+                    <strong>Dal Pont Medical S.r.l.s</strong><br>
+                    Piazza San Vito 12<br>
+                    31100 Treviso — Italia<br><br>
+                    VAT / C.F.: 05355480269<br>
+                    REA: 437837<br>
+                    EUDAMED SRN: IT-MF-000052836
+                </address>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Products</div>
+                <ul>
+                    <li><a href="DPMini.html">DP Mini</a></li>
+                    <li><a href="DPPro.html">DP Pro</a></li>
+                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="all-models.html">Compare Models</a></li>
+                    <li><a href="#specs">Specifications</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Support &amp; Service</div>
+                <ul>
+                    <li><a href="contactus.html">Sales Enquiries</a></li>
+                    <li><a href="contactus.html">Clinical Support</a></li>
+                    <li><a href="contactus.html">Service &amp; Repair (RMA)</a></li>
+                    <li><a href="#">Downloads &amp; Manuals</a></li>
+                    <li><a href="#">Instructions for Use (IFU)</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Regulatory &amp; Legal</div>
+                <ul>
+                    <li><a href="#">EU Declaration of Conformity</a></li>
+                    <li><a href="#">Vigilance &amp; Incident Reporting</a></li>
+                    <li><a href="#">UDI Information</a></li>
+                    <li><a href="#">Warranty</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Terms of Sale</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>© <span id="y"></span> Dal Pont Medical S.r.l.s — All rights reserved.</div>
+            <div class="footer-regulatory">
+                <span class="footer-regulatory-badge">CE</span>
+                <span class="footer-regulatory-badge">MDR Class I</span>
+                <span class="footer-regulatory-badge">Made in Italy</span>
+            </div>
+        </div>
     </div>
   </footer>
 
@@ -614,17 +1635,8 @@
     const closeMobileMenuBtn = document.getElementById('close-mobile-menu');
     const body = document.body;
 
-    // Show desktop buttons on larger screens
-    function updateDesktopButtons() {
-        const licensingBtn = document.querySelector('a[href="licensing.html"]');
-        if (window.innerWidth >= 960) {
-            licensingBtn.style.display = 'inline-flex';
-            hamburgerBtn.style.display = 'none';
-        } else {
-            licensingBtn.style.display = 'none';
-            hamburgerBtn.style.display = 'flex';
-        }
-    }
+    // Desktop button visibility now handled entirely by CSS (.desktop-btn / .hamburger-btn media queries)
+    function updateDesktopButtons() { /* no-op */ }
 
     function closeMobileMenu() {
         hamburgerBtn.classList.remove('is-open');
@@ -823,5 +1835,6 @@
     initCart();
   });
 </script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
 </body>
 </html>
