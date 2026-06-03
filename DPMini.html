@@ -1131,6 +1131,133 @@ footer {
 .cart-sidebar .cart-items { padding: 18px 22px !important; }
 .cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
 </style>
+<style>
+/* =========================================
+   DP MINI — CINEMATIC STEP TUTORIALS
+   ========================================= */
+#mini-tutorials {
+    --tut-blue: #0071e3;
+    --tut-blue-soft: rgba(0, 113, 227, 0.06);
+    --tut-blue-ring: rgba(0, 113, 227, 0.18);
+}
+#mini-tutorials .section-header { margin-bottom: 44px; }
+
+/* ---- Two-column horizontal layout: player | chapter rail ---- */
+.tut-cine {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr;
+    gap: 28px;
+    align-items: start;
+}
+@media(max-width: 900px) { .tut-cine { grid-template-columns: 1fr; } }
+.tut-main-col { min-width: 0; }
+
+.tut-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #000;
+    box-shadow: var(--shadow-lg);
+}
+/* Glossy ambient backdrop — uncropped video, blurred fill on the edges */
+.tut-stage .tut-ambient {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: blur(40px) saturate(170%) brightness(0.9);
+    transform: scale(1.25);
+    z-index: 0; pointer-events: none;
+}
+.tut-stage .tut-main {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    z-index: 1;
+}
+.tut-now { margin-top: 18px; padding: 0 2px; }
+.tut-now-step {
+    display: block;
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--tut-blue);
+    margin-bottom: 8px;
+}
+.tut-now h3 { font-size: 22px; margin-bottom: 8px; letter-spacing: -0.02em; }
+.tut-now p { font-size: 14.5px; line-height: 1.5; }
+
+/* ---- Vertical chapter rail (scrolls) ---- */
+.tut-rail {
+    display: flex; flex-direction: column; gap: 10px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding: 2px 6px 2px 2px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.tut-rail::-webkit-scrollbar { display: none; }
+@media(max-width: 900px) { .tut-rail { max-height: none; } }
+
+.tut-chip {
+    display: flex; align-items: center; gap: 14px;
+    width: 100%; text-align: left;
+    padding: 8px;
+    border-radius: 16px;
+    border: 2px solid var(--divider);
+    background: var(--bg-card);
+    cursor: pointer; font: inherit; color: inherit;
+    transition: transform 0.3s var(--ease-out-expo, ease), box-shadow 0.3s, border-color 0.3s, background 0.3s;
+}
+.tut-chip:hover { transform: translateX(2px); box-shadow: var(--shadow-sm); border-color: rgba(0,0,0,0.14); }
+/* Selected = Apple blue (matches buydpmini) */
+.tut-chip.is-active {
+    border-color: var(--tut-blue);
+    background: var(--tut-blue-soft);
+    box-shadow: 0 0 0 3px var(--tut-blue-ring);
+}
+.tut-chip-media {
+    position: relative;
+    flex: 0 0 116px;
+    aspect-ratio: 16 / 9;
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(150deg, #1e293b 0%, #334155 120%);
+}
+.tut-chip-media video,
+.tut-chip-media img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.tut-chip-num {
+    position: absolute; top: 6px; left: 6px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 11px; font-weight: 700;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 2;
+    transition: background 0.3s;
+}
+.tut-chip.is-active .tut-chip-num { background: var(--tut-blue); }
+.tut-chip-dur {
+    position: absolute; bottom: 6px; right: 6px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-size: 10px; font-weight: 600; color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 2;
+}
+.tut-chip-body { flex: 1; min-width: 0; padding-right: 6px; }
+.tut-chip-body strong { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; margin-bottom: 2px; }
+.tut-chip-body span { display: block; font-size: 12px; color: var(--text-secondary); line-height: 1.35; }
+</style>
 </head>
 <body>
 
@@ -1544,7 +1671,81 @@ footer {
 
 
 
-<section class="section section-bg">
+<!-- ========== DP MINI VIDEO TUTORIALS (cinematic) ========== -->
+<!--
+  Each .tut-chip carries: data-src (video file), data-step, data-title, data-desc, data-dur.
+  Click a chip → it loads into the big player above and highlights blue.
+  Thumbnails show each clip's first frame automatically. Add/remove chips freely.
+  (Using your two clips, 1.MP4 and 3.mp4, repeated across the steps for now.)
+-->
+<section class="section section-bg" id="mini-tutorials">
+  <div class="container">
+      <div class="section-header">
+          <span class="eyebrow">Step by Step</span>
+          <h2>Learn your DP Mini</h2>
+          <p>From the box to your first 3D capture — follow the guided steps. Tap any chapter to play it.</p>
+      </div>
+
+      <!-- Player (left) + chapter rail (right) -->
+      <div class="tut-cine">
+        <div class="tut-main-col">
+          <div class="tut-stage" id="mini-tut-stage"><!-- video injected by JS --></div>
+          <div class="tut-now">
+              <span class="tut-now-step" id="mini-tut-step">Step 1 of 7</span>
+              <h3 id="mini-tut-title">Unboxing</h3>
+              <p id="mini-tut-desc">What's in the box and how to handle your DP Mini for the first time.</p>
+          </div>
+        </div>
+
+        <!-- Chapter rail -->
+        <div class="tut-rail" id="mini-tut-strip">
+          <button class="tut-chip is-active" data-src="1.MP4" data-step="1" data-dur="2:10"
+                  data-title="Unboxing" data-desc="What's in the box and how to handle your DP Mini for the first time.">
+              <div class="tut-chip-media"><span class="tut-chip-num">1</span><span class="tut-chip-dur">2:10</span></div>
+              <div class="tut-chip-body"><strong>Unboxing</strong><span>What's in the box &amp; first handling</span></div>
+          </button>
+
+          <button class="tut-chip" data-src="3.mp4" data-step="2" data-dur="3:05"
+                  data-title="Mounting" data-desc="Attach the DP Mini to your phone and secure the optical assembly.">
+              <div class="tut-chip-media"><span class="tut-chip-num">2</span><span class="tut-chip-dur">3:05</span></div>
+              <div class="tut-chip-body"><strong>Mounting</strong><span>Attach &amp; secure to your phone</span></div>
+          </button>
+
+          <button class="tut-chip" data-src="1.MP4" data-step="3" data-dur="2:48"
+                  data-title="Motor Control" data-desc="Drive the focus motor with the joystick and on-screen controls.">
+              <div class="tut-chip-media"><span class="tut-chip-num">3</span><span class="tut-chip-dur">2:48</span></div>
+              <div class="tut-chip-body"><strong>Motor Control</strong><span>Joystick &amp; focus drive</span></div>
+          </button>
+
+          <button class="tut-chip" data-src="3.mp4" data-step="4" data-dur="4:20"
+                  data-title="Calibration" data-desc="Calibrate the Fusion 3D depth and white balance for accurate imaging.">
+              <div class="tut-chip-media"><span class="tut-chip-num">4</span><span class="tut-chip-dur">4:20</span></div>
+              <div class="tut-chip-body"><strong>Calibration</strong><span>Fusion 3D depth &amp; white balance</span></div>
+          </button>
+
+          <button class="tut-chip" data-src="1.MP4" data-step="5" data-dur="3:32"
+                  data-title="Focus &amp; Magnification" data-desc="Dial in working distance, focus and zoom for sharp, balanced results.">
+              <div class="tut-chip-media"><span class="tut-chip-num">5</span><span class="tut-chip-dur">3:32</span></div>
+              <div class="tut-chip-body"><strong>Focus &amp; Magnification</strong><span>Working distance &amp; zoom</span></div>
+          </button>
+
+          <button class="tut-chip" data-src="3.mp4" data-step="6" data-dur="3:58"
+                  data-title="Streaming &amp; Recording" data-desc="Capture stills, record 4K HDR clips and stream your view live.">
+              <div class="tut-chip-media"><span class="tut-chip-num">6</span><span class="tut-chip-dur">3:58</span></div>
+              <div class="tut-chip-body"><strong>Streaming &amp; Recording</strong><span>Capture, record &amp; stream</span></div>
+          </button>
+
+          <button class="tut-chip" data-src="1.MP4" data-step="7" data-dur="2:25"
+                  data-title="Voice Commands" data-desc="Control capture and focus hands-free with voice commands.">
+              <div class="tut-chip-media"><span class="tut-chip-num">7</span><span class="tut-chip-dur">2:25</span></div>
+              <div class="tut-chip-body"><strong>Voice Commands</strong><span>Hands-free capture &amp; focus</span></div>
+          </button>
+        </div>
+      </div>
+  </div>
+</section>
+
+<section class="section">
   <div class="container">
       <div class="section-header">
           <span class="eyebrow">Ready when you are</span>
@@ -1947,6 +2148,57 @@ h1, p, .hero-cta, .model-stage { transform: translateY(20px); }
   
       saveCart(); // Init
   });
+  </script>
+<script>
+  /* ===== DP Mini cinematic tutorials ===== */
+  (function () {
+      const strip = document.getElementById('mini-tut-strip');
+      if (!strip) return;
+      const stage   = document.getElementById('mini-tut-stage');
+      const stepEl  = document.getElementById('mini-tut-step');
+      const titleEl = document.getElementById('mini-tut-title');
+      const descEl  = document.getElementById('mini-tut-desc');
+      const chips   = Array.from(strip.querySelectorAll('.tut-chip'));
+
+      // Thumbnail = first frame of each clip (#t=0.1 seeks to it)
+      chips.forEach(chip => {
+          const media = chip.querySelector('.tut-chip-media');
+          media.insertAdjacentHTML('afterbegin',
+              '<video src="' + chip.dataset.src + '#t=0.1" muted preload="metadata" playsinline></video>');
+      });
+
+      const render = (chip, autoplay) => {
+          const src = chip.dataset.src;
+          // Uncropped video over a blurred ambient backdrop (no black bars / no cut)
+          stage.innerHTML =
+              '<video class="tut-ambient" src="' + src + '" muted ' + (autoplay ? 'autoplay ' : '') + 'loop playsinline></video>' +
+              '<video class="tut-main" src="' + src + (autoplay ? '' : '#t=0.1') + '" controls ' +
+                  (autoplay ? 'autoplay ' : 'preload="metadata" ') + 'playsinline></video>';
+          stepEl.textContent  = 'Step ' + chip.dataset.step + ' of ' + chips.length;
+          titleEl.textContent = chip.dataset.title;
+          descEl.textContent  = chip.dataset.desc;
+          chips.forEach(c => c.classList.toggle('is-active', c === chip));
+          // keep the active chip in view within the rail (no page jump)
+          chip.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      };
+
+      chips.forEach(chip => chip.addEventListener('click', () => render(chip, true)));
+      render(chips[0], false); // load first step's frame, no autoplay
+
+      // Soft fade at the rail edges when more chapters are hidden above/below
+      const updateFade = () => {
+          const atTop = strip.scrollTop <= 2;
+          const atBottom = strip.scrollTop + strip.clientHeight >= strip.scrollHeight - 2;
+          const top = atTop ? '#000 0' : 'transparent 0, #000 42px';
+          const bottom = atBottom ? '#000 100%' : '#000 calc(100% - 42px), transparent 100%';
+          const grad = 'linear-gradient(to bottom, ' + top + ', ' + bottom + ')';
+          strip.style.webkitMaskImage = grad;
+          strip.style.maskImage = grad;
+      };
+      strip.addEventListener('scroll', updateFade, { passive: true });
+      window.addEventListener('resize', updateFade);
+      updateFade();
+  })();
   </script>
 <script type="module" src="customer-account-nav.js"></script>
 </body>

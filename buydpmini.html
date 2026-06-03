@@ -477,6 +477,7 @@ body {
     align-self: start;
 }
 .viewer-frame {
+    position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
     max-height: calc(100vh - var(--nav-height) - 220px);
@@ -493,6 +494,84 @@ body {
     .viewer { position: static; }
     .viewer-frame { aspect-ratio: auto; height: 50vh; min-height: 380px; max-height: none; }
 }
+
+/* =========================================
+   VIEWER MEDIA GALLERY (3D model + video + images)
+   ========================================= */
+/* Video / image overlay shown on top of the live 3D model */
+.hg-media {
+    position: absolute; inset: 0;
+    z-index: 3;
+    overflow: hidden;
+    border-radius: 24px;
+    background: #000;
+    display: none;
+}
+.hg-media.is-on { display: block; }
+.hg-media .hg-ambient {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: blur(40px) saturate(170%) brightness(0.9);
+    transform: scale(1.25);
+    z-index: 0; pointer-events: none;
+}
+.hg-media .hg-main {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    z-index: 1;
+}
+
+/* Thumbnails under the viewer */
+.hg-thumbs {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.hg-thumbs::-webkit-scrollbar { display: none; }
+.hg-thumb {
+    position: relative;
+    width: 88px; height: 62px;
+    flex: 0 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    border: 2px solid var(--divider);
+    background: var(--bg-secondary);
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.hg-thumb:hover { transform: translateY(-2px); }
+.hg-thumb.is-active {
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 3px var(--apple-blue-ring);
+}
+.hg-thumb video,
+.hg-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hg-thumb-model {
+    width: 100%; height: 100%;
+    display: grid; place-items: center;
+    background: linear-gradient(135deg, rgba(255,122,24,0.18), rgba(255,59,48,0.08));
+    color: #ff7a18;
+}
+.hg-thumb-tag {
+    position: absolute; bottom: 4px; right: 4px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
+    padding: 1px 6px; border-radius: 999px;
+    background: rgba(0,0,0,0.55); color: #fff; z-index: 2;
+}
+.hg-thumb-play {
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    z-index: 2; color: #fff; pointer-events: none;
+    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.5));
+}
+@media(max-width: 600px) { .hg-thumb { width: 76px; height: 54px; } }
 
 /* Right column */
 aside {
@@ -1550,6 +1629,35 @@ footer { display: block; }
               <model-viewer id="product-viewer" src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope"
                   camera-controls ar shadow-intensity="1" camera-orbit="150deg 75deg auto" bounds="tight" interaction-prompt="none">
               </model-viewer>
+              <!-- video/image rendered here when a media thumbnail is selected -->
+              <div class="hg-media" id="hg-media"></div>
+            </div>
+
+            <!-- Media gallery thumbnails: data-type = model | video | image -->
+            <div class="hg-thumbs" id="hg-thumbs">
+                <button class="hg-thumb is-active" data-type="model" aria-label="3D model">
+                    <span class="hg-thumb-model">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 5v10l-9 5-9-5V7l9-5z"/><path d="M12 22V12M21 7l-9 5-9-5" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span class="hg-thumb-tag">3D</span>
+                </button>
+                <button class="hg-thumb" data-type="video" data-src="1.MP4" aria-label="Video 1">
+                    <video src="1.MP4#t=0.1" muted preload="metadata" playsinline></video>
+                    <span class="hg-thumb-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                </button>
+                <button class="hg-thumb" data-type="video" data-src="3.mp4" aria-label="Video 2">
+                    <video src="3.mp4#t=0.1" muted preload="metadata" playsinline></video>
+                    <span class="hg-thumb-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                </button>
+                <button class="hg-thumb" data-type="image" data-src="dpminiimage1.jpg" aria-label="Image 1">
+                    <img src="dpminiimage1.jpg" alt="">
+                </button>
+                <button class="hg-thumb" data-type="image" data-src="joystick.jpg" aria-label="Image 2">
+                    <img src="joystick.jpg" alt="">
+                </button>
+                <button class="hg-thumb" data-type="image" data-src="joystick2.jpg" aria-label="Image 3">
+                    <img src="joystick2.jpg" alt="">
+                </button>
             </div>
         </section>
 
@@ -1873,8 +1981,41 @@ footer { display: block; }
         const newSrc = eyepieceInput.closest('.choice').dataset.model;
         if (newSrc && modelViewer.getAttribute('src') !== newSrc) {
             modelViewer.setAttribute('src', newSrc);
+            hgShowModel(); // a config change updates the model → show it
         }
     }
+
+    /* ===== Viewer media gallery: 3D model + videos + images ===== */
+    const hgThumbs = document.getElementById('hg-thumbs');
+    const hgMedia  = document.getElementById('hg-media');
+    const hgItems  = hgThumbs ? Array.from(hgThumbs.querySelectorAll('.hg-thumb')) : [];
+
+    function hgShowModel() {
+        if (!hgMedia) return;
+        hgMedia.classList.remove('is-on');
+        hgMedia.innerHTML = '';                       // stop/unload any playing video
+        if (modelViewer) modelViewer.style.visibility = '';
+        hgItems.forEach(t => t.classList.toggle('is-active', t.dataset.type === 'model'));
+    }
+    function hgSelect(thumb) {
+        hgItems.forEach(t => t.classList.toggle('is-active', t === thumb));
+        const type = thumb.dataset.type;
+        if (type === 'model') { hgShowModel(); return; }
+        const src = thumb.dataset.src;
+        if (type === 'video') {
+            // Uncropped video over a blurred ambient backdrop
+            hgMedia.innerHTML =
+                '<video class="hg-ambient" src="' + src + '" muted autoplay loop playsinline></video>' +
+                '<video class="hg-main" src="' + src + '" controls autoplay playsinline></video>';
+        } else {
+            hgMedia.innerHTML =
+                '<img class="hg-ambient" src="' + src + '" alt="">' +
+                '<img class="hg-main" src="' + src + '" alt="">';
+        }
+        hgMedia.classList.add('is-on');
+        if (modelViewer) modelViewer.style.visibility = 'hidden';
+    }
+    hgItems.forEach(t => t.addEventListener('click', () => hgSelect(t)));
 
     const basePrice = 23990;
     const LICENSE_RATE = 0.10;
