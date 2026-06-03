@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>DP Biotech — Team &amp; permissions</title>
+
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<meta name="description" content="DP Biotech team and permissions management." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Auth gate -->
+<script>
+  if (sessionStorage.getItem('dp_authed') !== '1') {
+    window.location.replace('dashboard.html');
+  } else {
+    // Permission check: this page requires the "team" module
+    const role = sessionStorage.getItem('dp_user_role');
+    const perms = JSON.parse(sessionStorage.getItem('dp_permissions') || '[]');
+    if (role !== 'admin' && !perms.includes('team')) {
+      sessionStorage.setItem('dp_access_denied_module', 'Team & permissions');
+      window.location.replace('dashboard.html');
+    }
+  }
+</script>
+
+<style>
+:root {
+    --bg-body: #fafafa;
+    --bg-secondary: #f2f2f4;
+    --bg-card: #ffffff;
+    --text-primary: #0a0a0f;
+    --text-secondary: #6b6b78;
+    --accent: #0f766e;
+    --accent-2: #1e293b;
+    --accent-gradient: linear-gradient(135deg, #1e293b 0%, #0f766e 100%);
+    --divider: rgba(10, 10, 15, 0.06);
+    --divider-strong: rgba(10, 10, 15, 0.1);
+    --radius-lg: 32px;
+    --radius-md: 20px;
+    --radius-sm: 12px;
+    --nav-height: 64px;
+    --container-width: 1040px;
+    --shadow-sm: 0 1px 2px rgba(10,10,15,0.04), 0 2px 8px rgba(10,10,15,0.04);
+    --shadow-md: 0 4px 12px rgba(10,10,15,0.04), 0 20px 40px -12px rgba(15,23,42,0.08);
+    --shadow-lg: 0 8px 24px rgba(10,10,15,0.06), 0 32px 64px -16px rgba(15,23,42,0.12);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #0a0a0f;
+        --bg-secondary: #13131a;
+        --bg-card: #1a1a24;
+        --text-primary: #f5f5f7;
+        --text-secondary: #9ca3af;
+        --divider: rgba(255, 255, 255, 0.08);
+        --divider-strong: rgba(255, 255, 255, 0.14);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 20px 40px -12px rgba(0,0,0,0.3);
+        --shadow-lg: 0 8px 24px rgba(0,0,0,0.5), 0 32px 64px -16px rgba(0,0,0,0.4);
+    }
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+p { line-height: 1.5; color: var(--text-secondary); margin: 0; }
+a { text-decoration: none; color: inherit; }
+
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+
+.eyebrow {
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    display: block;
+}
+
+/* NAV */
+.nav {
+    position: sticky; top: 0;
+    height: var(--nav-height);
+    background: rgba(250, 250, 250, 0.7);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--divider);
+    display: flex; align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    z-index: 10;
+}
+@media (prefers-color-scheme: dark) {
+    .nav { background: rgba(10, 10, 15, 0.7); }
+}
+.nav .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+}
+.nav .logo-mark {
+    width: 32px; height: 32px;
+    border-radius: 999px;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-secondary);
+}
+.nav .logo .sep { color: var(--text-secondary); margin: 0 2px; }
+.nav .logo .role { color: var(--text-secondary); font-weight: 500; }
+.nav-spacer { flex: 1; }
+
+.user-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 5px 14px 5px 5px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s var(--ease-out-expo);
+}
+.user-chip:hover {
+    background: var(--bg-card);
+    border-color: var(--divider-strong);
+    color: var(--text-primary);
+}
+.user-chip .avatar {
+    width: 26px; height: 26px;
+    border-radius: 999px;
+    background: var(--accent-gradient);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 11px;
+    text-transform: uppercase;
+}
+.icon-btn {
+    background: transparent;
+    border: 1px solid var(--divider);
+    color: var(--text-primary);
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    display: grid; place-items: center;
+    transition: all 0.2s var(--ease-out-expo);
+    cursor: pointer;
+}
+.icon-btn:hover { background: var(--bg-secondary); border-color: var(--divider-strong); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* PAGE HEADER */
+.page-header {
+    padding: 48px 0 32px;
+    background:
+        radial-gradient(circle at 12% 18%, rgba(15, 118, 110, 0.08) 0%, transparent 50%);
+}
+.page-header .eyebrow { margin-bottom: 14px; }
+.page-header h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+}
+.page-header p { font-size: 15px; max-width: 640px; }
+
+.back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 18px;
+    transition: color 0.2s;
+}
+.back-link:hover { color: var(--text-primary); }
+.back-link svg { width: 14px; height: 14px; }
+
+main { padding-bottom: 80px; }
+
+/* TOOLBAR */
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 22px 0 18px;
+    flex-wrap: wrap;
+}
+.toolbar-left {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+}
+.toolbar-left strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.search-box {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: 999px;
+    padding: 6px 14px 6px 12px;
+    transition: border-color 0.2s;
+}
+.search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(15,118,110,0.10); }
+.search-box svg { width: 14px; height: 14px; color: var(--text-secondary); flex-shrink: 0; }
+.search-box input {
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    width: 180px;
+}
+.add-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 16px 9px 13px;
+    background: var(--text-primary);
+    color: var(--bg-body);
+    border: none;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s var(--ease-out-expo);
+}
+.add-btn:hover { transform: scale(1.03); }
+.add-btn svg { width: 14px; height: 14px; }
+
+/* TEAM TABLE */
+.team-card {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+.team-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.5fr) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--divider);
+    transition: background 0.15s;
+    cursor: pointer;
+}
+.team-row:last-child { border-bottom: none; }
+.team-row:hover { background: var(--bg-secondary); }
+.team-row.head {
+    background: var(--bg-secondary);
+    cursor: default;
+    padding: 12px 22px;
+}
+.team-row.head:hover { background: var(--bg-secondary); }
+.team-row.head .col {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.team-person {
+    display: flex; align-items: center; gap: 12px;
+    min-width: 0;
+}
+.team-avatar {
+    width: 38px; height: 38px;
+    border-radius: 999px;
+    background: var(--accent-gradient);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 14px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    letter-spacing: -0.01em;
+}
+.team-person-text { min-width: 0; }
+.team-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.team-name .you {
+    margin-left: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(15,118,110,0.10);
+    padding: 1px 7px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    vertical-align: 1px;
+}
+.team-email {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.role-badge {
+    display: inline-flex; align-items: center;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid;
+}
+.role-badge.admin    { background: rgba(15,118,110,0.10);  color: var(--accent); border-color: rgba(15,118,110,0.25); }
+.role-badge.operator { background: rgba(59,130,246,0.10);  color: #2563eb;       border-color: rgba(59,130,246,0.25); }
+.role-badge.viewer   { background: var(--bg-secondary);    color: var(--text-secondary); border-color: var(--divider); }
+.role-badge.custom   { background: rgba(147,51,234,0.10);  color: #9333ea;       border-color: rgba(147,51,234,0.25); }
+
+.access-summary {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.access-summary .n {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.row-arrow {
+    color: var(--text-secondary);
+    width: 14px; height: 14px;
+    transition: transform 0.2s var(--ease-out-expo);
+}
+.team-row:hover .row-arrow {
+    transform: translateX(3px);
+    color: var(--accent);
+}
+
+.empty-row {
+    padding: 60px 22px;
+    text-align: center;
+}
+.empty-row strong {
+    display: block;
+    font-size: 15px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+.empty-row span { color: var(--text-secondary); font-size: 13px; }
+
+@media (max-width: 760px) {
+    .team-row { grid-template-columns: 1fr; gap: 8px; padding: 14px 18px; }
+    .team-row.head { display: none; }
+    .access-summary { font-size: 12px; }
+    .row-arrow { display: none; }
+}
+
+/* MODAL */
+.modal {
+    position: fixed; inset: 0;
+    z-index: 500;
+    display: grid; place-items: center;
+    padding: 24px;
+}
+.modal-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(10,10,15,0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: fade-in 0.2s ease-out;
+}
+.modal-card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 520px;
+    display: flex; flex-direction: column;
+    animation: pop-in 0.25s var(--ease-out-expo);
+    max-height: calc(100vh - 48px);
+    overflow: hidden;
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: none; }
+}
+.modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--divider);
+}
+.modal-head h3 { font-size: 17px; letter-spacing: -0.02em; }
+.modal-close {
+    width: 30px; height: 30px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid var(--divider);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: grid; place-items: center;
+}
+.modal-close:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.modal-close svg { width: 13px; height: 13px; }
+.modal-body {
+    padding: 18px 22px;
+    display: flex; flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+}
+.modal-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 22px;
+    border-top: 1px solid var(--divider);
+    background: var(--bg-secondary);
+    gap: 12px;
+}
+.modal-foot-right { display: flex; gap: 10px; }
+
+.field {
+    display: flex; flex-direction: column;
+    gap: 6px;
+}
+.field > label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.field input, .field select {
+    background: var(--bg-body);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.15s;
+}
+.field input:focus, .field select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(15,118,110,0.12);
+}
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+@media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
+
+.perms-section {
+    border-top: 1px solid var(--divider);
+    padding-top: 14px;
+}
+.perms-title {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.perms-title .hint {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.8;
+}
+.perms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+@media (max-width: 480px) { .perms-grid { grid-template-columns: 1fr; } }
+
+.perm {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    background: var(--bg-body);
+    transition: all 0.15s;
+}
+.perm:hover { border-color: var(--divider-strong); }
+.perm input { margin: 0; accent-color: var(--accent); cursor: pointer; }
+.perm input:checked + .perm-label { color: var(--text-primary); }
+.perm-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+.perm:has(input:checked) {
+    background: rgba(15,118,110,0.06);
+    border-color: rgba(15,118,110,0.3);
+}
+.perm:has(input:checked) .perm-label {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.btn-primary, .btn-secondary, .btn-delete {
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out-expo);
+    border: 1px solid transparent;
+}
+.btn-primary {
+    background: var(--text-primary);
+    color: var(--bg-body);
+}
+.btn-primary:hover { transform: scale(1.03); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border-color: var(--divider);
+}
+.btn-secondary:hover { background: var(--bg-body); border-color: var(--divider-strong); }
+.btn-delete {
+    background: transparent;
+    color: #dc2626;
+    border-color: rgba(220,38,38,0.25);
+}
+.btn-delete:hover { background: #dc2626; color: white; border-color: #dc2626; }
+
+/* TOAST */
+#dp-toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text-primary);
+    color: var(--bg-body);
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 13px;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.35s var(--ease-out-expo), opacity 0.3s;
+    opacity: 0;
+    z-index: 600;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+#dp-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+#dp-toast strong { font-weight: 600; }
+#dp-toast span { font-weight: 400; opacity: 0.85; }
+#dp-toast.err { background: #dc2626; color: white; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="dashboard.html" class="logo">
+    <img class="logo-mark" src="favicon.png" alt="DP Biotech" />
+    <span>DP Biotech</span>
+    <span class="sep">/</span>
+    <span class="role">Team</span>
+  </a>
+  <div class="nav-spacer"></div>
+  <a class="user-chip" href="staff-profile.html" title="Account">
+    <span class="avatar" id="chip-initial">?</span>
+    <span id="chip-email">—</span>
+  </a>
+  <button class="icon-btn" id="logout-btn" title="Sign out">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      <polyline points="16 17 21 12 16 7"/>
+      <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+  </button>
+</nav>
+
+<header class="page-header">
+  <div class="container">
+    <span class="eyebrow">Admin</span>
+    <h1>Team &amp; permissions</h1>
+    <p>Manage who's part of the DP Biotech team and what each member can access. Role presets fill in permissions automatically — you can override them module by module.</p>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span><strong id="team-count">0</strong> team member<span id="team-plural">s</span></span>
+      </div>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="search-input" placeholder="Search…" />
+        </div>
+        <button class="add-btn" id="add-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add team member
+        </button>
+      </div>
+    </div>
+
+    <div class="team-card">
+      <div class="team-row head">
+        <div class="col">Person</div>
+        <div class="col">Email</div>
+        <div class="col">Role</div>
+        <div class="col"></div>
+      </div>
+      <div id="team-list">
+        <div class="empty-row">
+          <strong>Loading team…</strong>
+          <span>Reading from Firestore</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- MODAL: add / edit a member -->
+<div class="modal" id="member-modal" style="display:none">
+  <div class="modal-backdrop" id="member-backdrop"></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <header class="modal-head">
+      <h3 id="modal-title">Add team member</h3>
+      <button class="modal-close" id="modal-close" type="button" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </header>
+    <div class="modal-body">
+      <div class="field-row">
+        <div class="field">
+          <label for="in-firstname">First name</label>
+          <input type="text" id="in-firstname" maxlength="60" />
+        </div>
+        <div class="field">
+          <label for="in-lastname">Last name</label>
+          <input type="text" id="in-lastname" maxlength="60" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="in-email">Email</label>
+        <input type="email" id="in-email" maxlength="120" placeholder="name@dpbiotech.com" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="in-jobtitle">Job title <span style="opacity:0.7;font-weight:500;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <input type="text" id="in-jobtitle" maxlength="80" placeholder="e.g. Sales Manager" />
+        </div>
+        <div class="field">
+          <label for="in-role">Role preset</label>
+          <select id="in-role">
+            <option value="admin">Admin (full access)</option>
+            <option value="operator" selected>Operator</option>
+            <option value="viewer">Viewer (read-only)</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="perms-section">
+        <div class="perms-title">
+          <span>Module access</span>
+          <span class="hint">Selecting a preset auto-fills these</span>
+        </div>
+        <div class="perms-grid" id="perms-grid">
+          <!-- Built by JS -->
+        </div>
+      </div>
+    </div>
+    <footer class="modal-foot">
+      <button class="btn-delete" id="btn-delete" type="button" style="display:none">Delete</button>
+      <div class="modal-foot-right">
+        <button class="btn-secondary" id="btn-cancel" type="button">Cancel</button>
+        <button class="btn-primary" id="btn-save" type="button">Save</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAPZC_sUOYnwJdW3SG6uEoRKSDVXfcqjdg",
+    authDomain:        "flutter-webview-e59a8.firebaseapp.com",
+    databaseURL:       "https://flutter-webview-e59a8-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "flutter-webview-e59a8",
+    storageBucket:     "flutter-webview-e59a8.appspot.com",
+    messagingSenderId: "766286969529",
+    appId:             "1:766286969529:web:9418c504eca08fb1853968",
+  };
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // ── Constants: modules in the dashboard ──────────────────────────────
+  // The key is what we store in Firestore; the label is what the user sees.
+  // When you add a new module to the dashboard, add it here and add an
+  // access check on that module's HTML page.
+  const MODULES = [
+    { key: "support",      label: "Support Console" },
+    { key: "customers",    label: "Customers" },
+    { key: "sales",        label: "Sales" },
+    { key: "microscopes",  label: "Microscopes" },
+    { key: "documents",    label: "Documents" },
+    { key: "inventory",    label: "Inventory" },
+    { key: "manufacturing",label: "Manufacturing & QA" },
+    { key: "analytics",    label: "Analytics" },
+    { key: "team",         label: "Team & permissions" },
+  ];
+
+  // Role presets: which modules each role gets by default
+  const ROLE_PRESETS = {
+    admin:    MODULES.map(m => m.key),                                  // everything
+    operator: ["support", "customers", "microscopes", "documents"],
+    viewer:   ["support", "customers", "microscopes", "documents",
+               "inventory", "manufacturing", "analytics"],              // no team-mgmt, no sales
+    custom:   [],                                                        // user picks
+  };
+
+  // ── Sign-in info from session ────────────────────────────────────────
+  const myEmail = (sessionStorage.getItem("dp_user_email") || "").toLowerCase();
+  const myName  = sessionStorage.getItem("dp_user_name")  || myEmail;
+  document.getElementById("chip-email").textContent = myEmail;
+  document.getElementById("chip-initial").textContent = (myName || "?").trim().charAt(0).toUpperCase();
+
+  // ── Build the permission checkboxes once ─────────────────────────────
+  const permsGrid = document.getElementById("perms-grid");
+  permsGrid.innerHTML = MODULES.map(m => `
+    <label class="perm">
+      <input type="checkbox" data-mod="${m.key}" />
+      <span class="perm-label">${escapeHtml(m.label)}</span>
+    </label>
+  `).join("");
+
+  // ── State ────────────────────────────────────────────────────────────
+  const state = {
+    members:   [],
+    editingId: null,
+    search:    "",
+  };
+
+  // ── Firestore listener ───────────────────────────────────────────────
+  onSnapshot(collection(db, "team"), (snap) => {
+    state.members = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Ensure the current operator always shows up, even before any data exists.
+    // Giorgio is admin until Firebase Auth + roles take over.
+    if (myEmail && !state.members.some(m => (m.email || "").toLowerCase() === myEmail)) {
+      state.members.unshift({
+        id: "_self_" + myEmail,
+        firstname: myName.split(" ")[0] || "",
+        lastname:  myName.split(" ").slice(1).join(" "),
+        email:     myEmail,
+        jobtitle:  "Managing Director",
+        role:      "admin",
+        access:    ROLE_PRESETS.admin,
+        _virtual:  true,   // not a real Firestore doc
+      });
+    }
+    render();
+  }, (err) => {
+    console.error("team listener error:", err);
+    document.getElementById("team-list").innerHTML = `
+      <div class="empty-row">
+        <strong>Couldn't load team</strong>
+        <span>${escapeHtml(err.message)}</span>
+      </div>`;
+  });
+
+  // ── Rendering ────────────────────────────────────────────────────────
+  function render() {
+    const search = state.search.toLowerCase();
+    const filtered = !search ? state.members : state.members.filter(m => {
+      const hay = [m.firstname, m.lastname, m.email, m.jobtitle, m.role]
+        .map(x => String(x || "").toLowerCase()).join(" ");
+      return hay.includes(search);
+    });
+
+    document.getElementById("team-count").textContent = state.members.length;
+    document.getElementById("team-plural").textContent = state.members.length === 1 ? "" : "s";
+
+    const list = document.getElementById("team-list");
+    if (filtered.length === 0) {
+      list.innerHTML = `
+        <div class="empty-row">
+          <strong>${state.search ? "No matches" : "No team members yet"}</strong>
+          <span>${state.search ? "Try a different search." : "Add the first one above."}</span>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(m => {
+      const name = [m.firstname, m.lastname].filter(Boolean).join(" ") || m.email || "—";
+      const initial = (m.firstname || m.email || "?").trim().charAt(0).toUpperCase();
+      const isMe = (m.email || "").toLowerCase() === myEmail;
+      const role = m.role || "custom";
+      const access = Array.isArray(m.access) ? m.access : [];
+      const accessLabel = access.length === MODULES.length
+        ? "Full access"
+        : access.length === 0
+          ? "No access"
+          : `<span class="n">${access.length}</span> of ${MODULES.length} modules`;
+      return `
+        <div class="team-row" data-id="${escapeHtml(m.id)}">
+          <div class="team-person">
+            <div class="team-avatar">${escapeHtml(initial)}</div>
+            <div class="team-person-text">
+              <div class="team-name">${escapeHtml(name)}${isMe ? '<span class="you">You</span>' : ""}</div>
+              <div class="team-email">${escapeHtml(m.jobtitle || "—")}</div>
+            </div>
+          </div>
+          <div class="team-email">${escapeHtml(m.email || "—")}</div>
+          <div>
+            <span class="role-badge ${role}">${capitalize(role)}</span>
+            <div class="access-summary" style="margin-top:6px">${accessLabel}</div>
+          </div>
+          <svg class="row-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>`;
+    }).join("");
+
+    list.querySelectorAll(".team-row").forEach(row => {
+      row.addEventListener("click", () => openEdit(row.dataset.id));
+    });
+  }
+
+  // ── Modal ────────────────────────────────────────────────────────────
+  const modal      = document.getElementById("member-modal");
+  const $title     = document.getElementById("modal-title");
+  const $first     = document.getElementById("in-firstname");
+  const $last      = document.getElementById("in-lastname");
+  const $emailIn   = document.getElementById("in-email");
+  const $job       = document.getElementById("in-jobtitle");
+  const $role      = document.getElementById("in-role");
+  const $save      = document.getElementById("btn-save");
+  const $del       = document.getElementById("btn-delete");
+  const $cancel    = document.getElementById("btn-cancel");
+  const $closeBtn  = document.getElementById("modal-close");
+
+  function openNew() {
+    state.editingId = null;
+    $title.textContent = "Add team member";
+    $first.value = "";  $last.value = "";  $emailIn.value = "";  $job.value = "";
+    $role.value = "operator";
+    setChecks(ROLE_PRESETS.operator);
+    $del.style.display = "none";
+    showModal();
+    setTimeout(() => $first.focus(), 50);
+  }
+  function openEdit(id) {
+    const m = state.members.find(x => x.id === id);
+    if (!m) return;
+    state.editingId = id;
+    $title.textContent = "Edit team member";
+    $first.value = m.firstname || "";
+    $last.value  = m.lastname || "";
+    $emailIn.value = m.email || "";
+    $job.value   = m.jobtitle || "";
+    $role.value  = m.role || "custom";
+    setChecks(Array.isArray(m.access) ? m.access : []);
+    // Can't delete yourself, can't delete the virtual self-doc
+    $del.style.display = (m._virtual || (m.email || "").toLowerCase() === myEmail) ? "none" : "inline-block";
+    showModal();
+    setTimeout(() => $first.focus(), 50);
+  }
+  function setChecks(keys) {
+    const set = new Set(keys);
+    permsGrid.querySelectorAll("input").forEach(cb => {
+      cb.checked = set.has(cb.dataset.mod);
+    });
+  }
+  function getChecks() {
+    return Array.from(permsGrid.querySelectorAll("input"))
+      .filter(cb => cb.checked).map(cb => cb.dataset.mod);
+  }
+  function showModal() {
+    modal.style.display = "grid";
+    document.body.style.overflow = "hidden";
+    updateSaveEnabled();
+  }
+  function hideModal() {
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+  }
+
+  function updateSaveEnabled() {
+    const ok = $first.value.trim() && $emailIn.value.trim() && /.+@.+\..+/.test($emailIn.value);
+    $save.disabled = !ok;
+  }
+  [$first, $last, $emailIn, $job].forEach(el => el.addEventListener("input", updateSaveEnabled));
+
+  // Selecting a preset rewrites checkboxes (unless custom)
+  $role.addEventListener("change", () => {
+    if ($role.value !== "custom") setChecks(ROLE_PRESETS[$role.value] || []);
+  });
+  // If user manually flips a checkbox, role drops to "custom" unless it
+  // still matches a known preset
+  permsGrid.addEventListener("change", () => {
+    const cur = getChecks().sort().join(",");
+    let matched = "custom";
+    for (const [r, keys] of Object.entries(ROLE_PRESETS)) {
+      if (keys.slice().sort().join(",") === cur) { matched = r; break; }
+    }
+    $role.value = matched;
+  });
+
+  $save.addEventListener("click", async () => {
+    const data = {
+      firstname: $first.value.trim(),
+      lastname:  $last.value.trim(),
+      email:     $emailIn.value.trim().toLowerCase(),
+      jobtitle:  $job.value.trim(),
+      role:      $role.value,
+      access:    getChecks(),
+      updatedAt: serverTimestamp(),
+    };
+    if (!data.firstname || !data.email) return;
+    try {
+      let id;
+      if (state.editingId && !state.editingId.startsWith("_self_")) {
+        id = state.editingId;
+      } else {
+        // Doc ID from email (lowercased, safe chars) — guarantees uniqueness
+        id = data.email.replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+        data.createdAt = serverTimestamp();
+      }
+      await setDoc(doc(db, "team", id), data, { merge: true });
+      hideModal();
+      showToast("Saved", state.editingId ? "member updated" : "member added");
+    } catch (e) {
+      console.error("save failed", e);
+      showToast("Couldn't save", e.message, true);
+    }
+  });
+
+  $del.addEventListener("click", async () => {
+    if (!state.editingId) return;
+    if (!confirm("Remove this team member? They won't be able to access anything in DP Biotech.")) return;
+    try {
+      await deleteDoc(doc(db, "team", state.editingId));
+      hideModal();
+      showToast("Removed", "member deleted");
+    } catch (e) {
+      console.error("delete failed", e);
+      showToast("Couldn't delete", e.message, true);
+    }
+  });
+
+  $cancel.addEventListener("click", hideModal);
+  $closeBtn.addEventListener("click", hideModal);
+  document.getElementById("member-backdrop").addEventListener("click", hideModal);
+  document.addEventListener("keydown", e => {
+    if (modal.style.display !== "none" && e.key === "Escape") hideModal();
+  });
+
+  document.getElementById("add-btn").addEventListener("click", openNew);
+
+  // Search
+  document.getElementById("search-input").addEventListener("input", (e) => {
+    state.search = e.target.value;
+    render();
+  });
+
+  // ── Toast / helpers ──────────────────────────────────────────────────
+  function showToast(title, body, isErr) {
+    let t = document.getElementById("dp-toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "dp-toast";
+      document.body.appendChild(t);
+    }
+    t.innerHTML = `<strong>${escapeHtml(title)}</strong> <span>${escapeHtml(body || "")}</span>`;
+    t.classList.toggle("err", !!isErr);
+    t.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => t.classList.remove("show"), 2800);
+  }
+  function escapeHtml(s) {
+    return String(s ?? "").replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+  function capitalize(s) {
+    return String(s || "").charAt(0).toUpperCase() + String(s || "").slice(1);
+  }
+</script>
+
+<script>
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    sessionStorage.removeItem("dp_authed");
+    sessionStorage.removeItem("dp_user_email");
+    sessionStorage.removeItem("dp_user_name");
+    window.location.replace("dashboard.html");
+  });
+</script>
+</body>
+</html>

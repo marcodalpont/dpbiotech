@@ -1,0 +1,3146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>DP Biotech — Dashboard</title>
+
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<meta name="description" content="DP Biotech internal dashboard — Microscope Connect." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- ──────────────────────────────────────────────────────────────────────
+     Early auth check removed — Firebase Auth gates the page below
+     ────────────────────────────────────────────────────────────────────── -->
+
+<style>
+/* =========================================
+   DESIGN SYSTEM — shared with dpbiotech.com & support-console.html
+   ========================================= */
+:root {
+    --bg-body: #fafafa;
+    --bg-secondary: #f2f2f4;
+    --bg-card: #ffffff;
+    --text-primary: #0a0a0f;
+    --text-secondary: #6b6b78;
+    --accent: #0f766e;
+    --accent-2: #1e293b;
+    --accent-gradient: linear-gradient(135deg, #1e293b 0%, #0f766e 100%);
+    --divider: rgba(10, 10, 15, 0.06);
+    --divider-strong: rgba(10, 10, 15, 0.1);
+    --radius-lg: 32px;
+    --radius-md: 20px;
+    --radius-sm: 12px;
+    --nav-height: 64px;
+    --container-width: 1280px;
+    --shadow-sm: 0 1px 2px rgba(10,10,15,0.04), 0 2px 8px rgba(10,10,15,0.04);
+    --shadow-md: 0 4px 12px rgba(10,10,15,0.04), 0 20px 40px -12px rgba(15,23,42,0.08);
+    --shadow-lg: 0 8px 24px rgba(10,10,15,0.06), 0 32px 64px -16px rgba(15,23,42,0.12);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #0a0a0f;
+        --bg-secondary: #13131a;
+        --bg-card: #1a1a24;
+        --text-primary: #f5f5f7;
+        --text-secondary: #9ca3af;
+        --divider: rgba(255, 255, 255, 0.08);
+        --divider-strong: rgba(255, 255, 255, 0.14);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 20px 40px -12px rgba(0,0,0,0.3);
+        --shadow-lg: 0 8px 24px rgba(0,0,0,0.5), 0 32px 64px -16px rgba(0,0,0,0.4);
+    }
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+/* hide app shell until auth completes; login screen sits on top at z-200 */
+/* visibility-hidden gate removed — Firebase Auth gates the page in JS */
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+p { line-height: 1.5; color: var(--text-secondary); margin: 0; }
+a { text-decoration: none; color: inherit; }
+
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+
+.eyebrow {
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    display: block;
+}
+
+/* =========================================
+   NAV — mirrors index.html (without the 3 center links)
+   ========================================= */
+.nav {
+    position: sticky; top: 0;
+    height: var(--nav-height);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--divider);
+    z-index: 100;
+}
+@media (prefers-color-scheme: dark) {
+    .nav { background: rgba(0, 0, 0, 0.7); }
+}
+
+.nav-inner {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+}
+.nav .logo-mark {
+    width: 32px; height: 32px;
+    border-radius: 999px;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-secondary);
+}
+.nav .logo .sep { color: var(--text-secondary); margin: 0 2px; }
+.nav .logo .role { color: var(--text-secondary); font-weight: 500; }
+
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+
+/* Account dropdown — same look as index.html */
+.account-menu { position: relative; display: inline-block; }
+.account-menu-btn {
+    appearance: none; background: transparent;
+    font: inherit; cursor: pointer;
+    color: var(--text-primary);
+    padding: 5px 14px 5px 5px;
+    border: 1px solid var(--divider);
+    border-radius: 999px;
+    font-size: 13px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background 0.15s, border-color 0.15s;
+}
+.account-menu-btn:hover { background: var(--bg-secondary); }
+.account-menu-btn > svg { width: 12px; height: 12px; transition: transform 0.2s var(--ease-out-expo); color: var(--text-secondary); }
+.account-menu.is-open .account-menu-btn { background: var(--bg-secondary); border-color: var(--divider-strong); }
+.account-menu.is-open .account-menu-btn > svg { transform: rotate(180deg); }
+.account-menu-btn .nav-avatar {
+    width: 26px; height: 26px;
+    border-radius: 999px;
+    background: var(--accent-gradient);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 11px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+.account-menu-btn .nav-name {
+    color: var(--text-secondary);
+    font-weight: 500;
+    max-width: 240px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.account-menu-panel {
+    position: absolute; top: calc(100% + 8px); right: 0;
+    min-width: 260px;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    padding: 8px;
+    opacity: 0; visibility: hidden;
+    transform: translateY(-6px) scale(0.98);
+    transform-origin: top right;
+    transition: opacity 0.18s ease, transform 0.18s var(--ease-out-expo), visibility 0.18s;
+    z-index: 120;
+}
+.account-menu.is-open .account-menu-panel { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+.account-menu-user { padding: 12px 14px 14px; border-bottom: 1px solid var(--divider); margin-bottom: 6px; }
+.account-menu-name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 0; }
+.account-menu-email { font-size: 12px; color: var(--text-secondary); margin: 2px 0 0; word-break: break-all; }
+.account-menu-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 10px;
+    font-size: 13.5px; font-weight: 500;
+    color: var(--text-primary); text-decoration: none; cursor: pointer;
+    transition: background 0.12s;
+}
+.account-menu-link:hover { background: var(--bg-secondary); }
+.account-menu-link svg { width: 16px; height: 16px; color: var(--text-secondary); flex-shrink: 0; }
+.account-menu-divider { height: 1px; background: var(--divider); margin: 6px 8px; }
+.account-menu-signout {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+    padding: 9px 12px; border-radius: 10px;
+    font: inherit; font-size: 13.5px; font-weight: 500;
+    color: #b91c1c;
+    background: transparent; border: none;
+    text-align: left; cursor: pointer;
+    transition: background 0.12s;
+}
+.account-menu-signout:hover { background: rgba(239, 68, 68, 0.08); }
+.account-menu-signout svg { width: 16px; height: 16px; flex-shrink: 0; }
+@media (prefers-color-scheme: dark) {
+    .account-menu-signout { color: #f87171; }
+    .account-menu-signout:hover { background: rgba(239, 68, 68, 0.15); }
+}
+@media (max-width: 600px) {
+    .account-menu-btn .nav-name { display: none; }
+}
+
+.test-mode-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px;
+    background: rgba(245, 158, 11, 0.10);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: #b45309;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+.test-mode-badge svg { width: 14px; height: 14px; }
+@media (prefers-color-scheme: dark) {
+    .test-mode-badge { color: #fbbf24; }
+}
+
+/* =========================================
+   HERO — compact, personal greeting
+   ========================================= */
+.hero {
+    padding: 60px 0 28px;
+    text-align: left;
+    position: relative;
+}
+.hero .eyebrow { margin-bottom: 14px; }
+.hero h1 {
+    font-size: clamp(28px, 4.5vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.032em;
+    margin-bottom: 14px;
+    max-width: 900px;
+}
+.hero h1 .gradient-text {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero .lead {
+    font-size: clamp(14px, 1.4vw, 16px);
+    max-width: 600px;
+    line-height: 1.55;
+}
+
+/* =========================================
+   TOP ZONE — wraps hero + status with one shared gradient
+   ========================================= */
+.top-zone {
+    position: relative;
+    background:
+        radial-gradient(ellipse 1100px 700px at 12% 20%, rgba(15, 118, 110, 0.16) 0%, transparent 65%),
+        radial-gradient(ellipse 900px 600px at 92% 80%,  rgba(30, 41, 59, 0.10)  0%, transparent 60%),
+        radial-gradient(ellipse 800px 500px at 50% 100%, rgba(15, 118, 110, 0.08) 0%, transparent 55%);
+}
+
+/* =========================================
+   SYSTEM STATUS — colored ambient card
+   ========================================= */
+.status-strip {
+    padding: 28px 0 56px;   /* extra top breathing room from hero */
+}
+
+.status-card {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.5s, box-shadow 0.5s;
+}
+
+/* Ambient gradient layer behind the content. The color is driven by the
+   overall status (data-overall on .status-card). We use two radial
+   gradients at opposite corners so the color reads as "atmosphere", not
+   a flat block. */
+.status-card-bg {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out-expo), background 0.6s;
+}
+.status-card[data-overall="operational"] .status-card-bg {
+    opacity: 1;
+    background:
+        radial-gradient(circle at 8% 0%,   rgba(22, 163, 74, 0.22) 0%, transparent 55%),
+        radial-gradient(circle at 95% 100%, rgba(15, 118, 110, 0.18) 0%, transparent 55%),
+        linear-gradient(135deg, rgba(22, 163, 74, 0.05), rgba(15, 118, 110, 0.05));
+}
+.status-card[data-overall="degraded"] .status-card-bg {
+    opacity: 1;
+    background:
+        radial-gradient(circle at 8% 0%,   rgba(245, 158, 11, 0.28) 0%, transparent 55%),
+        radial-gradient(circle at 95% 100%, rgba(217, 119, 6, 0.20) 0%, transparent 55%),
+        linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(217, 119, 6, 0.06));
+}
+.status-card[data-overall="outage"] .status-card-bg {
+    opacity: 1;
+    background:
+        radial-gradient(circle at 8% 0%,   rgba(239, 68, 68, 0.30) 0%, transparent 55%),
+        radial-gradient(circle at 95% 100%, rgba(220, 38, 38, 0.22) 0%, transparent 55%),
+        linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(220, 38, 38, 0.06));
+}
+
+/* Border color picks up the overall state too */
+.status-card[data-overall="operational"] { border-color: rgba(22, 163, 74, 0.25); }
+.status-card[data-overall="degraded"]    { border-color: rgba(245, 158, 11, 0.30); }
+.status-card[data-overall="outage"]      { border-color: rgba(239, 68, 68, 0.30); }
+
+.status-card-content {
+    position: relative;
+    z-index: 1;
+    padding: 32px 28px 30px;
+}
+
+.status-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+.status-head .eyebrow {
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.status-summary {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+.status-summary-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    flex-shrink: 0;
+}
+.status-summary[data-status="operational"] .status-summary-dot { background: #16a34a; }
+.status-summary[data-status="degraded"]    .status-summary-dot { background: #d97706; }
+.status-summary[data-status="outage"]      .status-summary-dot { background: #dc2626; }
+.status-summary[data-status="operational"] #status-summary-text { color: #15803d; }
+.status-summary[data-status="degraded"]    #status-summary-text { color: #b45309; }
+.status-summary[data-status="outage"]      #status-summary-text { color: #b91c1c; }
+@media (prefers-color-scheme: dark) {
+    .status-summary[data-status="operational"] #status-summary-text { color: #4ade80; }
+    .status-summary[data-status="degraded"]    #status-summary-text { color: #fbbf24; }
+    .status-summary[data-status="outage"]      #status-summary-text { color: #f87171; }
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+@media (max-width: 1000px) { .status-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 640px)  { .status-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 420px)  { .status-grid { grid-template-columns: 1fr; } }
+
+.status-item {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(10, 10, 15, 0.06);
+    border-radius: var(--radius-sm);
+    padding: 16px 16px;
+    display: flex; align-items: center; gap: 11px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background 0.2s;
+}
+@media (prefers-color-scheme: dark) {
+    .status-item {
+        background: rgba(26, 26, 36, 0.7);
+        border-color: rgba(255, 255, 255, 0.06);
+    }
+}
+
+.status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--text-secondary);
+    position: relative;
+}
+.status-item[data-status="operational"] .status-dot {
+    background: #16a34a;
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+    animation: status-pulse-ok 2.4s ease-in-out infinite;
+}
+.status-item[data-status="degraded"] .status-dot {
+    background: #d97706;
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.5);
+    animation: status-pulse-warn 2s ease-in-out infinite;
+}
+.status-item[data-status="outage"] .status-dot {
+    background: #dc2626;
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5);
+    animation: status-pulse-bad 1.6s ease-in-out infinite;
+}
+.status-item[data-status="checking"] .status-dot {
+    background: var(--text-secondary);
+    opacity: 0.5;
+    animation: status-pulse-check 1.2s ease-in-out infinite;
+}
+@keyframes status-pulse-ok {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.55); }
+    50%      { box-shadow: 0 0 0 4px rgba(22, 163, 74, 0); }
+}
+@keyframes status-pulse-warn {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.55); }
+    50%      { box-shadow: 0 0 0 4px rgba(217, 119, 6, 0); }
+}
+@keyframes status-pulse-bad {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
+    50%      { box-shadow: 0 0 0 5px rgba(220, 38, 38, 0); }
+}
+@keyframes status-pulse-check {
+    0%, 100% { opacity: 0.3; }
+    50%      { opacity: 0.8; }
+}
+
+.status-text { min-width: 0; flex: 1; }
+.status-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    margin-bottom: 1px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.status-state {
+    font-size: 11px;
+    color: var(--text-secondary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.status-item[data-status="operational"] .status-state { color: #15803d; }
+.status-item[data-status="degraded"]    .status-state { color: #b45309; }
+.status-item[data-status="outage"]      .status-state { color: #b91c1c; }
+@media (prefers-color-scheme: dark) {
+    .status-item[data-status="operational"] .status-state { color: #4ade80; }
+    .status-item[data-status="degraded"]    .status-state { color: #fbbf24; }
+    .status-item[data-status="outage"]      .status-state { color: #f87171; }
+}
+
+@media (max-width: 600px) {
+    .status-card-content { padding: 18px 18px; }
+}
+
+
+/* =========================================
+   BROWSE — compact module list
+   ========================================= */
+.browse {
+    padding: 56px 0 64px;
+    background: #ffffff;
+    position: relative;
+    border-top: 1px solid var(--divider);
+    border-bottom: 1px solid var(--divider);
+    box-shadow:
+        inset 0 12px 24px -16px rgba(15, 23, 42, 0.06),
+        inset 0 -12px 24px -16px rgba(15, 23, 42, 0.06);
+}
+@media (prefers-color-scheme: dark) {
+    .browse {
+        background: var(--bg-card);
+        box-shadow: none;
+    }
+}
+
+.section-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 22px;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+.section-head h2 {
+    font-size: clamp(20px, 2.4vw, 24px);
+    letter-spacing: -0.02em;
+}
+.section-head .eyebrow { margin-bottom: 6px; }
+
+.mod-group { margin-bottom: 0; }
+.mod-group:last-child { margin-bottom: 0; }
+
+.mod-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+@media (max-width: 900px) {
+    .mod-columns { grid-template-columns: 1fr; gap: 32px; }
+}
+
+.mod-group-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 0 0 14px;
+    padding: 0;
+}
+.mod-group-title svg {
+    width: 14px; height: 14px;
+    color: var(--accent);
+    opacity: 0.7;
+}
+
+.mod-list {
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+@media (prefers-color-scheme: dark) {
+    .mod-list { background: rgba(26, 26, 36, 0.72); }
+}
+
+.mod-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--divider);
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.15s var(--ease-out-expo);
+}
+.mod-row:last-child { border-bottom: none; }
+.mod-row:hover {
+    background: var(--bg-secondary);
+}
+
+.mod-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    display: grid; place-items: center;
+    color: var(--text-primary);
+    flex-shrink: 0;
+    transition: all 0.2s var(--ease-out-expo);
+}
+.mod-row:hover .mod-icon {
+    background: var(--bg-card);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+.mod-icon svg { width: 18px; height: 18px; }
+
+.mod-text { flex: 1; min-width: 0; }
+.mod-name {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+}
+.mod-desc {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.mod-badge {
+    flex-shrink: 0;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid;
+}
+.mod-badge.live {
+    background: rgba(220, 38, 38, 0.10);
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.25);
+}
+.mod-badge.soon {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border-color: var(--divider);
+}
+
+.mod-arrow {
+    width: 14px; height: 14px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    transition: transform 0.2s var(--ease-out-expo), color 0.2s;
+}
+.mod-row:hover .mod-arrow {
+    transform: translateX(3px);
+    color: var(--accent);
+}
+
+@media (max-width: 600px) {
+    .mod-row { padding: 14px 16px; gap: 12px; }
+    .mod-icon { width: 34px; height: 34px; }
+    .mod-icon svg { width: 16px; height: 16px; }
+    .mod-desc { white-space: normal; }
+    .hero { padding: 70px 0 40px; }
+}
+
+
+/* =========================================
+   FOOTER LINK
+   ========================================= */
+.footer-note {
+    text-align: center;
+    padding: 30px 24px 50px;
+    color: var(--text-secondary);
+    font-size: 12.5px;
+}
+.footer-note a { color: var(--accent); font-weight: 500; }
+.footer-note a:hover { opacity: 0.7; }
+
+/* =========================================
+   CALENDAR (personal, localStorage)
+   ========================================= */
+.calendar-section {
+    padding: 56px 0 80px;
+    background:
+        radial-gradient(ellipse 900px 500px at 18% 30%,  rgba(15, 118, 110, 0.14) 0%, transparent 65%),
+        radial-gradient(ellipse 700px 500px at 90% 100%, rgba(30, 41, 59, 0.08)  0%, transparent 60%);
+}
+.calendar-section .section-head {
+    align-items: center;
+    margin-bottom: 22px;
+}
+.add-event-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 16px 8px 13px;
+    background: var(--text-primary);
+    color: var(--bg-body);
+    border: none;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s var(--ease-out-expo);
+}
+.add-event-btn:hover { transform: scale(1.03); }
+.add-event-btn svg { width: 14px; height: 14px; }
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 24px;
+    align-items: stretch;
+}
+@media (max-width: 900px) {
+    .calendar-grid { grid-template-columns: 1fr; }
+}
+
+/* ── LEFT: Mini month ────────────────────────────────────────────── */
+.cal-month {
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+@media (prefers-color-scheme: dark) {
+    .cal-month { background: rgba(26, 26, 36, 0.72); }
+}
+.cal-month-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.cal-month-label {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    flex: 1; text-align: center;
+}
+.cal-nav {
+    width: 28px; height: 28px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid var(--divider);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all 0.2s var(--ease-out-expo);
+}
+.cal-nav:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--divider-strong);
+}
+.cal-nav svg { width: 13px; height: 13px; }
+
+.cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 6px;
+}
+.cal-weekdays > div {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+    padding: 4px 0;
+}
+
+.cal-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+.cal-day {
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.15s;
+    background: transparent;
+    border: none;
+    font-family: inherit;
+}
+.cal-day:hover { background: var(--bg-secondary); }
+.cal-day.muted { color: var(--text-secondary); opacity: 0.35; cursor: pointer; }
+.cal-day.today {
+    background: var(--accent);
+    color: white;
+    font-weight: 700;
+}
+.cal-day.today:hover { background: var(--accent); filter: brightness(1.06); }
+.cal-day .ev-dot {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+.cal-day.today .ev-dot { background: white; }
+
+/* ── RIGHT: Upcoming list ────────────────────────────────────────── */
+.cal-upcoming {
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+@media (prefers-color-scheme: dark) {
+    .cal-upcoming { background: rgba(26, 26, 36, 0.72); }
+}
+
+.cal-upcoming-head {
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--divider);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.cal-upcoming-count {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border-radius: 999px;
+    padding: 2px 9px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+}
+
+.cal-events-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.cal-event {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--divider);
+    transition: background 0.15s;
+}
+.cal-event:last-child { border-bottom: none; }
+.cal-event:hover { background: var(--bg-secondary); }
+
+.cal-event-date {
+    flex-shrink: 0;
+    width: 46px;
+    text-align: center;
+}
+.cal-event-month {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+.cal-event-day {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.cal-event-body { flex: 1; min-width: 0; }
+.cal-event-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.cal-event-meta {
+    font-size: 12px;
+    color: var(--text-secondary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.cal-event-meta .sep { margin: 0 6px; opacity: 0.5; }
+
+.cal-event-type {
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid;
+}
+.cal-event-type.fair     { background: rgba(15, 118, 110, 0.10); color: var(--accent); border-color: rgba(15, 118, 110, 0.25); }
+.cal-event-type.meeting  { background: rgba(59, 130, 246, 0.10); color: #2563eb;       border-color: rgba(59, 130, 246, 0.25); }
+.cal-event-type.deadline { background: rgba(220, 38, 38, 0.10);  color: #dc2626;       border-color: rgba(220, 38, 38, 0.25); }
+.cal-event-type.demo     { background: rgba(147, 51, 234, 0.10); color: #9333ea;       border-color: rgba(147, 51, 234, 0.25); }
+.cal-event-type.internal { background: var(--bg-secondary);      color: var(--text-secondary); border-color: var(--divider); }
+
+.cal-events-empty {
+    padding: 36px 22px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+.cal-events-empty strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ── MODAL ────────────────────────────────────────────────────────── */
+.cal-modal {
+    position: fixed; inset: 0;
+    z-index: 500;
+    display: grid; place-items: center;
+    padding: 24px;
+}
+.cal-modal-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(10, 10, 15, 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: cal-fade-in 0.2s ease-out;
+}
+.cal-modal-card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 440px;
+    display: flex; flex-direction: column;
+    animation: cal-pop-in 0.25s var(--ease-out-expo);
+    max-height: calc(100vh - 48px);
+    overflow: hidden;
+}
+@keyframes cal-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cal-pop-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: none; }
+}
+.cal-modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--divider);
+}
+.cal-modal-head h3 {
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+.cal-modal-close {
+    width: 30px; height: 30px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid var(--divider);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all 0.2s var(--ease-out-expo);
+}
+.cal-modal-close:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.cal-modal-close svg { width: 13px; height: 13px; }
+
+.cal-modal-body {
+    padding: 18px 22px;
+    display: flex; flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+}
+.cal-field {
+    display: flex; flex-direction: column;
+    gap: 6px;
+}
+.cal-field > span {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.cal-field .opt {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+    opacity: 0.7;
+}
+.cal-field input,
+.cal-field textarea {
+    background: var(--bg-body);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.15s;
+    resize: vertical;
+}
+.cal-field input:focus,
+.cal-field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+}
+
+.cal-modal-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 22px;
+    border-top: 1px solid var(--divider);
+    background: var(--bg-secondary);
+    gap: 12px;
+}
+.cal-modal-foot-right { display: flex; gap: 10px; }
+.cal-btn-primary, .cal-btn-secondary, .cal-btn-delete {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out-expo);
+    border: 1px solid transparent;
+}
+.cal-btn-primary {
+    background: var(--text-primary);
+    color: var(--bg-body);
+}
+.cal-btn-primary:hover { transform: scale(1.03); }
+.cal-btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+.cal-btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border-color: var(--divider);
+}
+.cal-btn-secondary:hover { background: var(--bg-body); border-color: var(--divider-strong); }
+.cal-btn-delete {
+    background: transparent;
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.25);
+}
+.cal-btn-delete:hover {
+    background: #dc2626;
+    color: white;
+    border-color: #dc2626;
+}
+
+/* ── EXTRA STYLES for editable + collaborative calendar ─────────────── */
+
+/* Type "chips" inside the modal — visual picker instead of a select */
+.cal-type-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.cal-type-chip {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--divider);
+    background: var(--bg-body);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s var(--ease-out-expo);
+    user-select: none;
+    font-family: inherit;
+}
+.cal-type-chip:hover {
+    border-color: var(--divider-strong);
+    color: var(--text-primary);
+}
+.cal-type-chip.active.meeting  { background: rgba(59, 130, 246, 0.12); color: #2563eb; border-color: rgba(59, 130, 246, 0.35); }
+.cal-type-chip.active.demo     { background: rgba(147, 51, 234, 0.12); color: #9333ea; border-color: rgba(147, 51, 234, 0.35); }
+.cal-type-chip.active.deadline { background: rgba(220, 38, 38, 0.12);  color: #dc2626; border-color: rgba(220, 38, 38, 0.35); }
+.cal-type-chip.active.fair     { background: rgba(15, 118, 110, 0.12); color: var(--accent); border-color: rgba(15, 118, 110, 0.35); }
+.cal-type-chip.active.internal { background: var(--bg-secondary);      color: var(--text-primary); border-color: var(--divider-strong); }
+
+/* Invitee picker */
+.cal-invitees {
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    background: var(--bg-body);
+    max-height: 180px;
+    overflow-y: auto;
+}
+.cal-invitee-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--divider);
+    transition: background 0.12s;
+}
+.cal-invitee-row:last-child { border-bottom: none; }
+.cal-invitee-row:hover { background: var(--bg-secondary); }
+.cal-invitee-row input[type="checkbox"] {
+    width: 16px; height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    margin: 0;
+    flex-shrink: 0;
+}
+.cal-invitee-avatar {
+    width: 28px; height: 28px;
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    color: var(--text-primary);
+    display: grid; place-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.cal-invitee-text { min-width: 0; flex: 1; }
+.cal-invitee-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cal-invitee-email {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cal-invitees-empty {
+    padding: 16px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Status chip for invitee status (when viewing an event you created) */
+.cal-invitee-status {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+}
+.cal-invitee-status.pending  { background: rgba(245, 158, 11, 0.10); color: #b45309;       border-color: rgba(245, 158, 11, 0.30); }
+.cal-invitee-status.accepted { background: rgba(15, 118, 110, 0.10); color: var(--accent); border-color: rgba(15, 118, 110, 0.30); }
+.cal-invitee-status.declined { background: rgba(220, 38, 38, 0.10);  color: #dc2626;       border-color: rgba(220, 38, 38, 0.30); }
+
+/* Banner with incoming invites */
+.cal-invites-banner {
+    border: 1px solid rgba(15, 118, 110, 0.25);
+    background: rgba(15, 118, 110, 0.05);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.cal-invites-banner-head {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.cal-invites-banner-head svg { width: 14px; height: 14px; }
+.cal-invite-card {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.cal-invite-body { flex: 1; min-width: 0; }
+.cal-invite-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cal-invite-meta {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cal-invite-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.cal-invite-btn {
+    width: 30px; height: 30px;
+    border-radius: 999px;
+    border: 1px solid var(--divider);
+    background: var(--bg-body);
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all 0.15s var(--ease-out-expo);
+}
+.cal-invite-btn svg { width: 14px; height: 14px; }
+.cal-invite-btn.accept { color: var(--accent); }
+.cal-invite-btn.accept:hover { background: var(--accent); color: white; border-color: var(--accent); }
+.cal-invite-btn.decline { color: #dc2626; }
+.cal-invite-btn.decline:hover { background: #dc2626; color: white; border-color: #dc2626; }
+
+/* Make events in the upcoming list look clickable */
+.cal-event { cursor: pointer; }
+
+/* Small "shared" badge on the event card */
+.cal-event-tags {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+    flex-shrink: 0;
+}
+.cal-event-shared {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: inline-flex; align-items: center; gap: 3px;
+}
+.cal-event-shared svg { width: 10px; height: 10px; }
+
+/* Read-only field look (when viewing someone else's event) */
+.cal-field input[readonly],
+.cal-field textarea[readonly] {
+    opacity: 0.85;
+    cursor: default;
+    background: var(--bg-secondary);
+}
+
+/* Inline two-column field row */
+.cal-field-row {
+    display: flex;
+    gap: 10px;
+}
+.cal-field-row .cal-field {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Loading state */
+.cal-events-loading {
+    padding: 28px 20px;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 600px) {
+    .cal-event { padding: 14px 16px; gap: 12px; }
+    .cal-event-date { width: 40px; }
+    .cal-event-day { font-size: 20px; }
+    .cal-invitees { max-height: 200px; }
+}
+
+#dp-toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text-primary);
+    color: var(--bg-body);
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 13px;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.35s var(--ease-out-expo), opacity 0.3s;
+    opacity: 0;
+    z-index: 300;
+    display: inline-flex; align-items: center; gap: 8px;
+    max-width: 90vw;
+}
+#dp-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+#dp-toast strong { font-weight: 600; }
+#dp-toast span { font-weight: 400; opacity: 0.85; }
+
+/* =========================================
+   LOGIN SCREEN
+   ========================================= */
+#login-screen {
+    display: none !important; /* legacy overlay — Firebase Auth handles gating now */
+    position: fixed; inset: 0;
+    place-items: center;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(15, 118, 110, 0.10) 0%, transparent 55%),
+        radial-gradient(circle at 80% 80%, rgba(30, 41, 59, 0.06) 0%, transparent 55%),
+        var(--bg-body);
+    z-index: 200;
+    padding: 24px;
+    transition: opacity 0.4s var(--ease-out-expo);
+}
+#login-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.login-card {
+    width: 100%; max-width: 560px;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-lg);
+    padding: 48px 56px 36px;
+    box-shadow: var(--shadow-lg);
+}
+.login-card .eyebrow { margin-bottom: 14px; }
+.login-card h1 {
+    font-size: 38px; line-height: 1.05; letter-spacing: -0.03em;
+    margin-bottom: 12px;
+}
+.login-card h1 .gradient-text {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.login-card .sub {
+    font-size: 16px; color: var(--text-secondary);
+    margin-bottom: 36px;
+}
+.login-card label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin: 18px 0 8px;
+}
+.login-card input {
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    color: var(--text-primary);
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s;
+    -webkit-text-security: none; /* allow password manager autofill styling */
+}
+.login-card input:focus {
+    background: var(--bg-card);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.10);
+}
+.login-card input::placeholder { color: var(--text-secondary); }
+
+.login-card .btn-primary {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px 24px;
+    font-size: 15px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--text-primary);
+    color: var(--bg-body);
+    border: none;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.login-card .btn-primary:hover { transform: scale(1.02); opacity: 0.95; }
+.login-card .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.login-card .btn-primary svg { width: 16px; height: 16px; }
+
+.login-error {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #dc2626;
+    text-align: center;
+    min-height: 0;
+}
+.login-error:empty { display: none; }
+
+@media (max-width: 600px) {
+    .login-card { padding: 36px 28px 28px; }
+    .login-card h1 { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     NAV
+     ════════════════════════════════════════════════════════════════════ -->
+<nav class="nav" id="main-nav">
+  <div class="container nav-inner">
+    <a href="dashboard.html" class="logo">
+      <img class="logo-mark" src="favicon.png" alt="DP Biotech" />
+      <span>DP Biotech</span>
+      <span class="sep">/</span>
+      <span class="role">Dashboard</span>
+    </a>
+
+    <div class="nav-actions">
+      <div class="account-menu" id="account-menu-desktop">
+        <button type="button" class="account-menu-btn" id="account-menu-trigger" aria-haspopup="menu" aria-expanded="false">
+          <span class="nav-avatar" id="nav-user-avatar">—</span>
+          <span class="nav-name" id="nav-user-shortname">Account</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="account-menu-panel" role="menu">
+          <div class="account-menu-user">
+            <p class="account-menu-name" id="nav-user-name">—</p>
+            <p class="account-menu-email" id="nav-user-email">—</p>
+          </div>
+          <a href="staff-profile.html" class="account-menu-link" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            Staff profile
+          </a>
+          <div class="account-menu-divider"></div>
+          <button type="button" class="account-menu-signout" data-signout>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Sign out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     TOP ZONE — hero + status share one ambient gradient
+     ════════════════════════════════════════════════════════════════════ -->
+<div class="top-zone">
+
+<!-- ════════════════════════════════════════════════════════════════════
+     HERO — personal greeting
+     ════════════════════════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="container">
+    <div class="greeting">
+      <span class="eyebrow" id="greeting-eyebrow">Welcome</span>
+      <h1 id="greeting-headline">Hello.</h1>
+      <p class="lead" id="greeting-sub">A central console for everything DP Biotech: customer care, sales, microscopes, operations. New modules land here as we build them.</p>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     SYSTEM STATUS — live ping of company systems
+     ════════════════════════════════════════════════════════════════════ -->
+<section class="status-strip">
+  <div class="container">
+    <div class="status-card" id="status-card" data-overall="checking">
+      <div class="status-card-bg"></div>
+      <div class="status-card-content">
+        <div class="status-head">
+          <span class="eyebrow">System status</span>
+          <span class="status-summary" id="status-summary">
+            <span class="status-summary-dot" id="status-summary-dot"></span>
+            <span id="status-summary-text">Checking systems…</span>
+          </span>
+        </div>
+        <div class="status-grid">
+          <div class="status-item" data-status="checking" data-id="firestore">
+            <div class="status-dot"></div>
+            <div class="status-text">
+              <div class="status-name">Firestore</div>
+              <div class="status-state">Checking…</div>
+            </div>
+          </div>
+          <div class="status-item" data-status="checking" data-id="website">
+            <div class="status-dot"></div>
+            <div class="status-text">
+              <div class="status-name">dpbiotech.com</div>
+              <div class="status-state">Checking…</div>
+            </div>
+          </div>
+          <div class="status-item" data-status="operational" data-id="ios-app">
+            <div class="status-dot"></div>
+            <div class="status-text">
+              <div class="status-name">iOS app</div>
+              <div class="status-state">In production</div>
+            </div>
+          </div>
+          <div class="status-item" data-status="operational" data-id="support">
+            <div class="status-dot"></div>
+            <div class="status-text">
+              <div class="status-name">Support Console</div>
+              <div class="status-state">Operational</div>
+            </div>
+          </div>
+          <div class="status-item" data-status="operational" data-id="dashboard">
+            <div class="status-dot"></div>
+            <div class="status-text">
+              <div class="status-name">Dashboard</div>
+              <div class="status-state">Operational</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /.top-zone -->
+
+<!-- ════════════════════════════════════════════════════════════════════
+     BROWSE — compact list of all modules, grouped
+     ════════════════════════════════════════════════════════════════════ -->
+<main class="browse">
+  <div class="container">
+
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Modules</span>
+        <h2>Where would you like to go?</h2>
+      </div>
+    </div>
+
+    <div class="mod-columns">
+
+      <!-- LEFT COLUMN — Customer-facing -->
+      <div class="mod-group">
+        <h3 class="mod-group-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+          </svg>
+          Customer-facing
+        </h3>
+        <div class="mod-list">
+          <a href="support-console.html" class="mod-row" data-module="support">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+              </svg>
+            </div>
+            <div class="mod-text">
+              <div class="mod-name">Support Console</div>
+              <div class="mod-desc">Reply to user requests in real time.</div>
+            </div>
+            <span class="mod-badge live" id="browse-unread-badge" style="display:none">0 unread</span>
+            <svg class="mod-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </a>
+
+          <a href="#" class="mod-row" data-coming-soon data-module="customers">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div class="mod-text">
+              <div class="mod-name">Customers</div>
+              <div class="mod-desc">Hospital and clinic accounts, contracts, history.</div>
+            </div>
+            <svg class="mod-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </a>
+
+          <a href="#" class="mod-row" data-coming-soon data-module="sales">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div class="mod-text">
+              <div class="mod-name">Sales</div>
+              <div class="mod-desc">Deals in flight, quotes, invoices, revenue.</div>
+            </div>
+            <svg class="mod-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </a>
+
+          <a href="#" class="mod-row" data-coming-soon data-module="microscopes">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 18h12M9 18V8.5a3 3 0 0 1 6 0V18M5 22h14M11 4h2v3h-2z"/>
+              </svg>
+            </div>
+            <div class="mod-text">
+              <div class="mod-name">Microscopes</div>
+              <div class="mod-desc">Every registered unit, model, serial, NFC, service history.</div>
+            </div>
+            <svg class="mod-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </a>
+
+          <a href="#" class="mod-row" data-coming-soon data-module="documents">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </div>
+            <div class="mod-text">
+              <div class="mod-name">Documents</div>
+              <div class="mod-desc">Datasheets, manuals, certificates, brochures.</div>
+            </div>
+            <svg class="mod-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN — Internal & operations -->
+      <div class="mod-group">
+        <h3 class="mod-group-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+          </svg>
+          Internal &amp; operations
+        </h3>
+        <div class="mod-list">
+          <a href="inventory.html" class="mod-row" data-module="inventory">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                <line x1="12" y1="22.08" x2="12" y2="12"/>
+              </svg>
+            </div>
+            <div class="mod-text">
+              <div class="mod-name">Inventory</div>
+              <div class="mod-desc">Stock levels, parts, optics, shipments.</div>
+            </div>
+            <svg class="mod-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </a>
+
+          <a href="#" class="mod-row" data-coming-soon data-module="manufacturing">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <polyline points="9 15 11 17 15 13"/>
+              </svg>
+            </div>
+            <div class="mod-text">
+              <div class="mod-name">Manufacturing &amp; QA</div>
+              <div class="mod-desc">Production batches, calibration logs, quality reports.</div>
+            </div>
+            <svg class="mod-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </a>
+
+          <a href="#" class="mod-row" data-coming-soon data-module="analytics">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3v18h18"/>
+                <path d="M7 14l3-3 4 4 5-6"/>
+              </svg>
+            </div>
+            <div class="mod-text">
+              <div class="mod-name">Analytics</div>
+              <div class="mod-desc">Sales trends, support workload, microscope usage, KPIs.</div>
+            </div>
+            <svg class="mod-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </a>
+
+          <a href="team.html" class="mod-row" data-module="team">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div class="mod-text">
+              <div class="mod-name">Team &amp; permissions</div>
+              <div class="mod-desc">Who can access what, role-based authentication.</div>
+            </div>
+            <svg class="mod-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     CALENDAR — personal mini-month + upcoming events
+     ════════════════════════════════════════════════════════════════════ -->
+<section class="calendar-section">
+  <div class="container">
+
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Calendar</span>
+        <h2>What's on your week</h2>
+      </div>
+      <button class="add-event-btn" id="add-event-btn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        New event
+      </button>
+    </div>
+
+    <div class="calendar-grid">
+
+      <!-- LEFT: mini-month -->
+      <div class="cal-month">
+        <div class="cal-month-head">
+          <button class="cal-nav" id="cal-prev" type="button" title="Previous month">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+          <div class="cal-month-title" id="cal-month-title">—</div>
+          <button class="cal-nav" id="cal-next" type="button" title="Next month">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
+        </div>
+        <div class="cal-weekdays">
+          <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+        </div>
+        <div class="cal-days" id="cal-days"></div>
+      </div>
+
+      <!-- RIGHT: upcoming events list -->
+      <div class="cal-upcoming">
+        <div class="cal-upcoming-head">
+          <span class="cal-upcoming-title">Upcoming</span>
+        </div>
+
+        <!-- Pending invites banner (filled by JS when there are invites to act on) -->
+        <div id="cal-invites-banner" style="display:none"></div>
+
+        <div class="cal-events-list" id="cal-events-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     CALENDAR MODALS — event editor + delete confirmation
+     ════════════════════════════════════════════════════════════════════ -->
+<div class="cal-modal" id="event-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="event-modal-title">
+  <div class="cal-modal-backdrop" data-close-modal="event-modal"></div>
+  <div class="cal-modal-card">
+    <div class="cal-modal-head">
+      <h3 id="event-modal-title">New event</h3>
+      <button type="button" class="cal-modal-close" data-close-modal="event-modal" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="cal-modal-body">
+
+      <!-- Read-only banner shown when viewing an event owned by someone else -->
+      <div id="event-readonly-note" style="display:none; font-size:12.5px; color:var(--text-secondary); padding:10px 12px; background:var(--bg-secondary); border:1px solid var(--divider); border-radius:var(--radius-sm);">
+        Shared event — owned by <strong id="event-owner-name">—</strong>. Only the owner can edit it.
+      </div>
+
+      <div class="cal-field">
+        <span>Title</span>
+        <input type="text" id="ev-title" maxlength="120" placeholder="Team standup, Customer demo, …" />
+      </div>
+
+      <div class="cal-field">
+        <span>Type</span>
+        <div class="cal-type-chips" id="ev-type-chips" role="radiogroup" aria-label="Event type">
+          <button type="button" class="cal-type-chip" data-type="meeting"  role="radio">Meeting</button>
+          <button type="button" class="cal-type-chip" data-type="demo"     role="radio">Demo</button>
+          <button type="button" class="cal-type-chip" data-type="deadline" role="radio">Deadline</button>
+          <button type="button" class="cal-type-chip" data-type="fair"     role="radio">Fair</button>
+          <button type="button" class="cal-type-chip" data-type="internal" role="radio">Internal</button>
+        </div>
+      </div>
+
+      <div class="cal-field-row">
+        <div class="cal-field">
+          <span>Date</span>
+          <input type="date" id="ev-date" />
+        </div>
+        <div class="cal-field">
+          <span>Time <span class="opt">· optional</span></span>
+          <input type="time" id="ev-time" />
+        </div>
+      </div>
+
+      <div class="cal-field">
+        <span>Place <span class="opt">· optional</span></span>
+        <input type="text" id="ev-place" maxlength="160" placeholder="Office, Milan, Microsoft Teams, …" />
+      </div>
+
+      <div class="cal-field">
+        <span>Notes <span class="opt">· optional</span></span>
+        <textarea id="ev-notes" rows="2" maxlength="600" placeholder="Anything you want to remember…"></textarea>
+      </div>
+
+      <!-- Invitee picker — shown when creating, or editing your own event without invites yet -->
+      <div class="cal-field" id="ev-invite-section">
+        <span>Invite teammates <span class="opt">· optional</span></span>
+        <div class="cal-invitees" id="ev-invitees-list">
+          <div class="cal-invitees-empty">Loading team…</div>
+        </div>
+      </div>
+
+      <!-- Invite STATUS list — shown when editing your own event that has invites out -->
+      <div class="cal-field" id="ev-invite-status-section" style="display:none">
+        <span>Invited</span>
+        <div class="cal-invitees" id="ev-invitee-status-list"></div>
+      </div>
+
+    </div>
+
+    <div class="cal-modal-foot">
+      <button type="button" class="cal-btn-delete" id="ev-delete-btn" style="display:none">Delete</button>
+      <div class="cal-modal-foot-right" style="margin-left:auto;">
+        <button type="button" class="cal-btn-secondary" data-close-modal="event-modal">Cancel</button>
+        <button type="button" class="cal-btn-primary" id="ev-save-btn">Create event</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirmation modal -->
+<div class="cal-modal" id="confirm-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+  <div class="cal-modal-backdrop" data-close-modal="confirm-modal"></div>
+  <div class="cal-modal-card" style="max-width:380px;">
+    <div class="cal-modal-head">
+      <h3 id="confirm-modal-title">Delete event?</h3>
+      <button type="button" class="cal-modal-close" data-close-modal="confirm-modal" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="cal-modal-body">
+      <p style="margin:0; font-size:14px; color:var(--text-secondary);" id="confirm-modal-text">
+        This event will be removed from your calendar. Invited teammates will also lose it.
+      </p>
+    </div>
+    <div class="cal-modal-foot">
+      <div class="cal-modal-foot-right" style="margin-left:auto;">
+        <button type="button" class="cal-btn-secondary" data-close-modal="confirm-modal">Cancel</button>
+        <button type="button" class="cal-btn-delete" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     AUTH (temporary hardcoded override — replace with Firebase Auth)
+     ════════════════════════════════════════════════════════════════════ -->
+<script>
+  // ⚠️  TEMPORARY OVERRIDE
+  // These credentials are hardcoded in client-side code, which means
+  // anyone who opens "View source" on this page can read them.
+  // This is acceptable as a stop-gap for one-person testing, but it is
+  // NOT secure for production. Replace this block with Firebase Auth
+  // (signInWithEmailAndPassword) once you're ready.
+  const AUTHORIZED_USERS = [
+    {
+      email:    "giorgiodalpont@dpbiotech.com",
+      password: "giorgio",
+      name:     "Giorgio Dal Pont",
+    },
+    // Add more operators here, or replace the whole block with Firebase Auth.
+  ];
+
+  const $login    = document.getElementById("login-screen");
+  const $form     = document.getElementById("login-form");
+  const $email    = document.getElementById("email");
+  const $password = document.getElementById("password");
+  const $err      = document.getElementById("login-error");
+  const $btn      = document.getElementById("login-btn");
+
+  // Helper: mark as signed in, populate nav chip, reveal app shell
+  function markSignedIn(user) {
+    sessionStorage.setItem("dp_authed",       "1");
+    sessionStorage.setItem("dp_user_email",   user.email);
+    sessionStorage.setItem("dp_user_name",    user.name || user.email);
+    document.documentElement.dataset.authed = "1";
+    populateUserChip(user);
+    // hide login overlay with a fade (no-op if overlay was removed)
+    if ($login) {
+      $login.classList.add("hidden");
+      setTimeout(() => { $login.style.display = "none"; }, 400);
+    }
+  }
+
+  function populateUserChip(user) {
+    const avatar   = document.getElementById("nav-user-avatar");
+    const shortNm  = document.getElementById("nav-user-shortname");
+    const fullName = document.getElementById("nav-user-name");
+    const email    = document.getElementById("nav-user-email");
+    const display  = (user.name && user.name.trim()) ? user.name.trim() : (user.email || "");
+    if (avatar)   avatar.textContent   = (display || "?")[0].toUpperCase();
+    if (shortNm)  shortNm.textContent  = display || "Account";
+    if (fullName) fullName.textContent = display || "—";
+    if (email)    email.textContent    = user.email || "—";
+    updateGreeting(user);
+  }
+
+  function updateGreeting(user) {
+    const eb    = document.getElementById("greeting-eyebrow");
+    const head  = document.getElementById("greeting-headline");
+    if (!head) return;
+
+    const hour = new Date().getHours();
+    let timeOfDay;
+    if (hour < 5)       timeOfDay = "Good night";
+    else if (hour < 12) timeOfDay = "Good morning";
+    else if (hour < 18) timeOfDay = "Good afternoon";
+    else                timeOfDay = "Good evening";
+
+    // Use the full name as-is (supports multi-word surnames like "Dal Pont").
+    // Falls back to the local part of the email, tidied up.
+    let pretty = "";
+    if (user.name && user.name.trim() && !user.name.includes("@")) {
+      pretty = user.name.trim();
+    } else if (user.email) {
+      const local = user.email.split("@")[0].replace(/[._-]+/g, " ").trim();
+      pretty = local.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    }
+
+    const todayLabel = new Date().toLocaleDateString("en-GB", {
+      weekday: "long", day: "numeric", month: "long"
+    });
+
+    if (eb)   eb.textContent = todayLabel;
+    head.innerHTML = pretty
+      ? `${timeOfDay}, <span class="gradient-text">${escapeHtml(pretty)}</span>.`
+      : `${timeOfDay}.`;
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? "").replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  // If the early-check script flipped data-authed=1, surface the chip too
+  if (document.documentElement.dataset.authed === "1") {
+    const savedEmail = sessionStorage.getItem("dp_user_email") || "";
+    const savedName  = sessionStorage.getItem("dp_user_name")  || savedEmail;
+    populateUserChip({ email: savedEmail, name: savedName });
+  }
+
+  // Form submit handler. Returns true (no preventDefault until after
+  // validation) is NOT what we want — the password manager doesn't
+  // require navigation, but it DOES require: a real <form> element,
+  // input[name=email] + input[name=password], autocomplete attributes,
+  // and the form ENDING (either submit() succeeding or location change).
+  // Chrome/Safari/Firefox detect a "successful submit" as long as we
+  // don't abort early; we preventDefault AFTER stamping the credentials
+  // so the prompt still appears.
+  if ($form) $form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    $err.textContent = "";
+
+    const emailVal = ($email.value || "").trim().toLowerCase();
+    const passVal  = $password.value || "";
+
+    const match = AUTHORIZED_USERS.find(u =>
+      u.email.toLowerCase() === emailVal && u.password === passVal
+    );
+
+    if (!match) {
+      $err.textContent = "Invalid email or password.";
+      $password.focus();
+      $password.select();
+      return;
+    }
+
+    // Trigger the browser's "save password?" prompt:
+    // we explicitly call the (deprecated but still supported) password
+    // credentials API where available, then mark signed-in.
+    if (window.PasswordCredential) {
+      try {
+        const cred = new PasswordCredential({
+          id:       match.email,
+          password: passVal,
+          name:     match.name,
+        });
+        if (navigator.credentials && navigator.credentials.store) {
+          navigator.credentials.store(cred).catch(() => {});
+        }
+      } catch (_) { /* not all browsers support it; the form submit
+                       fallback below still works */ }
+    }
+
+    markSignedIn(match);
+  });
+
+  // Account dropdown open/close (signout itself is wired in the Firebase block)
+  (function wireAccountMenu() {
+    const accountMenu    = document.getElementById('account-menu-desktop');
+    const accountTrigger = document.getElementById('account-menu-trigger');
+    if (!accountMenu || !accountTrigger) return;
+    accountTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = accountMenu.classList.toggle('is-open');
+      accountTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', (e) => {
+      if (!accountMenu.contains(e.target)) {
+        accountMenu.classList.remove('is-open');
+        accountTrigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        accountMenu.classList.remove('is-open');
+        accountTrigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+
+  // ── Click on a module → permission check, then coming-soon toast ────
+  // Order:
+  //   1. If the user doesn't have access to this module → toast & block
+  //   2. If the module isn't built yet (data-coming-soon) → toast & block
+  //   3. Otherwise let the link navigate normally
+  document.addEventListener("click", function(e) {
+    const item = e.target.closest("a.mod-row, a.tile");
+    if (!item) return;
+
+    const modKey = item.getAttribute("data-module");
+    const title  = item.querySelector(".mod-name")?.textContent?.trim()
+                || item.querySelector("h3")?.textContent?.trim()
+                || "This module";
+
+    // Permission check (admin always passes, everyone else needs the key)
+    if (modKey && !hasAccess(modKey)) {
+      e.preventDefault();
+      showToast("Access denied", `You don't have access to ${title}.`);
+      return;
+    }
+
+    // Coming-soon check (after permission, so we don't reveal what they can't see)
+    if (item.hasAttribute("data-coming-soon")) {
+      e.preventDefault();
+      showToast(title, "is coming soon — we're building it.");
+    }
+  });
+
+  /// Read permissions from sessionStorage (set at boot from Firestore).
+  /// Returns true if the user is admin OR has the module in their access list.
+  function hasAccess(modKey) {
+    try {
+      const role = sessionStorage.getItem("dp_user_role");
+      if (role === "admin") return true;
+      const raw = sessionStorage.getItem("dp_permissions");
+      if (!raw) return true; // Permissive default until first sync — better than blocking
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) && arr.includes(modKey);
+    } catch (_) {
+      return true;
+    }
+  }
+
+  function showToast(title, body) {
+    let t = document.getElementById("dp-toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "dp-toast";
+      document.body.appendChild(t);
+    }
+    t.innerHTML = `<strong>${title}</strong> <span>${body}</span>`;
+    t.classList.add("show");
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => t.classList.remove("show"), 2800);
+  }
+
+  // ── If we just got bounced from a forbidden module, surface a toast ──
+  // The other pages set `dp_access_denied_module` in sessionStorage right
+  // before redirecting back here. We read it once and clear it.
+  (function showAccessDeniedFromRedirect() {
+    const blocked = sessionStorage.getItem("dp_access_denied_module");
+    if (!blocked) return;
+    sessionStorage.removeItem("dp_access_denied_module");
+    // Wait a tick so the toast doesn't compete with the page mount
+    setTimeout(() => showToast("Access denied", `You don't have access to ${blocked}.`), 250);
+  })();
+
+  // ════════════════════════════════════════════════════════════════════
+  //  PERSONAL CALENDAR
+  //  The full Firestore-backed implementation lives in the
+  //  <script type="module"> block at the bottom of this file.
+  // ════════════════════════════════════════════════════════════════════
+</script>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     LIVE STATS — same Firestore project as the support console
+     ════════════════════════════════════════════════════════════════════ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, query, where, getDocs, limit, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ── PASTE YOUR firebaseConfig HERE (same as support-console.html) ─────
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAPZC_sUOYnwJdW3SG6uEoRKSDVXfcqjdg",
+    authDomain:        "flutter-webview-e59a8.firebaseapp.com",
+    databaseURL:       "https://flutter-webview-e59a8-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "flutter-webview-e59a8",
+    storageBucket:     "flutter-webview-e59a8.appspot.com",
+    messagingSenderId: "766286969529",
+    appId:             "1:766286969529:web:9418c504eca08fb1853968",
+    measurementId:     "G-ZHPL8X1PXP",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // ── Hard-coded admin emails (until Firebase Auth + claims) ──────────
+  // These users are always treated as admin regardless of Firestore.
+  const ADMIN_EMAILS = ["giorgiodalpont@dpbiotech.com"];
+
+  /// Load the signed-in user's permissions from Firestore once we know
+  /// they're signed in. Cached in sessionStorage so the synchronous click
+  /// handler (in the auth script above) can read them without awaiting.
+  async function syncPermissions() {
+    const email = (sessionStorage.getItem("dp_user_email") || "").toLowerCase();
+    if (!email) return;
+
+    // Admin shortcut — never blocked
+    if (ADMIN_EMAILS.includes(email)) {
+      sessionStorage.setItem("dp_user_role",     "admin");
+      sessionStorage.setItem("dp_permissions",   JSON.stringify([
+        "support","customers","sales","microscopes","documents",
+        "inventory","manufacturing","analytics","team"
+      ]));
+      return;
+    }
+
+    try {
+      const q = query(collection(db, "team"), where("email", "==", email), limit(1));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        // User signed in but has no team doc → only the dashboard is open
+        sessionStorage.setItem("dp_user_role",   "");
+        sessionStorage.setItem("dp_permissions", JSON.stringify([]));
+        return;
+      }
+      const data = snap.docs[0].data();
+      sessionStorage.setItem("dp_user_role",   data.role   || "");
+      sessionStorage.setItem("dp_permissions", JSON.stringify(
+        Array.isArray(data.access) ? data.access : []
+      ));
+    } catch (e) {
+      console.warn("[perms] sync failed:", e);
+      // Don't lock the user out on a transient failure — leave whatever
+      // is already cached (likely from a previous successful sync).
+    }
+  }
+
+  // Sync once we're signed in; reruns on every page load
+  function syncWhenAuthed() {
+    if (document.documentElement.dataset.authed === "1") {
+      syncPermissions();
+      return;
+    }
+    setTimeout(syncWhenAuthed, 250);
+  }
+  syncWhenAuthed();
+
+  // Only start the listener once the user has signed in. We poll a short
+  // interval until the auth flag flips (set by the inline script when
+  // the login form succeeds). This keeps the dashboard from making
+  // unauthorized reads while the login screen is up.
+  function startListenerWhenAuthed() {
+    if (document.documentElement.dataset.authed === "1") {
+      attachListener();
+      return;
+    }
+    setTimeout(startListenerWhenAuthed, 250);
+  }
+  startListenerWhenAuthed();
+
+  function attachListener() {
+    const q = query(collection(db, "supportRequests"));
+    onSnapshot(q, handleSnapshot, handleError);
+  }
+
+  function handleSnapshot(snap) {
+    // ── Firestore is operational: we just got a snapshot ─────────────
+    setSystemStatus("firestore", "operational", "Real-time connected");
+    recomputeOverall();
+
+    const docs = snap.docs.map(d => d.data());
+
+    let unread = 0;
+    for (const r of docs) {
+      if ((r.unreadCountSupport || 0) > 0) unread++;
+    }
+
+    // ── Badge on the Support row in the browse list ───────────────────
+    const badge = document.getElementById("browse-unread-badge");
+    if (badge) {
+      if (unread > 0) {
+        badge.style.display = "inline-block";
+        badge.textContent = `${unread} unread`;
+      } else {
+        badge.style.display = "none";
+      }
+    }
+
+    // ── Browser tab title ─────────────────────────────────────────────
+    document.title = unread > 0
+      ? `(${unread}) DP Biotech — Dashboard`
+      : "DP Biotech — Dashboard";
+  }
+
+  function handleError(err) {
+    console.error("Firestore listener error:", err);
+    setSystemStatus("firestore", "outage", "Unreachable");
+    recomputeOverall();
+  }
+
+  // ── System status helpers ────────────────────────────────────────────
+  function setSystemStatus(id, status, label) {
+    const item = document.querySelector(`.status-item[data-id="${id}"]`);
+    if (!item) return;
+    item.setAttribute("data-status", status);
+    const state = item.querySelector(".status-state");
+    if (state) state.textContent = label;
+  }
+
+  function recomputeOverall() {
+    const items = document.querySelectorAll(".status-item");
+    let outage = 0, degraded = 0, checking = 0;
+    items.forEach(it => {
+      const s = it.getAttribute("data-status");
+      if (s === "outage")   outage++;
+      if (s === "degraded") degraded++;
+      if (s === "checking") checking++;
+    });
+
+    const summary = document.getElementById("status-summary");
+    const text    = document.getElementById("status-summary-text");
+    const card    = document.getElementById("status-card");
+
+    let overall, label;
+    if (outage > 0) {
+      overall = "outage";
+      label = outage === 1 ? "1 system down" : `${outage} systems down`;
+    } else if (degraded > 0) {
+      overall = "degraded";
+      label = degraded === 1 ? "1 system degraded" : `${degraded} systems degraded`;
+    } else if (checking > 0) {
+      overall = "checking";
+      label = "Checking systems…";
+    } else {
+      overall = "operational";
+      label = "All systems operational";
+    }
+
+    if (summary) summary.setAttribute("data-status", overall === "checking" ? "" : overall);
+    if (text)    text.textContent = label;
+    if (card)    card.setAttribute("data-overall", overall);
+  }
+
+  // ── Check the public website with a no-cors fetch ───────────────────
+  // We can't read the response (cross-origin) but we can tell if the
+  // request completed without network error vs. failed outright.
+  async function checkWebsite() {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 5000);
+      await fetch("https://www.dpbiotech.com", {
+        method: "HEAD",
+        mode: "no-cors",
+        cache: "no-store",
+        signal: ctrl.signal,
+      });
+      clearTimeout(t);
+      setSystemStatus("website", "operational", "Online");
+    } catch (e) {
+      console.warn("[status] website check failed:", e);
+      setSystemStatus("website", "outage", "Unreachable");
+    }
+    recomputeOverall();
+  }
+  checkWebsite();
+  setInterval(checkWebsite, 60000);
+
+  // Initial overall (everything either operational or checking)
+  recomputeOverall();
+</script>
+
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     CALENDAR — Firestore-backed, collaborative (events + invites)
+     ════════════════════════════════════════════════════════════════════ -->
+<script type="module">
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, query, where, onSnapshot,
+    addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs,
+    serverTimestamp, writeBatch, Timestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ─── Firebase setup (reuse if already initialised) ───────────────────
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAPZC_sUOYnwJdW3SG6uEoRKSDVXfcqjdg",
+    authDomain:        "flutter-webview-e59a8.firebaseapp.com",
+    databaseURL:       "https://flutter-webview-e59a8-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "flutter-webview-e59a8",
+    storageBucket:     "flutter-webview-e59a8.appspot.com",
+    messagingSenderId: "766286969529",
+    appId:             "1:766286969529:web:9418c504eca08fb1853968",
+    measurementId:     "G-ZHPL8X1PXP",
+  };
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // ─── Who am I? ───────────────────────────────────────────────────────
+  const myEmail = (sessionStorage.getItem("dp_user_email") || "").toLowerCase();
+  const myName  =  sessionStorage.getItem("dp_user_name")  || myEmail;
+
+  if (!myEmail) {
+    // The auth gate should keep this from happening, but bail safely if not.
+    console.warn("Calendar: no signed-in user — skipping init.");
+  }
+
+  // ─── DOM refs ────────────────────────────────────────────────────────
+  const $ = (id) => document.getElementById(id);
+  const daysEl    = $("cal-days");
+  const titleEl   = $("cal-month-title");
+  const listEl    = $("cal-events-list");
+  const bannerEl  = $("cal-invites-banner");
+
+  const modal       = $("event-modal");
+  const modalTitle  = $("event-modal-title");
+  const elTitle     = $("ev-title");
+  const elDate      = $("ev-date");
+  const elTime      = $("ev-time");
+  const elPlace     = $("ev-place");
+  const elNotes     = $("ev-notes");
+  const chipsWrap   = $("ev-type-chips");
+  const inviteSec   = $("ev-invite-section");
+  const inviteList  = $("ev-invitees-list");
+  const statusSec   = $("ev-invite-status-section");
+  const statusList  = $("ev-invitee-status-list");
+  const saveBtn     = $("ev-save-btn");
+  const deleteBtn   = $("ev-delete-btn");
+  const readonlyNote = $("event-readonly-note");
+  const ownerNameEl  = $("event-owner-name");
+
+  const confirmModal  = $("confirm-modal");
+  const confirmDelBtn = $("confirm-delete-btn");
+
+  // ─── Constants ───────────────────────────────────────────────────────
+  const MONTHS_LONG  = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const TYPE_LABELS  = { meeting:"Meeting", demo:"Demo", deadline:"Deadline", fair:"Fair", internal:"Internal" };
+  const VALID_TYPES  = new Set(Object.keys(TYPE_LABELS));
+
+  // ─── Local state ─────────────────────────────────────────────────────
+  const today = startOfDay(new Date());
+  let viewYear  = today.getFullYear();
+  let viewMonth = today.getMonth();
+
+  // events I own + events shared with me that I accepted
+  let myEvents = [];
+  // pending invites where I'm the invitee
+  let pendingInvites = [];
+  // team members (excluding me)
+  let teammates = [];
+  // selected invitee emails in the editor (for create mode)
+  let selectedInvitees = new Set();
+  // currently edited type
+  let selectedType = "meeting";
+  // editor mode + payload
+  // mode: "create" | "edit-own" | "view-shared"
+  let editorMode = "create";
+  let editingEvent = null;     // the event being edited (when applicable)
+
+  // ─── Utilities ───────────────────────────────────────────────────────
+  function startOfDay(d) { const x = new Date(d); x.setHours(0,0,0,0); return x; }
+  function sameDay(a, b) {
+    return a.getFullYear() === b.getFullYear()
+        && a.getMonth()    === b.getMonth()
+        && a.getDate()     === b.getDate();
+  }
+  function dayOffset(n) { const d = new Date(today); d.setDate(d.getDate() + n); return d; }
+  function isoDate(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+  function escapeHtml(s) {
+    return String(s ?? "").replace(/[&<>"\']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","\'":"&#39;"
+    }[c]));
+  }
+  function initial(s) { return (s || "?").trim().charAt(0).toUpperCase() || "?"; }
+  function relativeDayLabel(d) {
+    if (sameDay(d, today))            return "Today";
+    if (sameDay(d, dayOffset(1)))     return "Tomorrow";
+    const diff = Math.round((startOfDay(d) - today) / (24*60*60*1000));
+    if (diff > 0 && diff < 7) return d.toLocaleDateString("en-GB", { weekday: "long" });
+    if (diff < 0 && diff > -7) return "Last " + d.toLocaleDateString("en-GB", { weekday: "long" });
+    return d.toLocaleDateString("en-GB", { weekday: "long" });
+  }
+
+  // Convert Firestore Timestamp or string back to a JS Date (start of day)
+  function eventDate(ev) {
+    // Stored as ISO string "YYYY-MM-DD"
+    const [y, m, d] = (ev.date || "").split("-").map(Number);
+    if (!y) return new Date(NaN);
+    return new Date(y, m - 1, d);
+  }
+
+  function toast(title, body) {
+    if (typeof window.showToast === "function") {
+      window.showToast(title, body);
+    } else {
+      // Fallback: build/use the same #dp-toast element the auth block uses
+      let t = document.getElementById("dp-toast");
+      if (!t) {
+        t = document.createElement("div");
+        t.id = "dp-toast";
+        document.body.appendChild(t);
+      }
+      t.innerHTML = `<strong>${escapeHtml(title)}</strong> <span>${escapeHtml(body || "")}</span>`;
+      t.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => t.classList.remove("show"), 2800);
+    }
+  }
+
+  // ─── Firestore listeners ─────────────────────────────────────────────
+  // 1) Events I own
+  const eventsCol = collection(db, "events");
+  const myEventsQuery = query(eventsCol, where("ownerEmail", "==", myEmail));
+  onSnapshot(myEventsQuery, (snap) => {
+    const owned = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    mergeEvents({ owned });
+  }, (err) => {
+    console.error("events(owner) listener error:", err);
+    listEl.innerHTML = `<div class="cal-events-empty"><strong>Couldn't load events</strong><span>${escapeHtml(err.message)}</span></div>`;
+  });
+
+  // 2) Accepted invites where I'm the invitee → shown as events on my calendar
+  const invitesCol = collection(db, "eventInvites");
+  const myAcceptedInvitesQ = query(
+    invitesCol,
+    where("toEmail", "==", myEmail),
+    where("status", "==", "accepted")
+  );
+  onSnapshot(myAcceptedInvitesQ, (snap) => {
+    const accepted = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    mergeEvents({ accepted });
+  }, (err) => {
+    console.error("events(accepted-invites) listener error:", err);
+  });
+
+  // 3) Pending invites — for the banner
+  const myPendingInvitesQ = query(
+    invitesCol,
+    where("toEmail", "==", myEmail),
+    where("status", "==", "pending")
+  );
+  onSnapshot(myPendingInvitesQ, (snap) => {
+    pendingInvites = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderBanner();
+  }, (err) => {
+    console.error("invites(pending) listener error:", err);
+  });
+
+  // 4) Invites I SENT — to show status on my own events
+  const myOutgoingInvitesQ = query(invitesCol, where("fromEmail", "==", myEmail));
+  let outgoingInvites = [];
+  onSnapshot(myOutgoingInvitesQ, (snap) => {
+    outgoingInvites = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderMonth();
+    renderUpcoming();
+  }, (err) => {
+    console.error("invites(outgoing) listener error:", err);
+  });
+
+  // 5) Team members (for the invitee picker)
+  const teamCol = collection(db, "team");
+  onSnapshot(teamCol, (snap) => {
+    teammates = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(m => (m.email || "").toLowerCase() !== myEmail);
+    // If the modal is open and we're picking invitees, refresh the list
+    if (modal.style.display !== "none" && editorMode === "create") {
+      renderInviteePicker();
+    }
+  }, (err) => {
+    console.error("team listener error:", err);
+  });
+
+  // ─── Merge owned + accepted into myEvents ────────────────────────────
+  let _owned = [];
+  let _accepted = [];
+  function mergeEvents({ owned, accepted }) {
+    if (owned)    _owned = owned;
+    if (accepted) _accepted = accepted;
+
+    const fromOwned = _owned.map(e => ({
+      ...e,
+      _source: "own",
+    }));
+    const fromAccepted = _accepted.map(inv => ({
+      id: "inv:" + inv.id,
+      _inviteId: inv.id,
+      _source: "shared",
+      _fromName: inv.fromName,
+      _fromEmail: inv.fromEmail,
+      ownerEmail: inv.fromEmail,
+      ...inv.eventSnapshot,
+    }));
+
+    myEvents = [...fromOwned, ...fromAccepted];
+    renderMonth();
+    renderUpcoming();
+  }
+
+  // ─── Render: mini-month ──────────────────────────────────────────────
+  function renderMonth() {
+    titleEl.textContent = `${MONTHS_LONG[viewMonth]} ${viewYear}`;
+    daysEl.innerHTML = "";
+
+    const first = new Date(viewYear, viewMonth, 1);
+    const firstWeekday = (first.getDay() + 6) % 7;
+    const daysInMonth  = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const daysInPrev   = new Date(viewYear, viewMonth, 0).getDate();
+
+    const monthEventDays = new Set();
+    for (const ev of myEvents) {
+      const d = eventDate(ev);
+      if (d.getFullYear() === viewYear && d.getMonth() === viewMonth) {
+        monthEventDays.add(d.getDate());
+      }
+    }
+
+    // previous month tail
+    for (let i = firstWeekday - 1; i >= 0; i--) {
+      const cell = document.createElement("div");
+      cell.className = "cal-day muted";
+      cell.textContent = daysInPrev - i;
+      daysEl.appendChild(cell);
+    }
+    // current month
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cell = document.createElement("div");
+      const dt = new Date(viewYear, viewMonth, d);
+      cell.className = "cal-day" + (sameDay(dt, today) ? " today" : "");
+      cell.textContent = d;
+      if (monthEventDays.has(d)) {
+        const dot = document.createElement("span");
+        dot.className = "ev-dot";
+        cell.appendChild(dot);
+      }
+      daysEl.appendChild(cell);
+    }
+    // trailing
+    const total = firstWeekday + daysInMonth;
+    const trailing = (7 - (total % 7)) % 7;
+    for (let i = 1; i <= trailing; i++) {
+      const cell = document.createElement("div");
+      cell.className = "cal-day muted";
+      cell.textContent = i;
+      daysEl.appendChild(cell);
+    }
+  }
+
+  // ─── Render: upcoming list ───────────────────────────────────────────
+  function renderUpcoming() {
+    const upcoming = myEvents
+      .filter(ev => {
+        const d = eventDate(ev);
+        return !isNaN(d) && d >= today;
+      })
+      .sort((a, b) => eventDate(a) - eventDate(b));
+
+    if (upcoming.length === 0) {
+      listEl.innerHTML = `<div class="cal-events-empty">
+        <strong>No upcoming events</strong>
+        <span>Click "New event" to add one.</span>
+      </div>`;
+      return;
+    }
+
+    listEl.innerHTML = upcoming.map(ev => {
+      const d = eventDate(ev);
+      const day   = d.getDate();
+      const month = MONTHS_SHORT[d.getMonth()];
+      const when  = relativeDayLabel(d);
+      const timeBit  = ev.time  ? `<span class="sep">·</span><span>${escapeHtml(ev.time)}</span>` : "";
+      const placeBit = ev.place ? `<span class="sep">·</span><span>${escapeHtml(ev.place)}</span>` : "";
+
+      const isShared = ev._source === "shared";
+      const sharedBadge = isShared ? `
+        <span class="cal-event-shared" title="Shared by ${escapeHtml(ev._fromName || ev._fromEmail || '')}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Shared
+        </span>` : "";
+
+      const type = VALID_TYPES.has(ev.type) ? ev.type : "internal";
+
+      return `
+        <div class="cal-event" data-event-id="${escapeHtml(ev.id)}">
+          <div class="cal-event-date">
+            <div class="cal-event-month">${month}</div>
+            <div class="cal-event-day">${day}</div>
+          </div>
+          <div class="cal-event-body">
+            <div class="cal-event-title">${escapeHtml(ev.title || "Untitled")}</div>
+            <div class="cal-event-meta">
+              <span>${when}</span>${timeBit}${placeBit}
+            </div>
+          </div>
+          <div class="cal-event-tags">
+            <span class="cal-event-type ${type}">${TYPE_LABELS[type] || type}</span>
+            ${sharedBadge}
+          </div>
+        </div>`;
+    }).join("");
+
+    // Click handlers — wire after innerHTML
+    listEl.querySelectorAll(".cal-event").forEach(node => {
+      node.addEventListener("click", () => {
+        const id = node.dataset.eventId;
+        const ev = myEvents.find(e => e.id === id);
+        if (ev) openEventForView(ev);
+      });
+    });
+  }
+
+  // ─── Render: pending invites banner ──────────────────────────────────
+  function renderBanner() {
+    if (pendingInvites.length === 0) {
+      bannerEl.style.display = "none";
+      bannerEl.innerHTML = "";
+      return;
+    }
+    bannerEl.style.display = "flex";
+    const headerHtml = `
+      <div class="cal-invites-banner-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        ${pendingInvites.length} pending invite${pendingInvites.length === 1 ? "" : "s"}
+      </div>`;
+
+    const cardsHtml = pendingInvites.map(inv => {
+      const snap = inv.eventSnapshot || {};
+      const d = snap.date ? eventDate(snap) : null;
+      const dayStr = d && !isNaN(d) ? `${MONTHS_SHORT[d.getMonth()]} ${d.getDate()}` : "—";
+      const timeStr = snap.time || "";
+      const meta = [`From ${escapeHtml(inv.fromName || inv.fromEmail || "—")}`, dayStr, timeStr]
+        .filter(Boolean).join(" · ");
+      return `
+        <div class="cal-invite-card" data-invite-id="${escapeHtml(inv.id)}">
+          <div class="cal-invite-body">
+            <div class="cal-invite-title">${escapeHtml(snap.title || "Untitled event")}</div>
+            <div class="cal-invite-meta">${meta}</div>
+          </div>
+          <div class="cal-invite-actions">
+            <button class="cal-invite-btn accept" data-action="accept" data-invite-id="${escapeHtml(inv.id)}" title="Accept" aria-label="Accept">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </button>
+            <button class="cal-invite-btn decline" data-action="decline" data-invite-id="${escapeHtml(inv.id)}" title="Decline" aria-label="Decline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>`;
+    }).join("");
+
+    bannerEl.innerHTML = headerHtml + cardsHtml;
+
+    bannerEl.querySelectorAll(".cal-invite-btn").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.inviteId;
+        const action = btn.dataset.action;
+        btn.disabled = true;
+        try {
+          await updateDoc(doc(db, "eventInvites", id), {
+            status: action === "accept" ? "accepted" : "declined",
+            respondedAt: serverTimestamp(),
+          });
+          toast(action === "accept" ? "Invite accepted" : "Invite declined",
+                action === "accept" ? "added to your calendar" : "");
+        } catch (err) {
+          console.error("respond to invite:", err);
+          toast("Couldn't respond", err.message || "");
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  // ─── Modal: open/close helpers ───────────────────────────────────────
+  function openModal(id) {
+    const m = document.getElementById(id);
+    if (m) { m.style.display = "grid"; document.body.style.overflow = "hidden"; }
+  }
+  function closeModal(id) {
+    const m = document.getElementById(id);
+    if (m) { m.style.display = "none"; document.body.style.overflow = ""; }
+  }
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-close-modal]");
+    if (t) closeModal(t.getAttribute("data-close-modal"));
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (modal.style.display === "grid")        closeModal("event-modal");
+      if (confirmModal.style.display === "grid") closeModal("confirm-modal");
+    }
+  });
+
+  // ─── Editor: type chip picker ────────────────────────────────────────
+  function setSelectedType(t) {
+    selectedType = VALID_TYPES.has(t) ? t : "meeting";
+    chipsWrap.querySelectorAll(".cal-type-chip").forEach(chip => {
+      const isActive = chip.dataset.type === selectedType;
+      chip.classList.toggle("active", isActive);
+      chip.classList.remove("meeting","demo","deadline","fair","internal");
+      if (isActive) chip.classList.add(selectedType);
+      chip.setAttribute("aria-checked", isActive ? "true" : "false");
+    });
+  }
+  chipsWrap.addEventListener("click", (e) => {
+    const chip = e.target.closest(".cal-type-chip");
+    if (!chip || chip.disabled) return;
+    setSelectedType(chip.dataset.type);
+  });
+
+  // ─── Editor: invitee picker (create mode) ────────────────────────────
+  function renderInviteePicker() {
+    if (teammates.length === 0) {
+      inviteList.innerHTML = `<div class="cal-invitees-empty">No other team members yet.</div>`;
+      return;
+    }
+    inviteList.innerHTML = teammates.map(m => {
+      const fullName = [m.firstname, m.lastname].filter(Boolean).join(" ") || m.email || "—";
+      const email = (m.email || "").toLowerCase();
+      const checked = selectedInvitees.has(email) ? "checked" : "";
+      return `
+        <label class="cal-invitee-row">
+          <input type="checkbox" data-email="${escapeHtml(email)}" ${checked} />
+          <div class="cal-invitee-avatar">${escapeHtml(initial(m.firstname || m.email))}</div>
+          <div class="cal-invitee-text">
+            <div class="cal-invitee-name">${escapeHtml(fullName)}</div>
+            <div class="cal-invitee-email">${escapeHtml(m.email || "")}</div>
+          </div>
+        </label>`;
+    }).join("");
+
+    inviteList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener("change", () => {
+        const em = cb.dataset.email;
+        if (cb.checked) selectedInvitees.add(em);
+        else selectedInvitees.delete(em);
+      });
+    });
+  }
+
+  // ─── Editor: invitee status list (edit mode, own event) ──────────────
+  function renderInviteeStatusList(eventId) {
+    const related = outgoingInvites.filter(inv => inv.eventId === eventId);
+    if (related.length === 0) {
+      statusSec.style.display = "none";
+      return;
+    }
+    statusSec.style.display = "flex";
+    // also keep the picker visible so the owner can still ADD more invitees? — keep it hidden to avoid confusion
+    // (Adding more invitees after creation isn't supported in this iteration.)
+    inviteSec.style.display = "none";
+
+    statusList.innerHTML = related.map(inv => {
+      const tm = teammates.find(t => (t.email || "").toLowerCase() === (inv.toEmail || "").toLowerCase());
+      const fullName = tm
+        ? ([tm.firstname, tm.lastname].filter(Boolean).join(" ") || tm.email)
+        : inv.toEmail;
+      return `
+        <div class="cal-invitee-row" style="cursor:default;">
+          <div class="cal-invitee-avatar">${escapeHtml(initial(fullName))}</div>
+          <div class="cal-invitee-text">
+            <div class="cal-invitee-name">${escapeHtml(fullName || "—")}</div>
+            <div class="cal-invitee-email">${escapeHtml(inv.toEmail || "")}</div>
+          </div>
+          <span class="cal-invitee-status ${inv.status}">${inv.status}</span>
+        </div>`;
+    }).join("");
+  }
+
+  // ─── Editor: open in different modes ─────────────────────────────────
+  function resetEditor() {
+    elTitle.value = "";
+    elDate.value  = isoDate(today);
+    elTime.value  = "";
+    elPlace.value = "";
+    elNotes.value = "";
+    setSelectedType("meeting");
+    selectedInvitees = new Set();
+    editingEvent = null;
+    readonlyNote.style.display = "none";
+    statusSec.style.display = "none";
+    inviteSec.style.display = "flex";
+    deleteBtn.style.display = "none";
+    saveBtn.disabled = false;
+    saveBtn.style.display = "";
+
+    // Re-enable all inputs (might have been disabled in view mode)
+    [elTitle, elDate, elTime, elPlace, elNotes].forEach(el => el.removeAttribute("readonly"));
+    chipsWrap.querySelectorAll(".cal-type-chip").forEach(c => c.disabled = false);
+  }
+
+  function openEditorForCreate() {
+    resetEditor();
+    editorMode = "create";
+    modalTitle.textContent = "New event";
+    saveBtn.textContent = "Create event";
+    renderInviteePicker();
+    openModal("event-modal");
+    setTimeout(() => elTitle.focus(), 50);
+  }
+
+  function openEventForView(ev) {
+    resetEditor();
+    editingEvent = ev;
+
+    const isMine = ev._source !== "shared";
+    modalTitle.textContent = isMine ? "Edit event" : "Event details";
+
+    elTitle.value = ev.title || "";
+    elDate.value  = ev.date || isoDate(today);
+    elTime.value  = ev.time || "";
+    elPlace.value = ev.place || "";
+    elNotes.value = ev.notes || "";
+    setSelectedType(ev.type || "internal");
+
+    if (isMine) {
+      editorMode = "edit-own";
+      saveBtn.textContent = "Save changes";
+      deleteBtn.style.display = "";
+      // Show invitee STATUS instead of picker (if any invitees)
+      renderInviteeStatusList(ev.id);
+    } else {
+      editorMode = "view-shared";
+      saveBtn.style.display = "none";
+      deleteBtn.style.display = "";
+      deleteBtn.textContent = "Remove from my calendar";
+      readonlyNote.style.display = "block";
+      ownerNameEl.textContent = ev._fromName || ev._fromEmail || "—";
+      inviteSec.style.display = "none";
+      statusSec.style.display = "none";
+      // Lock all fields
+      [elTitle, elDate, elTime, elPlace, elNotes].forEach(el => el.setAttribute("readonly", "readonly"));
+      chipsWrap.querySelectorAll(".cal-type-chip").forEach(c => c.disabled = true);
+    }
+
+    openModal("event-modal");
+  }
+
+  // ─── Save (create / update) ──────────────────────────────────────────
+  saveBtn.addEventListener("click", async () => {
+    const title = (elTitle.value || "").trim();
+    const date  = elDate.value;
+    const time  = (elTime.value || "").trim();
+    const place = (elPlace.value || "").trim();
+    const notes = (elNotes.value || "").trim();
+
+    if (!title) { toast("Title required", ""); elTitle.focus(); return; }
+    if (!date)  { toast("Date required", "");  elDate.focus();  return; }
+
+    saveBtn.disabled = true;
+
+    const payload = {
+      title,
+      type: selectedType,
+      date,
+      time,
+      place,
+      notes,
+      ownerEmail: myEmail,
+      ownerName:  myName,
+      updatedAt:  serverTimestamp(),
+    };
+
+    try {
+      if (editorMode === "create") {
+        payload.createdAt = serverTimestamp();
+        const ref = await addDoc(collection(db, "events"), payload);
+
+        // Create one invite per selected teammate
+        if (selectedInvitees.size > 0) {
+          const eventSnapshot = { title, type: selectedType, date, time, place, notes };
+          const batch = writeBatch(db);
+          for (const inviteeEmail of selectedInvitees) {
+            const tm = teammates.find(t => (t.email || "").toLowerCase() === inviteeEmail);
+            const toName = tm ? ([tm.firstname, tm.lastname].filter(Boolean).join(" ") || tm.email) : inviteeEmail;
+            const inviteRef = doc(collection(db, "eventInvites"));
+            batch.set(inviteRef, {
+              eventId:   ref.id,
+              fromEmail: myEmail,
+              fromName:  myName,
+              toEmail:   inviteeEmail,
+              toName:    toName,
+              status:    "pending",
+              eventSnapshot,
+              createdAt: serverTimestamp(),
+            });
+          }
+          await batch.commit();
+        }
+
+        toast("Event created",
+              selectedInvitees.size > 0
+                ? `invited ${selectedInvitees.size} teammate${selectedInvitees.size === 1 ? "" : "s"}`
+                : "");
+      } else if (editorMode === "edit-own" && editingEvent) {
+        await updateDoc(doc(db, "events", editingEvent.id), payload);
+
+        // Also update the eventSnapshot on related invites so invitees see new details
+        const related = outgoingInvites.filter(inv => inv.eventId === editingEvent.id);
+        if (related.length > 0) {
+          const eventSnapshot = { title, type: selectedType, date, time, place, notes };
+          const batch = writeBatch(db);
+          related.forEach(inv => {
+            batch.update(doc(db, "eventInvites", inv.id), { eventSnapshot });
+          });
+          await batch.commit();
+        }
+        toast("Event updated", "");
+      }
+
+      closeModal("event-modal");
+    } catch (err) {
+      console.error("save event:", err);
+      toast("Couldn't save", err.message || "");
+      saveBtn.disabled = false;
+    }
+  });
+
+  // ─── Delete / remove from calendar ───────────────────────────────────
+  deleteBtn.addEventListener("click", () => {
+    if (!editingEvent) return;
+    const confirmText = document.getElementById("confirm-modal-text");
+    if (editorMode === "view-shared") {
+      document.getElementById("confirm-modal-title").textContent = "Remove from your calendar?";
+      confirmText.textContent = "This event will be removed from your calendar. The owner won't be notified — you can always be re-invited.";
+    } else {
+      document.getElementById("confirm-modal-title").textContent = "Delete event?";
+      confirmText.textContent = "This event will be deleted for everyone who was invited. This can't be undone.";
+    }
+    openModal("confirm-modal");
+  });
+
+  confirmDelBtn.addEventListener("click", async () => {
+    if (!editingEvent) return;
+    confirmDelBtn.disabled = true;
+    try {
+      if (editorMode === "edit-own") {
+        // Delete the event and all related invites
+        const related = outgoingInvites.filter(inv => inv.eventId === editingEvent.id);
+        const batch = writeBatch(db);
+        batch.delete(doc(db, "events", editingEvent.id));
+        related.forEach(inv => batch.delete(doc(db, "eventInvites", inv.id)));
+        await batch.commit();
+        toast("Event deleted", "");
+      } else if (editorMode === "view-shared") {
+        // "Remove from my calendar" = mark the invite as declined.
+        // editingEvent.id is "inv:<inviteId>" and editingEvent._inviteId has the raw id.
+        if (editingEvent._inviteId) {
+          await updateDoc(doc(db, "eventInvites", editingEvent._inviteId), {
+            status: "declined",
+            respondedAt: serverTimestamp(),
+          });
+        }
+        toast("Removed from calendar", "");
+      }
+      closeModal("confirm-modal");
+      closeModal("event-modal");
+    } catch (err) {
+      console.error("delete event:", err);
+      toast("Couldn't delete", err.message || "");
+    } finally {
+      confirmDelBtn.disabled = false;
+    }
+  });
+
+  // ─── Month navigation + New event button ─────────────────────────────
+  $("cal-prev").addEventListener("click", () => {
+    viewMonth--;
+    if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    renderMonth();
+  });
+  $("cal-next").addEventListener("click", () => {
+    viewMonth++;
+    if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    renderMonth();
+  });
+  $("add-event-btn").addEventListener("click", () => {
+    if (!myEmail) {
+      toast("Sign in required", "please sign in first.");
+      return;
+    }
+    openEditorForCreate();
+  });
+
+  // ─── Initial paint ───────────────────────────────────────────────────
+  listEl.innerHTML = `<div class="cal-events-loading">Loading your calendar…</div>`;
+  renderMonth();
+</script>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     FIREBASE AUTH GATE
+     - If not signed in → index.html
+     - If signed in but not in Firestore "team" → index.html
+     - Otherwise: stay here (staff member, dashboard intended for them)
+     ════════════════════════════════════════════════════════════════════ -->
+<script type="module">
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, query, collection, where, getDocs
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAPZC_sUOYnwJdW3SG6uEoRKSDVXfcqjdg",
+    authDomain:        "flutter-webview-e59a8.firebaseapp.com",
+    databaseURL:       "https://flutter-webview-e59a8-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "flutter-webview-e59a8",
+    storageBucket:     "flutter-webview-e59a8.appspot.com",
+    messagingSenderId: "766286969529",
+    appId:             "1:766286969529:web:9418c504eca08fb1853968",
+    measurementId:     "G-ZHPL8X1PXP"
+  };
+
+  // Re-use existing Firebase app instance if dashboard's own scripts already init'd one
+  const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  async function isStaffMember(email) {
+    if (!email) return false;
+    const lower = email.trim().toLowerCase();
+    const docId = lower.replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+    try {
+      const snap = await getDoc(doc(db, "team", docId));
+      if (snap.exists()) return true;
+    } catch (_) {}
+    try {
+      const q = query(collection(db, "team"), where("email", "==", lower));
+      const qs = await getDocs(q);
+      return !qs.empty;
+    } catch (_) { return false; }
+  }
+
+  // Sign-out wiring for any element with [data-signout]
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-signout]');
+    if (!btn) return;
+    e.preventDefault();
+    try {
+      sessionStorage.removeItem("dp_authed");
+      sessionStorage.removeItem("dp_user_email");
+      sessionStorage.removeItem("dp_user_name");
+      sessionStorage.removeItem("dp_user_role");
+      sessionStorage.removeItem("dp_permissions");
+      await signOut(auth);
+    } catch (err) { console.error('Sign out failed', err); }
+    window.location.href = "index.html";
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.replace("index.html");
+      return;
+    }
+    if (!(await isStaffMember(user.email))) {
+      // Logged in but not a staff member → send to customer site
+      window.location.replace("index.html");
+      return;
+    }
+    // Staff member confirmed — sync sessionStorage (used by calendar + perms)
+    // then populate the unified nav account menu.
+    sessionStorage.setItem("dp_authed",     "1");
+    sessionStorage.setItem("dp_user_email", user.email || "");
+    sessionStorage.setItem("dp_user_name",  user.displayName || user.email || "");
+    // Flag the document so syncPermissions() and the Firestore listener can start.
+    document.documentElement.dataset.authed = "1";
+
+    const display = (user.displayName && user.displayName.trim()) ? user.displayName.trim() : (user.email || "");
+    const avatar   = document.getElementById("nav-user-avatar");
+    const shortNm  = document.getElementById("nav-user-shortname");
+    const fullName = document.getElementById("nav-user-name");
+    const emailEl  = document.getElementById("nav-user-email");
+    if (avatar)   avatar.textContent   = (display || "?")[0].toUpperCase();
+    if (shortNm)  shortNm.textContent  = display || "Account";
+    if (fullName) fullName.textContent = display || "—";
+    if (emailEl)  emailEl.textContent  = user.email || "—";
+
+    // Update the greeting if a function is exposed by the dashboard's own scripts
+    if (typeof window.updateGreeting === "function") {
+      window.updateGreeting({ email: user.email, name: user.displayName || user.email });
+    } else {
+      // Fallback: write a basic greeting directly using the FULL displayName
+      // (supports multi-word surnames like "Dal Pont").
+      const head = document.getElementById("greeting-headline");
+      const eb   = document.getElementById("greeting-eyebrow");
+      if (head) {
+        const hour = new Date().getHours();
+        const part = hour < 5 ? "Good night" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+        let pretty = "";
+        if (user.displayName && user.displayName.trim()) {
+          pretty = user.displayName.trim();
+        } else if (user.email) {
+          const local = user.email.split("@")[0].replace(/[._-]+/g, " ").trim();
+          pretty = local.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+        }
+        head.innerHTML = pretty
+          ? `${part}, <span class="gradient-text">${pretty.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}</span>.`
+          : `${part}.`;
+      }
+      if (eb) {
+        eb.textContent = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

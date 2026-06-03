@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>DP Biotech — Account</title>
+
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<meta name="description" content="DP Biotech account settings." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Early auth gate: bounce to dashboard if not signed in -->
+<script>
+  if (sessionStorage.getItem('dp_authed') !== '1') {
+    window.location.replace('dashboard.html');
+  }
+</script>
+
+<style>
+/* =========================================
+   DESIGN SYSTEM — shared with dashboard & console
+   ========================================= */
+:root {
+    --bg-body: #fafafa;
+    --bg-secondary: #f2f2f4;
+    --bg-card: #ffffff;
+    --text-primary: #0a0a0f;
+    --text-secondary: #6b6b78;
+    --accent: #0f766e;
+    --accent-2: #1e293b;
+    --accent-gradient: linear-gradient(135deg, #1e293b 0%, #0f766e 100%);
+    --divider: rgba(10, 10, 15, 0.06);
+    --divider-strong: rgba(10, 10, 15, 0.1);
+    --radius-lg: 32px;
+    --radius-md: 20px;
+    --radius-sm: 12px;
+    --nav-height: 64px;
+    --container-width: 880px;
+    --shadow-sm: 0 1px 2px rgba(10,10,15,0.04), 0 2px 8px rgba(10,10,15,0.04);
+    --shadow-md: 0 4px 12px rgba(10,10,15,0.04), 0 20px 40px -12px rgba(15,23,42,0.08);
+    --shadow-lg: 0 8px 24px rgba(10,10,15,0.06), 0 32px 64px -16px rgba(15,23,42,0.12);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #0a0a0f;
+        --bg-secondary: #13131a;
+        --bg-card: #1a1a24;
+        --text-primary: #f5f5f7;
+        --text-secondary: #9ca3af;
+        --divider: rgba(255, 255, 255, 0.08);
+        --divider-strong: rgba(255, 255, 255, 0.14);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 20px 40px -12px rgba(0,0,0,0.3);
+        --shadow-lg: 0 8px 24px rgba(0,0,0,0.5), 0 32px 64px -16px rgba(0,0,0,0.4);
+    }
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+p { line-height: 1.5; color: var(--text-secondary); margin: 0; }
+a { text-decoration: none; color: inherit; }
+
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+
+.eyebrow {
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    display: block;
+}
+
+/* =========================================
+   NAV (same as dashboard)
+   ========================================= */
+.nav {
+    position: sticky; top: 0;
+    height: var(--nav-height);
+    background: rgba(250, 250, 250, 0.7);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--divider);
+    display: flex; align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    z-index: 10;
+}
+@media (prefers-color-scheme: dark) {
+    .nav { background: rgba(10, 10, 15, 0.7); }
+}
+.nav .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+}
+.nav .logo-mark {
+    width: 32px; height: 32px;
+    border-radius: 999px;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-secondary);
+}
+.nav .logo .sep { color: var(--text-secondary); margin: 0 2px; }
+.nav .logo .role { color: var(--text-secondary); font-weight: 500; }
+.nav-spacer { flex: 1; }
+
+.user-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 5px 14px 5px 5px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-decoration: none;
+}
+.user-chip.active {
+    background: var(--bg-card);
+    border-color: var(--divider-strong);
+    color: var(--text-primary);
+}
+.user-chip .avatar {
+    width: 26px; height: 26px;
+    border-radius: 999px;
+    background: var(--accent-gradient);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 11px;
+    text-transform: uppercase;
+    overflow: hidden;
+    position: relative;
+}
+.user-chip .avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.25s var(--ease-out-expo);
+}
+.user-chip .avatar img.loaded { opacity: 1; }
+
+.icon-btn {
+    background: transparent;
+    border: 1px solid var(--divider);
+    color: var(--text-primary);
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    display: grid; place-items: center;
+    transition: all 0.2s var(--ease-out-expo);
+    cursor: pointer;
+}
+.icon-btn:hover { background: var(--bg-secondary); border-color: var(--divider-strong); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* =========================================
+   PAGE HEADER
+   ========================================= */
+.page-header {
+    padding: 48px 0 32px;
+    background:
+        radial-gradient(circle at 12% 18%, rgba(15, 118, 110, 0.08) 0%, transparent 50%);
+}
+.page-header .eyebrow { margin-bottom: 14px; }
+.page-header h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+}
+.page-header p { font-size: 15px; }
+
+/* =========================================
+   PROFILE CARD (top)
+   ========================================= */
+.profile-card {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 28px;
+}
+.profile-avatar {
+    width: 88px; height: 88px;
+    border-radius: 999px;
+    background: var(--accent-gradient);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 20px -6px rgba(15, 118, 110, 0.35);
+}
+.profile-avatar .initial { z-index: 1; }
+.profile-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-out-expo);
+}
+.profile-avatar img.loaded { opacity: 1; z-index: 2; }
+.profile-info { flex: 1; min-width: 0; }
+.profile-info h2 {
+    font-size: 24px;
+    letter-spacing: -0.025em;
+    margin-bottom: 4px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.profile-info .email {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.role-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px;
+    background: rgba(15, 118, 110, 0.10);
+    color: var(--accent);
+    border: 1px solid rgba(15, 118, 110, 0.25);
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.role-badge svg { width: 11px; height: 11px; }
+/* Variants — match the colours used on the team page */
+.role-badge.admin    { background: rgba(15,118,110,0.10); color: var(--accent);        border-color: rgba(15,118,110,0.25); }
+.role-badge.operator { background: rgba(59,130,246,0.10); color: #2563eb;              border-color: rgba(59,130,246,0.25); }
+.role-badge.viewer   { background: var(--bg-secondary);   color: var(--text-secondary); border-color: var(--divider-strong); }
+.role-badge.custom   { background: rgba(147,51,234,0.10); color: #9333ea;              border-color: rgba(147,51,234,0.25); }
+
+@media (max-width: 600px) {
+    .profile-card { flex-direction: column; text-align: center; padding: 24px 18px; }
+    .profile-info { width: 100%; }
+}
+
+/* =========================================
+   SECTIONS
+   ========================================= */
+.section { margin-bottom: 28px; }
+.section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--divider);
+}
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+.row {
+    padding: 16px 22px;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid var(--divider);
+}
+.row:last-child { border-bottom: none; }
+.row .label {
+    flex: 0 0 180px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.row .value {
+    flex: 1;
+    font-size: 14.5px;
+    color: var(--text-primary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.row .value.muted { color: var(--text-secondary); font-style: italic; }
+.row .action {
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--divider);
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out-expo);
+}
+.row .action:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent);
+}
+.row .action.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: var(--text-secondary);
+}
+.row .action.disabled:hover {
+    background: transparent;
+    border-color: var(--divider);
+}
+
+@media (max-width: 600px) {
+    .row { flex-direction: column; align-items: flex-start; padding: 14px 18px; gap: 6px; }
+    .row .label { flex-basis: auto; }
+    .row .value { white-space: normal; word-break: break-word; }
+    .row .action { align-self: stretch; text-align: center; padding: 8px 14px; }
+}
+
+/* =========================================
+   DANGER ROW
+   ========================================= */
+.danger-row {
+    background: var(--bg-card);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    display: flex; align-items: center; gap: 18px;
+    box-shadow: var(--shadow-sm);
+}
+.danger-row .text { flex: 1; }
+.danger-row .text strong {
+    display: block;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+.danger-row .text span {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+.btn-danger {
+    background: transparent;
+    border: 1px solid #dc2626;
+    color: #dc2626;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out-expo);
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: inherit;
+}
+.btn-danger:hover {
+    background: #dc2626;
+    color: white;
+}
+.btn-danger svg { width: 14px; height: 14px; }
+
+@media (max-width: 600px) {
+    .danger-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .btn-danger { align-self: stretch; justify-content: center; }
+}
+
+/* =========================================
+   BACK LINK
+   ========================================= */
+.back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 18px;
+    transition: color 0.2s;
+}
+.back-link:hover { color: var(--text-primary); }
+.back-link svg { width: 14px; height: 14px; }
+
+main { padding-top: 32px; padding-bottom: 80px; }
+
+/* =========================================
+   TOAST
+   ========================================= */
+#dp-toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text-primary);
+    color: var(--bg-body);
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 13px;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.35s var(--ease-out-expo), opacity 0.3s;
+    opacity: 0;
+    z-index: 300;
+    display: inline-flex; align-items: center; gap: 8px;
+    max-width: 90vw;
+}
+#dp-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+#dp-toast strong { font-weight: 600; }
+#dp-toast span { font-weight: 400; opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     NAV
+     ════════════════════════════════════════════════════════════════════ -->
+<nav class="nav">
+  <a href="dashboard.html" class="logo">
+    <img class="logo-mark" src="favicon.png" alt="DP Biotech" />
+    <span>DP Biotech</span>
+    <span class="sep">/</span>
+    <span class="role">Account</span>
+  </a>
+  <div class="nav-spacer"></div>
+  <a class="user-chip active" href="staff-profile.html" title="Account">
+    <span class="avatar">
+      <span id="chip-initial">?</span>
+      <img id="chip-img" alt="">
+    </span>
+    <span id="chip-email">—</span>
+  </a>
+  <button class="icon-btn" id="logout-btn" title="Sign out">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      <polyline points="16 17 21 12 16 7"/>
+      <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+  </button>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     HEADER
+     ════════════════════════════════════════════════════════════════════ -->
+<header class="page-header">
+  <div class="container">
+    <span class="eyebrow">Settings</span>
+    <h1>Your account</h1>
+    <p>Profile and security settings for your DP Biotech account.</p>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     MAIN
+     ════════════════════════════════════════════════════════════════════ -->
+<main>
+  <div class="container">
+
+    <!-- PROFILE CARD -->
+    <div class="profile-card">
+      <div class="profile-avatar">
+        <span class="initial" id="profile-initial">?</span>
+        <img id="profile-img" alt="">
+      </div>
+      <div class="profile-info">
+        <h2 id="profile-name">—</h2>
+        <div class="email" id="profile-email">—</div>
+        <span class="role-badge" id="profile-role-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span id="profile-role-label">—</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- PROFILE DETAILS -->
+    <div class="section">
+      <div class="section-title">Profile</div>
+      <div class="card">
+        <div class="row">
+          <div class="label">Name</div>
+          <div class="value" id="row-name">—</div>
+          <button class="action disabled" title="Editing will be available once Firebase Auth is wired up.">Edit</button>
+        </div>
+        <div class="row">
+          <div class="label">Email</div>
+          <div class="value" id="row-email">—</div>
+          <button class="action disabled" title="Editing will be available once Firebase Auth is wired up.">Change</button>
+        </div>
+        <div class="row">
+          <div class="label">Job title</div>
+          <div class="value" id="row-jobtitle">—</div>
+          <button class="action disabled" title="Job title is managed in Team &amp; permissions.">Edit</button>
+        </div>
+        <div class="row">
+          <div class="label">Role</div>
+          <div class="value" id="row-role">—</div>
+          <button class="action disabled" title="Roles are managed in Team &amp; permissions.">Change</button>
+        </div>
+        <div class="row">
+          <div class="label">Module access</div>
+          <div class="value" id="row-access">—</div>
+          <a class="action" href="team.html" id="row-access-link">Manage</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="section">
+      <div class="section-title">Security</div>
+      <div class="card">
+        <div class="row">
+          <div class="label">Password</div>
+          <div class="value muted">Currently using hardcoded test credentials</div>
+          <button class="action disabled" title="Password management will be available once Firebase Auth is wired up.">Change</button>
+        </div>
+        <div class="row">
+          <div class="label">Two-factor</div>
+          <div class="value muted">Not enabled</div>
+          <button class="action disabled">Enable</button>
+        </div>
+        <div class="row">
+          <div class="label">Active session</div>
+          <div class="value" id="row-session">This browser · since now</div>
+          <button class="action" id="end-session-btn">End session</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DANGER -->
+    <div class="section">
+      <div class="section-title">Sign out</div>
+      <div class="danger-row">
+        <div class="text">
+          <strong>End this session</strong>
+          <span>You'll be returned to the login screen and have to sign in again to access the dashboard.</span>
+        </div>
+        <button class="btn-danger" id="signout-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Sign out
+        </button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     SCRIPTS
+     ════════════════════════════════════════════════════════════════════ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, query, where, getDocs, limit,
+    doc, getDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // Same config as the rest of the suite
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAPZC_sUOYnwJdW3SG6uEoRKSDVXfcqjdg",
+    authDomain:        "flutter-webview-e59a8.firebaseapp.com",
+    databaseURL:       "https://flutter-webview-e59a8-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "flutter-webview-e59a8",
+    storageBucket:     "flutter-webview-e59a8.appspot.com",
+    messagingSenderId: "766286969529",
+    appId:             "1:766286969529:web:9418c504eca08fb1853968",
+    measurementId:     "G-ZHPL8X1PXP",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // ─── Pull session info from storage ───────────────────────────────
+  const email = sessionStorage.getItem("dp_user_email") || "";
+  const name  = sessionStorage.getItem("dp_user_name")  || email;
+  const initial = (name || email || "?").trim().charAt(0).toUpperCase();
+
+  // Populate visible elements
+  document.getElementById("chip-email").textContent  = email;
+  document.getElementById("chip-initial").textContent = initial;
+  document.getElementById("profile-initial").textContent = initial;
+  document.getElementById("profile-name").textContent  = name || "—";
+  document.getElementById("profile-email").textContent = email || "—";
+  document.getElementById("row-name").textContent  = name || "—";
+  document.getElementById("row-email").textContent = email || "—";
+
+  // Session start time (use a per-session anchor so reloads keep it)
+  if (!sessionStorage.getItem("dp_session_start")) {
+    sessionStorage.setItem("dp_session_start", String(Date.now()));
+  }
+  updateSessionLine();
+  setInterval(updateSessionLine, 60000); // refresh "since X" every minute
+
+  function updateSessionLine() {
+    const t = parseInt(sessionStorage.getItem("dp_session_start") || "0", 10);
+    if (!t) return;
+    const mins = Math.floor((Date.now() - t) / 60000);
+    const ago = mins < 1 ? "just now" :
+                mins < 60 ? `${mins} minute${mins === 1 ? "" : "s"} ago` :
+                `${Math.floor(mins / 60)} hour${Math.floor(mins / 60) === 1 ? "" : "s"} ago`;
+    document.getElementById("row-session").textContent = `This browser · started ${ago}`;
+  }
+
+  // ─── Look up the user's team profile (job title, role, module access) ─
+  // The team page stores its records in collection "team" with doc IDs
+  // derived from email (lowercased, non-alphanumerics → "_"). Mirror that
+  // logic so we can fetch the right document directly without a query.
+  const MODULE_LABELS = {
+    support:       "Support",
+    customers:     "Customers",
+    microscopes:   "Microscopes",
+    documents:     "Documents",
+    inventory:     "Inventory",
+    sales:         "Sales",
+    manufacturing: "Manufacturing & QA",
+    analytics:     "Analytics",
+    team:          "Team & permissions",
+  };
+  const TOTAL_MODULES = Object.keys(MODULE_LABELS).length;
+  const ROLE_LABELS = {
+    admin:    "Admin",
+    operator: "Operator",
+    viewer:   "Viewer",
+    custom:   "Custom",
+  };
+  // Hard-coded admins (same list the dashboard uses) — fallback when there
+  // isn't a Firestore team doc yet for this user.
+  const ADMIN_EMAILS = ["giorgiodalpont@dpbiotech.com"];
+
+  function applyRole(role) {
+    const badge = document.getElementById("profile-role-badge");
+    const label = document.getElementById("profile-role-label");
+    const row   = document.getElementById("row-role");
+    const safe  = ROLE_LABELS[role] ? role : "custom";
+    badge.classList.remove("admin", "operator", "viewer", "custom");
+    badge.classList.add(safe);
+    label.textContent = ROLE_LABELS[safe];
+    row.textContent   = ROLE_LABELS[safe];
+    // Cache so other pages (team.html already reads it) can use it too
+    sessionStorage.setItem("dp_user_role", safe);
+  }
+  function applyJobTitle(jobtitle) {
+    document.getElementById("row-jobtitle").textContent = jobtitle || "—";
+  }
+  function applyAccess(role, access) {
+    const el = document.getElementById("row-access");
+    if (role === "admin") {
+      el.textContent = `All ${TOTAL_MODULES} modules`;
+      return;
+    }
+    if (!Array.isArray(access) || access.length === 0) {
+      el.textContent = "No modules";
+      return;
+    }
+    if (access.length === TOTAL_MODULES) {
+      el.textContent = `All ${TOTAL_MODULES} modules`;
+      return;
+    }
+    if (access.length <= 3) {
+      const labels = access.map(k => MODULE_LABELS[k] || k);
+      el.textContent = labels.join(", ");
+    } else {
+      el.textContent = `${access.length} of ${TOTAL_MODULES} modules`;
+    }
+    // Tooltip with the full list
+    el.title = access.map(k => MODULE_LABELS[k] || k).join(", ");
+  }
+
+  // Pre-fill with sensible fallbacks while Firestore loads
+  if (ADMIN_EMAILS.includes(email)) {
+    applyRole("admin");
+    applyAccess("admin");
+  } else {
+    applyRole("custom");
+    applyAccess("custom", []);
+  }
+  applyJobTitle(null);
+
+  (async function tryHydrateTeam() {
+    if (!email) return;
+    try {
+      // team.html derives the doc ID like this — we replicate it here.
+      const docId = email.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+      const snap = await getDoc(doc(db, "team", docId));
+      if (!snap.exists()) {
+        // Fall back to a query by email in case the ID convention differs
+        // for older records.
+        const qSnap = await getDocs(query(collection(db, "team"),
+                                          where("email", "==", email.toLowerCase()),
+                                          limit(1)));
+        if (qSnap.empty) return; // nothing more to do, keep fallback display
+        const data = qSnap.docs[0].data();
+        applyTeamData(data);
+        return;
+      }
+      applyTeamData(snap.data());
+    } catch (e) {
+      console.warn("[account] team lookup failed:", e);
+    }
+  })();
+
+  function applyTeamData(data) {
+    const role = data.role || (ADMIN_EMAILS.includes(email) ? "admin" : "custom");
+    applyRole(role);
+    applyJobTitle(data.jobtitle);
+    applyAccess(role, data.access);
+    // If team has a fuller name than session, prefer it
+    const fullName = [data.firstname, data.lastname].filter(Boolean).join(" ").trim();
+    if (fullName && fullName.length > (name || "").length) {
+      document.getElementById("profile-name").textContent = fullName;
+      document.getElementById("row-name").textContent     = fullName;
+    }
+  }
+
+  // ─── Look up the user's profile photo by email (matching the iOS app) ─
+  // The iOS app stores photoURL on users/{uid}. Operator accounts may or
+  // may not be present there (the hardcoded login isn't tied to a user
+  // doc), so this is best-effort: if we find a match by email, use the
+  // photo; otherwise the initial stays visible.
+  (async function tryHydratePhoto() {
+    if (!email) return;
+    try {
+      const q = query(collection(db, "users"), where("email", "==", email), limit(1));
+      const snap = await getDocs(q);
+      if (snap.empty) return;
+      const data = snap.docs[0].data();
+      const url = data.photoURL;
+      if (!url) return;
+      const chipImg    = document.getElementById("chip-img");
+      const profileImg = document.getElementById("profile-img");
+      chipImg.src    = url; chipImg.classList.add("loaded");
+      profileImg.src = url; profileImg.classList.add("loaded");
+      // Prefer Firestore-stored display name if richer than what we have
+      const dbName = [data.name, data.surname].filter(Boolean).join(" ").trim();
+      if (dbName && dbName.length > (name || "").length) {
+        document.getElementById("profile-name").textContent = dbName;
+        document.getElementById("row-name").textContent     = dbName;
+      }
+    } catch (e) {
+      console.warn("[account] photo lookup failed:", e);
+    }
+  })();
+</script>
+
+<!-- Plain script for UI interactions (no module needed) -->
+<script>
+  function signOut() {
+    sessionStorage.removeItem("dp_authed");
+    sessionStorage.removeItem("dp_user_email");
+    sessionStorage.removeItem("dp_user_name");
+    sessionStorage.removeItem("dp_session_start");
+    window.location.replace("dashboard.html");
+  }
+  document.getElementById("logout-btn").addEventListener("click", signOut);
+  document.getElementById("signout-btn").addEventListener("click", signOut);
+  document.getElementById("end-session-btn").addEventListener("click", function() {
+    if (confirm("End this session and sign out?")) signOut();
+  });
+
+  // Toast for actions that aren't wired up yet
+  function showToast(title, body) {
+    let t = document.getElementById("dp-toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "dp-toast";
+      document.body.appendChild(t);
+    }
+    t.innerHTML = `<strong>${title}</strong> <span>${body}</span>`;
+    t.classList.add("show");
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => t.classList.remove("show"), 2800);
+  }
+  // The .action.disabled buttons get a friendly toast instead of doing nothing
+  document.querySelectorAll(".action.disabled").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      showToast("Not available yet", "this will work once Firebase Auth is wired up.");
+    });
+  });
+</script>
+</body>
+</html>

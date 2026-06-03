@@ -1,0 +1,1636 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>DP Biotech — Support Console</title>
+
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<meta name="description" content="Operator console — Microscope Connect Support." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- ──────────────────────────────────────────────────────────────────────
+     ACCESS GATE — redirect to dashboard if not signed in.
+     The dashboard sets sessionStorage 'dp_authed' on successful login.
+     ────────────────────────────────────────────────────────────────────── -->
+<script>
+  if (sessionStorage.getItem('dp_authed') !== '1') {
+    window.location.replace('dashboard.html');
+  } else {
+    // Permission check: this page requires the "support" module
+    const role = sessionStorage.getItem('dp_user_role');
+    const perms = JSON.parse(sessionStorage.getItem('dp_permissions') || '[]');
+    if (role !== 'admin' && !perms.includes('support')) {
+      sessionStorage.setItem('dp_access_denied_module', 'Support Console');
+      window.location.replace('dashboard.html');
+    }
+  }
+</script>
+
+<!--
+  ─────────────────────────────────────────────────────────────────────────
+  DP BIOTECH — SUPPORT CONSOLE
+  ─────────────────────────────────────────────────────────────────────────
+  Standalone HTML file. Connects directly to your Firebase project and
+  reads/writes against the same Firestore structure used by the iOS app:
+    supportRequests/{id}
+    supportRequests/{id}/messages/{msgId}
+
+  ── SETUP ────────────────────────────────────────────────────────────────
+  1. In Firebase Console → Project settings → "Your apps", create (if
+     missing) a "Web app" and copy the firebaseConfig object.
+  2. Paste it below at the placeholder.
+  3. (Optional — currently disabled) For each support operator, add an
+     email/password account in Firebase Auth and assign the custom claim
+     { support: true } via Admin SDK.
+  4. Open this file in any browser and start working.
+  ─────────────────────────────────────────────────────────────────────────
+-->
+
+<style>
+/* =========================================
+   DESIGN SYSTEM — stesso linguaggio del sito DP Biotech
+   ========================================= */
+:root {
+    --bg-body: #fafafa;
+    --bg-secondary: #f2f2f4;
+    --bg-card: #ffffff;
+    --text-primary: #0a0a0f;
+    --text-secondary: #6b6b78;
+    --accent: #0f766e;
+    --accent-2: #1e293b;
+    --accent-gradient: linear-gradient(135deg, #1e293b 0%, #0f766e 100%);
+    --divider: rgba(10, 10, 15, 0.06);
+    --divider-strong: rgba(10, 10, 15, 0.1);
+    --radius-lg: 32px;
+    --radius-md: 20px;
+    --radius-sm: 12px;
+    --nav-height: 64px;
+    --shadow-sm: 0 1px 2px rgba(10,10,15,0.04), 0 2px 8px rgba(10,10,15,0.04);
+    --shadow-md: 0 4px 12px rgba(10,10,15,0.04), 0 20px 40px -12px rgba(15,23,42,0.08);
+    --shadow-lg: 0 8px 24px rgba(10,10,15,0.06), 0 32px 64px -16px rgba(15,23,42,0.12);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Bubble colors derived from system */
+    --bubble-user: var(--bg-secondary);
+    --bubble-support: var(--accent-gradient);
+    --bubble-system: rgba(10, 10, 15, 0.04);
+
+    /* Status colors */
+    --status-open:        #f59e0b;
+    --status-progress:    #2563eb;
+    --status-resolved:    #16a34a;
+    --status-closed:      #6b6b78;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #0a0a0f;
+        --bg-secondary: #13131a;
+        --bg-card: #1a1a24;
+        --text-primary: #f5f5f7;
+        --text-secondary: #9ca3af;
+        --divider: rgba(255, 255, 255, 0.08);
+        --divider-strong: rgba(255, 255, 255, 0.14);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 20px 40px -12px rgba(0,0,0,0.3);
+        --shadow-lg: 0 8px 24px rgba(0,0,0,0.5), 0 32px 64px -16px rgba(0,0,0,0.4);
+        --bubble-user: var(--bg-secondary);
+        --bubble-system: rgba(255, 255, 255, 0.05);
+    }
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { height: 100%; }
+body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.5;
+}
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+p { line-height: 1.5; color: var(--text-secondary); margin: 0; }
+button { font-family: inherit; cursor: pointer; }
+input, textarea, select { font-family: inherit; color: inherit; }
+
+/* Scrollbar discreta */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--divider-strong); border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* =========================================
+   BUTTONS (riusati dal sito)
+   ========================================= */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 10px 20px; border-radius: 999px;
+    font-size: 14px; font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    cursor: pointer; border: none; text-decoration: none;
+    gap: 6px;
+}
+.btn-primary { background: var(--text-primary); color: var(--bg-body); }
+.btn-primary:hover { transform: scale(1.02); opacity: 0.95; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--divider); }
+.btn-ghost:hover { background: var(--bg-secondary); }
+.btn-accent { background: var(--accent-gradient); color: white; }
+.btn-accent:hover { transform: scale(1.02); opacity: 0.95; }
+.btn-accent:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.icon-btn {
+    background: transparent; border: 1px solid var(--divider);
+    color: var(--text-primary);
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    display: grid; place-items: center;
+    transition: all 0.2s var(--ease-out-expo);
+}
+.icon-btn:hover { background: var(--bg-secondary); border-color: var(--divider-strong); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+.eyebrow {
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    display: block;
+}
+
+/* =========================================
+   LOGIN SCREEN — splash style
+   ========================================= */
+#login-screen {
+    position: fixed; inset: 0;
+    display: grid; place-items: center;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(15, 118, 110, 0.10) 0%, transparent 55%),
+        radial-gradient(circle at 80% 80%, rgba(30, 41, 59, 0.06) 0%, transparent 55%),
+        var(--bg-body);
+    z-index: 100;
+    padding: 24px;
+}
+
+.login-card {
+    width: 100%; max-width: 560px;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-lg);
+    padding: 48px 56px 36px;
+    box-shadow: var(--shadow-lg);
+}
+.login-card .eyebrow { margin-bottom: 14px; }
+.login-card h1 {
+    font-size: 38px; line-height: 1.05; letter-spacing: -0.03em;
+    margin-bottom: 12px;
+}
+.login-card h1 .gradient-text {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.login-card .sub {
+    font-size: 16px; color: var(--text-secondary);
+    margin-bottom: 36px;
+}
+.login-card label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin: 18px 0 8px;
+}
+.login-card input {
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    color: var(--text-primary);
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s;
+}
+.login-card input:focus {
+    background: var(--bg-card);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.10);
+}
+.login-card .btn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px 24px;
+    font-size: 15px;
+}
+
+/* =========================================
+   APP SHELL
+   ========================================= */
+#app { display: none; height: 100vh; flex-direction: column; }
+#app.ready { display: flex; }
+
+/* Top nav — backdrop blur come il sito */
+.nav {
+    height: var(--nav-height);
+    background: rgba(250, 250, 250, 0.7);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--divider);
+    display: flex; align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    flex-shrink: 0;
+    z-index: 10;
+}
+@media (prefers-color-scheme: dark) {
+    .nav { background: rgba(10, 10, 15, 0.7); }
+}
+
+.nav .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+.nav .logo:hover { opacity: 0.75; }
+.nav .logo-mark {
+    width: 32px; height: 32px;
+    border-radius: 999px;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-secondary);
+}
+.nav .logo .sep { color: var(--text-secondary); margin: 0 2px; }
+.nav .logo .role { color: var(--text-secondary); font-weight: 500; }
+
+.nav-spacer { flex: 1; }
+
+.user-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 14px 6px 6px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+.user-chip .avatar {
+    width: 26px; height: 26px;
+    border-radius: 999px;
+    background: var(--accent-gradient);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 11px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.test-mode-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px;
+    background: rgba(245, 158, 11, 0.10);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: #b45309;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+.test-mode-badge svg { width: 14px; height: 14px; }
+@media (prefers-color-scheme: dark) {
+    .test-mode-badge { color: #fbbf24; }
+}
+
+/* Layout principale */
+.layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    overflow: hidden;
+}
+
+/* =========================================
+   LEFT PANE — request list
+   ========================================= */
+.pane-left {
+    border-right: 1px solid var(--divider);
+    background: var(--bg-body);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+}
+
+.list-header {
+    padding: 24px 24px 16px;
+}
+.list-header .eyebrow { margin-bottom: 8px; }
+.list-header .title-row {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 18px;
+}
+.list-header h2 {
+    font-size: 24px;
+    letter-spacing: -0.02em;
+}
+.list-header .count {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.search-box {
+    position: relative;
+}
+.search-box svg {
+    position: absolute;
+    left: 14px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+.search-box input {
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 10px 14px 10px 40px;
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+}
+.search-box input:focus {
+    background: var(--bg-card);
+    border-color: var(--divider-strong);
+    box-shadow: var(--shadow-sm);
+}
+.search-box input::placeholder { color: var(--text-secondary); }
+
+.filters {
+    display: flex;
+    gap: 6px;
+    padding: 0 24px 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.filters::-webkit-scrollbar { display: none; }
+.filter-chip {
+    background: transparent;
+    border: 1px solid var(--divider);
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s var(--ease-out-expo);
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.filter-chip:hover { color: var(--text-primary); border-color: var(--divider-strong); }
+.filter-chip.active {
+    background: var(--text-primary);
+    color: var(--bg-body);
+    border-color: var(--text-primary);
+}
+.filter-chip .n {
+    font-size: 11px;
+    opacity: 0.65;
+    font-weight: 600;
+}
+.filter-chip.active .n { opacity: 1; }
+
+.request-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 16px 24px;
+}
+
+.req-item {
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out-expo);
+    position: relative;
+    margin-bottom: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--divider);
+    box-shadow: var(--shadow-sm);
+    display: flex; gap: 12px;
+    align-items: flex-start;
+}
+.req-item:hover {
+    background: var(--bg-card);
+    border-color: var(--divider-strong);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+.req-item.selected {
+    background: var(--bg-card);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent);
+}
+.req-item.selected::before {
+    content: "";
+    position: absolute;
+    left: -1px; top: -1px; bottom: -1px;
+    width: 3px;
+    background: var(--accent);
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+}
+
+/* Avatar (photo or initial) */
+.req-avatar {
+    width: 40px; height: 40px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    background: var(--accent-gradient);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 15px;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+}
+.req-avatar .initial { z-index: 1; }
+.req-avatar img.user-avatar {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.25s var(--ease-out-expo);
+}
+.req-avatar img.user-avatar.loaded { opacity: 1; z-index: 2; }
+
+.req-body { flex: 1; min-width: 0; }
+
+.req-line-1 {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 2px;
+}
+.req-user {
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--text-primary);
+    flex: 1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    letter-spacing: -0.01em;
+}
+.req-time {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    font-weight: 500;
+}
+.req-company {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.req-preview {
+    font-size: 13px;
+    color: var(--text-secondary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    line-height: 1.4;
+}
+.req-preview.unread {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+.req-line-3 {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.unread-dot {
+    width: 8px; height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+    flex-shrink: 0;
+}
+
+.pill {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid;
+}
+.pill-open      { color: var(--status-open);     border-color: rgba(245, 158, 11, 0.30); background: rgba(245, 158, 11, 0.08); }
+.pill-progress  { color: var(--status-progress); border-color: rgba(37, 99, 235, 0.30);  background: rgba(37, 99, 235, 0.08); }
+.pill-resolved  { color: var(--status-resolved); border-color: rgba(22, 163, 74, 0.30);  background: rgba(22, 163, 74, 0.08); }
+.pill-closed    { color: var(--status-closed);   border-color: var(--divider-strong);    background: var(--bg-secondary); }
+
+.pill-micro {
+    font-size: 11px;
+    color: var(--text-secondary);
+    border: 1px solid var(--divider);
+    background: transparent;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 5px;
+    max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pill-micro svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+.empty-list {
+    padding: 60px 24px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+.empty-list svg {
+    width: 40px; height: 40px;
+    color: var(--divider-strong);
+    margin: 0 auto 12px;
+    display: block;
+}
+
+.loading-row {
+    padding: 24px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+/* =========================================
+   RIGHT PANE — chat
+   ========================================= */
+.pane-right {
+    background: var(--bg-card);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.chat-empty {
+    flex: 1;
+    display: grid; place-items: center;
+    padding: 24px;
+}
+.chat-empty .inner {
+    text-align: center;
+    max-width: 360px;
+}
+.chat-empty .icon-bubble {
+    width: 80px; height: 80px;
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    display: grid; place-items: center;
+    margin: 0 auto 24px;
+}
+.chat-empty .icon-bubble svg {
+    width: 36px; height: 36px;
+    color: var(--text-secondary);
+}
+.chat-empty h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+}
+.chat-empty p {
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* Chat header */
+.chat-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--divider);
+    display: flex; align-items: center; gap: 16px;
+    background: var(--bg-card);
+    flex-shrink: 0;
+}
+.chat-header .avatar-lg {
+    width: 44px; height: 44px;
+    border-radius: 999px;
+    background: var(--accent-gradient);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 16px;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+.chat-header .avatar-lg .initial { z-index: 1; }
+.chat-header .avatar-lg img.user-avatar {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.25s var(--ease-out-expo);
+}
+.chat-header .avatar-lg img.user-avatar.loaded { opacity: 1; z-index: 2; }
+.chat-header .info { flex: 1; min-width: 0; }
+.chat-header .user-name {
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    margin-bottom: 3px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.chat-header .meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 8px;
+    flex-wrap: wrap;
+}
+.chat-header .meta .sep { opacity: 0.5; }
+.chat-header .meta .micro-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: var(--accent);
+    font-weight: 500;
+}
+.chat-header .meta .micro-tag svg { width: 13px; height: 13px; }
+
+.status-select {
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    color: var(--text-primary);
+    padding: 8px 14px;
+    padding-right: 36px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b78' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+.status-select:hover { border-color: var(--divider-strong); }
+.status-select:focus { box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.10); border-color: var(--accent); }
+
+/* Chat body */
+.chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(15, 118, 110, 0.025) 0%, transparent 50%),
+        var(--bg-card);
+}
+
+.msg-row { display: flex; }
+.msg-row.user { justify-content: flex-start; }
+.msg-row.support { justify-content: flex-end; }
+.msg-row.system { justify-content: center; }
+
+.bubble {
+    max-width: 65%;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    font-size: 14.5px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+}
+.bubble.user {
+    background: var(--bubble-user);
+    color: var(--text-primary);
+    border-bottom-left-radius: 6px;
+}
+.bubble.support {
+    background: var(--accent-gradient);
+    color: white;
+    border-bottom-right-radius: 6px;
+    box-shadow: 0 4px 16px -4px rgba(15, 118, 110, 0.3);
+}
+.bubble.system {
+    background: var(--bubble-system);
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    text-align: center;
+    max-width: 75%;
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-style: normal;
+    box-shadow: none;
+}
+.bubble .who {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.65;
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+.bubble.support .who { opacity: 0.85; }
+.bubble .time {
+    font-size: 10.5px;
+    opacity: 0.6;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.date-sep {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0 6px;
+}
+.date-sep span {
+    font-size: 11px;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--divider);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Composer */
+.composer {
+    border-top: 1px solid var(--divider);
+    padding: 18px 28px 22px;
+    background: var(--bg-card);
+    flex-shrink: 0;
+}
+.composer-inner {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    background: var(--bg-body);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md);
+    padding: 10px 10px 10px 18px;
+    transition: all 0.2s var(--ease-out-expo);
+    box-shadow: var(--shadow-sm);
+}
+.composer-inner:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.08), var(--shadow-sm);
+}
+.composer textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.5;
+    max-height: 200px;
+    min-height: 24px;
+    padding: 6px 0;
+    font-family: inherit;
+}
+.composer textarea::placeholder { color: var(--text-secondary); }
+
+.send-btn {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    width: 40px; height: 40px;
+    display: grid; place-items: center;
+    transition: all 0.25s var(--ease-out-expo);
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px -2px rgba(15, 118, 110, 0.4);
+}
+.send-btn:hover:not(:disabled) { transform: scale(1.05); }
+.send-btn:disabled {
+    opacity: 0.35; cursor: not-allowed; transform: none;
+    box-shadow: none;
+}
+.send-btn svg { width: 16px; height: 16px; }
+
+.composer .hint {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    padding-left: 4px;
+}
+kbd {
+    font-family: 'SF Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* Composer disabled state (when conversation is closed) */
+.composer.disabled .composer-inner {
+    background: var(--bg-secondary);
+    border-color: var(--divider);
+    box-shadow: none;
+    opacity: 0.55;
+    pointer-events: none;
+}
+.closed-notice {
+    margin-top: 10px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--divider);
+    color: var(--text-secondary);
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+.closed-notice svg { width: 13px; height: 13px; }
+
+/* =========================================
+   TOAST
+   ========================================= */
+#toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text-primary);
+    color: var(--bg-body);
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.4s var(--ease-out-expo), opacity 0.3s;
+    opacity: 0;
+    z-index: 200;
+    max-width: 90vw;
+}
+#toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+#toast.error {
+    background: #dc2626;
+    color: white;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .pane-right { display: none; }
+    .layout.show-chat .pane-left { display: none; }
+    .layout.show-chat .pane-right { display: flex; }
+    .chat-body { padding: 20px 16px; }
+    .chat-header { padding: 16px 18px; }
+    .composer { padding: 14px 16px 18px; }
+    .bubble { max-width: 80%; }
+    .nav { padding: 0 16px; }
+}
+@media (max-width: 480px) {
+    .login-card { padding: 36px 28px 28px; }
+    .login-card h1 { font-size: 30px; }
+    .user-chip .email { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN — disabled (see NO_AUTH_MODE in the script) -->
+<!-- To re-enable: restore this block and uncomment the auth code
+     below (search for "NO_AUTH_MODE"). -->
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     APP
+     ════════════════════════════════════════════════════════════════════ -->
+<div id="app">
+
+  <nav class="nav">
+    <a href="dashboard.html" class="logo" title="Back to dashboard">
+      <img class="logo-mark" src="favicon.png" alt="DP Biotech" />
+      <span>DP Biotech</span>
+      <span class="sep">/</span>
+      <span class="role">Support Console</span>
+    </a>
+    <div class="nav-spacer"></div>
+    <span class="user-chip" id="user-chip">
+      <span class="avatar" id="user-avatar">?</span>
+      <span class="email" id="user-email">—</span>
+    </span>
+    <button class="icon-btn" id="logout-btn" title="Sign out">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+    </button>
+  </nav>
+
+  <div class="layout" id="layout">
+
+    <!-- LEFT: lista richieste -->
+    <aside class="pane-left">
+      <div class="list-header">
+        <span class="eyebrow">Inbox</span>
+        <div class="title-row">
+          <h2>Requests</h2>
+          <span class="count" id="list-count"></span>
+        </div>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="search" id="search-input" placeholder="Search user, company, text…" />
+        </div>
+      </div>
+
+      <div class="filters" id="filters">
+        <button class="filter-chip active" data-filter="open">Open <span class="n" id="n-open">0</span></button>
+        <button class="filter-chip" data-filter="resolved">Resolved <span class="n" id="n-resolved">0</span></button>
+        <button class="filter-chip" data-filter="closed">Closed <span class="n" id="n-closed">0</span></button>
+        <button class="filter-chip" data-filter="unread">Unread <span class="n" id="n-unread">0</span></button>
+      </div>
+
+      <div class="request-list" id="request-list">
+        <div class="loading-row">Loading…</div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: chat -->
+    <section class="pane-right" id="pane-right">
+      <div class="chat-empty" id="chat-empty">
+        <div class="inner">
+          <div class="icon-bubble">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+            </svg>
+          </div>
+          <h3>No request selected</h3>
+          <p>Select a request from the list on the left to read it and reply to the user.</p>
+        </div>
+      </div>
+
+      <div id="chat-view" style="display:none; flex:1; flex-direction:column; min-height:0;">
+        <header class="chat-header">
+          <button class="icon-btn" id="back-btn" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+          <div class="avatar-lg" id="ch-avatar">
+            <span class="initial" id="ch-avatar-initial">—</span>
+            <img class="user-avatar" id="ch-avatar-img" alt="">
+          </div>
+          <div class="info">
+            <div class="user-name" id="ch-user-name">—</div>
+            <div class="meta" id="ch-meta"></div>
+          </div>
+          <select class="status-select" id="status-select">
+            <option value="open">Open</option>
+            <option value="resolved">Resolved</option>
+            <option value="closed">Closed</option>
+          </select>
+        </header>
+
+        <div class="chat-body" id="chat-body"></div>
+
+        <footer class="composer">
+          <div class="composer-inner">
+            <textarea id="composer" rows="1" placeholder="Write a reply…"></textarea>
+            <button class="send-btn" id="send-btn" disabled title="Send">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+          <div class="closed-notice" id="closed-notice" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span id="closed-notice-text">This request is closed. Change the status to reply.</span>
+          </div>
+        </footer>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     FIREBASE SDK (CDN, modular v10)
+     ════════════════════════════════════════════════════════════════════ -->
+<script type="module">
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, query, orderBy, onSnapshot,
+    doc, getDoc, updateDoc, serverTimestamp, writeBatch, increment
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ───────────────────────────────────────────────────────────────────
+  // 1. CONFIG — Paste your firebaseConfig (Web app) here
+  // ───────────────────────────────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAPZC_sUOYnwJdW3SG6uEoRKSDVXfcqjdg",
+    authDomain:        "flutter-webview-e59a8.firebaseapp.com",
+    databaseURL:       "https://flutter-webview-e59a8-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "flutter-webview-e59a8",
+    storageBucket:     "flutter-webview-e59a8.appspot.com",
+    messagingSenderId: "766286969529",
+    appId:             "1:766286969529:web:9418c504eca08fb1853968",
+    measurementId:     "G-ZHPL8X1PXP",
+  };
+
+  // ───────────────────────────────────────────────────────────────────
+  // 2. INIT
+  // ───────────────────────────────────────────────────────────────────
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // ⚠️ The dashboard sets these on successful sign-in. If you arrived
+  // here directly without going through the dashboard, the access gate
+  // at the top of <head> has already redirected you back.
+  const OPERATOR_ID   = sessionStorage.getItem("dp_user_email") || "support-console";
+  const OPERATOR_NAME = sessionStorage.getItem("dp_user_name")  || "DP Biotech Support";
+
+  // Populate the nav chip with the signed-in operator's info
+  (function showUser() {
+    const chip   = document.getElementById("user-chip");
+    const avatar = document.getElementById("user-avatar");
+    const email  = document.getElementById("user-email");
+    if (email)  email.textContent  = OPERATOR_ID;
+    if (avatar) avatar.textContent = (OPERATOR_NAME || OPERATOR_ID || "?")[0];
+  })();
+
+  document.getElementById("logout-btn").addEventListener("click", function() {
+    sessionStorage.removeItem("dp_authed");
+    sessionStorage.removeItem("dp_user_email");
+    sessionStorage.removeItem("dp_user_name");
+    window.location.replace("dashboard.html");
+  });
+
+  // Constants mirroring the Swift enums
+  const ROLE_USER    = "user";
+  const ROLE_SUPPORT = "support";
+
+  const STATUS_LABELS = {
+    open:     "Open",
+    resolved: "Resolved",
+    closed:   "Closed",
+  };
+
+  const SYSTEM_PREFIX = "[SYSTEM:";
+
+  // Swift constant markers → human readable text
+  function renderSystemText(raw) {
+    if (raw === "[SYSTEM:ASK_MICROSCOPE]") {
+      return "The user was asked: «Is this request about a microscope?»";
+    }
+    if (raw.startsWith("[SYSTEM:LINKED]")) {
+      const payload = raw.slice("[SYSTEM:LINKED]".length).replace(/^[: ]+/, "");
+      if (!payload) return "No microscope linked.";
+      const parts = payload.split(":");
+      const name = parts.length > 1 ? parts.slice(1).join(":") : payload;
+      return `Linked microscope: ${name}`;
+    }
+    if (raw === "[SYSTEM:OPERATOR_ACK]") {
+      return "Thanks! A support operator will reply as soon as possible.";
+    }
+    if (raw === "[SYSTEM:TYPING]") {
+      return "…";
+    }
+    return raw;
+  }
+
+  // ───────────────────────────────────────────────────────────────────
+  // 3. STATE
+  // ───────────────────────────────────────────────────────────────────
+  const state = {
+    allRequests:   [],
+    selectedId:    null,
+    selectedDoc:   null,
+    messages:      [],
+    filter:        "open",
+    search:        "",
+    unsubRequests: null,
+    unsubMessages: null,
+    userPhotos:    {},   // uid → photoURL (cached)
+    userPhotosPending: {}, // uid → Promise (to dedupe in-flight fetches)
+  };
+
+  // ───────────────────────────────────────────────────────────────────
+  //  USER PHOTO LOOKUP
+  //  The iOS app stores photoURL on users/{uid}. We fetch once per user
+  //  and cache the result (including misses, so we don't retry forever).
+  // ───────────────────────────────────────────────────────────────────
+  async function fetchUserPhoto(uid) {
+    if (!uid) return null;
+    if (uid in state.userPhotos) return state.userPhotos[uid];
+    if (uid in state.userPhotosPending) return state.userPhotosPending[uid];
+
+    const p = (async () => {
+      try {
+        const snap = await getDoc(doc(db, "users", uid));
+        const data = snap.exists() ? snap.data() : null;
+        const url = data?.photoURL || null;
+        state.userPhotos[uid] = url;
+        return url;
+      } catch (e) {
+        console.warn("[support] photo fetch failed for", uid, e);
+        state.userPhotos[uid] = null;
+        return null;
+      } finally {
+        delete state.userPhotosPending[uid];
+      }
+    })();
+    state.userPhotosPending[uid] = p;
+    return p;
+  }
+
+  /// Lazily resolve photoURLs for the visible request list and refresh
+  /// the DOM in place when each one lands. We don't block the initial
+  /// render — the page shows initials first, then upgrades to photos.
+  function hydratePhotosFor(requests) {
+    for (const r of requests) {
+      if (!r.userId) continue;
+      if (r.userId in state.userPhotos) continue; // known (cached, even nulls)
+      fetchUserPhoto(r.userId).then(url => {
+        if (!url) return;
+        // Patch any visible avatar img with the new URL
+        document.querySelectorAll(`img.user-avatar[data-uid="${cssEscape(r.userId)}"]`)
+          .forEach(img => { img.src = url; img.classList.add("loaded"); });
+      });
+    }
+  }
+  function cssEscape(s) { return String(s).replace(/"/g, '\\"'); }
+
+  // ───────────────────────────────────────────────────────────────────
+  // 4. STARTUP (no login)
+  // ───────────────────────────────────────────────────────────────────
+  document.getElementById("app").classList.add("ready");
+  startListeningRequests();
+
+  // ───────────────────────────────────────────────────────────────────
+  // 5. REQUEST LIST — real-time listener
+  // ───────────────────────────────────────────────────────────────────
+  function startListeningRequests() {
+    stopListeningRequests();
+    const q = query(
+      collection(db, "supportRequests"),
+      orderBy("createdAt", "desc")
+    );
+    state.unsubRequests = onSnapshot(q, (snap) => {
+      state.allRequests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderList();
+      if (state.selectedId) {
+        const found = state.allRequests.find(r => r.id === state.selectedId);
+        if (found) {
+          state.selectedDoc = found;
+          renderChatHeader();
+        }
+      }
+    }, (err) => {
+      console.error("requests snapshot error", err);
+      toast("Failed to load requests: " + err.message, true);
+    });
+  }
+  function stopListeningRequests() {
+    state.unsubRequests?.();
+    state.unsubRequests = null;
+  }
+
+  // ───────────────────────────────────────────────────────────────────
+  // 6. FILTERING / RENDERING LIST
+  // ───────────────────────────────────────────────────────────────────
+  document.getElementById("filters").addEventListener("click", (e) => {
+    const btn = e.target.closest(".filter-chip");
+    if (!btn) return;
+    document.querySelectorAll(".filter-chip").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.filter = btn.dataset.filter;
+    renderList();
+  });
+
+  document.getElementById("search-input").addEventListener("input", (e) => {
+    state.search = e.target.value.trim().toLowerCase();
+    renderList();
+  });
+
+  function filteredRequests() {
+    let list = state.allRequests;
+    if (state.filter === "unread") {
+      list = list.filter(r => (r.unreadCountSupport || 0) > 0);
+    } else if (state.filter !== "all") {
+      list = list.filter(r => r.status === state.filter);
+    }
+    if (state.search) {
+      const s = state.search;
+      list = list.filter(r =>
+        (r.userName || "").toLowerCase().includes(s) ||
+        (r.userCompany || "").toLowerCase().includes(s) ||
+        (r.title || "").toLowerCase().includes(s) ||
+        (r.lastMessagePreview || "").toLowerCase().includes(s) ||
+        (r.linkedMicroscopeName || "").toLowerCase().includes(s)
+      );
+    }
+    return list;
+  }
+
+  function renderList() {
+    const counts = { open:0, resolved:0, closed:0, unread:0 };
+    for (const r of state.allRequests) {
+      if (r.status && counts.hasOwnProperty(r.status)) counts[r.status]++;
+      if ((r.unreadCountSupport || 0) > 0) counts.unread++;
+    }
+    for (const k of Object.keys(counts)) {
+      const el = document.getElementById("n-" + k);
+      if (el) el.textContent = counts[k];
+    }
+
+    const list = filteredRequests();
+    document.getElementById("list-count").textContent =
+      list.length === state.allRequests.length
+        ? `${list.length} total`
+        : `${list.length} of ${state.allRequests.length}`;
+
+    const container = document.getElementById("request-list");
+    if (list.length === 0) {
+      container.innerHTML = `
+        <div class="empty-list">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          No requests${state.search ? ' matching «' + escapeHtml(state.search) + '»' : ''}.
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = list.map(r => renderListItem(r)).join("");
+    container.querySelectorAll(".req-item").forEach(el => {
+      el.addEventListener("click", () => selectRequest(el.dataset.id));
+    });
+    hydratePhotosFor(list);
+  }
+
+  function renderListItem(r) {
+    const unread = (r.unreadCountSupport || 0) > 0;
+    const sel = r.id === state.selectedId ? " selected" : "";
+    const statusClass = r.status || "open";
+    const statusPill = `<span class="pill pill-${statusClass}">${STATUS_LABELS[r.status] || r.status}</span>`;
+    const microPill = r.linkedMicroscopeName
+      ? `<span class="pill-micro" title="${escapeHtml(r.linkedMicroscopeName)}">${escapeHtml(r.linkedMicroscopeName)}</span>`
+      : "";
+
+    let preview = r.lastMessagePreview || "";
+    if (preview.startsWith(SYSTEM_PREFIX)) preview = renderSystemText(preview);
+    const fromTag = r.lastMessageSenderRole === ROLE_SUPPORT ? "You: " : "";
+
+    const name = r.userName || "User";
+    const initial = name.trim().charAt(0) || "?";
+    const cachedPhoto = state.userPhotos[r.userId];
+    const photoTag = cachedPhoto
+      ? `<img class="user-avatar loaded" data-uid="${escapeHtml(r.userId)}" src="${escapeHtml(cachedPhoto)}" alt="">`
+      : `<img class="user-avatar" data-uid="${escapeHtml(r.userId)}" alt="">`;
+
+    return `
+      <div class="req-item${sel}" data-id="${r.id}">
+        <div class="req-avatar">
+          <span class="initial">${escapeHtml(initial)}</span>
+          ${photoTag}
+        </div>
+        <div class="req-body">
+          <div class="req-line-1">
+            ${unread ? '<div class="unread-dot"></div>' : ''}
+            <div class="req-user">${escapeHtml(name)}</div>
+            <div class="req-time">${fmtRelTime(r.updatedAt || r.createdAt)}</div>
+          </div>
+          <div class="req-company">${escapeHtml(r.userCompany || "—")}</div>
+          <div class="req-preview${unread ? ' unread' : ''}">${escapeHtml(fromTag + preview)}</div>
+          <div class="req-line-3">
+            ${statusPill}
+            ${microPill}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ───────────────────────────────────────────────────────────────────
+  // 7. SELECT CONVERSATION → load messages
+  // ───────────────────────────────────────────────────────────────────
+  async function selectRequest(id) {
+    if (state.selectedId === id) return;
+    state.selectedId = id;
+    state.selectedDoc = state.allRequests.find(r => r.id === id) || null;
+    state.messages = [];
+
+    document.getElementById("layout").classList.add("show-chat");
+    document.getElementById("chat-empty").style.display = "none";
+    document.getElementById("chat-view").style.display = "flex";
+    document.getElementById("back-btn").style.display = window.innerWidth <= 900 ? "grid" : "none";
+
+    renderList();
+    renderChatHeader();
+    document.getElementById("chat-body").innerHTML = `<div class="loading-row">Loading messages…</div>`;
+
+    startListeningMessages(id);
+
+    try {
+      await updateDoc(doc(db, "supportRequests", id), { unreadCountSupport: 0 });
+    } catch (e) {
+      console.warn("mark-read fail", e);
+    }
+  }
+
+  document.getElementById("back-btn").addEventListener("click", () => {
+    document.getElementById("layout").classList.remove("show-chat");
+  });
+
+  function renderChatHeader() {
+    const r = state.selectedDoc;
+    if (!r) return;
+    const name = r.userName || "User";
+    document.getElementById("ch-user-name").textContent = name;
+    document.getElementById("ch-avatar-initial").textContent = (name || "?")[0];
+
+    // Photo: use cached if available, else fetch and set on arrival
+    const imgEl = document.getElementById("ch-avatar-img");
+    imgEl.classList.remove("loaded");
+    imgEl.removeAttribute("src");
+    const cached = state.userPhotos[r.userId];
+    if (cached) {
+      imgEl.src = cached;
+      imgEl.classList.add("loaded");
+    } else if (r.userId) {
+      fetchUserPhoto(r.userId).then(url => {
+        // Only apply if we're still on the same conversation
+        if (state.selectedId === r.id && url) {
+          imgEl.src = url;
+          imgEl.classList.add("loaded");
+        }
+      });
+    }
+
+    const bits = [];
+    if (r.userCompany) bits.push(`<span>${escapeHtml(r.userCompany)}</span>`);
+    if (r.linkedMicroscopeName) {
+      bits.push(`<span class="sep">·</span>
+        <span class="micro-tag" title="Linked microscope">${escapeHtml(r.linkedMicroscopeName)}</span>`);
+    }
+    if (r.createdAt) bits.push(`<span class="sep">·</span><span>opened ${fmtRelTime(r.createdAt)}</span>`);
+    document.getElementById("ch-meta").innerHTML = bits.join(" ");
+
+    document.getElementById("status-select").value = r.status || "open";
+    applyComposerStateForStatus(r.status);
+  }
+
+  /// Disables the composer when the conversation is closed or resolved.
+  /// "Closed" is permanent archive; "Resolved" means the issue is solved
+  /// but can be reopened. Either way, replies aren't expected — change the
+  /// status back to "Open" to reply.
+  function applyComposerStateForStatus(status) {
+    const composerEl  = document.querySelector(".composer");
+    const textarea    = document.getElementById("composer");
+    const notice      = document.getElementById("closed-notice");
+    const noticeText  = document.getElementById("closed-notice-text");
+    const isLocked = status === "closed" || status === "resolved";
+    if (!composerEl) return;
+    composerEl.classList.toggle("disabled", isLocked);
+    textarea.disabled = isLocked;
+    notice.style.display = isLocked ? "inline-flex" : "none";
+    if (noticeText) {
+      noticeText.textContent = status === "closed"
+        ? "This request is closed. Change the status to reply."
+        : "This request is marked as resolved. Change the status to reply.";
+    }
+    if (isLocked) {
+      $send.disabled = true;
+    } else {
+      $send.disabled = textarea.value.trim().length === 0;
+    }
+  }
+
+  function startListeningMessages(reqId) {
+    stopListeningMessages();
+    const q = query(
+      collection(db, "supportRequests", reqId, "messages"),
+      orderBy("createdAt", "asc")
+    );
+    state.unsubMessages = onSnapshot(q, (snap) => {
+      state.messages = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderMessages();
+    }, (err) => {
+      console.error("messages snapshot error", err);
+      toast("Messages error: " + err.message, true);
+    });
+  }
+  function stopListeningMessages() {
+    state.unsubMessages?.();
+    state.unsubMessages = null;
+  }
+
+  function renderMessages() {
+    const body = document.getElementById("chat-body");
+    if (state.messages.length === 0) {
+      body.innerHTML = `<div class="loading-row">No messages yet.</div>`;
+      return;
+    }
+
+    let html = "";
+    let lastDateKey = null;
+    for (const m of state.messages) {
+      const d = m.createdAt?.toDate?.() || new Date();
+      const dateKey = d.toDateString();
+      if (dateKey !== lastDateKey) {
+        html += `<div class="date-sep"><span>${fmtDateSep(d)}</span></div>`;
+        lastDateKey = dateKey;
+      }
+
+      const isSystem = (m.text || "").startsWith(SYSTEM_PREFIX);
+      const role = isSystem ? "system" : (m.senderRole || ROLE_USER);
+      const text = isSystem ? renderSystemText(m.text) : (m.text || "");
+      const time = fmtTime(d);
+
+      if (role === "system") {
+        html += `<div class="msg-row system"><div class="bubble system">${escapeHtml(text)}</div></div>`;
+      } else if (role === ROLE_SUPPORT) {
+        html += `
+          <div class="msg-row support">
+            <div class="bubble support">
+              <div class="who">${escapeHtml(m.senderName || "Support")}</div>
+              ${escapeHtml(text).replace(/\n/g, "<br>")}
+              <div class="time">${time}</div>
+            </div>
+          </div>`;
+      } else {
+        html += `
+          <div class="msg-row user">
+            <div class="bubble user">
+              <div class="who">${escapeHtml(m.senderName || "User")}</div>
+              ${escapeHtml(text).replace(/\n/g, "<br>")}
+              <div class="time">${time}</div>
+            </div>
+          </div>`;
+      }
+    }
+    body.innerHTML = html;
+    body.scrollTop = body.scrollHeight;
+  }
+
+  // ───────────────────────────────────────────────────────────────────
+  // 8. SEND MESSAGE
+  // ───────────────────────────────────────────────────────────────────
+  const $composer = document.getElementById("composer");
+  const $send     = document.getElementById("send-btn");
+
+  $composer.addEventListener("input", () => {
+    $send.disabled = $composer.value.trim().length === 0;
+    $composer.style.height = "auto";
+    $composer.style.height = Math.min($composer.scrollHeight, 200) + "px";
+  });
+
+  $composer.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendCurrent();
+    }
+  });
+  $send.addEventListener("click", sendCurrent);
+
+  async function sendCurrent() {
+    const text = $composer.value.trim();
+    if (!text || !state.selectedId) return;
+    $send.disabled = true;
+
+    try {
+      const reqRef  = doc(db, "supportRequests", state.selectedId);
+      const msgsRef = collection(db, "supportRequests", state.selectedId, "messages");
+
+      const now = serverTimestamp();
+      const preview = makePreview(text);
+
+      // Atomic batch: message + request update (mirrors the Swift store)
+      const batch = writeBatch(db);
+      const newMsgRef = doc(msgsRef);
+      batch.set(newMsgRef, {
+        senderId:   OPERATOR_ID,
+        senderName: OPERATOR_NAME,
+        senderRole: ROLE_SUPPORT,
+        text:       text,
+        createdAt:  now,
+      });
+      batch.update(reqRef, {
+        updatedAt:             now,
+        lastMessagePreview:    preview,
+        lastMessageSenderRole: ROLE_SUPPORT,
+        unreadCountUser:       increment(1),
+        unreadCountSupport:    0,
+      });
+      await batch.commit();
+
+      $composer.value = "";
+      $composer.style.height = "auto";
+      $send.disabled = true;
+    } catch (e) {
+      console.error("send error", e);
+      toast("Send failed: " + e.message, true);
+      $send.disabled = false;
+    }
+  }
+
+  function makePreview(s) {
+    const oneLine = s.replace(/\n/g, " ").trim();
+    if (oneLine.length <= 80) return oneLine;
+    const slice = oneLine.slice(0, 80);
+    const lastSpace = slice.lastIndexOf(" ");
+    return (lastSpace > 0 ? slice.slice(0, lastSpace) : slice) + "…";
+  }
+
+  // ───────────────────────────────────────────────────────────────────
+  // 9. STATUS CHANGE
+  // ───────────────────────────────────────────────────────────────────
+  document.getElementById("status-select").addEventListener("change", async (e) => {
+    if (!state.selectedId) return;
+    const newStatus = e.target.value;
+    // Optimistic UI: update composer immediately so the user doesn't
+    // have to wait for Firestore round-trip.
+    applyComposerStateForStatus(newStatus);
+    try {
+      await updateDoc(doc(db, "supportRequests", state.selectedId), {
+        status:    newStatus,
+        updatedAt: serverTimestamp(),
+      });
+      toast(`Status updated to: ${STATUS_LABELS[newStatus]}`);
+    } catch (err) {
+      toast("Failed to update status: " + err.message, true);
+      if (state.selectedDoc) {
+        e.target.value = state.selectedDoc.status;
+        applyComposerStateForStatus(state.selectedDoc.status);
+      }
+    }
+  });
+
+  // ───────────────────────────────────────────────────────────────────
+  // 10. HELPERS
+  // ───────────────────────────────────────────────────────────────────
+  function escapeHtml(s) {
+    return String(s ?? "").replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  function fmtRelTime(ts) {
+    if (!ts) return "";
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    const now = new Date();
+    const diff = (now - d) / 1000;
+    if (diff < 60) return "now";
+    if (diff < 3600) return Math.floor(diff/60) + "m";
+    if (diff < 86400) return Math.floor(diff/3600) + "h";
+    if (diff < 86400*7) return Math.floor(diff/86400) + "d";
+    return d.toLocaleDateString("en-GB", { day:"2-digit", month:"short" });
+  }
+  function fmtTime(d) {
+    return d.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit" });
+  }
+  function fmtDateSep(d) {
+    const now = new Date();
+    if (d.toDateString() === now.toDateString()) return "Today";
+    const yest = new Date(now); yest.setDate(now.getDate() - 1);
+    if (d.toDateString() === yest.toDateString()) return "Yesterday";
+    return d.toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long" });
+  }
+
+  let toastTimer = null;
+  function toast(msg, isError=false) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.toggle("error", isError);
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
+  }
+
+  // Refresh relative times every 60s
+  setInterval(() => {
+    if (state.allRequests.length > 0) renderList();
+  }, 60000);
+
+</script>
+</body>
+</html>

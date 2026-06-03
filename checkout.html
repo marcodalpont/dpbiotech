@@ -126,6 +126,108 @@ a:hover { opacity: 0.7; }
     padding: 80px 0 32px;
     background: radial-gradient(circle at 50% 0%, rgba(15, 118, 110, 0.06) 0%, transparent 60%);
 }
+
+/* Auth gate (guest vs sign-in) */
+.checkout-auth-gate {
+    max-width: 640px;
+    margin: 60px auto 80px;
+    padding: 40px 28px;
+    background: var(--bg-card, #fff);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-lg, 32px);
+    box-shadow: 0 8px 24px rgba(10,10,15,0.06), 0 32px 64px -16px rgba(15,23,42,0.10);
+    text-align: center;
+}
+.checkout-auth-gate .eyebrow { margin-bottom: 12px; }
+.checkout-auth-gate h2 { font-size: 26px; letter-spacing: -0.02em; margin: 0 0 8px; }
+.checkout-auth-gate p.lead { font-size: 15px; color: var(--text-secondary); max-width: 460px; margin: 0 auto 32px; line-height: 1.5; }
+.checkout-auth-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    max-width: 520px;
+    margin: 0 auto;
+}
+@media (max-width: 560px) {
+    .checkout-auth-options { grid-template-columns: 1fr; }
+}
+.checkout-auth-card {
+    display: flex; flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+    text-align: left;
+    padding: 18px 20px;
+    background: var(--bg-secondary, #f2f2f4);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-md, 20px);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+    font-family: inherit;
+}
+.checkout-auth-card:hover {
+    border-color: var(--text-primary);
+    transform: translateY(-1px);
+}
+.checkout-auth-card.primary { background: var(--text-primary, #0a0a0f); color: var(--bg-body, #fafafa); border-color: var(--text-primary); }
+.checkout-auth-card.primary:hover { opacity: 0.92; }
+.checkout-auth-card-icon {
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.15);
+    display: grid; place-items: center;
+    margin-bottom: 4px;
+}
+.checkout-auth-card:not(.primary) .checkout-auth-card-icon {
+    background: var(--bg-card, #fff);
+    border: 1px solid var(--divider);
+}
+.checkout-auth-card-icon svg { width: 18px; height: 18px; }
+.checkout-auth-card h3 { font-size: 16px; margin: 0; letter-spacing: -0.01em; font-weight: 600; }
+.checkout-auth-card p { font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85; }
+
+/* Signed-in banner on top of checkout form */
+.checkout-signed-banner {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px;
+    background: rgba(15, 118, 110, 0.06);
+    border: 1px solid rgba(15, 118, 110, 0.20);
+    border-radius: var(--radius-md, 20px);
+    margin-bottom: 24px;
+}
+.checkout-signed-banner-icon {
+    width: 32px; height: 32px;
+    border-radius: 999px;
+    background: var(--accent, #0f766e);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+.checkout-signed-banner-text { flex: 1; min-width: 0; }
+.checkout-signed-banner-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+.checkout-signed-banner-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+.checkout-signed-banner-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.checkout-signed-banner-btn {
+    appearance: none;
+    background: transparent; border: 1px solid var(--divider-strong);
+    color: var(--text-primary);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font: inherit; font-size: 12.5px; font-weight: 500;
+    cursor: pointer;
+}
+.checkout-signed-banner-btn:hover { background: var(--bg-secondary); }
+.checkout-signed-banner-btn.primary {
+    background: var(--accent); color: white; border-color: var(--accent);
+}
+.checkout-signed-banner-btn.primary:hover { opacity: 0.92; }
+
+.checkout-loading {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--text-secondary);
+}
 .checkout-hero .eyebrow {
     display: block;
     font-size: 12px; font-weight: 700;
@@ -896,6 +998,21 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
         return;
       }
 
+      // ── Auth gate ──────────────────────────────────────────────────
+      const authState = window.__checkoutAuth;
+      if (!authState || !authState.resolved) {
+        // Still waiting for Firebase Auth to settle — show a quick loading state
+        checkoutContent.innerHTML = `<div class="checkout-loading">Loading your details…</div>`;
+        window.addEventListener("checkout-auth-ready", () => renderPage(), { once: true });
+        return;
+      }
+      const isSignedIn = !!authState.user;
+      const guestChosen = sessionStorage.getItem("checkout_guest") === "1";
+      if (!isSignedIn && !guestChosen) {
+        renderAuthGate();
+        return;
+      }
+
       const consolidatedCart = {};
       cart.forEach(item => {
         if (consolidatedCart[item.id]) {
@@ -1658,7 +1775,192 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
         else if (action === 'remove') removeItem(id);
     });
 
+    // ── AUTH GATE & PROFILE PREFILL ─────────────────────────────────
+    function renderAuthGate() {
+      checkoutContent.innerHTML = `
+        <div class="checkout-hero">
+            <span class="eyebrow">Checkout</span>
+            <h1>Almost there — how would you like to continue?</h1>
+            <p class="lead">Sign in to reuse your saved shipping and billing details, or keep going as a guest and fill them in now.</p>
+        </div>
+        <div class="checkout-auth-gate">
+            <div class="checkout-auth-options">
+                <button type="button" class="checkout-auth-card primary" id="gate-signin">
+                    <div class="checkout-auth-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            <polyline points="10 17 15 12 10 7"/>
+                            <line x1="15" y1="12" x2="3" y2="12"/>
+                        </svg>
+                    </div>
+                    <h3>Sign in</h3>
+                    <p>Use saved shipping &amp; billing. Faster, and your order history stays in one place.</p>
+                </button>
+                <button type="button" class="checkout-auth-card" id="gate-guest">
+                    <div class="checkout-auth-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <h3>Continue as guest</h3>
+                    <p>You can create an account later with the same email.</p>
+                </button>
+            </div>
+        </div>
+      `;
+      document.getElementById('gate-signin').addEventListener('click', () => {
+        window.location.href = "loginprofile.html?return=checkout.html";
+      });
+      document.getElementById('gate-guest').addEventListener('click', () => {
+        sessionStorage.setItem("checkout_guest", "1");
+        renderPage();
+      });
+    }
+    // Expose to renderPage()
+    window.__checkout_renderAuthGate = renderAuthGate;
+
+    // Prefill saved profile into the form when the customer is signed in
+    function prefillFromProfile(user, profile) {
+      const set = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val != null && val !== "") el.value = val;
+      };
+      // Contact info
+      const display = (user.displayName || "").trim();
+      const parts = display ? display.split(/\s+/) : [];
+      set("email-input", user.email || "");
+      if (parts.length) {
+        set("first-name", parts[0]);
+        if (parts.length > 1) set("last-name", parts.slice(1).join(" "));
+      }
+      const s = profile?.shipping || {};
+      const b = profile?.billing  || {};
+      // If shipping fullName has both, prefer it
+      if (s.fullName) {
+        const sp = s.fullName.trim().split(/\s+/);
+        if (sp.length) {
+          set("first-name", sp[0]);
+          if (sp.length > 1) set("last-name", sp.slice(1).join(" "));
+        }
+      }
+      set("phone", s.phone || "");
+      // Shipping
+      set("ship-recipient", s.fullName || display);
+      set("ship-address",   s.line1);
+      set("ship-address2",  s.line2);
+      set("ship-city",      s.city);
+      set("ship-zip",       s.postalCode);
+      set("ship-province",  s.province);
+      set("ship-phone",     s.phone);
+      const countrySel = document.getElementById("ship-country");
+      if (countrySel && s.country) {
+        // Try matching by code or by name
+        const want = s.country.trim().toUpperCase();
+        for (const opt of countrySel.options) {
+          if (opt.value.toUpperCase() === want || opt.text.toUpperCase() === want) {
+            countrySel.value = opt.value; break;
+          }
+        }
+      }
+      // Billing — resolve sameAsShipping
+      const baddr = b.sameAsShipping ? s : b;
+      set("ragione-sociale", baddr.company || b.companyName);
+      set("partita-iva",     b.vat);
+      // Determine SDI vs PEC routing if any
+      // (left to the user to pick the right tab; we just fill the values)
+      set("codice-sdi",  b.sdi);
+      set("pec-address", b.email && /pec/i.test(b.email) ? b.email : "");
+    }
+
+    function renderSignedInBanner(user) {
+      const main = document.querySelector('.checkout-layout > main');
+      if (!main) return;
+      const existing = document.getElementById('checkout-signed-banner');
+      if (existing) existing.remove();
+      const initial = ((user.displayName || user.email || "?")[0] || "?").toUpperCase();
+      const banner = document.createElement('div');
+      banner.id = 'checkout-signed-banner';
+      banner.className = 'checkout-signed-banner';
+      banner.innerHTML = `
+        <div class="checkout-signed-banner-icon">${initial}</div>
+        <div class="checkout-signed-banner-text">
+          <div class="checkout-signed-banner-title">Signed in as ${user.displayName || user.email}</div>
+          <div class="checkout-signed-banner-sub">We've prefilled the form with your saved details. Change anything you like.</div>
+        </div>
+        <div class="checkout-signed-banner-actions">
+          <button type="button" class="checkout-signed-banner-btn" id="checkout-signed-banner-clear">Start fresh</button>
+        </div>
+      `;
+      main.prepend(banner);
+      document.getElementById('checkout-signed-banner-clear').addEventListener('click', () => {
+        // Clear all the form fields we may have filled
+        const ids = ["email-input","first-name","last-name","phone","ship-recipient","ship-address","ship-address2","ship-city","ship-zip","ship-province","ship-phone","ragione-sociale","partita-iva","sdi-code","pec-address"];
+        ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+        banner.remove();
+      });
+    }
+
+    // Hook: after renderPage finishes building the form, prefill + show banner
+    const _renderPage = renderPage;
+    renderPage = function() {
+      _renderPage();
+      const a = window.__checkoutAuth;
+      if (a && a.resolved && a.user) {
+        // Defer to next tick so the form HTML is in the DOM
+        setTimeout(() => {
+          prefillFromProfile(a.user, a.profile || null);
+          renderSignedInBanner(a.user);
+        }, 0);
+      }
+    };
+
     loadCart();
+  });
+</script>
+
+<!-- Checkout auth gate: resolve Firebase Auth + load saved customer profile -->
+<script type="module">
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAPZC_sUOYnwJdW3SG6uEoRKSDVXfcqjdg",
+    authDomain:        "flutter-webview-e59a8.firebaseapp.com",
+    databaseURL:       "https://flutter-webview-e59a8-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "flutter-webview-e59a8",
+    storageBucket:     "flutter-webview-e59a8.appspot.com",
+    messagingSenderId: "766286969529",
+    appId:             "1:766286969529:web:9418c504eca08fb1853968",
+    measurementId:     "G-ZHPL8X1PXP"
+  };
+
+  const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  // We only care about the FIRST resolution — once we know if the user is
+  // signed in (or not), we expose the result and notify the checkout script.
+  let resolved = false;
+  onAuthStateChanged(auth, async (user) => {
+    if (resolved) {
+      // If the user signs out mid-session, drop them back to the gate
+      window.__checkoutAuth = { resolved: true, user: null, profile: null };
+      sessionStorage.removeItem("checkout_guest");
+      window.dispatchEvent(new CustomEvent("checkout-auth-ready"));
+      return;
+    }
+    resolved = true;
+    let profile = null;
+    if (user) {
+      try {
+        const snap = await getDoc(doc(db, "customers", user.uid));
+        if (snap.exists()) profile = snap.data();
+      } catch (e) { console.warn("Couldn't load saved profile:", e); }
+    }
+    window.__checkoutAuth = { resolved: true, user, profile };
+    window.dispatchEvent(new CustomEvent("checkout-auth-ready", { detail: { user, profile } }));
   });
 </script>
 
@@ -1813,5 +2115,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
+<script type="module" src="customer-account-nav.js"></script>
 </body>
 </html>
