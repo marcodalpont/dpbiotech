@@ -45,10 +45,10 @@
 
   /* Main grid layout */
   .config-layout{
-    display:grid; 
+    display:grid;
     grid-template-columns: 3fr 2fr;
     gap: 48px;
-    height: calc(100vh - 57px);
+    min-height: calc(100vh - 57px);
   }
   @media(max-width: 999px){
     body { overflow: auto; }
@@ -451,7 +451,7 @@ body {
     letter-spacing: -0.022em;
     color: var(--text-primary);
     font-weight: 600;
-    margin: 4px 0 6px;
+    margin: 4px 0 28px;
 }
 .viewer .config-eyebrow {
     display: inline-block;
@@ -1501,6 +1501,7 @@ footer { display: block; }
 .cart-sidebar .cart-items { padding: 18px 22px !important; }
 .cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
 </style>
+<style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
 </head>
 <body>
   <nav class="nav" id="main-nav">
@@ -1623,8 +1624,7 @@ footer { display: block; }
       <div class="config-layout">
         <section class="viewer">
             <span class="config-eyebrow">DP Mini · Configure</span>
-            <h1>Build your DP Mini.</h1>
-            <p class="config-sub">Pick your phone, objective, eyepieces and mount — your choices update the model and price live.</p>
+            <h1>Build your DP Mini</h1>
             <div class="viewer-frame">
               <model-viewer id="product-viewer" src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope"
                   camera-controls ar shadow-intensity="1" camera-orbit="150deg 75deg auto" bounds="tight" interaction-prompt="none">

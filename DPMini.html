@@ -1149,7 +1149,85 @@ footer {
     align-items: start;
 }
 @media(max-width: 900px) { .tut-cine { grid-template-columns: 1fr; } }
-.tut-main-col { min-width: 0; }
+.tut-main-col { min-width: 0; position: relative; }
+
+/* Expand-to-lightbox button over the inline player */
+.tut-expand {
+    position: absolute;
+    top: 14px; right: 14px;
+    z-index: 4;
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    display: grid; place-items: center;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background 0.25s, transform 0.25s var(--ease-out-expo, ease);
+}
+.tut-expand:hover { background: rgba(0, 0, 0, 0.65); transform: scale(1.08); }
+
+/* Lightbox (Apple-style, same look as the homepage) */
+.tut-lb {
+    position: fixed; inset: 0;
+    z-index: 300;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: rgba(10, 10, 15, 0.6);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.4s var(--ease-out-expo, ease), visibility 0.4s;
+}
+.tut-lb.is-open { opacity: 1; visibility: visible; }
+.tut-lb-inner {
+    width: 100%; max-width: 1000px;
+    transform: scale(0.96) translateY(10px);
+    transition: transform 0.5s var(--ease-out-expo, ease);
+}
+.tut-lb.is-open .tut-lb-inner { transform: scale(1) translateY(0); }
+.tut-lb-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5);
+}
+.tut-lb-stage .tut-ambient {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: blur(40px) saturate(170%) brightness(0.9);
+    transform: scale(1.25);
+    z-index: 0; pointer-events: none;
+}
+.tut-lb-stage .tut-main {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    z-index: 1;
+}
+.tut-lb-caption { margin-top: 18px; text-align: center; }
+.tut-lb-caption h3 { font-size: 20px; color: #fff; margin-bottom: 4px; }
+.tut-lb-caption p { font-size: 14px; color: rgba(255, 255, 255, 0.7); }
+.tut-lb-close {
+    position: absolute;
+    top: 24px; right: 24px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none; cursor: pointer;
+    display: grid; place-items: center;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: background 0.25s, transform 0.25s var(--ease-out-expo, ease);
+}
+.tut-lb-close:hover { background: rgba(255, 255, 255, 0.28); transform: scale(1.08); }
 
 .tut-stage {
     position: relative;
@@ -1257,6 +1335,7 @@ footer {
 .tut-chip-body strong { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; margin-bottom: 2px; }
 .tut-chip-body span { display: block; font-size: 12px; color: var(--text-secondary); line-height: 1.35; }
 </style>
+<style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
 </head>
 <body>
 
@@ -1517,165 +1596,10 @@ footer {
   </div>
 </section>
 
-<section class="section section-bg" id="voice-commands-section">
-<div class="container">
-    <div class="feature-row align-top-mobile">
-        <div class="feature-text text-content-padded">
-            <span class="eyebrow">Neural Engine Control</span>
-            <h2>Instant Voice Command</h2>
-            <p>
-                Leveraging the immense power of Apple Silicon, DP Mini delivers immediate, on-device Speech-to-Text processing. Execute commands with sub-second latency and keep your hands completely sterile.
-            </p>
-            <div class="modern-feature-list">
-                <div class="feature-item">
-                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
-                    <div class="feature-detail">
-                        <strong>Sub-Second Latency</strong>
-                        <span>Powered by the iPhone's Neural Engine.</span>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg></div>
-                    <div class="feature-detail">
-                        <strong>Fully Customizable</strong>
-                        <span>Map "Focus" or "Next" to your specific workflow.</span>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg></div>
-                    <div class="feature-detail">
-                        <strong>Ecosystem Integration</strong>
-                        <span>Control connected devices hands-free.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="image-stack-column">
-            <div class="feature-image-wrapper split-card">
-                <img src="voicecommands.png" alt="Voice Control Main">
-            </div>
-            <div class="feature-image-wrapper split-card">
-                <img src="voicecommand2.png" alt="Voice Control Secondary">
-            </div>
-        </div>
-    </div>
-</div>
-</section>
-
-<section class="section">
-<div class="container">
-    <div class="feature-row reverse align-top-mobile">
-        <div class="feature-text text-content-padded">
-            <span class="eyebrow">Med Connect</span>
-            <h2>Streaming & Learning Platform</h2>
-            <p>
-              Turn any procedure into a live, interactive session. Create a private classroom and share a simple access code. You see everyone in real time, guide them step-by-step, and deliver consultations with full context.
-            </p>
-            <div class="modern-feature-list">
-                <div class="feature-item">
-                    <div class="feature-icon">4K</div>
-                    <div class="feature-detail">
-                        <strong>High Fidelity Stream</strong>
-                        <span>4K @ 60fps in 2D or true 3D mode (VR compatible).</span>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg></div>
-                    <div class="feature-detail">
-                        <strong>Interactive Overlays</strong>
-                        <span>Stream 3D models, NDI data, and annotations directly in-view.</span>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg></div>
-                    <div class="feature-detail">
-                        <strong>Two-Way Communication</strong>
-                        <span>In-stream chat & voice mode for instant Q&A.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="feature-image-wrapper vertical-card">
-             <img src="classroom.jpg" alt="Streaming Platform UI">
-        </div>
-    </div>
-</div>
-</section>
-
-<section class="section section-bg" id="recording-section">
-<div class="container">
-    <div class="feature-row align-items-center">
-        <div class="feature-text text-content-padded">
-            <span class="eyebrow">Seamless Documentation</span>
-            <h2>Integrated Recording & Editing</h2>
-            <p>
-                Capture clinical excellence in 4K and edit directly on the device. Annotate key moments, trim footage, and instantly post your cases to <strong>Med Connect</strong>.
-            </p>
-            <p style="margin-top: 20px; font-size: 16px;">
-                This secure integration allows authenticated peers to view your recordings, exchange feedback, and interact with your procedural content in a professional, collaborative environment.
-            </p>
-        </div>
-        <div class="feature-image-wrapper horizontal-card">
-            <img src="editing.jpg" alt="Video Editing Interface">
-        </div>
-    </div>
-</div>
-</section>
-  <section class="section" id="handle-section">
-    <div class="container">
-        <div class="feature-row align-top-mobile">
-            
-            <div class="feature-text text-content-padded">
-                <span class="eyebrow">Bluetooth Connectivity</span>
-                <h2>Wireless Smart Handle</h2>
-                <p>
-                    Connects seamlessly to your phone via Bluetooth. Use the integrated <strong>joystick, buttons, and touchpad</strong> to manage your entire workflow without ever touching the screen.
-                </p>
-  
-                <div class="modern-feature-list">
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
-                        </div>
-                        <div class="feature-detail">
-                            <strong>Full Optical Control</strong>
-                            <span>Instantly pull focus, calibrate the microscope, and adjust zoom levels.</span>
-                        </div>
-                    </div>
-  
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                        </div>
-                        <div class="feature-detail">
-                            <strong>Digital Overlays</strong>
-                            <span>Cycle NDI streams, image overlays, videos, and 3D models on the fly.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-  
-            <div class="image-stack-column">
-                <div class="feature-image-wrapper split-card">
-                    <img src="joystick2.jpg" alt="Smart Handle Overview" onerror="this.src='https://via.placeholder.com/600x300?text=Joystick+2'">
-                </div>
-                <div class="feature-image-wrapper split-card">
-                    <img src="joystick.jpg" alt="Smart Handle Controls" onerror="this.src='https://via.placeholder.com/600x300?text=Joystick+1'">
-                </div>
-            </div>
-  
-        </div>
-    </div>
-  </section>
-
-
-
-<!-- ========== DP MINI VIDEO TUTORIALS (cinematic) ========== -->
+<!-- ========== DP MINI VIDEO TUTORIALS (cinematic) — placed after "Built for the field" ========== -->
 <!--
   Each .tut-chip carries: data-src (video file), data-step, data-title, data-desc, data-dur.
-  Click a chip → it loads into the big player above and highlights blue.
-  Thumbnails show each clip's first frame automatically. Add/remove chips freely.
-  (Using your two clips, 1.MP4 and 3.mp4, repeated across the steps for now.)
+  Click a chip → it loads into the big player above and highlights blue. Add/remove chips freely.
 -->
 <section class="section section-bg" id="mini-tutorials">
   <div class="container">
@@ -1689,6 +1613,9 @@ footer {
       <div class="tut-cine">
         <div class="tut-main-col">
           <div class="tut-stage" id="mini-tut-stage"><!-- video injected by JS --></div>
+          <button class="tut-expand" id="mini-tut-expand" aria-label="Expand to full view" title="Expand">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          </button>
           <div class="tut-now">
               <span class="tut-now-step" id="mini-tut-step">Step 1 of 7</span>
               <h3 id="mini-tut-title">Unboxing</h3>
@@ -1743,6 +1670,159 @@ footer {
       </div>
   </div>
 </section>
+
+<section class="section" id="voice-commands-section">
+<div class="container">
+    <div class="feature-row align-top-mobile">
+        <div class="feature-text text-content-padded">
+            <span class="eyebrow">Neural Engine Control</span>
+            <h2>Instant Voice Command</h2>
+            <p>
+                Leveraging the immense power of Apple Silicon, DP Mini delivers immediate, on-device Speech-to-Text processing. Execute commands with sub-second latency and keep your hands completely sterile.
+            </p>
+            <div class="modern-feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
+                    <div class="feature-detail">
+                        <strong>Sub-Second Latency</strong>
+                        <span>Powered by the iPhone's Neural Engine.</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg></div>
+                    <div class="feature-detail">
+                        <strong>Fully Customizable</strong>
+                        <span>Map "Focus" or "Next" to your specific workflow.</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg></div>
+                    <div class="feature-detail">
+                        <strong>Ecosystem Integration</strong>
+                        <span>Control connected devices hands-free.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="image-stack-column">
+            <div class="feature-image-wrapper split-card">
+                <img src="voicecommands.png" alt="Voice Control Main">
+            </div>
+            <div class="feature-image-wrapper split-card">
+                <img src="voicecommand2.png" alt="Voice Control Secondary">
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<section class="section section-bg">
+<div class="container">
+    <div class="feature-row reverse align-top-mobile">
+        <div class="feature-text text-content-padded">
+            <span class="eyebrow">Med Connect</span>
+            <h2>Streaming & Learning Platform</h2>
+            <p>
+              Turn any procedure into a live, interactive session. Create a private classroom and share a simple access code. You see everyone in real time, guide them step-by-step, and deliver consultations with full context.
+            </p>
+            <div class="modern-feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon">4K</div>
+                    <div class="feature-detail">
+                        <strong>High Fidelity Stream</strong>
+                        <span>4K @ 60fps in 2D or true 3D mode (VR compatible).</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg></div>
+                    <div class="feature-detail">
+                        <strong>Interactive Overlays</strong>
+                        <span>Stream 3D models, NDI data, and annotations directly in-view.</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg></div>
+                    <div class="feature-detail">
+                        <strong>Two-Way Communication</strong>
+                        <span>In-stream chat & voice mode for instant Q&A.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feature-image-wrapper vertical-card">
+             <img src="classroom.jpg" alt="Streaming Platform UI">
+        </div>
+    </div>
+</div>
+</section>
+
+<section class="section" id="recording-section">
+<div class="container">
+    <div class="feature-row align-items-center">
+        <div class="feature-text text-content-padded">
+            <span class="eyebrow">Seamless Documentation</span>
+            <h2>Integrated Recording & Editing</h2>
+            <p>
+                Capture clinical excellence in 4K and edit directly on the device. Annotate key moments, trim footage, and instantly post your cases to <strong>Med Connect</strong>.
+            </p>
+            <p style="margin-top: 20px; font-size: 16px;">
+                This secure integration allows authenticated peers to view your recordings, exchange feedback, and interact with your procedural content in a professional, collaborative environment.
+            </p>
+        </div>
+        <div class="feature-image-wrapper horizontal-card">
+            <img src="editing.jpg" alt="Video Editing Interface">
+        </div>
+    </div>
+</div>
+</section>
+  <section class="section section-bg" id="handle-section">
+    <div class="container">
+        <div class="feature-row align-top-mobile">
+            
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">Bluetooth Connectivity</span>
+                <h2>Wireless Smart Handle</h2>
+                <p>
+                    Connects seamlessly to your phone via Bluetooth. Use the integrated <strong>joystick, buttons, and touchpad</strong> to manage your entire workflow without ever touching the screen.
+                </p>
+  
+                <div class="modern-feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+                        </div>
+                        <div class="feature-detail">
+                            <strong>Full Optical Control</strong>
+                            <span>Instantly pull focus, calibrate the microscope, and adjust zoom levels.</span>
+                        </div>
+                    </div>
+  
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                        </div>
+                        <div class="feature-detail">
+                            <strong>Digital Overlays</strong>
+                            <span>Cycle NDI streams, image overlays, videos, and 3D models on the fly.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+  
+            <div class="image-stack-column">
+                <div class="feature-image-wrapper split-card">
+                    <img src="joystick2.jpg" alt="Smart Handle Overview" onerror="this.src='https://via.placeholder.com/600x300?text=Joystick+2'">
+                </div>
+                <div class="feature-image-wrapper split-card">
+                    <img src="joystick.jpg" alt="Smart Handle Controls" onerror="this.src='https://via.placeholder.com/600x300?text=Joystick+1'">
+                </div>
+            </div>
+  
+        </div>
+    </div>
+  </section>
+
+
 
 <section class="section">
   <div class="container">
@@ -1884,6 +1964,9 @@ h1, p, .hero-cta, .model-stage { transform: translateY(20px); }
       setTimeout(() => {
           splash.classList.add('hidden');
           body.classList.remove('no-scroll');
+          // Nudge the scroll position to force a repaint — without this the hero
+          // sometimes stays blank until the user manually scrolls (Safari + nav backdrop-filter paint bug).
+          requestAnimationFrame(() => { window.scrollTo(0, 1); window.scrollTo(0, 0); });
           setTimeout(() => splash.remove(), 800);
       }, 1500);
   
@@ -2148,6 +2231,16 @@ h1, p, .hero-cta, .model-stage { transform: translateY(20px); }
       saveCart(); // Init
   });
   </script>
+<!-- DP Mini tutorial lightbox (expand view — same look as homepage) -->
+<div class="tut-lb" id="mini-tut-lb" role="dialog" aria-modal="true" aria-label="Tutorial video">
+    <button class="tut-lb-close" id="mini-tut-lb-close" aria-label="Close">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg>
+    </button>
+    <div class="tut-lb-inner">
+        <div class="tut-lb-stage" id="mini-tut-lb-stage"></div>
+        <div class="tut-lb-caption"><h3 id="mini-tut-lb-title"></h3><p id="mini-tut-lb-desc"></p></div>
+    </div>
+</div>
 <script>
   /* ===== DP Mini cinematic tutorials ===== */
   (function () {
@@ -2158,6 +2251,7 @@ h1, p, .hero-cta, .model-stage { transform: translateY(20px); }
       const titleEl = document.getElementById('mini-tut-title');
       const descEl  = document.getElementById('mini-tut-desc');
       const chips   = Array.from(strip.querySelectorAll('.tut-chip'));
+      let current   = chips[0];
 
       // Thumbnail = first frame of each clip (#t=0.1 seeks to it)
       chips.forEach(chip => {
@@ -2177,12 +2271,46 @@ h1, p, .hero-cta, .model-stage { transform: translateY(20px); }
           titleEl.textContent = chip.dataset.title;
           descEl.textContent  = chip.dataset.desc;
           chips.forEach(c => c.classList.toggle('is-active', c === chip));
+          current = chip;
           // keep the active chip in view within the rail (no page jump)
           chip.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       };
 
       chips.forEach(chip => chip.addEventListener('click', () => render(chip, true)));
       render(chips[0], false); // load first step's frame, no autoplay
+
+      /* ===== Expand → lightbox (same big view as the homepage) ===== */
+      const expandBtn = document.getElementById('mini-tut-expand');
+      const lb        = document.getElementById('mini-tut-lb');
+      const lbStage   = document.getElementById('mini-tut-lb-stage');
+      const lbTitle   = document.getElementById('mini-tut-lb-title');
+      const lbDesc    = document.getElementById('mini-tut-lb-desc');
+      const lbClose   = document.getElementById('mini-tut-lb-close');
+
+      const openLb = () => {
+          const src = current.dataset.src;
+          // pause the inline player so audio doesn't double up
+          const inlineVid = stage.querySelector('video.tut-main');
+          if (inlineVid) inlineVid.pause();
+          lbStage.innerHTML =
+              '<video class="tut-ambient" src="' + src + '" muted autoplay loop playsinline></video>' +
+              '<video class="tut-main" src="' + src + '" controls autoplay playsinline></video>';
+          lbTitle.textContent = current.dataset.title || '';
+          lbDesc.textContent  = current.dataset.desc || '';
+          lb.classList.add('is-open');
+          document.body.classList.add('no-scroll');
+      };
+      const closeLb = () => {
+          lb.classList.remove('is-open');
+          document.body.classList.remove('no-scroll');
+          lbStage.innerHTML = ''; // stop & unload the video
+      };
+      if (expandBtn) expandBtn.addEventListener('click', openLb);
+      if (lbClose) lbClose.addEventListener('click', closeLb);
+      if (lb) lb.addEventListener('click', (e) => { if (e.target === lb) closeLb(); });
+      document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && lb.classList.contains('is-open')) closeLb();
+      });
 
       // Soft fade at the rail edges when more chapters are hidden above/below
       const updateFade = () => {

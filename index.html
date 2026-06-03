@@ -81,7 +81,7 @@ a:hover { opacity: 0.7; }
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: var(--bg-body);
   display: grid; place-items: center; z-index: 1000;
-  transition: opacity 1s ease-out; pointer-events: none;
+  transition: opacity 0.5s ease-out; pointer-events: none;
 }
 .splash-screen.hidden { opacity: 0; }
 
@@ -92,14 +92,14 @@ a:hover { opacity: 0.7; }
 
 .splash-content {
   display: flex; align-items: center; gap: 24px;
-  animation: slide-in-container 1.5s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+  animation: slide-in-container 2s cubic-bezier(0.8, 0, 0.2, 1) forwards;
 }
 
 .splash-text {
   font-size: clamp(40px, 10vw, 90px); font-weight: 800; letter-spacing: -0.04em;
   color: var(--text-primary);
   clip-path: inset(0 100% 0 0);
-  animation: reveal-text-from-left 1.1s cubic-bezier(0.8, 0, 0.2, 1) 0.2s forwards;
+  animation: reveal-text-from-left 1.6s cubic-bezier(0.8, 0, 0.2, 1) 0.2s forwards;
 }
 
 /* =========================
@@ -1589,6 +1589,7 @@ footer {
 .cart-sidebar .cart-items { padding: 18px 22px !important; }
 .cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
 </style>
+<style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
 </head>
 <body>
 
@@ -2408,8 +2409,8 @@ footer {
               setTimeout(() => {
                   splash.classList.add('hidden');
                   body.classList.remove('no-scroll');
-              }, 3000);
-              setTimeout(() => { splash.remove(); }, 5500);
+              }, 2500);
+              setTimeout(() => { splash.remove(); }, 3000);
           }
       });
   
