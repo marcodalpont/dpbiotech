@@ -2404,15 +2404,16 @@ footer {
       const body = document.body;
       body.classList.add('no-scroll');
 
-      window.addEventListener('load', () => {
-          if (splash) {
-              setTimeout(() => {
-                  splash.classList.add('hidden');
-                  body.classList.remove('no-scroll');
-              }, 2500);
-              setTimeout(() => { splash.remove(); }, 3000);
-          }
-      });
+      // Start timing as soon as the HTML is parsed — NOT on window 'load',
+      // which waits for all heavy assets (3D models, images) and on a slow
+      // connection can leave the splash frozen for many seconds.
+      if (splash) {
+          setTimeout(() => {
+              splash.classList.add('hidden');
+              body.classList.remove('no-scroll');
+          }, 2500);
+          setTimeout(() => { splash.remove(); }, 3000);
+      }
   
       // --- MOBILE MENU ---
       const menuBtn = document.getElementById('menu-btn');
