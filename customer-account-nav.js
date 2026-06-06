@@ -49,7 +49,7 @@ if (!document.getElementById("customer-account-nav-css")) {
     .account-menu.is-open .account-menu-btn { background: var(--bg-secondary, #f2f2f4); border-color: var(--divider, rgba(10,10,15,0.06)); }
     .account-menu.is-open .account-menu-btn svg { transform: rotate(180deg); }
     .account-menu-panel {
-      position: absolute; top: calc(100% + 8px); right: 0;
+      position: absolute; top: calc(100% + 2px); right: 0;
       min-width: 260px;
       background: var(--bg-card, #ffffff);
       border: 1px solid var(--divider, rgba(10,10,15,0.06));

@@ -1,10 +1,11 @@
 /* DP Biotech — model & asset cache service worker.
    Strategy:
-     - .glb / .usdz : NETWORK-FIRST so freshly exported model files are picked up on reload.
-                      Falls back to cache if offline.
+     - .glb / .usdz : STALE-WHILE-REVALIDATE — served instantly from cache once downloaded
+                      (so the same model is reused across every page with no re-download),
+                      while a background fetch refreshes the cache for next time.
      - .png/.jpg/.jpeg/.webp : cache-first (images change rarely).
    Bump CACHE_NAME to invalidate cached assets. */
-const CACHE_NAME = 'dpbiotech-assets-v3';
+const CACHE_NAME = 'dpbiotech-assets-v4';
 
 self.addEventListener('install', event => {
     self.skipWaiting();
@@ -26,20 +27,20 @@ self.addEventListener('fetch', event => {
     if (!isModel && !isImage) return;
 
     if (isModel) {
-        // Network-first: always try to fetch the freshest model.
+        // Stale-while-revalidate: serve the cached model instantly (instant reuse
+        // across pages), and refresh the cache from the network in the background.
         event.respondWith((async () => {
             const cache = await caches.open(CACHE_NAME);
-            try {
-                const networkResp = await fetch(event.request, { cache: 'no-store' });
+            const cached = await cache.match(event.request);
+            const networkFetch = fetch(event.request).then(networkResp => {
                 if (networkResp && networkResp.ok && networkResp.type !== 'opaque') {
                     cache.put(event.request, networkResp.clone());
                 }
                 return networkResp;
-            } catch (err) {
-                const cached = await cache.match(event.request);
-                if (cached) return cached;
-                throw err;
-            }
+            }).catch(() => null);
+            // Keep the worker alive while the background refresh completes.
+            event.waitUntil(networkFetch);
+            return cached || (await networkFetch) || Response.error();
         })());
         return;
     }

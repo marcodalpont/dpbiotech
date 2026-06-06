@@ -365,6 +365,14 @@ a:hover { opacity: 0.7; }
 .hero-stat .stat-value { font-size: 22px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.01em; line-height: 1.1; margin-bottom: 4px; }
 .hero-stat .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; }
 
+/* Small Italian flag next to the "Italy" stat */
+.it-flag {
+    display: inline-block; height: 0.8em; width: 1.2em;
+    margin-left: 8px; vertical-align: baseline; position: relative; top: 0.06em; border-radius: 2px;
+    background: linear-gradient(90deg,
+        #008C45 0 33.33%, #ffffff 33.33% 66.66%, #CE2B37 66.66% 100%);
+}
+
 .model-stage { position: relative; width: 100%; height: 620px; display: flex; align-items: center; justify-content: center; }
 .model-stage::before {
     content: ""; position: absolute; inset: 8% 6%;
@@ -1360,6 +1368,9 @@ footer {
 .tut-chip-body span { display: block; font-size: 12px; color: var(--text-secondary); line-height: 1.35; }
 </style>
 <style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
+<style>/* DPMini only: nudge account-menu Welcome pitch up */
+.account-menu-pitch .account-menu-name,
+.account-menu-pitch .account-menu-email { position: relative; top: -20px; }</style>
 </head>
 <body>
 
@@ -1492,7 +1503,7 @@ footer {
                         <div class="stat-label">HDR @ 60 fps</div>
                     </div>
                     <div class="hero-stat">
-                        <div class="stat-value">Italy</div>
+                        <div class="stat-value">Italy <span class="it-flag"></span></div>
                         <div class="stat-label">Designed &amp; Made</div>
                     </div>
                 </div>
@@ -1521,43 +1532,7 @@ footer {
 
 
 
-<section class="spec-section section-bg" id="specs">
-  <div class="container">
-      <div class="chapter-label">Datasheet — DP Mini</div>
-      <h3 class="chapter-title">Specifications.</h3>
-      <p class="chapter-intro">Optical, computational and mechanical details for the DP Mini Fusion 3D system. Configurable across three objectives and two eyepiece options to match your specialty.</p>
-
-      <div class="spec-table">
-          <div class="spec-table-grid">
-              <div class="spec-row"><div class="spec-label">Imaging</div><div class="spec-value">Fusion 3D — active stereoscopic depth from a single sensor</div></div>
-              <div class="spec-row"><div class="spec-label">Resolution</div><div class="spec-value">4K HDR @ 60 fps</div></div>
-              <div class="spec-row"><div class="spec-label">Magnification</div><div class="spec-value">5× optical + 5–10× digital zoom</div></div>
-              <div class="spec-row"><div class="spec-label">Working Distance</div><div class="spec-value">25–35 cm (configurable: 50 / 60 / 75 mm objectives)</div></div>
-              <div class="spec-row"><div class="spec-label">Illumination</div><div class="spec-value">Coaxial LED, intensity-controlled</div></div>
-              <div class="spec-row"><div class="spec-label">Latency</div><div class="spec-value">Sub-frame, real-time pipeline</div></div>
-
-              <div class="spec-row"><div class="spec-label">Compute</div><div class="spec-value">Apple Silicon (iPhone 17 Pro+ recommended)</div></div>
-              <div class="spec-row"><div class="spec-label">Voice Control</div><div class="spec-value">On-device, sub-second latency (Neural Engine)</div></div>
-              <div class="spec-row"><div class="spec-label">Smart Handle</div><div class="spec-value">Bluetooth 5.3 — joystick, buttons, touchpad</div></div>
-              <div class="spec-row"><div class="spec-label">Eyepieces</div><div class="spec-value">Screen-only · Full HD 1080p · 4K UHD OLED</div></div>
-              <div class="spec-row"><div class="spec-label">Mounting</div><div class="spec-value">Ergonomic handle · Articulated arm · Table stand</div></div>
-              <div class="spec-row"><div class="spec-label">Streaming</div><div class="spec-value">Med Connect — 4K/60 in 2D or true 3D (VR-compatible)</div></div>
-
-              <div class="spec-row"><div class="spec-label">Weight</div><div class="spec-value">2.5 kg (head unit)</div></div>
-              <div class="spec-row"><div class="spec-label">Dimensions</div><div class="spec-value">34 × 28 × 15 cm</div></div>
-              <div class="spec-row"><div class="spec-label">Power</div><div class="spec-value">100–240 V AC, USB-C PD</div></div>
-              <div class="spec-row"><div class="spec-label">Connectivity</div><div class="spec-value">Wi-Fi 6E · Bluetooth 5.3 · NDI · USB-C</div></div>
-              <div class="spec-row"><div class="spec-label">EU MDR Class</div><div class="spec-value">Class I</div></div>
-              <div class="spec-row"><div class="spec-label">Certifications</div><div class="spec-value">CE · Made in Italy</div></div>
-          </div>
-          <div class="spec-footnote">
-              Specifications are indicative and may evolve before launch. Final values, certifications and accessory compatibility will be confirmed in the released IFU and Declaration of Conformity.
-          </div>
-      </div>
-  </div>
-</section>
-
-<section class="spec-section" id="intended-use">
+<section class="spec-section section-bg" id="intended-use">
   <div class="container">
       <div class="chapter-label">Intended Use</div>
       <h3 class="chapter-title">Built for the field. Used everywhere.</h3>
@@ -1629,7 +1604,7 @@ footer {
   Each .tut-chip carries: data-src (video file), data-step, data-title, data-desc, data-dur.
   Click a chip → it loads into the big player above and highlights blue. Add/remove chips freely.
 -->
-<section class="section section-bg" id="mini-tutorials">
+<section class="section" id="mini-tutorials">
   <div class="container">
       <div class="section-header">
           <span class="eyebrow">Step by Step</span>
@@ -1699,7 +1674,7 @@ footer {
   </div>
 </section>
 
-<section class="section" id="voice-commands-section">
+<section class="section section-bg" id="voice-commands-section">
 <div class="container">
     <div class="feature-row align-top-mobile">
         <div class="feature-text text-content-padded">
@@ -1744,7 +1719,7 @@ footer {
 </div>
 </section>
 
-<section class="section section-bg">
+<section class="section">
 <div class="container">
     <div class="feature-row reverse align-top-mobile">
         <div class="feature-text text-content-padded">
@@ -1784,7 +1759,7 @@ footer {
 </div>
 </section>
 
-<section class="section" id="recording-section">
+<section class="section section-bg" id="recording-section">
 <div class="container">
     <div class="feature-row align-items-center">
         <div class="feature-text text-content-padded">
@@ -1803,7 +1778,7 @@ footer {
     </div>
 </div>
 </section>
-  <section class="section section-bg" id="handle-section">
+  <section class="section" id="handle-section">
     <div class="container">
         <div class="feature-row align-top-mobile">
             
@@ -1852,6 +1827,42 @@ footer {
 
 
 
+<section class="spec-section section-bg" id="specs">
+  <div class="container">
+      <div class="chapter-label">Datasheet — DP Mini</div>
+      <h3 class="chapter-title">Specifications.</h3>
+      <p class="chapter-intro">Optical, computational and mechanical details for the DP Mini Fusion 3D system. Configurable across three objectives and two eyepiece options to match your specialty.</p>
+
+      <div class="spec-table">
+          <div class="spec-table-grid">
+              <div class="spec-row"><div class="spec-label">Imaging</div><div class="spec-value">Fusion 3D — active stereoscopic depth from a single sensor</div></div>
+              <div class="spec-row"><div class="spec-label">Resolution</div><div class="spec-value">4K HDR @ 60 fps</div></div>
+              <div class="spec-row"><div class="spec-label">Magnification</div><div class="spec-value">5× optical + 5–10× digital zoom</div></div>
+              <div class="spec-row"><div class="spec-label">Working Distance</div><div class="spec-value">25–35 cm (configurable: 50 / 60 / 75 mm objectives)</div></div>
+              <div class="spec-row"><div class="spec-label">Illumination</div><div class="spec-value">Coaxial LED, intensity-controlled</div></div>
+              <div class="spec-row"><div class="spec-label">Latency</div><div class="spec-value">Sub-frame, real-time pipeline</div></div>
+
+              <div class="spec-row"><div class="spec-label">Compute</div><div class="spec-value">Apple Silicon (iPhone 17 Pro+ recommended)</div></div>
+              <div class="spec-row"><div class="spec-label">Voice Control</div><div class="spec-value">On-device, sub-second latency (Neural Engine)</div></div>
+              <div class="spec-row"><div class="spec-label">Smart Handle</div><div class="spec-value">Bluetooth 5.3 — joystick, buttons, touchpad</div></div>
+              <div class="spec-row"><div class="spec-label">Eyepieces</div><div class="spec-value">Screen-only · Full HD 1080p · 4K UHD OLED</div></div>
+              <div class="spec-row"><div class="spec-label">Mounting</div><div class="spec-value">Ergonomic handle · Articulated arm · Table stand</div></div>
+              <div class="spec-row"><div class="spec-label">Streaming</div><div class="spec-value">Med Connect — 4K/60 in 2D or true 3D (VR-compatible)</div></div>
+
+              <div class="spec-row"><div class="spec-label">Weight</div><div class="spec-value">2.5 kg (head unit)</div></div>
+              <div class="spec-row"><div class="spec-label">Dimensions</div><div class="spec-value">34 × 28 × 15 cm</div></div>
+              <div class="spec-row"><div class="spec-label">Power</div><div class="spec-value">100–240 V AC, USB-C PD</div></div>
+              <div class="spec-row"><div class="spec-label">Connectivity</div><div class="spec-value">Wi-Fi 6E · Bluetooth 5.3 · NDI · USB-C</div></div>
+              <div class="spec-row"><div class="spec-label">EU MDR Class</div><div class="spec-value">Class I</div></div>
+              <div class="spec-row"><div class="spec-label">Certifications</div><div class="spec-value">CE · Made in Italy</div></div>
+          </div>
+          <div class="spec-footnote">
+              Specifications are indicative and may evolve before launch. Final values, certifications and accessory compatibility will be confirmed in the released IFU and Declaration of Conformity.
+          </div>
+      </div>
+  </div>
+</section>
+
 <section class="section">
   <div class="container">
       <div class="section-header">
@@ -1874,7 +1885,7 @@ footer {
                     <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:28px; border-radius:50%; margin-right:8px;">
                     <span style="font-weight:600;">DP Biotech</span>
                 </div>
-                <p>High-performance surgical microscopes engineered in Italy. Designed for clinical workflows; built around optical precision and modern digital ergonomics.</p>
+                <p style="position:relative; top:-20px;">High-performance surgical microscopes engineered in Italy. Designed for clinical workflows; built around optical precision and modern digital ergonomics.</p>
                 <address class="footer-address">
                     <strong>Dal Pont Medical S.r.l.s</strong><br>
                     Piazza San Vito 12<br>

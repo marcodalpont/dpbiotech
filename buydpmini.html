@@ -26,18 +26,20 @@
     :root { --bg:#0a0a0a; --text:#fafafa; --muted:#a1a1aa; --line:#262626; --card:#18181b; } 
   }
   body{
-    margin:0; 
-    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-    background:var(--bg); 
+    margin:0;
+    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background:var(--bg);
     color:var(--text);
-    overflow: hidden; 
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   .container{max-width:1200px; margin:0 auto; padding:0 20px}
 
   /* Navigation Bar */
   .nav{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line)}
   .nav-inner{height:57px; display:flex; align-items:center; justify-content:space-between}
-  .logo{display:flex; gap:8px; align-items:center; font-weight:600; letter-spacing:-0.02em; font-size: 18px;}
+  .logo{display:flex; gap:8px; align-items:center; font-weight:600;}
   .nav a{color:inherit; text-decoration:none}
   .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:14px; background:transparent; color:inherit; cursor:pointer; text-decoration: none;}
   .btn.primary{background:var(--text); color:var(--bg); border-color:transparent}
@@ -374,6 +376,7 @@ footer {
     font-size: 13px;
     color: var(--text-secondary);
     transition: color 0.2s;
+    text-decoration: none;
 }
 .footer-col a:hover { color: var(--text-primary); opacity: 1; }
 .footer-bottom {
@@ -425,7 +428,7 @@ body {
     color: var(--text-primary);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     padding-top: var(--nav-height);
-    padding-bottom: 120px;
+    padding-bottom: 75px;
 }
 
 /* Layout */
