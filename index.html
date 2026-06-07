@@ -402,28 +402,6 @@ model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
 }
 .mini-bg { background: linear-gradient(180deg, var(--stage-top) 0%, var(--stage-bottom) 100%); }
 .pro-bg { background: linear-gradient(180deg, var(--stage-top) 0%, var(--stage-bottom) 100%); position: relative; }
-/* DP Pro silhouette + "Hidden until launch" caption */
-.pro-bg model-viewer {
-    filter: blur(10px) brightness(0.55) saturate(0.3) contrast(1.1);
-    transform: scale(0.8);
-    transform-origin: center;
-    pointer-events: none;
-}
-.pro-bg::after {
-    content: 'Hidden until launch';
-    position: absolute;
-    bottom: 18px; left: 50%;
-    transform: translateX(-50%);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    pointer-events: none;
-    white-space: nowrap;
-    opacity: 0.7;
-    z-index: 2;
-}
 
 /* Mobile Menu Overlay */
 .mobile-menu-overlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 150; padding: 80px 24px; transform: translateY(-100%); transition: transform 0.4s ease; display: flex; flex-direction: column; gap: 24px; }
@@ -1942,13 +1920,14 @@ footer {
                     src="dppro.glb"
                     ios-src="dppro.usdz"
                     alt="DP Pro"
+                    camera-controls
                     shadow-intensity="1"
                     environment-image="neutral"
-                    interaction-prompt="none"
-                    disable-zoom
-                    disable-pan
-                    disable-tap
                     camera-orbit="40deg 75deg 105%">
+                    <div class="model-loader" slot="progress-bar">
+                        <div class="model-loader-ring"></div>
+                        <span class="model-loader-pct">0%</span>
+                    </div>
                 </model-viewer>
             </div>
         </div>
