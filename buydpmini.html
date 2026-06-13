@@ -1651,7 +1651,7 @@ footer { display: block; }
             <h1>Build your DP Mini</h1>
             <div class="viewer-frame">
               <model-viewer id="product-viewer" src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope"
-                  camera-controls ar shadow-intensity="1" camera-orbit="150deg 75deg auto" bounds="tight" interaction-prompt="none">
+                  camera-controls ar shadow-intensity="1" camera-orbit="150deg 75deg 1m" camera-target="0.41m -0.01m -0.05m" field-of-view="16.7deg" max-field-of-view="16.7deg" bounds="tight" interaction-prompt="none">
                   <div class="model-loader" slot="progress-bar">
                       <div class="model-loader-ring"></div>
                       <span class="model-loader-pct">0%</span>
@@ -2004,6 +2004,18 @@ footer { display: block; }
     // Swap the .glb when the eyepieces option changes.
     const modelViewer = document.getElementById('product-viewer');
 
+    // Each model's body is off-center on X; aim the camera at its real center.
+    const MINI_CAMERA_TARGETS = {
+        'dpmini.glb':          '0.41m -0.01m -0.05m',
+        'dpmininooculars.glb': '0.24m -0.02m -0.01m',
+    };
+    function applyMiniCameraTarget() {
+        if (!modelViewer) return;
+        const src = (modelViewer.getAttribute('src') || '').split('/').pop();
+        const t = MINI_CAMERA_TARGETS[src];
+        if (t) modelViewer.setAttribute('camera-target', t);
+    }
+
     // --- 3D MODEL LOADER (spinner + %) ---
     if (modelViewer) {
         const mLoader = modelViewer.querySelector('.model-loader');
@@ -2016,7 +2028,8 @@ footer { display: block; }
                 else mLoader.classList.add('hide');
             }
         });
-        modelViewer.addEventListener('load', () => { if (mLoader) mLoader.classList.add('hide'); });
+        modelViewer.addEventListener('load', () => { if (mLoader) mLoader.classList.add('hide'); applyMiniCameraTarget(); });
+        applyMiniCameraTarget();
     }
 
     function updateModelViewer() {

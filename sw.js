@@ -3,9 +3,11 @@
      - .glb / .usdz : STALE-WHILE-REVALIDATE — served instantly from cache once downloaded
                       (so the same model is reused across every page with no re-download),
                       while a background fetch refreshes the cache for next time.
-     - .png/.jpg/.jpeg/.webp : cache-first (images change rarely).
+     - .png/.jpg/.jpeg/.webp : STALE-WHILE-REVALIDATE — served instantly from cache,
+                      while a background fetch refreshes the cache so an edited image
+                      shows up on the next reload (no manual cache clearing needed).
    Bump CACHE_NAME to invalidate cached assets. */
-const CACHE_NAME = 'dpbiotech-assets-v4';
+const CACHE_NAME = 'dpbiotech-assets-v6';
 
 self.addEventListener('install', event => {
     self.skipWaiting();
@@ -45,18 +47,18 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // Images — cache-first.
-    event.respondWith(
-        caches.open(CACHE_NAME).then(cache =>
-            cache.match(event.request).then(cached => {
-                if (cached) return cached;
-                return fetch(event.request).then(response => {
-                    if (response && response.ok && response.type !== 'opaque') {
-                        cache.put(event.request, response.clone());
-                    }
-                    return response;
-                }).catch(() => cached);
-            })
-        )
-    );
+    // Images — stale-while-revalidate: serve from cache instantly, refresh in the
+    // background so an edited image appears on the next reload.
+    event.respondWith((async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const cached = await cache.match(event.request);
+        const networkFetch = fetch(event.request).then(networkResp => {
+            if (networkResp && networkResp.ok && networkResp.type !== 'opaque') {
+                cache.put(event.request, networkResp.clone());
+            }
+            return networkResp;
+        }).catch(() => null);
+        event.waitUntil(networkFetch);
+        return cached || (await networkFetch) || Response.error();
+    })());
 });

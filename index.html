@@ -538,285 +538,6 @@ model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
 @media(max-width: 900px) {
     .team-grid { grid-template-columns: 1fr; gap: 60px; }
 }
-/* =========================
-   VIDEO TUTORIALS (Apple-style carousel)
-   ========================= */
-.tutorials-wrapper { position: relative; margin-top: 48px; }
-
-/* Category filter — Apple segmented pills */
-.tutorial-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 32px;
-}
-.tutorial-tab {
-    appearance: none;
-    font: inherit;
-    cursor: pointer;
-    /* Clearer edges on the unselected tabs */
-    border: 1.5px solid var(--divider-strong);
-    background: var(--bg-card);
-    color: var(--text-secondary);
-    padding: 9px 18px;
-    border-radius: 999px;
-    font-size: 13.5px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    box-shadow: var(--shadow-sm);
-    transition: background 0.35s var(--ease-out-expo), color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s var(--ease-out-expo);
-}
-.tutorial-tab:hover { color: var(--text-primary); border-color: var(--text-secondary); }
-
-/* Selected = soft tinted fill + colored word (smooth) */
-.tutorial-tab.is-active {
-    color: var(--accent);
-    font-weight: 700;
-    background: color-mix(in srgb, var(--accent) 14%, var(--bg-card));
-    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-    box-shadow: var(--shadow-sm), 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
-}
-
-/* Brand-colored words (orange = DP Mini, blue = DP Pro) */
-.tutorial-tab.tab-mini,
-.tutorial-tab.tab-mini:hover { color: #ff7a18; }
-.tutorial-tab.tab-pro,
-.tutorial-tab.tab-pro:hover { color: #2563eb; }
-/* Their selected fills use the matching brand color */
-.tutorial-tab.tab-mini.is-active {
-    color: #ff7a18;
-    background: rgba(255, 122, 24, 0.14);
-    border-color: rgba(255, 122, 24, 0.45);
-    box-shadow: var(--shadow-sm), 0 0 0 3px rgba(255, 122, 24, 0.12);
-}
-.tutorial-tab.tab-pro.is-active {
-    color: #2563eb;
-    background: rgba(37, 99, 235, 0.14);
-    border-color: rgba(37, 99, 235, 0.45);
-    box-shadow: var(--shadow-sm), 0 0 0 3px rgba(37, 99, 235, 0.12);
-}
-
-/* Horizontal scroll track */
-.tutorial-track {
-    display: flex;
-    gap: 24px;
-    margin-top: 40px;
-    padding: 8px 4px 40px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-.tutorial-track::-webkit-scrollbar { display: none; }
-
-/* Apple-style card */
-.tutorial-card {
-    flex: 0 0 78vw;
-    scroll-snap-align: center;
-    border: none;
-    border-radius: 24px;
-    overflow: hidden;
-    background: var(--bg-card);
-    box-shadow: var(--shadow-md);
-    cursor: pointer;
-    text-align: left;
-    padding: 0;
-    font: inherit;
-    color: inherit;
-    transition: transform 0.5s var(--ease-out-expo), box-shadow 0.5s var(--ease-out-expo);
-    display: flex;
-    flex-direction: column;
-}
-@media(min-width: 700px)  { .tutorial-card { flex: 0 0 calc(50% - 12px); } }
-@media(min-width: 1100px) { .tutorial-card { flex: 0 0 calc(33.333% - 16px); } }
-.tutorial-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
-.tutorial-card.is-hidden { display: none; }
-
-.tutorial-media {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    background: linear-gradient(150deg, #1e293b 0%, #0f766e 120%);
-}
-/* Glossy ambient backdrop — blurred, scaled copy fills the lateral edges */
-.tutorial-media .tut-ambient,
-.tut-stage-frame .tut-ambient {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: blur(30px) saturate(170%) brightness(0.9);
-    transform: scale(1.25);
-    z-index: 0;
-    pointer-events: none;
-}
-/* Foreground media — shown uncropped (no cut) and centered */
-.tutorial-media .tut-frame,
-.tut-stage-frame .tut-main {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    z-index: 1;
-    transition: transform 0.7s var(--ease-out-expo);
-}
-/* In cards, scale the frame up a touch so it crops slightly — less visible edge */
-.tutorial-media .tut-frame { transform: scale(1.18); }
-.tutorial-card:hover .tut-frame { transform: scale(1.23); }
-.tutorial-media .tutorial-play,
-.tutorial-media .tutorial-duration { z-index: 2; }
-
-/* Frosted glass play button */
-.tutorial-play {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    color: #fff;
-    background: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(14px) saturate(180%);
-    -webkit-backdrop-filter: blur(14px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-    transition: transform 0.4s var(--ease-out-expo), background 0.3s;
-}
-.tutorial-card:hover .tutorial-play {
-    transform: translate(-50%, -50%) scale(1.08);
-    background: rgba(255, 255, 255, 0.28);
-}
-.tutorial-play svg { margin-left: 3px; }
-
-/* Top-right badges */
-.tutorial-duration {
-    position: absolute;
-    top: 14px; right: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 10px;
-    border-radius: 999px;
-    font-size: 11.5px;
-    font-weight: 600;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}
-
-.tutorial-body { padding: 22px 24px 26px; }
-.tutorial-cat {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    margin-bottom: 8px;
-}
-/* Match the category word to the product color */
-.tutorial-card[data-category="mini"] .tutorial-cat { color: #ff7a18; }
-.tutorial-card[data-category="pro"]  .tutorial-cat { color: #2563eb; }
-.tutorial-body h3 {
-    font-size: 19px;
-    line-height: 1.25;
-    margin-bottom: 8px;
-    color: var(--text-primary);
-}
-.tutorial-body p {
-    font-size: 14px;
-    line-height: 1.55;
-    color: var(--text-secondary);
-}
-
-/* Reuse .scroll-arrow look for carousel nav */
-#tutorials .scroll-arrow { top: 50%; }
-
-@media(max-width: 700px) {
-    .tutorial-card { flex: 0 0 82vw; }
-}
-
-/* =========================
-   TUTORIAL LIGHTBOX (Apple-style modal player)
-   ========================= */
-.tut-lightbox {
-    position: fixed; inset: 0;
-    z-index: 300;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: rgba(10, 10, 15, 0.6);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.4s var(--ease-out-expo), visibility 0.4s;
-}
-.tut-lightbox.is-open { opacity: 1; visibility: visible; }
-.tut-lightbox-inner {
-    width: 100%;
-    max-width: 980px;
-    transform: scale(0.96) translateY(10px);
-    transition: transform 0.5s var(--ease-out-expo);
-}
-.tut-lightbox.is-open .tut-lightbox-inner { transform: scale(1) translateY(0); }
-/* Lightbox stage: uncropped video over a glossy ambient backdrop */
-.tut-stage-frame {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border-radius: 20px;
-    overflow: hidden;
-    background: #000;
-    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5);
-}
-.tut-lightbox-caption {
-    margin-top: 18px;
-    text-align: center;
-}
-.tut-lightbox-caption h3 { font-size: 20px; color: #fff; margin-bottom: 4px; }
-.tut-lightbox-caption p { font-size: 14px; color: rgba(255,255,255,0.7); }
-.tut-lightbox-close {
-    position: absolute;
-    top: 24px; right: 24px;
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    color: #fff;
-    background: rgba(255, 255, 255, 0.16);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: background 0.25s, transform 0.25s var(--ease-out-expo);
-}
-.tut-lightbox-close:hover { background: rgba(255, 255, 255, 0.28); transform: scale(1.08); }
-
-/* "Coming soon" state inside lightbox */
-.tut-lightbox-soon {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    color: rgba(255,255,255,0.85);
-    background: linear-gradient(150deg, #1e293b 0%, #0f766e 130%);
-    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5);
-}
-.tut-lightbox-soon span { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; }
 
 /* =========================
    SOFTWARE SECTION (Horizontal Scroll)
@@ -1297,9 +1018,11 @@ html { scroll-behavior: smooth; }
    ========================= */
 .specialty-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
 }
+@media (max-width: 900px) { .specialty-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 540px) { .specialty-grid { grid-template-columns: 1fr; } }
 .specialty-card {
     background: var(--bg-card);
     border: 1px solid var(--divider);
@@ -1818,7 +1541,10 @@ footer {
                     camera-controls
                     shadow-intensity="1"
                     environment-image="neutral"
-                    camera-orbit="155deg 75deg 110%">
+                    camera-orbit="155deg 75deg 1m"
+                    camera-target="0.41m -0.01m -0.05m"
+                    field-of-view="16.7deg"
+                    max-field-of-view="16.7deg">
                     <div class="model-loader" slot="progress-bar">
                         <div class="model-loader-ring"></div>
                         <span class="model-loader-pct">0%</span>
@@ -2046,131 +1772,44 @@ footer {
     </div>
   </section>
 
-<!-- ========== VIDEO TUTORIALS ========== -->
-<!--
-  HOW TO ADD A VIDEO:
-  On each <button class="tutorial-card"> set:
-    data-video="tutorials/your-file.mp4"   (leave empty "" to show "coming soon")
-    data-poster="tutorials/your-thumb.jpg" (optional thumbnail image)
-    data-category="mini | pro | software | workflow"  (must match a tab below)
-    data-duration="4:12"                    (optional badge text)
-  Copy a card block to add more. Categories drive the filter tabs automatically.
--->
-<section class="section" id="tutorials">
-  <div class="container-wide">
-      <div class="section-header">
-          <span class="eyebrow">Learn &amp; Master</span>
-          <h2>Video Tutorials</h2>
-          <p>Step-by-step guides to get the most out of your DP Biotech products — from first setup to advanced clinical workflows.</p>
-      </div>
-
-      <!-- Category tabs (data-filter must match card data-category, or "all") -->
-      <div class="tutorial-tabs" id="tutorial-tabs">
-          <button class="tutorial-tab is-active" data-filter="all">Trending</button>
-          <button class="tutorial-tab tab-mini" data-filter="mini">DP Mini</button>
-          <button class="tutorial-tab tab-pro" data-filter="pro">DP Pro</button>
-          <button class="tutorial-tab" data-filter="software">Software</button>
-          <button class="tutorial-tab" data-filter="workflow">Workflows</button>
-      </div>
-
-      <div class="tutorials-wrapper">
-          <button class="scroll-arrow left" id="tut-scroll-left" aria-label="Previous">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-
-          <div class="tutorial-track" id="tutorial-track">
-
-              <!-- DP MINI -->
-              <button class="tutorial-card" data-category="mini" data-video="1.mp4" data-poster="" data-duration="3:40"
-                      data-title="Getting Started with DP Mini" data-desc="Unbox, assemble and power up your DP Mini in minutes.">
-                  <div class="tutorial-media">
-                      <span class="tutorial-duration"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>3:40</span>                  </div>
-                  <div class="tutorial-body">
-                      <span class="tutorial-cat">DP Mini</span>
-                      <h3>Getting Started with DP Mini</h3>
-                      <p>Unbox, assemble and power up your DP Mini in minutes. Everything you need for your first session.</p>
-                  </div>
-              </button>
-
-              <button class="tutorial-card" data-category="mini" data-video="" data-poster="2.jpg"
-                      data-title="DP Mini: Focus &amp; Magnification" data-desc="Dial in working distance, focus and zoom for sharp results.">
-                  <div class="tutorial-media">                  </div>
-                  <div class="tutorial-body">
-                      <span class="tutorial-cat">DP Mini</span>
-                      <h3>Focus &amp; Magnification</h3>
-                      <p>Dial in working distance, focus and zoom to get sharp, balanced results every time.</p>
-                  </div>
-              </button>
-
-              <!-- DP PRO -->
-              <button class="tutorial-card" data-category="pro" data-video="3.mp4" data-poster="" data-duration="5:10"
-                      data-title="DP Pro Setup &amp; Calibration" data-desc="Position the stand, balance the arm and calibrate the optics.">
-                  <div class="tutorial-media">
-                      <span class="tutorial-duration"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>5:10</span>                  </div>
-                  <div class="tutorial-body">
-                      <span class="tutorial-cat">DP Pro</span>
-                      <h3>DP Pro Setup &amp; Calibration</h3>
-                      <p>Position the stand, balance the arm and calibrate the optics for the operating room.</p>
-                  </div>
-              </button>
-
-              <!-- SOFTWARE -->
-              <button class="tutorial-card" data-category="software" data-video="4.mp4" data-poster="" data-duration="4:02"
-                      data-title="Pairing the Med Connect App" data-desc="Connect your device and stream your view to any screen.">
-                  <div class="tutorial-media">
-                      <span class="tutorial-duration"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>4:02</span>                  </div>
-                  <div class="tutorial-body">
-                      <span class="tutorial-cat">Software</span>
-                      <h3>Pairing the Med Connect App</h3>
-                      <p>Connect your device to the Med Connect suite and stream your view to phone, tablet or desktop.</p>
-                  </div>
-              </button>
-
-              <button class="tutorial-card" data-category="software" data-video="5.mp4" data-poster="" data-duration="3:18"
-                      data-title="Med Share: Sync Across Devices" data-desc="Bridge desktop and mobile with intelligent auto-sorting.">
-                  <div class="tutorial-media">
-                      <span class="tutorial-duration"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>3:18</span>                  </div>
-                  <div class="tutorial-body">
-                      <span class="tutorial-cat">Software</span>
-                      <h3>Med Share: Sync Across Devices</h3>
-                      <p>Seamlessly bridge desktop and mobile with intelligent auto-sorting of your captures.</p>
-                  </div>
-              </button>
-
-              <!-- WORKFLOW -->
-              <button class="tutorial-card" data-category="workflow" data-video="6.mp4" data-poster="" data-duration="6:24"
-                      data-title="Advanced Clinical Workflows" data-desc="Capture, annotate and share cases with patients and colleagues.">
-                  <div class="tutorial-media">
-                      <span class="tutorial-duration"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>6:24</span>                  </div>
-                  <div class="tutorial-body">
-                      <span class="tutorial-cat">Workflows</span>
-                      <h3>Advanced Clinical Workflows</h3>
-                      <p>Capture, annotate and share cases with patients and colleagues using the full software ecosystem.</p>
-                  </div>
-              </button>
-
-          </div>
-
-          <button class="scroll-arrow right" id="tut-scroll-right" aria-label="Next">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-      </div>
+<!-- ========== BUILT WITH ========== -->
+<style>
+.builtwith-section { background: #fff; }
+.builtwith-section .section-header { max-width: 900px; margin-bottom: 64px; }
+.builtwith-section .section-header h2 { white-space: nowrap; }
+.builtwith-logos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); justify-items: center; align-items: center; gap: 44px clamp(24px, 3vw, 40px); width: min(1180px, 92vw); max-width: none; margin-left: 50%; transform: translateX(-50%); padding: 28px 0; }
+.builtwith-logos img { height: clamp(60px, 7.5vw, 100px); width: auto; object-fit: contain; transition: transform 0.25s ease; }
+.builtwith-logos img.logo-apple, .builtwith-logos img.logo-amuse { height: auto; }
+.builtwith-logos img.logo-amuse { width: calc(clamp(95px, 11vw, 150px) * 1.25); max-height: calc(clamp(60px, 7.5vw, 100px) * 1.25); }
+.builtwith-logos img.logo-apple { width: calc(clamp(95px, 11vw, 150px) * 0.984555); max-height: clamp(60px, 7.5vw, 100px); transform: translate(15px, -3px); }
+.builtwith-logos img.logo-cubemars { transform: translateX(10px); }
+.builtwith-logos img.logo-blackmagic { height: calc(clamp(60px, 7.5vw, 100px) * 0.765); transform: translateY(4px); }
+.builtwith-logos img.logo-jlcpcb { height: calc(clamp(60px, 7.5vw, 100px) * 0.90); }
+.builtwith-logos img.logo-cloom { height: calc(clamp(60px, 7.5vw, 100px) * 1.0925); }
+.builtwith-logos img.logo-craftcloud { height: calc(clamp(60px, 7.5vw, 100px) * 0.80); }
+.builtwith-logos img.logo-edmund { height: calc(clamp(60px, 7.5vw, 100px) * 1.20); }
+.builtwith-logos img:hover { transform: translateY(-3px); }
+.builtwith-logos img.logo-apple:hover { transform: translateY(-8px); }
+@media (max-width: 760px) { .builtwith-section .section-header h2 { white-space: normal; } .builtwith-logos { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 16px; } .builtwith-logos img { height: 55px; } .builtwith-logos img.logo-apple, .builtwith-logos img.logo-amuse { width: 100px; height: auto; max-height: 55px; transform: none; } .builtwith-logos img.logo-blackmagic { height: 47px; } .builtwith-logos img.logo-edmund { height: 67px; } }
+</style>
+<section class="section builtwith-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Components &amp; Technology</span>
+      <h2>Built with the best in the industry</h2>
+    </div>
+    <div class="builtwith-logos">
+      <img src="apple-logo-cropped.png" alt="Apple" class="logo-apple">
+      <img src="Blackmagic_logo.jpg" alt="Blackmagic Design" class="logo-blackmagic">
+      <img src="Edmund%20Optics%20logo.png" alt="Edmund Optics" class="logo-edmund">
+      <img src="JLCPCB.jpg" alt="JLCPCB" class="logo-jlcpcb">
+      <img src="cubemarslogo.png" alt="Cubemars" class="logo-cubemars">
+      <img src="amuselogo.png" alt="Amuse" class="logo-amuse">
+      <img src="cloomtechlogo.png" alt="Cloomtech" class="logo-cloom">
+      <img src="craftcloudlogo.png" alt="Craftcloud" class="logo-craftcloud">
+    </div>
   </div>
 </section>
-
-<!-- ========== TUTORIAL LIGHTBOX PLAYER ========== -->
-<div class="tut-lightbox" id="tut-lightbox" role="dialog" aria-modal="true" aria-label="Video player">
-    <button class="tut-lightbox-close" id="tut-lightbox-close" aria-label="Close">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg>
-    </button>
-    <div class="tut-lightbox-inner">
-        <div id="tut-lightbox-stage"><!-- video or "coming soon" injected here --></div>
-        <div class="tut-lightbox-caption">
-            <h3 id="tut-lightbox-title"></h3>
-            <p id="tut-lightbox-desc"></p>
-        </div>
-    </div>
-</div>
 
 <section class="section section-bg" id="team">
   <div class="container">
@@ -2218,6 +1857,7 @@ footer {
       </div>
   </div>
 </section>
+
 
 <!-- ========== FAQ ========== -->
 <section class="section faq-section" id="faq">
@@ -2357,7 +1997,6 @@ footer {
                     <li><a href="contactus.html">Service &amp; Repair (RMA)</a></li>
                     <li><a href="#">Downloads &amp; Manuals</a></li>
                     <li><a href="#">Instructions for Use (IFU)</a></li>
-                    <li><a href="#tutorials">Video Tutorials</a></li>
                     <li><a href="#faq">FAQ</a></li>
                 </ul>
             </div>
@@ -2693,117 +2332,6 @@ footer {
         updateArrows();
     }
 
-    /* ===== VIDEO TUTORIALS: tabs, carousel arrows, lightbox ===== */
-    (function () {
-        const track = document.getElementById('tutorial-track');
-        if (!track) return;
-
-        const tabs = Array.from(document.querySelectorAll('#tutorial-tabs .tutorial-tab'));
-        const cards = Array.from(track.querySelectorAll('.tutorial-card'));
-        const tLeft = document.getElementById('tut-scroll-left');
-        const tRight = document.getElementById('tut-scroll-right');
-
-        // --- Arrow visibility ---
-        const updateTutArrows = () => {
-            const buffer = 5;
-            const maxScroll = track.scrollWidth - track.clientWidth;
-            const noScroll = maxScroll <= buffer;
-            tLeft.classList.toggle('is-hidden', noScroll || track.scrollLeft <= buffer);
-            tRight.classList.toggle('is-hidden', noScroll || track.scrollLeft >= maxScroll - buffer);
-        };
-        const step = () => {
-            const card = track.querySelector('.tutorial-card:not(.is-hidden)');
-            return card ? card.offsetWidth + 24 : 320;
-        };
-        tLeft.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
-        tRight.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
-        track.addEventListener('scroll', updateTutArrows);
-        window.addEventListener('resize', updateTutArrows);
-
-        // --- Category filtering ---
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('is-active'));
-                tab.classList.add('is-active');
-                const filter = tab.dataset.filter;
-                cards.forEach(card => {
-                    const show = filter === 'all' || card.dataset.category === filter;
-                    card.classList.toggle('is-hidden', !show);
-                });
-                track.scrollTo({ left: 0, behavior: 'smooth' });
-                updateTutArrows();
-            });
-        });
-
-        // --- Lightbox player ---
-        const box = document.getElementById('tut-lightbox');
-        const stage = document.getElementById('tut-lightbox-stage');
-        const lbTitle = document.getElementById('tut-lightbox-title');
-        const lbDesc = document.getElementById('tut-lightbox-desc');
-        const closeBtn = document.getElementById('tut-lightbox-close');
-
-        const openLightbox = (card) => {
-            const src = card.dataset.video;
-            const poster = card.dataset.poster || '';
-            lbTitle.textContent = card.dataset.title || '';
-            lbDesc.textContent = card.dataset.desc || '';
-            if (src) {
-                // Uncropped video over a blurred ambient backdrop (no black bars / no cut)
-                stage.innerHTML =
-                    '<div class="tut-stage-frame">' +
-                        '<video class="tut-ambient" src="' + src + '" muted autoplay loop playsinline></video>' +
-                        '<video class="tut-main" src="' + src + '" controls autoplay playsinline' +
-                            (poster ? ' poster="' + poster + '"' : '') + '></video>' +
-                    '</div>';
-            } else if (poster) {
-                // Image-only entry: show the picture uncropped over the ambient backdrop
-                stage.innerHTML =
-                    '<div class="tut-stage-frame">' +
-                        '<img class="tut-ambient" src="' + poster + '" alt="">' +
-                        '<img class="tut-main" src="' + poster + '" alt="' + (card.dataset.title || '') + '">' +
-                    '</div>';
-            } else {
-                stage.innerHTML =
-                    '<div class="tut-lightbox-soon">' +
-                    '<span class="tutorial-play" style="position:static;transform:none;">' +
-                    '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>' +
-                    '<span>Video coming soon</span></div>';
-            }
-            box.classList.add('is-open');
-            document.body.classList.add('no-scroll');
-        };
-        const closeLightbox = () => {
-            box.classList.remove('is-open');
-            document.body.classList.remove('no-scroll');
-            stage.innerHTML = ''; // stop & unload any playing video
-        };
-
-        cards.forEach(card => {
-            const media = card.querySelector('.tutorial-media');
-            const poster = card.dataset.poster;
-            const video = card.dataset.video;
-            if (poster) {
-                // Poster image: ambient blurred copy + uncropped foreground
-                media.insertAdjacentHTML('afterbegin',
-                    '<img class="tut-ambient" src="' + poster + '" alt="">' +
-                    '<img class="tut-frame" src="' + poster + '" alt="">');
-            } else if (video) {
-                // No poster: show the video's first frame (#t=0.1 seeks to it)
-                const frameSrc = video + '#t=0.1';
-                media.insertAdjacentHTML('afterbegin',
-                    '<video class="tut-ambient" src="' + frameSrc + '" muted preload="metadata" playsinline></video>' +
-                    '<video class="tut-frame" src="' + frameSrc + '" muted preload="metadata" playsinline></video>');
-            }
-            card.addEventListener('click', () => openLightbox(card));
-        });
-        closeBtn.addEventListener('click', closeLightbox);
-        box.addEventListener('click', (e) => { if (e.target === box) closeLightbox(); });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && box.classList.contains('is-open')) closeLightbox();
-        });
-
-        updateTutArrows();
-    })();
   </script>
 <script src="waitlist-modal.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
