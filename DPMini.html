@@ -958,7 +958,7 @@ footer {
     display: flex; flex-direction: column; gap: 24px;
 }
 .mobile-menu-overlay.is-open { transform: translateY(0); }
-.mobile-link { font-size: 24px; font-weight: 600; }
+.mobile-link { font-size: 24px; font-weight: 600; border-bottom: 1px solid var(--divider); padding-bottom: 16px; }
 
 .hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-primary); }
 @media(max-width: 960px) { .hamburger { display: block; } }
@@ -1064,7 +1064,7 @@ footer {
 .cart-sidebar .cart-product-subtitle {
     font-size: 12px !important;
     color: var(--text-secondary, var(--muted, #6b6b78)) !important;
-    margin: -25px 0 50px 0 !important;
+    margin: 0 0 12px 0 !important;
     font-weight: 400 !important; line-height: 1.45;
 }
 .cart-sidebar .cart-product-card > * { width: auto !important; }
@@ -1083,7 +1083,7 @@ footer {
 .cart-sidebar .cart-product-subtitle {
     font-size: 12px !important;
     color: var(--text-secondary, var(--muted, #6b6b78)) !important;
-    margin: -25px 0 30px 0 !important;
+    margin: 0 0 12px 0 !important;
     font-weight: 400 !important; line-height: 1.45;
 }
 .cart-sidebar .cart-product-price {
@@ -1440,7 +1440,9 @@ footer {
 }
 .story-sticky {
     position: sticky; top: 0;
-    height: 100vh; height: 100svh;
+    /* dvh follows Safari's toolbar as it shrinks and grows, so the stage always reaches the bottom of the
+       screen (with svh a black band opened under the text once the toolbar shrank) */
+    height: 100vh; height: 100svh; height: 100dvh;
     overflow: hidden;
     /* same charcoal studio as the video */
     background: linear-gradient(to bottom, #0b0b0d 0%, #16171a 55%, #0c0c0e 100%);
@@ -2063,10 +2065,27 @@ body.story-on .nav {
 
 <!-- MOBILE MENU -->
 <div class="mobile-menu-overlay" id="mobile-menu">
-    <a href="#" class="mobile-link">Microscopes</a>
-    <a href="#" class="mobile-link">Software</a>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <span class="logo">DP Biotech</span>
+        <button class="btn btn-ghost" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
+    </div>
+    <a href="DPMini.html" class="mobile-link">DP Mini</a>
+    <a href="DPPro.html" class="mobile-link">DP Pro</a>
+    <a href="all-models.html" class="mobile-link">All Models</a>
     <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
-    <button class="btn btn-primary" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
+    <div class="mobile-account">   <!-- styled and kept in sync with the sign-in state by customer-account-nav.js -->
+        <button type="button" class="mobile-account-toggle" aria-expanded="false" aria-controls="mobile-account-links"
+                onclick="const o = this.getAttribute('aria-expanded') !== 'true'; this.setAttribute('aria-expanded', o); document.getElementById('mobile-account-links').hidden = !o;">
+            <span>Account</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mobile-account-links" id="mobile-account-links" hidden>
+            <a href="loginprofile.html" id="auth-btn-mobile">Log in</a>
+            <a href="loginprofile.html#signup" id="signup-link-mobile">Sign up</a>
+            <a href="account.html" id="account-link-mobile" hidden>My account</a>
+            <a href="#" id="signout-link-mobile" data-signout hidden>Sign out</a>
+        </div>
+    </div>
 </div>
 
 <!-- ========== SCROLL STORY ==========
@@ -2568,6 +2587,7 @@ body.story-on .nav {
     to { opacity: 1; transform: translateY(0); }
 }
 h1, p, .hero-cta, .model-stage { transform: translateY(20px); }
+.cart-sidebar p { transform: none; }   /* the fade-up offset above is not meant for the bag's text */
 </style>
 
 <script>
@@ -3673,6 +3693,6 @@ mqMobile.addEventListener('change', layout);
 layout();
 
 </script>
-<script type="module" src="customer-account-nav.js"></script>
+<script type="module" src="customer-account-nav.js?v=3"></script>
 </body>
 </html>

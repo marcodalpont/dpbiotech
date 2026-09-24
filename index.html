@@ -408,6 +408,19 @@ model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
 .mobile-menu-overlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 150; padding: 80px 24px; transform: translateY(-100%); transition: transform 0.4s ease; display: flex; flex-direction: column; gap: 24px; }
 .mobile-menu-overlay.is-open { transform: translateY(0); }
 .mobile-link { font-size: 24px; font-weight: 600; border-bottom: 1px solid var(--divider); padding-bottom: 16px; }
+/* "Account" in the phone menu opens to Log in / Sign up (or My account / Sign out); same as customer-account-nav.js */
+.mobile-account-toggle {
+    display: flex; justify-content: space-between; align-items: center; width: 100%;
+    background: none; border: 0; border-bottom: 1px solid var(--divider);
+    padding: 0 0 16px; margin: 0;
+    font: inherit; font-size: 24px; font-weight: 600; color: inherit; text-align: left; cursor: pointer;
+}
+.mobile-account-toggle svg { width: 18px; height: 18px; color: var(--text-secondary); transition: transform 0.25s ease; }
+.mobile-account-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+.mobile-account-links { display: flex; flex-direction: column; gap: 16px; padding: 18px 0 4px 2px; }
+.mobile-account-links[hidden], .mobile-account-links a[hidden] { display: none; }
+.mobile-account-links a { font-size: 18px; font-weight: 500; color: var(--text-secondary); }
+.mobile-account-links #signout-link-mobile { color: #ff3b30; }
 
 /* Account menu dropdown — shows when user is signed in */
 .account-menu { position: relative; display: inline-block; }
@@ -1222,7 +1235,12 @@ footer {
 .pill-btn.is-primary { background: #0071e3; border-color: #0071e3; color: #fff; }
 .pill-btn.is-primary:hover { background: #0077ed; border-color: #0077ed; }
 .pill-row { display: flex; gap: 14px; flex-wrap: wrap; }
-.feature-text .product-price { font-size: 17px; font-weight: 600; color: var(--text-primary); margin: -8px 0 22px; }
+/* the model column: the 3D stage and, right under it, price and buttons */
+.feature-media { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
+.feature-media .feature-visual { flex: none; width: 100%; }
+.feature-cta { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.feature-cta .product-price { font-size: 17px; font-weight: 600; color: var(--text-primary); margin: 0; }
+.feature-cta .pill-row { justify-content: center; }
 @media (max-width: 900px) { .pill-row { justify-content: center; } }
 .check-icon { background: rgba(0, 113, 227, 0.1); color: #0071e3; }
 .group-header .group-eyebrow { border: 0; padding: 0; color: var(--text-primary); letter-spacing: 0.3em; }
@@ -1319,6 +1337,15 @@ footer {
 #software .scroll-arrow { background: rgba(58, 58, 60, 0.85); color: #f5f5f7; border-color: rgba(255, 255, 255, 0.1); }
 #software .scroll-arrow:hover { background: rgba(72, 72, 74, 0.95); }
 #software .duo-img { box-shadow: 0 20px 44px -20px rgba(0, 0, 0, 0.7); }
+.software-duo { padding-bottom: 8px; }
+.duo-dots { display: flex; justify-content: center; gap: 8px; margin-top: 22px; }
+.duo-dots button {
+    width: 22px; height: 4px; padding: 0; border: 0; border-radius: 2px;
+    background: rgba(255, 255, 255, 0.22); cursor: pointer;
+    transition: background 0.25s ease, width 0.25s ease;
+}
+.duo-dots button.is-active { width: 36px; background: #f5f5f7; }
+.duo-dots button:focus-visible { outline: 2px solid #2997ff; outline-offset: 3px; }
 .duo-visual { margin-top: 32px; padding: 0 0 44px; align-items: flex-start; }   /* every picture the same distance under its text */
 .duo-visual > * { margin-bottom: 0 !important; }          /* the pictures had their own bottom margins, all different */
 @media (min-width: 901px) {
@@ -1379,7 +1406,7 @@ footer {
 
 /* ---- Tablets and phones: the tiles turn into compact rows (icon or photo on the left), so the lists don't run tall ---- */
 @media (max-width: 900px) {
-    .feature-row .feature-visual { order: -1; }                 /* the 3D model before the text */
+    .feature-row .feature-media { order: -1; width: 100%; }      /* the 3D model, price and buttons before the text */
     .specialty-grid, .pro-next-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .specialty-card, .pro-next-card {
         display: grid; grid-template-columns: 36px minmax(0, 1fr); column-gap: 14px; align-content: start;
@@ -1740,10 +1767,19 @@ footer { background: var(--bg-secondary); }
     <a href="DPPro.html" class="mobile-link">DP Pro</a>
     <a href="all-models.html" class="mobile-link">All Models</a>
     <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
-    <a href="loginprofile.html" id="auth-btn-mobile" class="mobile-link">Log in</a>
-    <a href="loginprofile.html#signup" id="signup-link-mobile" class="mobile-link">Sign up</a>
-    <a href="account.html" id="account-link-mobile" class="mobile-link" hidden>My account</a>
-    <a href="#" id="signout-link-mobile" class="mobile-link" data-signout hidden style="color:#b91c1c;">Sign out</a>
+    <div class="mobile-account">
+        <button type="button" class="mobile-account-toggle" aria-expanded="false" aria-controls="mobile-account-links"
+                onclick="const o = this.getAttribute('aria-expanded') !== 'true'; this.setAttribute('aria-expanded', o); document.getElementById('mobile-account-links').hidden = !o;">
+            <span>Account</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mobile-account-links" id="mobile-account-links" hidden>
+            <a href="loginprofile.html" id="auth-btn-mobile">Log in</a>
+            <a href="loginprofile.html#signup" id="signup-link-mobile">Sign up</a>
+            <a href="account.html" id="account-link-mobile" hidden>My account</a>
+            <a href="#" id="signout-link-mobile" data-signout hidden>Sign out</a>
+        </div>
+    </div>
 </div>
 
 <section class="hero" id="home">
@@ -1928,12 +1964,8 @@ footer { background: var(--bg-secondary); }
                     <li><span class="check-icon">✓</span> Compact, portable design</li>
                     <li><span class="check-icon">✓</span> AR/MR Integration</li>
                 </ul>
-                <p class="product-price">From €31.990 excl. VAT</p>
-                <div class="pill-row">
-                    <a href="DPMini.html" class="pill-btn is-primary">Learn more</a>
-                    <a href="buydpmini.html" class="pill-btn">Buy</a>
-                </div>
             </div>
+            <div class="feature-media">
             <div class="feature-visual mini-bg">
                 <model-viewer
                     src="dpmini.glb"
@@ -1952,6 +1984,14 @@ footer { background: var(--bg-secondary); }
                     </div>
                 </model-viewer>
             </div>
+            <div class="feature-cta">
+                <p class="product-price">From €31.990 excl. VAT</p>
+                <div class="pill-row">
+                    <a href="DPMini.html" class="pill-btn is-primary">Learn more</a>
+                    <a href="buydpmini.html" class="pill-btn">Buy</a>
+                </div>
+            </div>
+            </div><!-- /feature-media -->
         </div>
     </div>
 </section>
@@ -2034,11 +2074,8 @@ footer { background: var(--bg-secondary); }
                     <li><span class="check-icon">✓</span> Articulated extensible arm</li>
                     <li><span class="check-icon">✓</span> AI Surgical Guidance</li>
                 </ul>
-                <div class="pill-row">
-                    <a href="DPPro.html" class="pill-btn is-primary">Learn more</a>
-                    <button type="button" class="pill-btn" data-open-waitlist>Join the waitlist</button>
-                </div>
             </div>
+            <div class="feature-media">
             <div class="feature-visual pro-bg">
                  <model-viewer
                     src="dppro.glb"
@@ -2055,6 +2092,13 @@ footer { background: var(--bg-secondary); }
                     </div>
                 </model-viewer>
             </div>
+            <div class="feature-cta">
+                <div class="pill-row">
+                    <a href="DPPro.html" class="pill-btn is-primary">Learn more</a>
+                    <button type="button" class="pill-btn" data-open-waitlist>Join the waitlist</button>
+                </div>
+            </div>
+            </div><!-- /feature-media -->
         </div>
     </div>
 </section>
@@ -2172,6 +2216,8 @@ footer { background: var(--bg-secondary); }
                 </svg>
             </button>
         </div>
+        <!-- one dash per app: shows the row scrolls sideways, and where you are in it -->
+        <div class="duo-dots" id="software-dots" role="group" aria-label="Apps"></div>
     </div>
   </section>
 
@@ -2701,6 +2747,30 @@ footer { background: var(--bg-secondary); }
       });
   });
   const container = document.getElementById('software-container');
+    // dashes under the apps: one per card, the ones in view are lit; a click brings that card into view
+    const dotsRow = document.getElementById('software-dots');
+    if (container && dotsRow) {
+        const cards = [...container.querySelectorAll('.duo-card')];
+        const dots = cards.map((card, i) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.setAttribute('aria-label', card.querySelector('h3')?.textContent || 'App ' + (i + 1));
+            b.addEventListener('click', () => card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }));
+            dotsRow.appendChild(b);
+            return b;
+        });
+        const lightDots = () => {
+            const box = container.getBoundingClientRect();
+            cards.forEach((card, i) => {
+                const r = card.getBoundingClientRect();
+                const seen = Math.min(r.right, box.right) - Math.max(r.left, box.left);
+                dots[i].classList.toggle('is-active', seen > r.width * 0.6);
+            });
+        };
+        container.addEventListener('scroll', lightDots, { passive: true });
+        window.addEventListener('resize', lightDots);
+        lightDots();
+    }
     const leftBtn = document.getElementById('scroll-left');
     const rightBtn = document.getElementById('scroll-right');
 

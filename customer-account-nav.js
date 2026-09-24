@@ -3,6 +3,9 @@
 //  Drop-in script that replaces the "Licensing" nav button with the
 //  unified Account dropdown (same look as index.html). Handles Firebase
 //  Auth state (logged-out vs logged-in), dropdown open/close, sign-out.
+//  It also gives the phone menu (☰, #mobile-menu) the same content on every
+//  page: the products, Company & Support, and an "Account" row that opens to
+//  Log in / Sign up, or My account / Sign out once signed in.
 //
 //  Usage: <script type="module" src="customer-account-nav.js"></script>
 // ════════════════════════════════════════════════════════════════════
@@ -93,8 +96,67 @@ if (!document.getElementById("customer-account-nav-css")) {
       .account-menu-signout:hover { background: rgba(239, 68, 68, 0.15); }
     }
     .account-menu[hidden] { display: none; }
+
+    /* phone menu (☰) */
+    #mobile-menu .mobile-menu-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    #mobile-menu .mobile-menu-head .btn {
+      display: inline-flex; align-items: center; padding: 8px 16px;
+      background: transparent; color: inherit;
+      border: 1px solid var(--divider-strong, rgba(0,0,0,0.14)); border-radius: 999px;
+      font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    #mobile-menu .mobile-link { border-bottom: 1px solid var(--divider, rgba(0,0,0,0.08)); padding-bottom: 16px; }
+    .mobile-account-toggle {
+      display: flex; justify-content: space-between; align-items: center; width: 100%;
+      background: none; border: 0; border-bottom: 1px solid var(--divider, rgba(0,0,0,0.08));
+      padding: 0 0 16px; margin: 0;
+      font: inherit; font-size: 24px; font-weight: 600; color: inherit; text-align: left; cursor: pointer;
+    }
+    .mobile-account-toggle svg { width: 18px; height: 18px; color: var(--text-secondary, #6e6e73); transition: transform 0.25s ease; }
+    .mobile-account-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .mobile-account-links { display: flex; flex-direction: column; gap: 16px; padding: 18px 0 4px 2px; }
+    .mobile-account-links[hidden], .mobile-account-links a[hidden] { display: none; }
+    .mobile-account-links a { font-size: 18px; font-weight: 500; color: var(--text-secondary, #6e6e73); text-decoration: none; }
+    .mobile-account-links #signout-link-mobile { color: #ff3b30; }
   `;
   document.head.appendChild(style);
+}
+
+// ── Phone menu (☰): the same content on every page ─────────────────
+const MOBILE_MENU_HTML = `
+  <div class="mobile-menu-head">
+    <span class="logo">DP Biotech</span>
+    <button class="btn btn-ghost" type="button" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
+  </div>
+  <a href="DPMini.html" class="mobile-link">DP Mini</a>
+  <a href="DPPro.html" class="mobile-link">DP Pro</a>
+  <a href="all-models.html" class="mobile-link">All Models</a>
+  <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
+  <div class="mobile-account">
+    <button type="button" class="mobile-account-toggle" aria-expanded="false" aria-controls="mobile-account-links"
+            onclick="const o = this.getAttribute('aria-expanded') !== 'true'; this.setAttribute('aria-expanded', o); document.getElementById('mobile-account-links').hidden = !o;">
+      <span>Account</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mobile-account-links" id="mobile-account-links" hidden>
+      <a href="loginprofile.html" id="auth-btn-mobile">Log in</a>
+      <a href="loginprofile.html#signup" id="signup-link-mobile">Sign up</a>
+      <a href="account.html" id="account-link-mobile" hidden>My account</a>
+      <a href="#" id="signout-link-mobile" data-signout hidden>Sign out</a>
+    </div>
+  </div>`;
+
+function mountMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  if (!menu) return;
+  if (!menu.querySelector('.mobile-account')) menu.innerHTML = MOBILE_MENU_HTML;
+  onAuthStateChanged(auth, (user) => {
+    const show = (id, on) => { const el = document.getElementById(id); if (el) el.hidden = !on; };
+    show('auth-btn-mobile', !user);
+    show('signup-link-mobile', !user);
+    show('account-link-mobile', !!user);
+    show('signout-link-mobile', !!user);
+  });
 }
 
 // ── Build the dropdown HTML ─────────────────────────────────────────
@@ -275,7 +337,8 @@ function boot() {
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", boot);
+  document.addEventListener("DOMContentLoaded", () => { mountMobileMenu(); boot(); });
 } else {
+  mountMobileMenu();
   boot();
 }
