@@ -4,15 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-<link rel="apple-touch-icon" href="favicon-192.png"><title>Buy DP Mini - DP Biotech</title>
-<script>
-    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
-      window.location.href = 'login.html';
-    }
-  </script>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=2">
+<link rel="apple-touch-icon" href="favicon-192.png?v=2"><title>Buy DP Mini - DP Biotech</title>
+<script src="gate.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -441,7 +437,9 @@ footer {
     --apple-blue: #0071e3;
     --apple-blue-soft: rgba(0, 113, 227, 0.05);
     --apple-blue-ring: rgba(0, 113, 227, 0.18);
+    --viewer-glow: rgba(255, 255, 255, 0.85);
 }
+@media (prefers-color-scheme: dark) { :root { --viewer-glow: rgba(255, 255, 255, 0.05); } }
 body {
     overflow-x: hidden;
     overflow-y: auto;
@@ -460,6 +458,8 @@ body {
     padding-top: 32px;
     align-items: start;
 }
+/* the columns may shrink below their content: the thumbnail row scrolls instead of widening the page */
+.config-layout > * { min-width: 0; }
 @media(max-width: 999px) {
     .config-layout {
         grid-template-columns: 1fr;
@@ -509,7 +509,7 @@ body {
     border-radius: 24px;
     border: 1px solid var(--divider);
     background:
-        radial-gradient(ellipse 95% 75% at 50% 5%, rgba(255, 122, 24, 0.16) 0%, transparent 75%),
+        radial-gradient(ellipse 95% 75% at 50% 5%, var(--viewer-glow) 0%, transparent 75%),
         var(--bg-secondary);
     box-shadow: 0 1px 3px rgba(10,10,15,0.04);
     overflow: hidden;
@@ -580,8 +580,8 @@ body {
 .hg-thumb-model {
     width: 100%; height: 100%;
     display: grid; place-items: center;
-    background: linear-gradient(135deg, rgba(255,122,24,0.18), rgba(255,59,48,0.08));
-    color: #ff7a18;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
 }
 .hg-thumb-tag {
     position: absolute; bottom: 4px; right: 4px;
@@ -735,6 +735,7 @@ select.custom-select:focus {
     box-shadow: none;
     transition: background 0.2s ease, opacity 0.2s ease;
 }
+#addToCartBtn { white-space: nowrap; flex-shrink: 0; }
 #addToCartBtn:hover {
     background: #0077ed;
     opacity: 1;
@@ -785,12 +786,12 @@ aside { scroll-behavior: smooth; }
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--mini-accent);
-    background: var(--mini-accent-soft);
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
     padding: 4px 8px;
     border-radius: 999px;
 }
-.group-tag.optional { color: var(--mini-accent); background: var(--mini-accent-soft); }
+.group-tag.optional { color: var(--text-secondary); background: var(--bg-secondary); }
 
 /* Add-on (checkbox) choices */
 .addon-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--bg-card); }
@@ -845,207 +846,38 @@ aside { scroll-behavior: smooth; }
 }
 .addon-choice .price-delta { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; }
 
-/* Engraving inline summary in the addon row */
-.engraving-edit-btn {
-    display: inline-flex;
-    align-items: center;
-    margin-top: 8px;
-    background: none;
-    border: none;
-    padding: 0;
-    color: var(--apple-blue);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-}
-.engraving-edit-btn:hover { text-decoration: underline; }
-.engraving-edit-btn[hidden] { display: none; }
-.has-engraving #engraving-summary { white-space: pre-line; }
-
-/* Engraving Modal */
-.engraving-backdrop {
-    position: fixed; inset: 0;
-    background: rgba(10,10,15,0.42);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    opacity: 0; visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    z-index: 300;
-}
-.engraving-backdrop.is-visible { opacity: 1; visibility: visible; }
-
-.engraving-modal {
-    position: fixed; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
-    z-index: 301;
-    opacity: 0; visibility: hidden;
-    transition: opacity 0.35s ease, visibility 0.35s ease;
-}
-.engraving-modal.is-open { opacity: 1; visibility: visible; }
-.engraving-card {
-    width: 100%;
-    max-width: 540px;
-    background: var(--bg-card);
-    border-radius: 24px;
-    padding: 36px 36px 28px;
-    box-shadow: 0 30px 80px rgba(10,10,15,0.30), 0 8px 24px rgba(10,10,15,0.10);
-    border: 1px solid var(--divider);
-    transform: translateY(12px) scale(0.98);
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    position: relative;
-    max-height: calc(100vh - 48px);
-    overflow-y: auto;
-}
-.engraving-modal.is-open .engraving-card { transform: translateY(0) scale(1); }
-@media(max-width: 600px) { .engraving-card { padding: 28px 22px 22px; border-radius: 20px; } }
-
-.engraving-close {
-    position: absolute;
-    top: 16px; right: 16px;
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    border: none;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    font-size: 22px;
-    line-height: 1;
-    cursor: pointer;
+/* Mounting: the included DP Stand (not a choice) and its stepper for extra stands */
+.addon-choice.is-included { cursor: default; align-items: flex-start; flex-wrap: wrap; row-gap: 0; background: var(--bg-secondary); }
+.addon-choice.is-included:hover { border-color: var(--divider); }
+.included-check {
+    width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px;
+    border-radius: 50%; background: var(--apple-blue); color: #fff;
     display: grid; place-items: center;
-    transition: background 0.2s;
 }
-.engraving-close:hover { background: rgba(10,10,15,0.08); }
-
-.engraving-header {
-    text-align: center;
-    margin-bottom: 24px;
-    padding: 0 12px;
+.included-check svg { width: 12px; height: 12px; }
+.addon-choice.is-included .price-delta { color: var(--text-secondary); }
+.stand-extra {
+    flex-basis: 100%;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    margin: 14px 0 0 36px; padding-top: 12px;       /* under the text, past the check */
+    border-top: 1px solid var(--divider);
+    font-size: 13px; color: var(--text-primary);
 }
-.engraving-eyebrow {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
-}
-.engraving-header h3 {
-    font-size: clamp(22px, 2.6vw, 28px);
-    font-weight: 600;
-    letter-spacing: -0.018em;
-    color: var(--text-primary);
-    margin: 0 0 8px;
-}
-.engraving-header p {
-    font-size: 14px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    margin: 0;
-}
-
-/* Stage with metallic plate preview */
-.engraving-stage {
-    margin-bottom: 22px;
-    padding: 22px;
-    border-radius: 18px;
-    background:
-        radial-gradient(ellipse 90% 70% at 50% 5%, rgba(255, 122, 24, 0.05) 0%, transparent 70%),
-        var(--bg-secondary);
-    border: 1px solid var(--divider);
-}
-.engraving-plate {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 90px;
-    padding: 18px 24px;
-    border-radius: 12px;
-    background: linear-gradient(180deg, #f8f8fa 0%, #e9e9ee 100%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(10,10,15,0.06);
-    border: 1px solid rgba(10,10,15,0.08);
-}
-@media (prefers-color-scheme: dark) {
-    .engraving-plate {
-        background: linear-gradient(180deg, #2a2a30 0%, #1c1c20 100%);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.4);
-        border-color: rgba(255,255,255,0.05);
-    }
-}
-.engraving-preview {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: clamp(20px, 2.2vw, 26px);
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: rgba(10,10,15,0.55);
-    text-align: center;
-    word-break: break-word;
-    line-height: 1.3;
-    transition: color 0.2s;
-}
-@media (prefers-color-scheme: dark) {
-    .engraving-preview { color: rgba(245,245,247,0.55); }
-}
-.engraving-preview.is-empty { color: rgba(10,10,15,0.25); font-style: italic; font-weight: 400; }
-@media (prefers-color-scheme: dark) {
-    .engraving-preview.is-empty { color: rgba(245,245,247,0.25); }
-}
-
-/* Input */
-.engraving-input-wrap { margin-bottom: 24px; }
-#engraving-text {
-    width: 100%;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid var(--divider);
+.stand-extra-label span { display: block; font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.stepper {
+    display: inline-flex; align-items: center;
+    border: 1px solid var(--divider-strong); border-radius: 999px;
     background: var(--bg-card);
-    color: var(--text-primary);
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: 500;
-    box-sizing: border-box;
-    transition: border-color 0.2s, box-shadow 0.2s;
 }
-#engraving-text:focus {
-    outline: none;
-    border-color: var(--apple-blue);
-    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.18);
+.stepper button {
+    width: 32px; height: 30px; border: 0; background: none; cursor: pointer;
+    font-size: 17px; line-height: 1; color: var(--apple-blue);
 }
-.engraving-counter-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-    font-size: 12px;
-    color: var(--text-secondary);
-}
-
-/* Actions */
-.engraving-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-}
-.engraving-btn {
-    padding: 11px 22px;
-    border-radius: 999px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s, opacity 0.2s, transform 0.15s;
-    border: none;
-}
-.engraving-btn-ghost {
-    background: transparent;
-    color: var(--text-primary);
-}
-.engraving-btn-ghost:hover { background: var(--bg-secondary); }
-.engraving-btn-primary {
-    background: var(--apple-blue);
-    color: #fff;
-}
-.engraving-btn-primary:hover { background: #0077ed; }
-.engraving-btn-primary:active { transform: scale(0.98); }
+.stepper button:disabled { color: var(--text-secondary); opacity: 0.4; cursor: default; }
+.stepper output { min-width: 20px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+.group-tag.included { color: var(--apple-blue); background: var(--apple-blue-soft); }
+.summary-row .label small { display: block; font-size: 12px; margin-top: 1px; }
+.summary-row.is-total .label small { font-weight: 400; color: var(--text-secondary); }
 
 /* Align right column's "Configure your DP Mini" header with left column's H1 */
 aside .config-section-header:first-child {
@@ -1218,207 +1050,112 @@ aside .config-section-header:first-child {
     max-width: 600px;
 }
 
-/* In the box — 4-tile grid */
-.box-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
+/* In the box — one panel, the items side by side as large line drawings */
+.box-title {
+    text-align: center;
+    font-size: clamp(30px, 3.6vw, 44px); font-weight: 600; letter-spacing: -0.022em; line-height: 1.06;
+    color: var(--text-primary); margin: 0 0 40px;
 }
-@media(max-width: 900px) { .box-grid { grid-template-columns: 1fr 1fr; } }
-@media(max-width: 600px) { .box-grid { grid-template-columns: 1fr; } }
-.box-tile {
-    background: var(--bg-card);
-    border: 1px solid var(--divider);
-    border-radius: 22px;
-    padding: 32px 24px;
-    text-align: left;
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+.box-panel {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    max-width: 1080px; margin: 0 auto;
+    background: var(--bg-card); border-radius: 28px;
+    padding: 56px 20px 50px;
 }
-.box-tile:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 40px rgba(10,10,15,0.06), 0 3px 10px rgba(10,10,15,0.04);
-}
-.box-tile-icon {
-    width: 56px; height: 56px;
-    border-radius: 16px;
-    background: var(--bg-secondary);
-    display: grid; place-items: center;
-    color: var(--text-primary);
-    margin-bottom: 22px;
-}
-.box-tile-icon svg { width: 28px; height: 28px; }
-.box-tile-title {
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--text-primary);
-    margin-bottom: 6px;
-}
-.box-tile-desc {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.5;
+.box-item { text-align: center; padding: 0 18px; }
+.box-note { text-align: center; font-size: 14px; color: var(--text-secondary); margin: 24px auto 0; max-width: 640px; }
+.box-item + .box-item { border-left: 1px solid var(--divider); }
+.box-item-icon { color: var(--text-primary); margin-bottom: 24px; }
+.box-item-icon svg { width: 60px; height: 60px; }
+.box-item-name { font-size: 17px; font-weight: 600; letter-spacing: -0.012em; color: var(--text-primary); margin-bottom: 6px; }
+.box-item-desc { font-size: 13px; line-height: 1.45; color: var(--text-secondary); max-width: 190px; margin: 0 auto; }
+@media(max-width: 900px) {
+    .box-panel { grid-template-columns: 1fr 1fr; row-gap: 44px; padding: 44px 8px 40px; }
+    .box-item + .box-item { border-left: 0; }
+    .box-item:last-child { grid-column: 1 / -1; }
 }
 
-/* License section */
-.license-grid {
-    display: grid;
-    grid-template-columns: 0.85fr 1fr;
-    gap: 24px;
-    max-width: 1080px;
-    margin: 0 auto;
-    align-items: stretch;
-}
-@media(max-width: 900px) { .license-grid { grid-template-columns: 1fr; } }
-
-.license-pricing {
-    background: var(--bg-secondary);
-    border: 1px solid var(--divider);
-    border-radius: 24px;
-    padding: 32px;
-    display: flex;
-    flex-direction: column;
-}
-.license-pricing-stats {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 24px;
-    padding: 4px 0 28px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--divider);
-}
-.license-pricing-stat { text-align: center; }
-.license-pricing-stat-value {
-    font-size: clamp(34px, 3.6vw, 44px);
-    font-weight: 600;
-    letter-spacing: -0.022em;
-    color: var(--text-primary);
-    line-height: 1;
-    margin-bottom: 6px;
-}
-.license-pricing-stat-label {
-    font-size: 12px;
-    color: var(--text-secondary);
-    font-weight: 500;
-    line-height: 1.35;
-}
-.license-pricing-stat-divider {
-    width: 1px;
-    height: 36px;
-    background: var(--divider);
-    align-self: center;
-}
-
-.license-pricing-example {
-    background: var(--bg-card);
-    border: 1px solid var(--divider);
-    border-radius: 14px;
-    padding: 18px 20px;
-    margin-bottom: 18px;
-}
-.license-example-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-.license-example-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 6px 0;
-    font-size: 14px;
-    color: var(--text-primary);
-}
-.license-example-row span:first-child { color: var(--text-secondary); }
-.license-example-total {
-    border-top: 1px solid var(--divider);
-    margin-top: 6px;
-    padding-top: 12px;
-    font-weight: 600;
-    font-size: 16px;
-}
-.license-example-total span:first-child { color: var(--text-primary); font-weight: 600; }
-.license-example-total span:last-child { color: var(--text-primary); font-weight: 600; letter-spacing: -0.01em; }
-.license-example-suffix { color: var(--text-secondary); font-weight: 400; font-size: 13px; margin-left: 2px; }
-
-.license-pricing-note {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    margin: 0;
-    margin-top: auto;
-}
-
-.license-features {
-    background: var(--bg-card);
-    border: 1px solid var(--divider);
-    border-radius: 24px;
-    padding: 36px 32px;
-}
-.license-features-title {
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--text-primary);
-    margin-bottom: 22px;
-}
+.license-covered { max-width: 880px; margin: 0 auto; }
+.license-covered-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); margin-bottom: 20px; }
 .license-feature-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 22px 32px;
 }
-.license-feature-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-}
+@media(max-width: 700px) { .license-feature-list { grid-template-columns: 1fr; } }
+.license-feature-list li { display: flex; align-items: flex-start; gap: 14px; }
 .license-check {
-    flex-shrink: 0;
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    flex-shrink: 0; width: 24px; height: 24px; margin-top: 2px;
+    border-radius: 50%; background: var(--bg-secondary); color: var(--text-primary);
     display: grid; place-items: center;
-    margin-top: 2px;
 }
 .license-check svg { width: 12px; height: 12px; }
-.license-feature-list li strong {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    letter-spacing: -0.005em;
-    margin-bottom: 2px;
-}
-.license-feature-list li small {
-    display: block;
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.45;
-}
-
-.license-foot-row {
-    max-width: 1080px;
-    margin: 32px auto 0;
-    text-align: center;
-}
-.license-foot {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    max-width: 720px;
-    margin: 0 auto;
-}
-.license-foot strong { color: var(--text-primary); font-weight: 600; }
+.license-feature-list li strong { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.005em; margin-bottom: 2px; }
+.license-feature-list li small { display: block; font-size: 13px; color: var(--text-secondary); line-height: 1.45; }
+.license-foot { max-width: 880px; margin: 36px auto 0; font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
 .license-foot a { color: var(--apple-blue); text-decoration: none; }
 .license-foot a:hover { text-decoration: underline; }
+
+/* the license in the order summary: its own box, and a tick before the bag */
+.license-callout {
+    margin-top: 14px; padding: 16px 18px;
+    border: 1px solid var(--divider); border-radius: 14px;
+    background: var(--bg-secondary);
+}
+.license-callout-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 8px; }
+.license-callout-row + .license-callout-row { margin-top: 6px; }
+.license-callout-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.license-callout-row strong { font-size: 18px; letter-spacing: -0.01em; white-space: nowrap; }
+.license-callout-row strong small { font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-left: 2px; }
+.license-callout p { font-size: 12.5px; line-height: 1.45; color: var(--text-secondary); margin: 10px 0 0; }
+.license-callout a { color: var(--apple-blue); text-decoration: none; }
+.bar-license { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.bar-vat { font-size: 12px; color: var(--text-secondary); margin-left: 4px; }
+
+/* DP Care+ — protection, presented the way AppleCare is: what you get with and without it, then add */
+.care-head { display: flex; align-items: center; gap: 14px; padding: 18px 20px 14px; }
+.care-mark {
+    width: 40px; height: 40px; flex-shrink: 0;
+    display: grid; place-items: center; border-radius: 11px;
+    background: #1d1d1f; color: #fff;
+}
+@media (prefers-color-scheme: dark) { .care-mark { background: #3a3a3c; } }
+.care-mark svg { width: 22px; height: 22px; }
+.care-head strong { display: block; font-size: 18px; font-weight: 600; letter-spacing: -0.015em; color: var(--text-primary); }
+.care-head small { display: block; font-size: 13px; color: var(--text-secondary); margin-top: 1px; }
+.care-compare { width: calc(100% - 40px); margin: 0 20px 4px; border-collapse: collapse; font-size: 13px; }
+.care-compare th { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); text-align: center; padding: 6px 4px 8px; width: 26%; }
+.care-compare th:first-child { width: auto; }
+.care-compare td { border-top: 1px solid var(--divider); padding: 10px 4px; text-align: center; color: var(--text-primary); }
+.care-compare td:first-child { text-align: left; padding-left: 0; }
+.care-compare td.no { color: var(--text-secondary); }
+.care-compare td.yes { color: var(--text-primary); font-weight: 500; }
+.care-compare td.yes svg { color: var(--apple-blue); }
+.care-compare svg { width: 16px; height: 16px; vertical-align: -3px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.with-mini { color: var(--text-primary) !important; font-weight: 500; }
+
+/* Regulatory information */
+.reg-section { padding: 0 0 110px; background: var(--bg-body); }
+@media(max-width: 900px) { .reg-section { padding-bottom: 72px; } }
+.reg-card {
+    max-width: 1080px; margin: 0 auto;
+    border: 1px solid var(--divider); border-radius: 24px;
+    padding: clamp(24px, 3.4vw, 40px);
+}
+.reg-head { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 26px; }
+.reg-head h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.012em; color: var(--text-primary); margin: 0; }
+.reg-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.reg-badges span {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-primary); border: 1px solid var(--divider-strong); border-radius: 6px; padding: 4px 8px;
+}
+.reg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px 36px; }
+@media(max-width: 900px) { .reg-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width: 600px) { .reg-grid { grid-template-columns: 1fr; } }
+.reg-grid h3 { font-size: 13px; font-weight: 600; color: var(--text-primary); margin: 0 0 6px; }
+.reg-grid p { font-size: 13px; line-height: 1.55; color: var(--text-secondary); margin: 0; }
+.reg-grid a { color: var(--apple-blue); text-decoration: none; }
+.reg-grid a:hover { text-decoration: underline; }
 
 footer { display: block; }
 </style>
@@ -1524,6 +1261,40 @@ footer { display: block; }
 .cart-sidebar .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .cart-sidebar .cart-items { padding: 18px 22px !important; }
 .cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
+/* Cart buttons with room to breathe: a proper Checkout button, Clear Cart as a quiet link */
+.cart-sidebar .cart-footer { padding: 22px 24px 24px !important; }
+.cart-sidebar .cart-total { font-size: 17px; margin-bottom: 16px !important; }
+.cart-sidebar #checkout-btn {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 100% !important; height: 48px !important; padding: 0 20px !important; margin: 0 !important;
+    border: none !important; border-radius: 12px !important; box-shadow: none !important;
+    background: #0071e3 !important; color: #fff !important;
+    font-size: 16px !important; font-weight: 500 !important; letter-spacing: -0.01em;
+}
+.cart-sidebar #checkout-btn:hover { background: #0077ed !important; }
+.cart-sidebar #checkout-btn:disabled { opacity: 0.4 !important; cursor: default; }
+.cart-sidebar #clear-cart-btn {
+    display: block !important; width: 100% !important; height: 40px !important;
+    margin: 8px 0 0 !important; padding: 0 !important;
+    border: none !important; background: none !important; box-shadow: none !important;
+    font-size: 14px !important; font-weight: 400 !important; color: #0071e3 !important;
+}
+.cart-sidebar #clear-cart-btn:hover { text-decoration: underline; }
+.cart-sidebar #clear-cart-btn:disabled { color: var(--text-secondary, #86868b) !important; text-decoration: none; cursor: default; }
+.cart-sidebar .cart-product-subtitle { margin-bottom: 16px !important; }
+.cart-sidebar .cart-product-remove-btn,
+.cart-sidebar .cart-product-header > button { width: 30px !important; height: 30px !important; min-width: 30px !important; }
+.cart-sidebar .quantity-control { padding: 3px !important; }
+.cart-sidebar .quantity-btn,
+.cart-sidebar .quantity-input,
+.cart-sidebar span.quantity-input,
+.cart-sidebar input.quantity-input { width: 34px !important; height: 34px !important; min-width: 34px !important; line-height: 34px !important; }
+.cart-sidebar .quantity-btn { font-size: 18px !important; }
+.cart-sidebar .cart-footer::after {
+    content: "Prices exclude VAT, added at checkout. Free shipping.";
+    display: block; margin-top: 6px; text-align: center;
+    font-size: 12px; color: var(--text-secondary, #86868b);
+}
 </style>
 <style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
 </head>
@@ -1650,8 +1421,9 @@ footer { display: block; }
             <span class="config-eyebrow">DP Mini · Configure</span>
             <h1>Build your DP Mini</h1>
             <div class="viewer-frame">
+              <!-- camera-target: the model's visual centre, measured so its margins in the frame are even -->
               <model-viewer id="product-viewer" src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini mobile microscope"
-                  camera-controls ar shadow-intensity="1" camera-orbit="150deg 75deg 1m" camera-target="0.41m -0.01m -0.05m" field-of-view="16.7deg" max-field-of-view="16.7deg" bounds="tight" interaction-prompt="none">
+                  camera-controls ar shadow-intensity="1" camera-orbit="150deg 75deg 1.2m" camera-target="0.373m -0.023m -0.011m" field-of-view="auto" bounds="tight" interaction-prompt="none">
                   <div class="model-loader" slot="progress-bar">
                       <div class="model-loader-ring"></div>
                       <span class="model-loader-pct">0%</span>
@@ -1692,47 +1464,67 @@ footer { display: block; }
         <aside>
             <div class="config-section-header">
                 <h2>Configure your DP Mini</h2>
-                <p>Two required choices below — they affect your final price.</p>
-            </div>
-
-            <div class="option-group">
-                <div class="group-header">
-                    <strong>Eyepieces</strong>
-                    <small>Pick your viewing method</small>
-                    <span class="group-tag">Required</span>
-                </div>
-                <div class="option-list" id="eyepiece-options">
-                    <label class="choice" data-price="0" data-model="dpmininooculars.glb"><input type="radio" name="eyepiece" value="No Eyepieces"><div class="choice-details"><strong>Screen Only</strong><small>Use your smartphone screen for direct viewing.</small></div><span class="price-delta">Included</span></label>
-                    <label class="choice" data-price="5450" data-model="dpmini.glb"><input type="radio" name="eyepiece" value="With Eyepieces" checked><div class="choice-details"><strong>With Eyepieces</strong><small>4K UHD per eye, immersive viewing.</small></div><span class="price-delta">+ €5.450</span></label>
-                </div>
+                <p>DP Mini comes with its eyepieces and a DP Stand. Add what fits your practice. All prices exclude VAT.</p>
             </div>
 
             <div class="option-group">
                 <div class="group-header">
                     <strong>Mounting</strong>
-                    <small>Select your setup</small>
-                    <span class="group-tag">Required</span>
+                    <small>One DP Stand comes with DP Mini</small>
+                    <span class="group-tag included">Stand included</span>
                 </div>
-                <div class="option-list" id="mount-options">
-                    <label class="choice" data-price="0"><input type="radio" name="mount" value="Desk Mount" checked><div class="choice-details"><strong>Desk Mount</strong><small>For stable positioning on a desk or workbench.</small></div><span class="price-delta">Included</span></label>
-                    <label class="choice" data-price="1850"><input type="radio" name="mount" value="Floor Stand"><div class="choice-details"><strong>Floor Stand</strong><small>Provides a freestanding, adjustable setup.</small></div><span class="price-delta">+ €1.850</span></label>
-                    <label class="choice" data-price="2300"><input type="radio" name="mount" value="Wall Mount"><div class="choice-details"><strong>Wall Mount</strong><small>For a fixed, space-saving installation.</small></div><span class="price-delta">+ €2.300</span></label>
-                    <label class="choice" data-price="5700"><input type="radio" name="mount" value="Ceiling Mount"><div class="choice-details"><strong>Ceiling Mount</strong><small>Offers an overhead, unobstructed view.</small></div><span class="price-delta">+ €5.700</span></label>
+                <div class="addon-list" id="mount-options">
+                    <div class="addon-choice is-included">
+                        <span class="included-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                        <div class="choice-details">
+                            <strong>DP Stand</strong>
+                            <small>Attaches to any vertical pole from 44 to 56 mm. Quick attach and release: move DP Mini from room to room in seconds.</small>
+                        </div>
+                        <span class="price-delta">Included</span>
+                        <div class="stand-extra">
+                            <span class="stand-extra-label">Extra stands for other rooms<span>€1.850 each</span></span>
+                            <div class="stepper" role="group" aria-label="Extra DP Stands">
+                                <button type="button" data-step="-1" aria-label="One stand less">&minus;</button>
+                                <output id="extra-stands" aria-live="polite">0</output>
+                                <button type="button" data-step="1" aria-label="One more stand">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <label class="addon-choice" data-price="2350">
+                        <input type="checkbox" name="mount" value="Mobile cart">
+                        <div class="choice-details">
+                            <strong>Mobile cart</strong>
+                            <small>A stand on wheels, to roll DP Mini wherever you work.</small>
+                        </div>
+                        <span class="price-delta">+ €2.350</span>
+                    </label>
+                    <label class="addon-choice" data-price="279">
+                        <input type="checkbox" name="mount" value="Desk mount">
+                        <div class="choice-details">
+                            <strong>Desk mount</strong>
+                            <small>For a desk or workbench.</small>
+                        </div>
+                        <span class="price-delta">+ €279</span>
+                    </label>
                 </div>
-            </div>
-
-            <div class="config-section-header">
-                <h2>Optional add-ons</h2>
-                <p>Accessories and services to extend your DP Mini. None are required.</p>
             </div>
 
             <div class="option-group">
                 <div class="group-header">
-                    <strong>Accessories &amp; care</strong>
+                    <strong>Accessories</strong>
                     <small>Pick any combination</small>
                     <span class="group-tag optional">Optional</span>
                 </div>
                 <div class="addon-list" id="addon-options">
+                    <label class="addon-choice" data-price="670">
+                        <input type="checkbox" name="addon" value="DP Pedal">
+                        <div class="choice-details">
+                            <strong>DP Pedal</strong>
+                            <small>Zoom, focus, light and your image library, all underfoot.</small>
+                            <small class="with-mini">€670 with DP Mini instead of €1.490.</small>
+                        </div>
+                        <span class="price-delta">+ €670</span>
+                    </label>
                     <label class="addon-choice" data-price="290">
                         <input type="checkbox" name="addon" value="Carrying Case">
                         <div class="choice-details">
@@ -1741,42 +1533,44 @@ footer { display: block; }
                         </div>
                         <span class="price-delta">+ €290</span>
                     </label>
-                    <label class="addon-choice" data-price="120">
-                        <input type="checkbox" name="addon" value="Cleaning Kit">
-                        <div class="choice-details">
-                            <strong>Optics Cleaning Kit</strong>
-                            <small>Lens fluid, anti-static cloths and air blower.</small>
-                        </div>
-                        <span class="price-delta">+ €120</span>
-                    </label>
-                    <label class="addon-choice" data-price="1490">
+                </div>
+            </div>
+
+            <div class="option-group care-group" id="care">
+                <div class="care-head">
+                    <span class="care-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.4-3 7.8-7 9-4-1.2-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                    <div><strong>DP Care+</strong><small>Protection for your DP Mini, renewed every year</small></div>
+                </div>
+                <table class="care-compare">
+                    <thead><tr><th scope="col"><span class="visually-hidden">Cover</span></th><th scope="col">DP Mini</th><th scope="col">With DP Care+</th></tr></thead>
+                    <tbody>
+                        <tr><td>Repairs for defects</td><td>24 months</td><td class="yes">Year after year</td></tr>
+                        <tr><td>Accidental damage</td><td class="no">—</td><td class="yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-label="Included"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+                        <tr><td>Priority repair and replacement</td><td class="no">—</td><td class="yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-label="Included"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+                    </tbody>
+                </table>
+                <div class="addon-list">
+                    <label class="addon-choice" data-price="1490" data-yearly>
                         <input type="checkbox" name="addon" value="DP Care+">
-                        <div class="choice-details">
-                            <strong>DP Care+ (3 years)</strong>
-                            <small>Extended warranty, accidental damage cover and priority RMA.</small>
-                        </div>
-                        <span class="price-delta">+ €1.490</span>
-                    </label>
-                    <label class="addon-choice has-engraving" data-price="90">
-                        <input type="checkbox" name="addon" value="Custom Engraving">
-                        <div class="choice-details">
-                            <strong>Custom Engraving</strong>
-                            <small id="engraving-summary">Laser-engrave your name, hospital or department on the body. Up to 40 characters.</small>
-                            <button type="button" class="engraving-edit-btn" id="engraving-edit-btn" hidden>Edit engraving</button>
-                        </div>
-                        <span class="price-delta">+ €90</span>
+                        <div class="choice-details"><strong>Add DP Care+</strong><small>Billed every year, like the license.</small></div>
+                        <span class="price-delta">+ €1.490/year</span>
                     </label>
                 </div>
             </div>
 
             <div class="summary-card">
                 <h3>Your DP Mini</h3>
-                <div class="summary-row"><span class="label">DP Mini base</span><span class="value" id="sum-base">€23.990</span></div>
-                <div class="summary-row"><span class="label" id="sum-eyepiece-label">Eyepieces — With Eyepieces</span><span class="value" id="sum-eyepiece">+ €5.450</span></div>
-                <div class="summary-row"><span class="label" id="sum-mount-label">Mount — Desk Mount</span><span class="value" id="sum-mount">Included</span></div>
-                <div class="summary-row" id="sum-addons-row" style="display:none;"><span class="label">Add-ons</span><span class="value" id="sum-addons">€0</span></div>
-                <div class="summary-row is-total"><span class="label">Total</span><span class="value" id="sum-total">€29.440</span></div>
-                <div class="summary-note">Software license billed separately on a yearly basis. <a href="#license-info">Learn more</a></div>
+                <div id="sum-rows">
+                    <div class="summary-row"><span class="label">DP Mini<small>Eyepieces and DP Stand included</small></span><span class="value">€31.990</span></div>
+                </div>
+                <div class="summary-row is-total"><span class="label">Total<small>Excl. VAT, added at checkout. Free shipping.</small></span><span class="value" id="sum-total">€31.990</span></div>
+                <div class="license-callout" id="license-callout">
+                    <div class="license-callout-title">Billed every year</div>
+                    <div id="yearly-rows">
+                        <div class="license-callout-row"><span>License</span><strong>€3.199<small>/year</small></strong></div>
+                    </div>
+                    <p>Not included in the total above: invoiced separately every year, from the first, excl. VAT. The license is required to use DP Mini. <a href="#license-info">What it covers</a></p>
+                </div>
             </div>
         </aside>
     </div>
@@ -1785,41 +1579,35 @@ footer { display: block; }
   <!-- ========== WHAT'S IN THE BOX ========== -->
   <section class="bottom-section box-section">
     <div class="container">
-      <div class="bottom-section-header">
-        <span class="bottom-info-eyebrow">In the box</span>
-        <h2>Everything you need to get started.</h2>
-        <p>Each DP Mini ships ready for the OR. No surprises, no hidden extras.</p>
-      </div>
-      <div class="box-grid">
-        <div class="box-tile">
-          <div class="box-tile-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
-          </div>
-          <div class="box-tile-title">DP Mini Microscope</div>
-          <div class="box-tile-desc">Main optical assembly with smartphone mount, calibrated and tested.</div>
+      <h2 class="box-title">What's in the box</h2>
+      <div class="box-panel">
+        <div class="box-item">
+          <div class="box-item-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="30" r="8"/><circle cx="33" cy="30" r="8"/><circle cx="15" cy="30" r="3.5"/><circle cx="33" cy="30" r="3.5"/><path d="M11 23l3-11h6l2 11M37 23l-3-11h-6l-2 11M20 17h8"/></svg></div>
+          <div class="box-item-name">DP Mini</div>
+          <div class="box-item-desc">With its eyepieces and smartphone holder, calibrated and tested.</div>
         </div>
-        <div class="box-tile">
-          <div class="box-tile-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="9" width="12" height="12" rx="2"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><line x1="12" y1="13" x2="12" y2="17"/></svg>
-          </div>
-          <div class="box-tile-title">DP Mini Power Supply</div>
-          <div class="box-tile-desc">Proprietary medical-grade adapter and cable with EU plug. Specific to the DP Mini — third-party chargers are not supported.</div>
+        <div class="box-item">
+          <div class="box-item-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4v40"/><rect x="18" y="16" width="12" height="10" rx="2.5"/><path d="M30 21h9M39 17v8M16 44h16"/></svg></div>
+          <div class="box-item-name">DP Stand</div>
+          <div class="box-item-desc">Attaches to vertical poles from 44 to 56 mm, with quick attach and release.</div>
         </div>
-        <div class="box-tile">
-          <div class="box-tile-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-          </div>
-          <div class="box-tile-title">User Manual &amp; IFU</div>
-          <div class="box-tile-desc">Quick-start guide and clinical Instructions For Use, compliant with EU MDR 2017/745.</div>
+        <div class="box-item">
+          <div class="box-item-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5v8M29 5v8"/><path d="M14 13h20v7a10 10 0 0 1-20 0z"/><path d="M24 30v5a6 6 0 0 1-6 6h-4"/></svg></div>
+          <div class="box-item-name">Power supply</div>
+          <div class="box-item-desc">Medical-grade adapter with EU plug, made for DP Mini.</div>
         </div>
-        <div class="box-tile">
-          <div class="box-tile-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10"/><path d="M7 13h6"/></svg>
-          </div>
-          <div class="box-tile-title">Anti-Static Cloth</div>
-          <div class="box-tile-desc">Microfiber cleaning cloth for the optics and smartphone screen.</div>
+        <div class="box-item">
+          <div class="box-item-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8a3 3 0 0 1 3-3h18l7 7v28a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3z"/><path d="M31 5v7h7M17 22h14M17 29h14M17 36h9"/></svg></div>
+          <div class="box-item-name">Manual and IFU</div>
+          <div class="box-item-desc">Quick-start guide and Instructions For Use, EU MDR 2017/745.</div>
+        </div>
+        <div class="box-item">
+          <div class="box-item-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12c5-4 11 4 16 0s11-4 16 0v24c-5 4-11-4-16 0s-11 4-16 0z"/><path d="M8 24c5-4 11 4 16 0s11-4 16 0"/></svg></div>
+          <div class="box-item-name">Cleaning cloth</div>
+          <div class="box-item-desc">Anti-static microfibre, for the optics and the phone screen.</div>
         </div>
       </div>
+      <p class="box-note">DP Mini works with an iPhone 17 Pro or later, with iOS 26 and the Med Connect app. The iPhone is not included.</p>
     </div>
   </section>
 
@@ -1828,35 +1616,13 @@ footer { display: block; }
     <div class="container">
       <div class="bottom-section-header">
         <span class="bottom-info-eyebrow">Software license</span>
-        <h2>Required to operate. Billed yearly.</h2>
-        <p>The DP Mini runs on a licensed firmware and the Med Connect Mini app. The license is purchased separately and renewed once a year — it's never bundled into the device price.</p>
+        <h2>Required to use DP Mini. Billed every year.</h2>
+        <p>€3.199 a year + VAT, billed separately. Cancel at any renewal.</p>
       </div>
 
-      <div class="license-grid">
-        <div class="license-pricing">
-          <div class="license-pricing-stats">
-            <div class="license-pricing-stat">
-              <div class="license-pricing-stat-value">10%</div>
-              <div class="license-pricing-stat-label">of the device price</div>
-            </div>
-            <div class="license-pricing-stat-divider"></div>
-            <div class="license-pricing-stat">
-              <div class="license-pricing-stat-value">Yearly</div>
-              <div class="license-pricing-stat-label">renewable, cancellable</div>
-            </div>
-          </div>
-          <div class="license-pricing-example">
-            <div class="license-example-title">For your DP Mini configuration</div>
-            <div class="license-example-row"><span>DP Mini base</span><span>€23.990</span></div>
-            <div class="license-example-row"><span>License rate</span><span>10%</span></div>
-            <div class="license-example-row license-example-total"><span>Yearly license</span><span>€2.399<span class="license-example-suffix">/yr</span></span></div>
-          </div>
-          <p class="license-pricing-note">Billed once per year on a separate invoice. Cancellable at any renewal date.</p>
-        </div>
-
-        <div class="license-features">
-          <div class="license-features-title">What's covered</div>
-          <ul class="license-feature-list">
+      <div class="license-covered">
+        <div class="license-covered-title">What the license covers</div>
+        <ul class="license-feature-list">
             <li>
               <span class="license-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
               <div>
@@ -1886,47 +1652,56 @@ footer { display: block; }
               </div>
             </li>
           </ul>
-        </div>
       </div>
 
-      <div class="license-foot-row">
-        <p class="license-foot">The license is <strong>not included</strong> in the device price shown above. It's invoiced separately, on a yearly basis, to the registered customer. <a href="contactus.html">Contact our team</a> to learn more about volume licensing.</p>
+      <p class="license-foot">Need licenses for several DP Minis? <a href="contactus.html">Contact our team</a> about volume licensing.</p>
+    </div>
+  </section>
+
+  <!-- ========== REGULATORY INFORMATION ========== -->
+  <!-- texts from the intended use and FAQ in index.html; keep the two in step -->
+  <section class="reg-section" id="regulatory" aria-labelledby="reg-title">
+    <div class="container">
+      <div class="reg-card">
+        <div class="reg-head">
+          <h2 id="reg-title">Regulatory information</h2>
+          <div class="reg-badges"><span>CE</span><span>MDR Class I</span><span>Non-sterile</span><span>MR Non-Safe</span></div>
+        </div>
+        <div class="reg-grid">
+          <div>
+            <h3>Medical device</h3>
+            <p>DP Mini is a CE-marked active Class I medical device under Regulation (EU) 2017/745 (MDR), self-certified by the manufacturer under Art. 19 MDR. Expected service life: 10 years.</p>
+          </div>
+          <div>
+            <h3>Intended purpose</h3>
+            <p>Magnified visualization of the surgical field and anatomical structures during medical and surgical procedures. It is a visual aid only: it does not perform diagnosis, measurement or therapy.</p>
+          </div>
+          <div>
+            <h3>Intended users</h3>
+            <p>Qualified healthcare professionals only: surgeons, medical specialists and trained OR technicians. Read the warnings and the instructions for use carefully before use.</p>
+          </div>
+          <div>
+            <h3>Contraindications</h3>
+            <p>Not for MRI environments, nor in the presence of flammable anesthetic mixtures, concentrated oxygen or nitrous oxide. Supplied non-sterile and cannot be sterilized: near the surgical field, cover it with a certified single-use sterile drape.</p>
+          </div>
+          <div>
+            <h3>Manufacturer</h3>
+            <p>Dal Pont Medical S.r.l.s<br>Piazza San Vito 12, 31100 Treviso, Italy<br>EUDAMED SRN IT-MF-000052836</p>
+          </div>
+          <div>
+            <h3>Documents and incidents</h3>
+            <p>The instructions for use ship with every DP Mini; the EU Declaration of Conformity is available on request. Report any serious incident to <a href="mailto:support@dpbiotech.com">support@dpbiotech.com</a> and to the competent authority of your country.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <div class="engraving-backdrop" id="engraving-backdrop"></div>
-  <div class="engraving-modal" id="engraving-modal" role="dialog" aria-labelledby="engraving-title" aria-hidden="true">
-    <div class="engraving-card">
-      <button type="button" class="engraving-close" id="engraving-close" aria-label="Close">&times;</button>
-      <div class="engraving-header">
-        <span class="engraving-eyebrow">Personalize</span>
-        <h3 id="engraving-title">Add your engraving.</h3>
-        <p>Inscribe your name, hospital or department on the body of your DP Mini. Up to 40 characters.</p>
-      </div>
-      <div class="engraving-stage">
-        <div class="engraving-plate">
-          <span class="engraving-preview" id="engraving-preview" data-placeholder="Your text">Your text</span>
-        </div>
-      </div>
-      <div class="engraving-input-wrap">
-        <input type="text" id="engraving-text" maxlength="40" placeholder="Type your engraving">
-        <div class="engraving-counter-row">
-          <span class="engraving-tip">Letters, numbers, spaces and basic punctuation.</span>
-          <span class="engraving-count"><span id="engraving-count">0</span> / 40</span>
-        </div>
-      </div>
-      <div class="engraving-actions">
-        <button type="button" class="engraving-btn engraving-btn-ghost" id="engraving-cancel">Cancel</button>
-        <button type="button" class="engraving-btn engraving-btn-primary" id="engraving-confirm">Save engraving</button>
-      </div>
-    </div>
-  </div>
-
   <div class="sticky-bar">
     <div class="bar-inner container">
       <div class="total-price">
-        <div class="amount">Total <strong id="total-price-display">€29.440</strong></div>
+        <div class="amount">Total <strong id="total-price-display">€31.990</strong> <span class="bar-vat">excl. VAT</span></div>
+        <div class="bar-license" id="bar-yearly">+ €3.199/year license, billed separately</div>
       </div>
       <button id="addToCartBtn" class="btn primary">Add to Bag</button>
     </div>
@@ -1944,7 +1719,7 @@ footer { display: block; }
                 <address class="footer-address">
                     <strong>Dal Pont Medical S.r.l.s</strong><br>
                     Piazza San Vito 12<br>
-                    31100 Treviso — Italia<br><br>
+                    31100 Treviso — Italy<br><br>
                     VAT / C.F.: 05355480269<br>
                     REA: 437837<br>
                     EUDAMED SRN: IT-MF-000052836
@@ -2001,20 +1776,7 @@ footer { display: block; }
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Swap the .glb when the eyepieces option changes.
     const modelViewer = document.getElementById('product-viewer');
-
-    // Each model's body is off-center on X; aim the camera at its real center.
-    const MINI_CAMERA_TARGETS = {
-        'dpmini.glb':          '0.41m -0.01m -0.05m',
-        'dpmininooculars.glb': '0.24m -0.02m -0.01m',
-    };
-    function applyMiniCameraTarget() {
-        if (!modelViewer) return;
-        const src = (modelViewer.getAttribute('src') || '').split('/').pop();
-        const t = MINI_CAMERA_TARGETS[src];
-        if (t) modelViewer.setAttribute('camera-target', t);
-    }
 
     // --- 3D MODEL LOADER (spinner + %) ---
     if (modelViewer) {
@@ -2028,18 +1790,7 @@ footer { display: block; }
                 else mLoader.classList.add('hide');
             }
         });
-        modelViewer.addEventListener('load', () => { if (mLoader) mLoader.classList.add('hide'); applyMiniCameraTarget(); });
-        applyMiniCameraTarget();
-    }
-
-    function updateModelViewer() {
-        const eyepieceInput = document.querySelector('input[name="eyepiece"]:checked');
-        if (!eyepieceInput || !modelViewer) return;
-        const newSrc = eyepieceInput.closest('.choice').dataset.model;
-        if (newSrc && modelViewer.getAttribute('src') !== newSrc) {
-            modelViewer.setAttribute('src', newSrc);
-            hgShowModel(); // a config change updates the model → show it
-        }
+        modelViewer.addEventListener('load', () => { if (mLoader) mLoader.classList.add('hide'); });
     }
 
     /* ===== Viewer media gallery: 3D model + videos + images ===== */
@@ -2074,19 +1825,21 @@ footer { display: block; }
     }
     hgItems.forEach(t => t.addEventListener('click', () => hgSelect(t)));
 
-    const basePrice = 23990;
-    const LICENSE_RATE = 0.10;
-    const choices = document.querySelectorAll('.choice, .addon-choice');
+    // DP Mini comes with its eyepieces and one DP Stand; everything else is priced on its row
+    const BASE_PRICE = 31990;
+    const STAND_PRICE = 1850;            // each extra DP Stand
+    const MAX_EXTRA_STANDS = 9;
+    const LICENSE_PRICE = 3199;          // per year, per DP Mini (10% of the DP Mini price); billed separately
+    let extraStands = 0;
+    const choices = document.querySelectorAll('.addon-choice');
     const totalPriceDisplay = document.getElementById('total-price-display');
-    const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    // €31.990, as written everywhere on the site
+    const EUR = { format: n => '€' + Math.round(n).toLocaleString('de-DE') };
 
-    const sumEyepieceLabel = document.getElementById('sum-eyepiece-label');
-    const sumEyepiece = document.getElementById('sum-eyepiece');
-    const sumMountLabel = document.getElementById('sum-mount-label');
-    const sumMount = document.getElementById('sum-mount');
-    const sumAddonsRow = document.getElementById('sum-addons-row');
-    const sumAddons = document.getElementById('sum-addons');
+    const sumRows = document.getElementById('sum-rows');
     const sumTotal = document.getElementById('sum-total');
+    const extraStandsEl = document.getElementById('extra-stands');
+    const stepperBtns = document.querySelectorAll('.stepper button');
 
     const cartBtn = document.getElementById('cart-btn');
     const cartCountEl = document.getElementById('cart-count');
@@ -2198,49 +1951,32 @@ footer { display: block; }
     }
     
     function getPricing() {
-      const eyepieceInput = document.querySelector('input[name="eyepiece"]:checked');
-      const eyepiecePrice = Number(eyepieceInput.closest('.choice').dataset.price);
-      const eyepieceValue = eyepieceInput.value;
-
-      const mountInput = document.querySelector('input[name="mount"]:checked');
-      const mountValue = mountInput.value;
-      const mountPrice = Number(mountInput.closest('.choice').dataset.price);
-
-      const devicePrice = basePrice + eyepiecePrice + mountPrice;
-      const yearlyLicense = Math.round(devicePrice * LICENSE_RATE);
-
-      const addonInputs = Array.from(document.querySelectorAll('input[name="addon"]:checked'));
-      const addons = addonInputs.map(i => {
-          const base = {
-              name: i.value,
-              price: Number(i.closest('.addon-choice').dataset.price)
-          };
-          if (i.value === 'Custom Engraving' && engravingSavedText) {
-              base.detail = engravingSavedText;
-          }
-          return base;
-      });
-      const addonsTotal = addons.reduce((s, a) => s + a.price, 0);
-
-      const total = devicePrice + addonsTotal;
-      return { eyepieceValue, eyepiecePrice, mountValue, mountPrice, devicePrice, yearlyLicense, addons, addonsTotal, total };
+      const picked = Array.from(document.querySelectorAll('input[name="mount"]:checked, input[name="addon"]:checked'))
+          .map(i => { const el = i.closest('[data-price]');
+              return { name: i.value, group: i.name, price: Number(el.dataset.price), yearly: el.hasAttribute('data-yearly') }; });
+      // billed every year, separately: the license always, DP Care+ when added
+      const yearly = [{ name: 'License', price: LICENSE_PRICE }, ...picked.filter(p => p.yearly)];
+      const oneTime = picked.filter(p => !p.yearly);
+      const lines = [{ name: 'DP Mini', note: 'Eyepieces and DP Stand included', price: BASE_PRICE }];
+      if (extraStands) lines.push({ name: `Extra DP Stand${extraStands > 1 ? 's' : ''} × ${extraStands}`, price: extraStands * STAND_PRICE });
+      oneTime.forEach(p => lines.push({ name: p.name, price: p.price }));
+      const total = lines.reduce((sum, l) => sum + l.price, 0);
+      const yearlyTotal = yearly.reduce((sum, l) => sum + l.price, 0);
+      return { picked: oneTime, yearly, yearlyTotal, lines, total };
     }
 
     function addToCart() {
       const p = getPricing();
-      const addonNames = p.addons.length
-          ? p.addons.map(a => a.detail ? `${a.name} (“${a.detail}”)` : a.name).join(', ')
-          : 'No add-ons';
+      const mounting = ['DP Stand',
+          ...(extraStands ? [`${extraStands} extra DP Stand${extraStands > 1 ? 's' : ''}`] : []),
+          ...p.picked.filter(x => x.group === 'mount').map(x => x.name)].join(', ');
+      const extras = p.picked.filter(x => x.group !== 'mount').map(x => x.name).join(', ') || 'No accessories';
 
       const newItem = {
-        id: `dp-mini-${p.eyepieceValue}-${p.mountValue}-${p.addons.map(a => a.name + (a.detail || '')).join('|') || 'base'}`,
-        name: `DP Mini (${p.eyepieceValue}, ${p.mountValue})`,
+        id: 'dp-mini-' + [extraStands, ...p.picked.map(x => x.name)].join('|'),
+        name: 'DP Mini',
         price: p.total,
-        options: {
-            eyepiece: p.eyepieceValue,
-            mount: p.mountValue,
-            addons: addonNames
-        }
+        options: { mounting, extras, yearly: 'Billed yearly, excl. VAT: ' + p.yearly.map(y => `${y.name} ${EUR.format(y.price)}/year`).join(', ') }
       };
 
       cart.push(newItem);
@@ -2253,157 +1989,49 @@ footer { display: block; }
     function calculateTotal() {
       const p = getPricing();
       totalPriceDisplay.textContent = EUR.format(p.total);
-
-      // Update summary card
-      sumEyepieceLabel.textContent = `Eyepieces — ${p.eyepieceValue === 'No Eyepieces' ? 'Screen Only' : 'With Eyepieces'}`;
-      sumEyepiece.textContent = p.eyepiecePrice === 0 ? 'Included' : '+ ' + EUR.format(p.eyepiecePrice);
-      sumMountLabel.textContent = `Mount — ${p.mountValue}`;
-      sumMount.textContent = p.mountPrice === 0 ? 'Included' : '+ ' + EUR.format(p.mountPrice);
-
-      if (p.addonsTotal > 0) {
-        sumAddonsRow.style.display = 'flex';
-        sumAddons.textContent = '+ ' + EUR.format(p.addonsTotal);
-      } else {
-        sumAddonsRow.style.display = 'none';
-      }
-
+      sumRows.replaceChildren(...p.lines.map((l, k) => {
+        const row = document.createElement('div');
+        row.className = 'summary-row';
+        const label = Object.assign(document.createElement('span'), { className: 'label', textContent: l.name });
+        if (l.note) label.append(Object.assign(document.createElement('small'), { textContent: l.note }));
+        const value = Object.assign(document.createElement('span'), { className: 'value', textContent: (k ? '+ ' : '') + EUR.format(l.price) });
+        row.append(label, value);
+        return row;
+      }));
       sumTotal.textContent = EUR.format(p.total);
+      // what is billed every year, apart from the total
+      document.getElementById('yearly-rows').replaceChildren(...p.yearly.map(y => {
+        const row = Object.assign(document.createElement('div'), { className: 'license-callout-row' });
+        const price = Object.assign(document.createElement('strong'), { textContent: EUR.format(y.price) });
+        price.append(Object.assign(document.createElement('small'), { textContent: '/year' }));
+        row.append(Object.assign(document.createElement('span'), { textContent: y.name }), price);
+        return row;
+      }));
+      document.getElementById('bar-yearly').textContent = p.yearly.length > 1
+          ? `+ ${EUR.format(p.yearlyTotal)}/year for the license and DP Care+, billed separately`
+          : `+ ${EUR.format(LICENSE_PRICE)}/year license, billed separately`;
     }
+
+    // extra DP Stands, for the other rooms DP Mini moves between
+    stepperBtns.forEach(b => b.addEventListener('click', () => {
+      extraStands = Math.min(MAX_EXTRA_STANDS, Math.max(0, extraStands + Number(b.dataset.step)));
+      extraStandsEl.textContent = extraStands;
+      stepperBtns.forEach(x => { x.disabled = Number(x.dataset.step) < 0 ? extraStands === 0 : extraStands === MAX_EXTRA_STANDS; });
+      calculateTotal();
+    }));
+    stepperBtns.forEach(x => { x.disabled = Number(x.dataset.step) < 0; });
 
     function updateSelectionUI() {
       choices.forEach(choice => {
-        const input = choice.querySelector('input[type="radio"], input[type="checkbox"]');
-        if (input && input.checked) {
-          choice.classList.add('selected');
-        } else {
-          choice.classList.remove('selected');
-        }
-      });
-      updateEngravingSummary();
-    }
-
-    // ===== Engraving modal =====
-    const engravingCheckbox = document.querySelector('input[name="addon"][value="Custom Engraving"]');
-    const engravingModal = document.getElementById('engraving-modal');
-    const engravingBackdrop = document.getElementById('engraving-backdrop');
-    const engravingClose = document.getElementById('engraving-close');
-    const engravingCancel = document.getElementById('engraving-cancel');
-    const engravingConfirm = document.getElementById('engraving-confirm');
-    const engravingTextEl = document.getElementById('engraving-text');
-    const engravingCountEl = document.getElementById('engraving-count');
-    const engravingPreview = document.getElementById('engraving-preview');
-    const engravingSummary = document.getElementById('engraving-summary');
-    const engravingEditBtn = document.getElementById('engraving-edit-btn');
-    let engravingSavedText = '';
-    let engravingDraft = '';
-
-    function syncPreview(text) {
-      if (text && text.length > 0) {
-        engravingPreview.textContent = text;
-        engravingPreview.classList.remove('is-empty');
-      } else {
-        engravingPreview.textContent = engravingPreview.dataset.placeholder || 'Your text';
-        engravingPreview.classList.add('is-empty');
-      }
-      if (engravingCountEl) engravingCountEl.textContent = (text || '').length;
-    }
-
-    function openEngravingModal() {
-      engravingDraft = engravingSavedText;
-      engravingTextEl.value = engravingSavedText;
-      syncPreview(engravingSavedText);
-      engravingBackdrop.classList.add('is-visible');
-      engravingModal.classList.add('is-open');
-      engravingModal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => engravingTextEl.focus(), 100);
-    }
-
-    function closeEngravingModal() {
-      engravingBackdrop.classList.remove('is-visible');
-      engravingModal.classList.remove('is-open');
-      engravingModal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-
-    function updateEngravingSummary() {
-      if (!engravingCheckbox || !engravingSummary || !engravingEditBtn) return;
-      if (engravingCheckbox.checked) {
-        if (engravingSavedText) {
-          engravingSummary.innerHTML = 'Engraving: <strong style="color:var(--text-primary);">"' + engravingSavedText.replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])) + '"</strong>';
-        } else {
-          engravingSummary.textContent = 'Click "Edit engraving" to add your text.';
-        }
-        engravingEditBtn.hidden = false;
-      } else {
-        engravingSummary.textContent = 'Laser-engrave your name, hospital or department on the body. Up to 40 characters.';
-        engravingEditBtn.hidden = true;
-        engravingSavedText = '';
-      }
-    }
-
-    if (engravingCheckbox) {
-      engravingCheckbox.addEventListener('change', () => {
-        if (engravingCheckbox.checked) {
-          openEngravingModal();
-        }
-        updateEngravingSummary();
+        const input = choice.querySelector('input[type="checkbox"]');
+        choice.classList.toggle('selected', !!(input && input.checked));
       });
     }
-    if (engravingEditBtn) {
-      engravingEditBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        openEngravingModal();
-      });
-    }
-    if (engravingTextEl) {
-      engravingTextEl.addEventListener('input', () => {
-        engravingDraft = engravingTextEl.value;
-        syncPreview(engravingDraft);
-      });
-    }
-    if (engravingConfirm) {
-      engravingConfirm.addEventListener('click', () => {
-        engravingSavedText = engravingTextEl.value.trim();
-        closeEngravingModal();
-        updateEngravingSummary();
-      });
-    }
-    function cancelEngraving() {
-      closeEngravingModal();
-      // If they cancelled and never had text saved, untick the addon
-      if (!engravingSavedText && engravingCheckbox && engravingCheckbox.checked) {
-        engravingCheckbox.checked = false;
-        engravingCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    }
-    if (engravingCancel) engravingCancel.addEventListener('click', cancelEngraving);
-    if (engravingClose) engravingClose.addEventListener('click', cancelEngraving);
-    if (engravingBackdrop) engravingBackdrop.addEventListener('click', cancelEngraving);
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && engravingModal.classList.contains('is-open')) cancelEngraving();
-    });
-
-    choices.forEach(choice => {
-      choice.addEventListener('click', (e) => {
-        const input = choice.querySelector('input[type="radio"], input[type="checkbox"]');
-        if (!input) return;
-        // Don't intercept clicks that originated on form fields inside the label
-        if (e.target !== choice && e.target.closest('input, textarea, select')) return;
-        if (input.type === 'radio') {
-          input.checked = true;
-          input.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-        // Checkboxes are toggled natively by the label/input; don't override.
-      });
-    });
 
     document.body.addEventListener('change', (event) => {
-      if (event.target.type === 'radio' || event.target.type === 'checkbox') {
+      if (event.target.type === 'checkbox') {
         updateSelectionUI();
         calculateTotal();
-        if (event.target.name === 'eyepiece') updateModelViewer();
       }
     });
 
@@ -2451,18 +2079,10 @@ footer { display: block; }
         window.location.href = 'checkout.html';
     });
 
-    window.onbeforeunload = function(event) {
-        if (cart.length > 0) {
-            const message = "Your cart contains items. Are you sure you want to leave?";
-            event.returnValue = message; 
-            return message;
-        }
-    };
 
     initCart();
     updateSelectionUI();
     calculateTotal();
-    updateModelViewer();
 
     // --- MEGA MENU LOGIC ---
     const mainNav = document.getElementById('main-nav');

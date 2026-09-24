@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="favicon-192.png"><title>Med Connect Mini — Surgical Command Center</title>
+<script src="../gate.js" data-site="old"></script>
+<meta name="description" content="The dedicated companion app for DP Mini. Control optics, broadcast procedures, and manage patient data securely." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================
+   DESIGN SYSTEM (Matches Main Site)
+   ========================================= */
+:root {
+    --bg-body: #ffffff;
+    --bg-secondary: #f5f5f7;
+    --bg-card: #ffffff;
+    --text-primary: #1d1d1f;
+    --text-secondary: #86868b;
+    --accent: #4f46e5;
+    --accent-gradient: linear-gradient(135deg, #4f46e5, #a21caf);
+    --divider: rgba(0, 0, 0, 0.08);
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --nav-height: 52px;
+    --container-width: 1080px;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 12px 24px rgba(0,0,0,0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #000000;
+        --bg-secondary: #121212;
+        --bg-card: #1c1c1e;
+        --text-primary: #f5f5f7;
+        --text-secondary: #a1a1aa;
+        --divider: rgba(255, 255, 255, 0.12);
+    }
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-primary); overflow-x: hidden; }
+body.no-scroll { overflow: hidden; height: 100vh; }
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+p { line-height: 1.5; color: var(--text-secondary); margin: 0; }
+a { text-decoration: none; color: inherit; transition: opacity 0.2s; }
+a:hover { opacity: 0.7; }
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+
+/* =========================
+   NAVIGATION (Fixed from Main Code)
+   ========================= */
+.nav {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height);
+    background: rgba(255, 255, 255, 0.7); backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    z-index: 100; border-bottom: 1px solid var(--divider);
+}
+@media (prefers-color-scheme: dark) { .nav { background: rgba(0,0,0,0.7); } }
+
+.nav-inner { height: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+
+/* This hides the links on mobile and shows them on desktop */
+.nav-links { display: none; list-style: none; gap: 32px; margin: 0; padding: 0; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+@media(min-width: 960px) { .nav-links { display: flex; } }
+
+.nav-links li { cursor: pointer; transition: color 0.2s; height: 100%; display: flex; align-items: center; }
+.nav-links li:hover { color: var(--text-primary); }
+
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+
+/* Buttons matching Main Site */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; border: none; text-decoration: none !important;
+}
+.btn-primary { background: var(--text-primary); color: var(--bg-body); }
+.btn-primary:hover { transform: scale(1.02); opacity: 0.95; }
+.btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--divider); }
+.btn-ghost:hover { background: var(--bg-secondary); }
+
+/* Hide Desktop button on Mobile */
+.desktop-btn { display: none !important; }
+@media(min-width: 960px) { .desktop-btn { display: inline-flex !important; } }
+
+.cart-icon-btn {
+    position: relative; background: none; border: none; color: var(--text-primary); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
+}
+.cart-badge {
+    position: absolute; top: 4px; right: 4px; background: var(--accent); color: white;
+    font-size: 10px; width: 16px; height: 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+
+/* Hamburger - Hidden on Desktop */
+.hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-primary); }
+@media(max-width: 960px) { .hamburger { display: block; } }
+
+/* =========================
+   MEGA MENU
+   ========================= */
+.dropdown-menu { 
+    opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; 
+    position: absolute; top: var(--nav-height); left: 0; right: 0; 
+    background: var(--bg-body); border-top: 1px solid var(--divider); 
+    box-shadow: 0 20px 60px rgba(0,0,0,.15); z-index: 90; 
+    overflow-y: auto; max-height: calc(100vh - var(--nav-height)); 
+}
+.dropdown-menu.is-open { opacity: 1; visibility: visible; }
+.menu-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding: 40px 0; }
+.menu-main-links, .menu-link-column { list-style: none; padding: 0; margin: 0; }
+.menu-main-links li:first-child, .menu-link-column li:first-child { 
+    font-size: 11px; text-transform: uppercase; letter-spacing: .05em; 
+    color: var(--text-secondary); margin-bottom: 12px; padding: 0 12px; 
+}
+.menu-main-links a { font-size: 24px; font-weight: 600; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-link-column a { font-size: 14px; font-weight: 500; display: block; padding: 8px 12px; border-radius: 8px; }
+.menu-main-links a:hover, .menu-link-column a:hover { background: var(--bg-secondary); }
+.menu-backdrop { position: fixed; top: var(--nav-height); left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; visibility: hidden; transition: 0.3s; }
+.menu-backdrop.is-visible { opacity: 1; visibility: visible; }
+.cart-sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 400px; background: var(--bg-card); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 201; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
+.cart-sidebar.is-open { transform: translateX(0); }
+
+/* =========================
+   HERO & SECTIONS
+   ========================= */
+.hero {
+    padding-top: 180px; padding-bottom: 120px; text-align: center;
+    background: radial-gradient(circle at 50% 0%, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+}
+.hero h1 { font-size: clamp(42px, 7vw, 84px); line-height: 1.05; margin-bottom: 24px; }
+.gradient-text { background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero p.lead { font-size: clamp(18px, 3vw, 22px); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+/* Utilities */
+.section { padding: 100px 0; }
+.section-bg { background-color: var(--bg-secondary); }
+.eyebrow { font-size: 13px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 12px; }
+.section-header { text-align: center; max-width: 700px; margin: 0 auto 60px; }
+.section-header h2 { font-size: 42px; margin-bottom: 16px; }
+
+/* Feature Layouts */
+.feature-row { display: flex; align-items: center; gap: 60px; }
+.feature-row.reverse { flex-direction: row-reverse; }
+.feature-text { flex: 1; }
+.feature-text h2 { font-size: 42px; margin-bottom: 24px; }
+.feature-text p { font-size: 18px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 32px; }
+
+/* Images */
+.feature-image-wrapper {
+    flex: 1; background: var(--bg-card); border-radius: var(--radius-lg);
+    border: 1px solid var(--divider); overflow: hidden;
+    box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: center;
+    height: 500px; position: relative;
+}
+.feature-image-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Specific Image Variants */
+.feature-image-wrapper.vertical-card { flex: 0.5; height: 690px; width: 60%; }
+.feature-image-wrapper.split-card { width: 100%; height: 240px; flex: none; background: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--divider); overflow: hidden; box-shadow: var(--shadow-md); position: relative; }
+.feature-image-wrapper.phone-portrait { flex: 1; height: 550px; width: auto; }
+.feature-image-wrapper.horizontal-card { flex: 1.2; height: 250px; width: 100%; }
+.feature-image-wrapper.square-card { flex: 0.8; height: 280px; width: 500px; aspect-ratio: 1 / 1; margin: 0 auto; }
+
+/* Layout Containers */
+.image-stack-column { flex: 1; display: flex; flex-direction: column; gap: 24px; height: 100%; justify-content: center; }
+.image-side-by-side-container { flex: 1.3; display: flex; gap: 24px; justify-content: center; align-items: center; }
+.grid-2-column { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.feature-card { background: var(--bg-card); padding: 48px; border-radius: var(--radius-lg); border: 1px solid var(--divider); }
+.feature-card h3 { font-size: 28px; margin-bottom: 16px; }
+.feature-card p { font-size: 17px; line-height: 1.6; }
+
+/* Mobile Responsive */
+@media(max-width: 900px) {
+    .feature-row, .feature-row.reverse, .grid-2-column { flex-direction: column; grid-template-columns: 1fr; gap: 40px; }
+    .feature-image-wrapper, .feature-image-wrapper.vertical-card, .feature-image-wrapper.phone-portrait { width: 100%; height: 400px; flex: auto; }
+    .image-stack-column, .image-side-by-side-container { width: 100%; flex: auto; }
+    .image-side-by-side-container { flex-direction: column; }
+    .feature-image-wrapper.horizontal-card { flex: auto; height: 300px; }
+    .feature-image-wrapper.square-card { height: auto; width: 100%; max-width: 400px; }
+}
+
+/* UI Lists */
+.ui-feature-list { list-style: none; padding: 0; margin-top: 32px; }
+.ui-feature-item { display: flex; gap: 16px; margin-bottom: 24px; }
+.ui-icon { width: 40px; height: 40px; background: var(--bg-secondary); border-radius: 10px; display: grid; place-items: center; color: var(--accent); flex-shrink: 0; font-weight: 700; }
+
+/* AI Badges */
+.ai-badge-container { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+.ai-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 99px; font-size: 13px; font-weight: 600; transition: all 0.3s; border: 1px solid transparent; cursor: default; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+.ai-badge:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.08); }
+.badge-gemini { background: linear-gradient(135deg, #eff6ff, #f5f3ff); color: #4f46e5; border-color: rgba(99, 102, 241, 0.2); }
+.badge-chatgpt { background: linear-gradient(135deg, #ecfdf5, #f0fdf4); color: #059669; border-color: rgba(16, 185, 129, 0.2); }
+
+/* Animations */
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.ai-badge:hover .ai-sparkle { display: inline-block; animation: spin 2s linear infinite; }
+.ai-badge:hover .ai-brain { display: inline-block; animation: pulse 1s infinite; }
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 150; padding: 80px 24px; transform: translateY(-100%); transition: transform 0.4s ease; display: flex; flex-direction: column; gap: 24px; }
+.mobile-menu-overlay.is-open { transform: translateY(0); }
+.mobile-link { font-size: 24px; font-weight: 600; border-bottom: 1px solid var(--divider); padding-bottom: 16px; }
+
+/* Footer */
+footer { padding: 60px 0; border-top: 1px solid var(--divider); font-size: 13px; color: var(--text-secondary); background: var(--bg-body); }
+.footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.footer-links { display: flex; gap: 24px; }
+
+/* === Canonical cart/footer === */
+footer {
+    border-top: 1px solid var(--divider);
+    padding: 64px 0 32px;
+    background: var(--bg-body);
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+}
+@media(max-width: 860px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+@media(max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; }
+}
+.footer-brand .logo { margin-bottom: 16px; }
+.footer-brand p {
+    font-size: 13px;
+    max-width: 320px;
+    margin-bottom: 16px;
+}
+.footer-address {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: normal;
+}
+.footer-address strong { color: var(--text-primary); font-weight: 600; }
+.footer-col-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+.footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--text-primary); opacity: 1; }
+.footer-bottom {
+    padding-top: 24px;
+    border-top: 1px solid var(--divider);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+.footer-regulatory {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.footer-regulatory-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid var(--divider);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.cart-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10,10,15,0.32);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+    z-index: 200;
+}
+.cart-backdrop.is-visible { opacity: 1; visibility: visible; }
+.cart-sidebar {
+    position: fixed;
+    top: 16px; right: 16px; bottom: 16px; left: auto;
+    width: calc(100% - 32px); max-width: 400px; height: auto;
+    background: var(--bg-card);
+    border-radius: 22px;
+    border: 1px solid rgba(10,10,15,0.06);
+    transform: translateX(calc(100% + 32px));
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 201;
+    display: flex; flex-direction: column;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.6) inset,
+        0 24px 60px rgba(10,10,15,0.22),
+        0 6px 16px rgba(10,10,15,0.08);
+    overflow: hidden;
+}
+.cart-sidebar.is-open { transform: translateX(0); }
+.cart-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--divider);
+    display: flex; justify-content: space-between; align-items: center;
+}
+.cart-items {
+    flex: 1; overflow-y: auto;
+    padding: 20px 22px;
+    list-style: none; margin: 0;
+}
+.cart-footer {
+    padding: 22px;
+    border-top: 1px solid var(--divider);
+    background: var(--bg-secondary);
+}
+@media(max-width: 480px) {
+    .cart-sidebar {
+        top: 12px; right: 12px; bottom: 12px;
+        width: calc(100% - 24px); max-width: calc(100% - 24px);
+        border-radius: 20px;
+    }
+}
+/* === End canonical === */
+</style>
+<style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
+</head>
+<body>
+
+<div class="mobile-menu-overlay" id="mobile-menu">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <span class="logo">DP Biotech</span>
+        <button class="btn btn-ghost" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
+    </div>
+    <a href="DPMini.html" class="mobile-link">DP Mini</a>
+    <a href="DPPro.html" class="mobile-link">DP Pro</a>
+    <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
+    <a href="licensing.html" class="mobile-link">Licensing</a>
+</div>
+
+<nav class="nav" id="main-nav">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+        <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRmNDZlNSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4=' " alt="Logo" style="height:28px; border-radius: 50%;">
+        <span>DP Biotech</span>
+    </a>
+      
+      <ul class="nav-links">
+          <li class="dropdown" data-menu="microscopes-menu">Microscopes</li>
+          <li class="dropdown" data-menu="software-menu">Software</li>
+          <li class="dropdown" data-menu="support-menu">Company &amp; Support</li>
+      </ul>
+
+      <div class="nav-actions">
+          <a href="licensing.html" class="btn btn-ghost desktop-btn" style="border: none;">Licensing</a>
+          
+          <button class="cart-icon-btn" id="cart-btn">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              <span class="cart-badge" id="cart-count">0</span>
+          </button>
+          <button class="hamburger" id="menu-btn">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+      </div>
+  </div>
+
+  <div id="microscopes-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Shop Microscopes</li>
+                  <li><a href="DPMini.html">DP Mini</a></li>
+                  <li><a href="DPPro.html">DP Pro</a></li>
+              </ul>
+              <ul class="menu-link-column">
+                  <li>Quick Links</li>
+                  <li><a href="all-models.html">Compare Models</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+  <div id="software-menu" class="dropdown-menu">
+    <div class="container">
+        <div class="menu-content">
+            
+            <ul class="menu-main-links">
+                <li>Connect Suite</li>
+                <li><a href="medconnectmini.html">Med Connect Mini</a></li>
+                <li><a href="medconnectpro.html">Med Connect Pro</a></li>
+            </ul>
+  
+            <ul class="menu-link-column">
+                <li>Cloud & Services</li>
+                <li><a href="medpatient.html">Med Patient</a></li>
+                <li><a href="medshare.html">Med Share</a></li>
+            </ul>
+        </div>
+    </div>
+  </div>
+
+  <div id="support-menu" class="dropdown-menu">
+      <div class="container">
+          <div class="menu-content">
+              <ul class="menu-main-links">
+                  <li>Get Support</li>
+                  <li><a href="contactus.html">Contact Us</a></li>
+                  <li><a href="#">Downloads & Manuals</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+</nav>
+<div class="menu-backdrop"></div>
+
+<section class="hero" id="home">
+    <div class="container">
+        <div style="opacity: 0; animation: fadeUp 0.8s 0.2s forwards;">
+            <span class="eyebrow" style="color:var(--text-secondary); border: 1px solid var(--divider); padding: 6px 16px; border-radius: 99px; display: inline-block; margin-bottom:24px;">DP Mini Companion App</span>
+            <h1>Your pocket-sized <br><span class="gradient-text">Surgical Command Center.</span></h1>
+            <p class="lead">Med Connect Mini unlocks the full potential of your smartphone's sensor. It's your monitor, your recorder, and your sterile controller.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section section-bg">
+    <div class="container">
+        <div class="feature-row">
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">Professional Portfolio</span>
+                <h2>Your Medical Legacy</h2>
+                <p>Manage your career highlights in one secure location. Edit your surgical recordings, upload new cases, and curate your professional profile. <strong>Transform your raw clinical data into a dynamic digital CV that showcases your expertise to peers, institutions, and patients worldwide.</strong></p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">👤</div>
+                        <div>
+                            <strong>Granular Privacy</strong>
+                            <p style="font-size:14px; margin:0;">Complete control over your data. Decide exactly which cases are broadcast to the community and which remain encrypted private records for personal review.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">✏️</div>
+                        <div>
+                            <strong>Case Management</strong>
+                            <p style="font-size:14px; margin:0;">A searchable archive of your work. Add ICD-10 codes, patient notes, procedural tags, and pre-op/post-op imaging to organize your surgical history.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">📊</div>
+                        <div>
+                            <strong>Impact Analytics</strong>
+                            <p style="font-size:14px; margin:0;">Measure your influence. Track views, saves, and engagement stats to see how your techniques are helping the global surgical community.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="feature-image-wrapper vertical-card">
+                <img src="profilo.png" alt="Profile UI"> 
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="feature-row reverse align-top-mobile">
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">The Community</span>
+                <h2>Connect & Discover</h2>
+                <p> Med Connect Mini connects you to a global network of surgical excellence. Stay on the cutting edge by accessing a curated feed of live surgeries, technique breakdowns, and clinical pearls from key opinion leaders worldwide.</p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">🔔</div>
+                        <div>
+                            <strong>Smart Notifications</strong>
+                            <p style="font-size:14px; margin:0;">Never miss a learning opportunity. Set customizable alerts to know the moment a mentor goes live or when a new case matching your specialty interests is published.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">🌍</div>
+                        <div>
+                            <strong>Global Search Engine</strong>
+                            <p style="font-size:14px; margin:0;">Find the exact reference you need. Filter the global feed by pathology or specific surgical technique to prepare for your next complex case.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">💬</div>
+                        <div>
+                            <strong>Peer Discussion</strong>
+                            <p style="font-size:14px; margin:0;">Engage in high-level clinical debate. Comment on specific video timestamps, ask technical questions, and verify techniques in a secure, professional environment.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="image-side-by-side-container">
+                <div class="feature-image-wrapper phone-portrait">
+                    <img src="feed.png" alt="Main Feed">
+                </div>
+                <div class="feature-image-wrapper phone-portrait">
+                    <img src="explore.png" alt="Explore UI">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-bg">
+    <div class="container">
+        <div class="feature-row">
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">Bring your own AI Architecture</span>
+                <h2>Supercharged Intelligence</h2>
+                <p>We don't just give you tools; we give you a platform. Med Connect Mini is designed to be model-agnostic, allowing you to connect your personal or enterprise AI accounts (OpenAI, Google Cloud, Anthropic) directly into the surgical workflow via secure API keys.</p>
+                
+                <p style="margin-bottom: 24px;">Whether you prefer the reasoning of <strong>ChatGPT</strong> or the multimodal capabilities of Google's <strong>Gemini</strong>, you can harness them to automate the administrative burden of surgery. Turn voice dictation into structured reports or analyze case data instantly.</p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">📝</div>
+                        <div>
+                            <strong>Automated Op-Notes</strong>
+                            <p style="font-size:14px; margin:0;">The app listens to your intra-operative voice notes and uses your connected AI to format them into perfect, billing-ready surgical reports automatically.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">🔍</div>
+                        <div>
+                            <strong>Semantic Case Search</strong>
+                            <p style="font-size:14px; margin:0;">Forget keywords. Ask your library: <em>"Show me the last three times I treated a Class II furcation defect,"</em> and let the AI find the exact timestamps.</p>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="ai-badge-container">
+                    <span class="ai-badge badge-gemini">
+                        <span class="ai-sparkle">✨</span> Gemini Integrated
+                    </span>
+                    <span class="ai-badge badge-chatgpt">
+                        <span class="ai-brain">🧠</span> ChatGPT Ready
+                    </span>
+                </div>
+            </div>
+
+            <div class="feature-image-wrapper vertical-card">
+                 <img src="impostazioni.png" alt="AI Integration">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="feature-row reverse align-top-mobile">
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">Universal Streaming</span>
+                <h2>Broadcast Anywhere.</h2>
+                <p>You don't always need the full OR setup. Go live directly from your phone to share lectures, rounds, or quick consultations.</p>
+                
+                <div class="feature-card" style="padding: 24px; margin-top:24px; background: #f9fafb;">
+                    <h4 style="margin-bottom:8px;">📱 Pocket Mode</h4>
+                    <p style="font-size:14px; margin-bottom:0;">Stream using your phone's native camera. While you won't get the DP Mini's stereoscopic 3D view, you get the full power of our low-latency broadcasting network.</p>
+                </div>
+
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">👀</div>
+                        <div>
+                            <strong>Watch Live</strong>
+                            <p style="font-size:14px; margin:0;">Join streams as a spectator with chat and reaction capabilities.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="image-side-by-side-container">
+                <div class="feature-image-wrapper phone-portrait">
+                    <img src="main.png" alt="Watching Stream">
+                </div>
+                <div class="feature-image-wrapper phone-portrait">
+                     <img src="streamer.png" alt="Going Live UI">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-bg" id="features">
+    <div class="container">
+        <div class="feature-row">
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">Computational Imaging</span>
+                <h2>Smart Filtration</h2>
+                <p>Go beyond standard optics. The app leverages the GPU to apply real-time <strong>Chroma and Luma keying</strong>, allowing you to isolate specific tissues or suppress background distractions instantly.</p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">🎨</div>
+                        <div>
+                            <strong>Chroma Key (Color Isolation)</strong>
+                            <p style="font-size:14px; margin:0;">Isolate specific color spectrums (e.g., hemoglobin red) to emphasize vascularity or highlight pathological markers while desaturating surrounding tissue.</p>
+                        </div>
+                    </li>
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">💡</div>
+                        <div>
+                            <strong>Luma Key (Brightness Filter)</strong>
+                            <p style="font-size:14px; margin:0;">Filter based on luminance to visualize depth and texture. Perfect for distinguishing nerve fibers or enhancing visibility in deep cavities.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="feature-image-wrapper horizontal-card">
+                <img src="key.png" alt="Chroma and Luma Key Interface">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="feature-row">
+            
+            <div class="image-stack-column">
+                
+                <div class="feature-image-wrapper split-card">
+                    <img src="stream.png" alt="Live Stream UI">
+                    <div style="position:absolute; bottom:12px; left:12px; background:rgba(0,0,0,0.6); color:white; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; backdrop-filter:blur(4px);">
+                        Live Broadcast
+                    </div>
+                </div>
+                
+                <div class="feature-image-wrapper split-card">
+                    <img src="editing.jpg" alt="Editing Timeline UI">
+                    <div style="position:absolute; bottom:12px; left:12px; background:rgba(0,0,0,0.6); color:white; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; backdrop-filter:blur(4px);">
+                        Timeline Editor
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="feature-text text-content-padded">
+                <span class="eyebrow">The Collaborative O.R.</span>
+                <h2>Stream, Record, and Done.</h2>
+                <p>Turn any procedure into a live, interactive session. Stream 4K video with low latency to colleagues, or capture clinical excellence and edit directly on the device.</p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">📡</div>
+                        <div><strong>Secure Streaming:</strong> Share a private access code for real-time remote consultation.</div>
+                    </li>
+                     <li class="ui-feature-item">
+                        <div class="ui-icon">🎬</div>
+                        <div><strong>On-Device Editing:</strong> Trim footage, annotate key moments, and save without transferring files.</div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="section section-bg">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow">Sterile Interface</span>
+            <h2>Total Control, Zero Touch.</h2>
+            <p>Two powerful ways to manage your workflow without breaking sterility.</p>
+        </div>
+        
+        <div class="grid-2-column">
+            <div class="feature-card">
+                <div class="ui-icon" style="margin-bottom:24px;">🎤</div>
+                <h3>Neural Voice Command</h3>
+                <p>Leveraging the power of the phone's Neural Engine, execute commands with sub-second latency. Simply say "Focus", "Zoom In", or "Capture" to control the app instantly.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="ui-icon" style="margin-bottom:24px;">🎮</div>
+                <h3>Smart Handle Integration</h3>
+                <p>The app seamlessly pairs with the DP Mini Smart Handle. Map physical buttons and the joystick to app functions like digital zoom, cycling overlays, or snapping photos.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="feature-row reverse">
+            <div class="feature-text">
+                <span class="eyebrow">Cloud Integration</span>
+                <h2>Powered by Med Patient</h2>
+                <p>Your smartphone is the capture tool; <strong>Med Patient</strong> is the vault. Media is instantly encrypted and offloaded to our secure cloud, keeping your personal camera roll separate and ensuring zero local footprint on your device.</p>
+                
+                <ul class="ui-feature-list">
+                    <li class="ui-feature-item">
+                        <div class="ui-icon">☁️</div>
+                        <div>
+                            <strong>Secure Offsite Storage</strong>
+                            <p style="font-size:14px; margin:0;">Automatic sync to HIPAA/GDPR-compliant servers ensures data is accessible anywhere, but never stored permanently on the phone.</p>
+                        </div>
+                    </li>
+                </ul>
+                <a href="medpatient.html" class="btn btn-ghost" style="border:1px solid var(--divider);">Explore Med Patient Cloud →</a>
+            </div>
+            
+            <div class="feature-image-wrapper square-card">
+                <img src="calendar.png" alt="Med Patient Cloud Interface">
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="logo.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyNTI1MiI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4='" style="height:28px; border-radius:50%; margin-right:8px;">
+                    <span style="font-weight:600;">DP Biotech</span>
+                </div>
+                <p>High-performance surgical microscopes engineered in Italy. Designed for clinical workflows; built around optical precision and modern digital ergonomics.</p>
+                <address class="footer-address">
+                    <strong>Dal Pont Medical S.r.l.s</strong><br>
+                    Piazza San Vito 12<br>
+                    31100 Treviso — Italia<br><br>
+                    VAT / C.F.: 05355480269<br>
+                    REA: 437837<br>
+                    EUDAMED SRN: IT-MF-000052836
+                </address>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Products</div>
+                <ul>
+                    <li><a href="DPMini.html">DP Mini</a></li>
+                    <li><a href="DPPro.html">DP Pro</a></li>
+                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="all-models.html">Compare Models</a></li>
+                    <li><a href="#specs">Specifications</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Support &amp; Service</div>
+                <ul>
+                    <li><a href="contactus.html">Sales Enquiries</a></li>
+                    <li><a href="contactus.html">Clinical Support</a></li>
+                    <li><a href="contactus.html">Service &amp; Repair (RMA)</a></li>
+                    <li><a href="#">Downloads &amp; Manuals</a></li>
+                    <li><a href="#">Instructions for Use (IFU)</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-col-title">Regulatory &amp; Legal</div>
+                <ul>
+                    <li><a href="#">EU Declaration of Conformity</a></li>
+                    <li><a href="#">Vigilance &amp; Incident Reporting</a></li>
+                    <li><a href="#">UDI Information</a></li>
+                    <li><a href="#">Warranty</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Terms of Sale</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>© 2026 Dal Pont Medical S.r.l.s — All rights reserved.</div>
+            <div class="footer-regulatory">
+                <span class="footer-regulatory-badge">CE</span>
+                <span class="footer-regulatory-badge">MDR Class I</span>
+                <span class="footer-regulatory-badge">Made in Italy</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="cart-backdrop" id="cart-backdrop"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button class="btn btn-ghost" id="close-cart">Close</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div id="cart-empty" style="padding:40px; text-align:center; color:var(--text-secondary);">Cart is empty</div>
+    <div class="cart-footer">
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
+            <span>Total</span><span id="cart-total">€0,00</span>
+        </div>
+        <button id="checkout-btn" class="btn btn-primary" style="width:100%;">Checkout</button>
+        <button id="clear-cart" class="btn btn-ghost" style="width:100%; margin-top:8px; font-size:12px;">Clear Cart</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- NAV & MOBILE MENU ---
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if(menuBtn && mobileMenu){
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('is-open');
+        });
+    }
+
+    // --- MEGA MENU LOGIC (FIXED) ---
+    const mainNav = document.getElementById('main-nav');
+    const navItems = mainNav.querySelectorAll('.nav-links li');
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    const backdrop = document.querySelector('.menu-backdrop');
+    let activeMenu = null, closeTimeout;
+
+    function openMenu(id){
+        if(activeMenu && activeMenu.id !== id){ activeMenu.classList.remove('is-open'); }
+        const menu = document.getElementById(id);
+        if(menu){ 
+            menu.classList.add('is-open'); 
+            backdrop.classList.add('is-visible'); 
+            activeMenu = menu; 
+        }
+    }
+
+    function closeAll(){
+        if(activeMenu){ activeMenu.classList.remove('is-open'); }
+        backdrop.classList.remove('is-visible'); 
+        activeMenu = null;
+    }
+
+    if(window.innerWidth >= 960) {
+        navItems.forEach(item => {
+            item.addEventListener('mouseenter', () => { 
+                clearTimeout(closeTimeout); 
+                if (item.dataset.menu) {
+                    openMenu(item.dataset.menu);
+                } else {
+                    closeAll();
+                }
+            });
+        });
+
+        mainNav.addEventListener('mouseleave', () => { 
+            closeTimeout = setTimeout(closeAll, 200); 
+        });
+        mainNav.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+
+        dropdowns.forEach(menu => {
+            menu.addEventListener('mouseenter', () => {
+                clearTimeout(closeTimeout);
+            });
+            menu.addEventListener('mouseleave', () => {
+                closeTimeout = setTimeout(closeAll, 200);
+            });
+        });
+    }
+    backdrop.addEventListener('click', closeAll);
+
+    // --- CART LOGIC ---
+    const cartBtn = document.getElementById('cart-btn');
+    const sidebar = document.getElementById('cart-sidebar');
+    const cartBackdrop = document.getElementById('cart-backdrop');
+    const closeCart = document.getElementById('close-cart');
+
+    function toggleCart() {
+        sidebar.classList.toggle('is-open');
+        cartBackdrop.classList.toggle('is-visible');
+    }
+
+    if(cartBtn) cartBtn.addEventListener('click', toggleCart);
+    if(closeCart) closeCart.addEventListener('click', toggleCart);
+    if(cartBackdrop) cartBackdrop.addEventListener('click', toggleCart);
+    
+    // Update Cart Count
+    const count = JSON.parse(sessionStorage.getItem('shoppingCart') || '[]').length;
+    const badge = document.getElementById('cart-count');
+    if(badge) badge.innerText = count;
+});
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
+<script type="module" src="customer-account-nav.js"></script>
+</body>
+</html>

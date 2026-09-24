@@ -4,34 +4,44 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-<link rel="apple-touch-icon" href="favicon-192.png"><title>DP Mini — Fusion 3D Mobile Microscope</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=2">
+<link rel="apple-touch-icon" href="favicon-192.png?v=2"><title>The all new DP Mini — Mobile Microscope</title>
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#000000">
+<script src="gate.js"></script>
 <script>
-    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
-      window.location.href = 'login.html';
-    }
+    // the page always opens on the DP MINI splash + hero, never mid-story
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 </script>
-<meta name="description" content="DP Mini brings true depth to mobile imaging with Fusion 3D." />
+<meta name="description" content="DP Mini brings true depth to mobile imaging." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<link rel="preload" href="dpmini-anim.glb?v=2" as="fetch" crossorigin>
 
 <style>
 /* =========================================
    DESIGN SYSTEM (Apple/Clean Tech Style)
    ========================================= */
+/* DP Mini: always dark, whatever the system setting */
 :root {
-    --bg-body: #ffffff;
-    --bg-secondary: #f5f5f7; /* Classic Apple gray background */
-    --bg-card: #ffffff;
-    --text-primary: #1d1d1f;
-    --text-secondary: #86868b;
+    color-scheme: dark;
+    --bg-body: #000000;
+    --bg-secondary: #0e0e10;
+    --bg-card: #1c1c1e;
+    --text-primary: #f5f5f7;
+    --text-secondary: #a1a1a6;
     --accent: #ff7a18; /* Your brand orange */
     --accent-gradient: linear-gradient(135deg, #ff7a18, #ff3b30);
-    --divider: rgba(0, 0, 0, 0.08);
+    --divider: rgba(255, 255, 255, 0.12);
     
     --radius-lg: 28px;
     --radius-md: 18px;
@@ -55,17 +65,6 @@
 /* 2. Text Area */
 #handle-section .feature-text {
   flex: 1;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-body: #000000;
-        --bg-secondary: #121212;
-        --bg-card: #1c1c1e;
-        --text-primary: #f5f5f7;
-        --text-secondary: #86868b;
-        --divider: rgba(255, 255, 255, 0.12);
-    }
 }
 
 * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
@@ -138,13 +137,12 @@ a:hover { opacity: 0.7; }
     position: fixed;
     top: 0; left: 0; right: 0;
     height: var(--nav-height);
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     z-index: 100;
     border-bottom: 1px solid var(--divider);
 }
-@media (prefers-color-scheme: dark) { .nav { background: rgba(0,0,0,0.7); } }
 
 .nav-inner {
     height: 100%;
@@ -1161,6 +1159,40 @@ footer {
 .cart-sidebar .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .cart-sidebar .cart-items { padding: 18px 22px !important; }
 .cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
+/* Cart buttons with room to breathe: a proper Checkout button, Clear Cart as a quiet link */
+.cart-sidebar .cart-footer { padding: 22px 24px 24px !important; }
+.cart-sidebar .cart-total { font-size: 17px; margin-bottom: 16px !important; }
+.cart-sidebar #checkout-btn {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 100% !important; height: 48px !important; padding: 0 20px !important; margin: 0 !important;
+    border: none !important; border-radius: 12px !important; box-shadow: none !important;
+    background: #0071e3 !important; color: #fff !important;
+    font-size: 16px !important; font-weight: 500 !important; letter-spacing: -0.01em;
+}
+.cart-sidebar #checkout-btn:hover { background: #0077ed !important; }
+.cart-sidebar #checkout-btn:disabled { opacity: 0.4 !important; cursor: default; }
+.cart-sidebar #clear-cart-btn {
+    display: block !important; width: 100% !important; height: 40px !important;
+    margin: 8px 0 0 !important; padding: 0 !important;
+    border: none !important; background: none !important; box-shadow: none !important;
+    font-size: 14px !important; font-weight: 400 !important; color: #0071e3 !important;
+}
+.cart-sidebar #clear-cart-btn:hover { text-decoration: underline; }
+.cart-sidebar #clear-cart-btn:disabled { color: var(--text-secondary, #86868b) !important; text-decoration: none; cursor: default; }
+.cart-sidebar .cart-product-subtitle { margin-bottom: 16px !important; }
+.cart-sidebar .cart-product-remove-btn,
+.cart-sidebar .cart-product-header > button { width: 30px !important; height: 30px !important; min-width: 30px !important; }
+.cart-sidebar .quantity-control { padding: 3px !important; }
+.cart-sidebar .quantity-btn,
+.cart-sidebar .quantity-input,
+.cart-sidebar span.quantity-input,
+.cart-sidebar input.quantity-input { width: 34px !important; height: 34px !important; min-width: 34px !important; line-height: 34px !important; }
+.cart-sidebar .quantity-btn { font-size: 18px !important; }
+.cart-sidebar .cart-footer::after {
+    content: "Prices exclude VAT, added at checkout. Free shipping.";
+    display: block; margin-top: 6px; text-align: center;
+    font-size: 12px; color: var(--text-secondary, #86868b);
+}
 </style>
 <style>
 /* =========================================
@@ -1373,6 +1405,566 @@ footer {
 .account-menu-pitch .account-menu-email,
 .account-menu-user .account-menu-name,
 .account-menu-user .account-menu-email { position: relative; top: -20px; }</style>
+<style>
+/* =========================================
+   DP MINI — dark theme fixes
+   (colours the base styles above hard-code for a white page)
+   ========================================= */
+.segment-btn.active { box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+.specialty-card:hover,
+.tut-chip:hover { border-color: rgba(255, 255, 255, 0.22); }
+.specialty-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.6); }
+.card:hover { box-shadow: 0 24px 48px rgba(0,0,0,0.6); }
+.feature-image-wrapper { box-shadow: 0 12px 32px rgba(0,0,0,0.5); }
+.feature-item .feature-icon { background: #1c1c1e; }
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.08); }
+.dropdown-menu { box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+.cart-backdrop { background: rgba(0,0,0,0.55); }
+.cart-sidebar {
+    border-color: rgba(255,255,255,0.08);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 6px 16px rgba(0,0,0,0.4);
+}
+.cart-sidebar .cart-product-card:hover { border-color: rgba(255,255,255,0.18) !important; }
+.cart-sidebar .quantity-control { background: #2c2c2e !important; }
+.cart-sidebar .quantity-btn:hover { background: rgba(255,255,255,0.1) !important; }
+.cart-sidebar .quantity-btn:active { background: rgba(255,255,255,0.16) !important; }
+.tut-stage, .tut-lb-stage { box-shadow: 0 24px 60px rgba(0,0,0,0.6); }
+
+/* =========================================
+   DP MINI — SCROLL STORY
+   ========================================= */
+.story {
+    position: relative;
+    height: 830vh;                 /* JS resizes it to the chapter total */
+    background: #000;
+}
+.story-sticky {
+    position: sticky; top: 0;
+    height: 100vh; height: 100svh;
+    overflow: hidden;
+    /* same charcoal studio as the video */
+    background: linear-gradient(to bottom, #0b0b0d 0%, #16171a 55%, #0c0c0e 100%);
+}
+/* follows the model with a transform (set by the story script), so it is never repainted */
+.story-glow {
+    position: absolute; inset: -10%;
+    background: radial-gradient(ellipse 38% 46% at 50% 46%,
+        rgba(92, 96, 108, 0.30) 0%, rgba(40, 42, 48, 0.18) 45%, transparent 75%);
+    pointer-events: none;
+    will-change: transform;
+}
+#story-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+}
+#story-canvas.is-ready { opacity: 1; }
+/* the app's screen recordings: in the page so Safari plays them, seen only on the phone in the model */
+.app-video {
+    position: absolute; left: 0; top: 0;
+    width: 2px; height: 2px;
+    opacity: 0; pointer-events: none;
+}
+.story-fallback {
+    position: absolute; right: 4%; top: 50%; transform: translateY(-50%);
+    width: min(56vw, 760px); height: auto;
+}
+.story-loader {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; pointer-events: none;
+    transition: opacity 0.6s ease;
+}
+.story-loader.hide { opacity: 0; }
+
+/* ---- chapter cards ---- */
+.story-card {
+    position: absolute; top: 50%;
+    width: min(440px, 36vw);
+    opacity: 0; visibility: hidden;
+    transform: translateY(calc(-50% + 26px));
+    transition: opacity 0.45s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.45s;
+    z-index: 2;
+}
+/* the outgoing card fades as the camera leaves; activate() brings the new one in as it arrives */
+.story-card.is-active {
+    opacity: 1; visibility: visible;
+    transform: translateY(-50%);
+    transition: opacity 0.7s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s;
+}
+/* replay: bottom-right corner of the stage, on the chapter bar's line and the page margin */
+.story-replay {
+    position: absolute; bottom: 28px;
+    right: max(32px, calc((100vw - 1240px) / 2));
+    width: 44px; height: 44px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(24, 24, 26, 0.92);          /* no backdrop blur over the moving 3D: Safari redoes it every frame */
+    color: #f5f5f7; cursor: pointer;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0s linear 0.4s, border-color 0.25s ease, background 0.25s ease;
+    z-index: 3;
+}
+.story-replay.is-visible {
+    opacity: 1; visibility: visible;
+    transition: opacity 0.6s ease 0.9s, visibility 0s, border-color 0.25s ease, background 0.25s ease;
+}
+.story-replay:hover { border-color: rgba(255, 122, 24, 0.7); background: rgba(255, 122, 24, 0.12); }
+.story-replay svg { transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.story-replay:hover svg { transform: rotate(-50deg); }
+.story-replay.spin svg { animation: replaySpin 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes replaySpin { from { transform: rotate(0); } to { transform: rotate(-360deg); } }
+.story-card.is-left  { left:  max(32px, calc((100vw - 1240px) / 2)); }
+.story-card.is-right { right: max(32px, calc((100vw - 1240px) / 2)); }
+/* soft shade behind the text, so it stays readable when a part of the model passes under it */
+.story-card::before {
+    content: ""; position: absolute; inset: -90px -110px;
+    background: radial-gradient(closest-side, rgba(8, 8, 10, 0.72), rgba(8, 8, 10, 0));
+    z-index: -1; pointer-events: none;
+}
+/* the base styles push every p/h1 down 20px for their fade-up; the story moves its own cards */
+.story-card p, .story-card h1, .story-card .hero-cta { transform: none; }
+
+.story-kicker {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.22em;
+    color: #fff;
+    margin-bottom: 18px;
+}
+.story-kicker em {
+    font-style: normal; color: var(--accent);
+    letter-spacing: 0.08em;
+    padding-right: 12px; border-right: 1px solid rgba(255,255,255,0.2);
+}
+.story-card h2 {
+    font-size: clamp(28px, 3vw, 42px); line-height: 1.08;
+    letter-spacing: -0.025em; font-weight: 700;
+    color: #fff; margin-bottom: 18px;
+}
+.story-card > p { font-size: 16.5px; line-height: 1.6; color: #a1a1a6; }
+.story-points {
+    list-style: none; margin: 26px 0 0; padding: 0;
+    display: flex; flex-direction: column; gap: 14px;
+}
+.story-points li {
+    display: flex; flex-direction: column; gap: 2px;
+    padding-left: 16px;
+    border-left: 2px solid rgba(255, 122, 24, 0.55);
+}
+.story-points strong { font-size: 14px; font-weight: 600; color: #f5f5f7; }
+.story-points span { font-size: 13px; line-height: 1.45; color: #86868b; }
+
+/* body copy is fully justified, last line flush left (cards on the right read from the left too) */
+.story-card > p, .story-hero .lead {
+    text-align: justify; text-align-last: left;
+    -webkit-hyphens: auto; hyphens: auto;
+}
+/* the base styles centre the hero bits below 900px; the story hero stays flush left on desktop */
+@media (min-width: 861px) {
+    .story-hero .hero-cta { justify-content: flex-start; }
+    .story-hero .hero-eyebrow, .story-hero .hero-stats { margin-left: 0; margin-right: 0; }
+}
+
+/* ---- hero card ---- */
+.story-hero { width: min(540px, 44vw); }
+.story-hero .hero-eyebrow { margin-bottom: 26px; }
+.story-allnew {
+    font-size: clamp(14px, 1.3vw, 18px); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.3em;
+    color: #fff; margin: 0 0 4px 4px;
+}
+.story-name {
+    font-size: clamp(64px, 8.4vw, 124px); font-weight: 800;
+    letter-spacing: -0.05em; line-height: 0.95;
+    margin: 0 0 26px;
+}
+.story-hero .lead { font-size: clamp(17px, 1.4vw, 20px); line-height: 1.5; color: #a1a1a6; margin-bottom: 32px; max-width: 480px; }
+.story-hero .story-price { margin: -18px 0 26px; font-size: 17px; font-weight: 600; color: #f5f5f7; text-align: left; text-align-last: left; }
+.story-hero .btn-primary { background: #0071e3; color: #fff; }
+.story-hero .btn-primary:hover { background: #0077ed; opacity: 1; }
+.story-hero .btn-ghost { border-color: rgba(255,255,255,0.25); }
+.story-hero .btn-ghost:hover { border-color: rgba(0, 113, 227, 0.6); color: #2997ff; background: transparent; }
+.story-hero .hero-stats { border-top-color: rgba(255,255,255,0.14); }
+
+/* ---- scroll cue ---- */
+.story-cue {
+    position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    pointer-events: none; z-index: 2;
+    transition: opacity 0.4s ease;
+}
+.story-cue i {
+    width: 1px; height: 36px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.7), transparent);
+    animation: cueDrop 1.8s ease-in-out infinite;
+    transform-origin: top;
+}
+@keyframes cueDrop {
+    0% { transform: scaleY(0); opacity: 1; }
+    60% { transform: scaleY(1); opacity: 1; }
+    100% { transform: scaleY(1); opacity: 0; }
+}
+
+/* ---- chapter rail ---- */
+.story-rail {
+    position: absolute; left: 50%; bottom: 28px;
+    transform: translate(-50%, 12px);
+    height: 44px; box-sizing: border-box;          /* same height as the replay button beside it */
+    padding: 5px;
+    border-radius: 999px;
+    background: rgba(24, 24, 26, 0.92);          /* no backdrop blur over the moving 3D: Safari redoes it every frame */
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    opacity: 0; visibility: hidden;
+    /* width is set by the story script: the pill stretches when it turns into the app bar */
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s, width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 3;
+}
+.story-rail.is-visible { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+/* two sets in the same pill: the chapters, and in the app chapter the app features */
+.rail-set {
+    display: flex; align-items: center; gap: 4px; height: 100%;
+    transition: opacity 0.35s ease, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.rail-chapters { width: max-content; }          /* its own width, so the pill can shrink back to it */
+.rail-app {
+    position: absolute; inset: 5px; height: auto;   /* inside the padding, like the chapters: centred on the pill */
+    opacity: 0; transform: translateY(14px); pointer-events: none;
+}
+.story-rail.is-app .rail-chapters { opacity: 0; transform: translateY(-14px); pointer-events: none; }
+.story-rail.is-app .rail-app { opacity: 1; transform: none; pointer-events: auto; transition-delay: 0.15s; }
+/* while the 3D stage is on screen the nav drops its blur too (same look on black, much cheaper in Safari) */
+body.story-on .nav {
+    background: rgba(6, 6, 8, 0.88);
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.rail-chapters button {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px;
+    border: none; border-radius: 999px;
+    background: transparent; color: rgba(255,255,255,0.55);
+    font: inherit; font-size: 12px; font-weight: 600; white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.3s ease, background 0.3s ease;
+}
+.rail-chapters button b { font-weight: 700; color: rgba(255,255,255,0.35); transition: color 0.3s ease; }
+.rail-chapters button:hover { color: #fff; }
+.rail-chapters button.is-active { background: rgba(255,255,255,0.1); color: #fff; }
+.rail-chapters button.is-active b { color: var(--accent); }
+
+/* ---- tablet / phone: model on top, text below ---- */
+@media (max-width: 860px) {
+    .story-sticky::after {
+        content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 58%;
+        background: linear-gradient(to top, rgba(0,0,0,0.92) 35%, rgba(0,0,0,0));
+        pointer-events: none; z-index: 1;
+    }
+    .story-card, .story-hero {
+        top: auto; bottom: 86px;
+        left: 20px !important; right: 20px !important;
+        width: auto;
+        transform: translateY(20px);
+    }
+    .story-card.is-active { transform: none; }
+    /* full-width cards under the model: everything centred */
+    .story-card { text-align: center; }
+    .story-card > p, .story-hero .lead { text-align-last: center; }
+    .story-kicker { justify-content: center; }
+    .story-points { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+    .story-points li {
+        flex-direction: row; align-items: center; gap: 8px;
+        padding: 0; border: 0;
+    }
+    .story-points li::before {
+        content: ""; width: 5px; height: 5px; border-radius: 50%;
+        background: var(--accent); opacity: 0.8;
+    }
+    .story-allnew { margin-left: 0; padding-left: 0.3em; }   /* balances the trailing letter-spacing */
+    .story-hero .lead { margin-left: auto; margin-right: auto; }
+    .story-hero .hero-cta { justify-content: center; }
+    .story-hero .story-price { margin: -8px 0 16px; text-align: center; text-align-last: center; font-size: 16px; }
+    .story-hero { bottom: 70px; }
+    .story-hero .hero-eyebrow, .story-hero .hero-stats { display: none; }
+    .story-name { margin-bottom: 14px; }
+    .story-hero .lead { font-size: 16px; margin-bottom: 20px; }
+    .story-hero .hero-cta { margin-bottom: 0; }
+    .story-kicker { margin-bottom: 12px; }
+    .story-card h2 { margin-bottom: 12px; }
+    .story-card > p { font-size: 15px; line-height: 1.5; }
+    .story-points { margin-top: 16px; gap: 8px 20px; }
+    .story-points span { display: none; }
+    .story-rail { bottom: 20px; max-width: calc(100vw - 24px); }
+    .story-replay { bottom: 20px; right: 20px; }
+    .rail-chapters button { padding: 8px 11px; }
+    .rail-chapters button span { display: none; }
+    .story-cue { display: none; }
+    .story-fallback { left: 10%; right: auto; top: 12%; transform: none; width: 80vw; }
+}
+@media (max-width: 860px) and (max-height: 760px) {
+    .story-points, .app-more { display: none; }
+}
+
+/* ---- app chapter: the bottom bar's feature tabs, sideways ---- */
+.app-tabs {
+    flex: 1; min-width: 0; height: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 2px;
+}
+.app-tabs button {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 13px;
+    border: 0; border-radius: 999px;
+    background: transparent; color: rgba(255, 255, 255, 0.6);
+    font: inherit; font-size: 12px; font-weight: 600; white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+.app-tabs button.is-side { color: rgba(255, 255, 255, 0.45); }
+.app-tabs button.is-side:hover { color: #fff; }
+.app-tabs button.is-active { background: #fff; color: #0a0a0b; cursor: default; }
+@media (max-width: 520px) {
+    .app-tabs button.is-side { display: none; }        /* on phones: just the selected feature between the arrows */
+}
+.app-arrow {
+    flex: none; width: 32px; height: 32px;
+    display: grid; place-items: center;
+    border: 0; border-radius: 50%;
+    background: transparent; color: rgba(255, 255, 255, 0.75); cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+.app-arrow:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.app-arrow:disabled { opacity: 0.25; cursor: default; background: transparent; }
+.app-panel h3 {
+    font-size: clamp(28px, 3vw, 42px); line-height: 1.08;
+    letter-spacing: -0.025em; font-weight: 700;
+    color: #fff; margin-bottom: 18px;
+}
+.app-panel p {
+    font-size: 16px; line-height: 1.55; color: #a1a1a6;
+    text-align: justify; text-align-last: left; -webkit-hyphens: auto; hyphens: auto;
+}
+.app-more { margin-top: 24px; min-height: 120px; }   /* the card doesn't jump between features */
+.app-more-label {
+    display: block; margin-bottom: 12px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #86868b;
+}
+.app-figures { display: flex; flex-wrap: wrap; gap: 20px 36px; }
+.app-figures strong { display: block; font-size: 34px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.05; color: #f5f5f7; }
+.app-figures span { display: block; margin-top: 6px; font-size: 13px; color: #86868b; }
+.app-points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.app-points li {
+    padding-left: 14px; border-left: 2px solid rgba(255, 122, 24, 0.6);
+    font-size: 15px; line-height: 1.4; color: #e5e5ea;
+}
+.app-steps { list-style: none; margin: 0; padding: 0; counter-reset: step; display: flex; flex-direction: column; gap: 12px; }
+.app-steps li {
+    counter-increment: step;
+    display: flex; align-items: baseline; gap: 12px;
+    font-size: 15px; line-height: 1.4; color: #e5e5ea;
+}
+.app-steps li::before {
+    content: counter(step, decimal-leading-zero);
+    flex: none; font-size: 13px; font-weight: 700; color: var(--accent);
+}
+.app-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.app-modes > div {
+    padding: 14px 16px; border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.app-modes strong { display: block; font-size: 16px; font-weight: 600; color: #f5f5f7; margin-bottom: 4px; }
+.app-modes span { display: block; font-size: 14px; line-height: 1.4; color: #a1a1a6; }
+.app-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.app-chips li {
+    padding: 7px 13px; border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    font-size: 13px; font-weight: 500; color: #e5e5ea;
+}
+@media (max-width: 860px) {
+    .app-panel h3 { margin-bottom: 12px; }
+    .app-panel p { font-size: 14.5px; line-height: 1.5; text-align-last: center; }
+    .app-more { margin-top: 16px; min-height: 0; }
+    .app-figures, .app-chips { justify-content: center; }
+    .app-figures strong { font-size: 26px; }
+    .app-points, .app-steps { align-items: center; }
+    .app-points li { border-left: 0; padding-left: 0; }
+    .app-modes { text-align: left; }
+}
+
+/* =========================================
+   ACCESSORIES — DP Pedal | DP Stand, tiles in the style of apple.com:
+   12px frame, name + one line + price + two pill buttons on top, the product below
+   ========================================= */
+.acc-section {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    padding: 12px;
+    background: #000;
+}
+.acc-tile {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    text-align: center;
+    background:
+        radial-gradient(ellipse 65% 50% at 50% 52%, rgba(92, 96, 108, 0.24) 0%, rgba(40, 42, 48, 0.1) 50%, transparent 75%),
+        #161618;                               /* the charcoal of Tech Specs */
+}
+.acc-head, .acc-foot {
+    position: relative; z-index: 2;
+    padding: clamp(40px, 4.4vw, 60px) 24px 0;
+}
+.acc-foot { padding: 0 24px clamp(36px, 4vw, 56px); }
+.acc-head h3 {
+    font-size: clamp(34px, 3.4vw, 48px); font-weight: 600; line-height: 1.08;
+    letter-spacing: -0.015em; color: #f5f5f7;
+    margin: 0 0 6px;
+}
+.acc-head p, .acc-foot p { transform: none; }
+.acc-sub {
+    font-size: clamp(18px, 1.7vw, 24px); font-weight: 400; line-height: 1.25;
+    color: #f5f5f7; max-width: 520px; margin: 0 auto;
+}
+.acc-price { font-size: 14px; color: #86868b; }
+.acc-cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-top: 18px; }
+.pill-btn {
+    pointer-events: auto;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 10px 22px;
+    border-radius: 980px; border: 1px solid #2997ff;
+    font-size: 16px; font-weight: 400; color: #2997ff;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.pill-btn:hover { opacity: 1; background: #2997ff; color: #fff; }
+.pill-btn.is-primary { background: #0071e3; border-color: #0071e3; color: #fff; }
+.pill-btn.is-primary:hover { background: #0077ed; border-color: #0077ed; }
+.acc-visual { position: absolute; inset: 0; }
+.acc-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.acc-placeholder { display: grid; place-items: center; }
+.acc-placeholder span {
+    padding: 10px 16px; border-radius: 12px;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+}
+@media (max-width: 860px) {
+    .acc-section { grid-template-columns: 1fr; }
+    .acc-tile { aspect-ratio: 4 / 5; }
+    .pill-btn { font-size: 15px; padding: 9px 20px; }
+}
+
+/* =========================================
+   TECH SPECS — apple.com style: big title, key figures, one hairline row per group
+   ========================================= */
+.tech-specs { padding: clamp(80px, 9vw, 120px) 0 clamp(70px, 8vw, 100px); }
+.ts-title {
+    font-size: clamp(40px, 5vw, 64px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.05;
+    color: #f5f5f7;
+    padding-bottom: 28px; margin-bottom: 52px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+.ts-highlights { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; padding-bottom: 60px; }
+.ts-highlights strong {
+    display: block; margin-bottom: 10px;
+    font-size: clamp(40px, 4.6vw, 64px); font-weight: 600; letter-spacing: -0.03em; line-height: 1;
+    color: #f5f5f7;
+}
+.ts-highlights span { display: block; font-size: 15px; line-height: 1.35; color: #86868b; }
+.ts-group {
+    display: grid; grid-template-columns: minmax(180px, 1fr) 3fr; gap: 24px;
+    padding: 34px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+.ts-group h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; color: #f5f5f7; }
+.ts-group dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 48px; margin: 0; }
+.ts-group dt { margin-bottom: 4px; font-size: 14px; font-weight: 400; color: #86868b; }
+.ts-group dd { margin: 0; font-size: 17px; line-height: 1.45; color: #f5f5f7; }
+.ts-note {
+    transform: none;
+    margin-top: 8px; padding-top: 26px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: 12px; line-height: 1.55; color: #86868b;
+}
+@media (max-width: 860px) {
+    .ts-highlights { grid-template-columns: repeat(2, 1fr); gap: 32px 24px; }
+    .ts-group { grid-template-columns: 1fr; gap: 20px; }
+    .ts-group dl { gap: 22px 24px; }
+}
+@media (max-width: 480px) {
+    .ts-group dl { grid-template-columns: 1fr; }
+}
+
+/* =========================================
+   THE END OF THE PAGE — same language as the new parts:
+   big left titles, hairlines instead of boxes, orange numbers, Apple pills
+   ========================================= */
+.end-title {
+    font-size: clamp(36px, 4.6vw, 60px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.06;
+    color: #f5f5f7; max-width: 860px; margin-bottom: 18px;
+}
+.end-intro {
+    transform: none;
+    font-size: clamp(17px, 1.5vw, 21px); line-height: 1.5; color: #a1a1a6;
+    max-width: 680px; margin: 0 0 56px;
+}
+/* Built for the field */
+#intended-use { padding: clamp(90px, 10vw, 130px) 0 clamp(60px, 7vw, 90px); }
+#intended-use .specialty-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 32px; margin-top: 0; }
+#intended-use .specialty-card {
+    background: none; border: 0; border-radius: 0; box-shadow: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 24px 0 40px;
+}
+#intended-use .specialty-card:hover { transform: none; box-shadow: none; border-color: rgba(255, 255, 255, 0.14); }
+/* the icons come back as plain orange line icons, without their old boxes */
+#intended-use .specialty-icon {
+    width: auto; height: auto; margin-bottom: 16px;
+    background: none; border-radius: 0; display: block;
+    color: var(--accent);
+}
+#intended-use .specialty-icon svg { width: 28px; height: 28px; }
+#intended-use .specialty-name { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; color: #f5f5f7; margin-bottom: 8px; }
+#intended-use .specialty-desc { font-size: 15px; line-height: 1.5; color: #86868b; }
+/* Tech specs sit on a charcoal band: one change of surface in a long black page */
+.tech-specs { background: #161618; }
+/* Closing: headline and price, then three ways to get DP Mini side by side */
+.closing { padding: clamp(110px, 12vw, 160px) 0 clamp(100px, 11vw, 150px); text-align: center; }
+.closing-title {
+    font-size: clamp(40px, 5.2vw, 72px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.05;
+    color: #f5f5f7; max-width: 860px; margin: 0 auto;
+}
+.closing-price { transform: none; margin-top: 20px; font-size: 21px; font-weight: 500; color: #a1a1a6; }
+.closing-ways {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: clamp(32px, 5vw, 72px);
+    max-width: 1000px; margin: 48px auto 0;
+}
+.way {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 8px;
+}
+.way:hover { opacity: 1; }
+.way-icon { width: 34px; height: 34px; color: #f5f5f7; margin-bottom: 22px; }
+.way-title { font-size: 24px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; color: #f5f5f7; margin-bottom: 10px; }
+.way-text { max-width: 290px; font-size: 17px; line-height: 1.47; color: #a1a1a6; margin-bottom: 18px; }
+.way-link { margin-top: auto; font-size: 17px; color: #2997ff; }      /* the three links line up */
+.way-link::after { content: " \203A"; }            /* the › apple.com puts after its links */
+.way:hover .way-link { text-decoration: underline; }
+@media (max-width: 860px) {
+    #intended-use .specialty-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
+    .end-intro { margin-bottom: 40px; }
+    .closing-ways { grid-template-columns: 1fr; row-gap: 56px; }
+}
+@media (max-width: 480px) {
+    #intended-use .specialty-grid { grid-template-columns: 1fr; }
+    #intended-use .specialty-card { padding-bottom: 28px; }
+}
+</style>
 </head>
 <body>
 
@@ -1477,70 +2069,134 @@ footer {
     <button class="btn btn-primary" onclick="document.getElementById('mobile-menu').classList.remove('is-open')">Close</button>
 </div>
 
-<section class="hero">
-    <div class="container">
-        <div class="hero-eyebrow hero-eyebrow-top" style="opacity: 0; animation: fadeUp 0.8s 1.3s forwards;">
-            <span class="pulse"></span>
-            <span>Fusion 3D · Mobile Microscope</span>
-        </div>
-        <div class="hero-split-layout">
-            <div class="hero-text-side" style="opacity: 0; animation: fadeUp 0.8s 1.5s forwards;">
-                <h1>
-                    <span class="gradient-text">Fusion 3D.</span> Depth you can&nbsp;feel.
-                </h1>
-                <p class="lead">
-                    The first system to generate true 3D perception from a single smartphone sensor. Lightweight. Fast. Clinic-ready.
-                </p>
-                <div class="hero-cta">
-                    <a href="buydpmini.html" class="btn btn-primary btn-lg">Buy DP Mini</a>
-                    <a href="#specs" class="btn btn-ghost btn-lg">View specs ↓</a>
-                </div>
-                <div class="hero-stats">
-                    <div class="hero-stat">
-                        <div class="stat-value">CE</div>
-                        <div class="stat-label">EU MDR Class I</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="stat-value">4K</div>
-                        <div class="stat-label">HDR @ 60 fps</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="stat-value">Italy <span class="it-flag"></span></div>
-                        <div class="stat-label">Designed &amp; Made</div>
-                    </div>
-                </div>
-            </div>
+<!-- ========== SCROLL STORY ==========
+     The 3D model sits in a sticky stage; scrolling through this section scrubs the
+     same animation as the DP Mini video (exported from Blender: dpmini-anim.glb,
+     see /Users/giorgio/blender/pipeline/6_esporta_web.py) and moves the camera.
+     Chapter timing lives in CHAPTERS inside the story script at the bottom. -->
+<section class="story" id="story" aria-label="DP Mini in motion">
+    <div class="story-sticky">
+        <div class="story-glow"></div>
+        <canvas id="story-canvas" aria-hidden="true"></canvas>
+        <img class="story-fallback" src="renders/dpmini-hero.webp" alt="DP Mini" hidden>
 
-            <div class="model-stage" style="opacity: 0; animation: fadeUp 1s 1.9s forwards;">
-                <model-viewer src="dpmini.glb" ios-src="dpmini.usdz" alt="DP Mini Fusion 3D Microscope"
-                    camera-orbit="145deg 75deg 1m"
-                    camera-target="0.41m -0.01m -0.05m"
-                    field-of-view="16.7deg"
-                    max-field-of-view="16.7deg"
-                    bounds="tight"
-                    camera-controls
-                    interaction-prompt="none"
-                    shadow-intensity="1"
-                    shadow-softness="0.5"
-                    environment-image="neutral"
-                    disable-zoom>
-                    <div class="model-loader" slot="progress-bar">
-                        <div class="model-loader-ring"></div>
-                        <span class="model-loader-pct">0%</span>
-                    </div>
-                </model-viewer>
+        <div class="story-loader" id="story-loader">
+            <div class="model-loader-ring"></div>
+            <span class="model-loader-pct" id="story-pct">0%</span>
+        </div>
+
+        <!-- 0 · Hero -->
+        <div class="story-card story-hero is-left" data-card="hero">
+            <div class="hero-eyebrow">
+                <span class="pulse"></span>
+                <span>Stereoscopic 3D · Mobile Microscope</span>
+            </div>
+            <p class="story-allnew">The all new</p>
+            <h1 class="story-name"><span class="gradient-text">DP MINI</span></h1>
+            <p class="lead">
+                The first system to generate true 3D perception from a single smartphone sensor. Lightweight. Fast. Clinic-ready.
+            </p>
+            <p class="story-price">From €31.990 excl. VAT</p>
+            <div class="hero-cta">
+                <a href="buydpmini.html" class="btn btn-primary btn-lg">Buy DP Mini</a>
+                <a href="#specs" class="btn btn-ghost btn-lg">View specs ↓</a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="stat-value">CE</div>
+                    <div class="stat-label">EU MDR Class I</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="stat-value">5K</div>
+                    <div class="stat-label">Display resolution</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="stat-value">Italy <span class="it-flag"></span></div>
+                    <div class="stat-label">Designed &amp; Made</div>
+                </div>
             </div>
         </div>
+
+        <!-- 1 · Variable-resistance mode (video 5.0–10.2 s) -->
+        <div class="story-card is-right" data-card="resistance">
+            <span class="story-kicker"><em>01</em>Variable-resistance mode</span>
+            <h2>Optics travel proportional to handle force.</h2>
+            <p>The optical head answers to the handle like an extension of your hand. A light push moves it just enough to reframe; a firmer one sweeps it through its whole range. There is no mode to switch and no knob to loosen: how hard you push decides how far it goes.</p>
+            <ul class="story-points">
+                <li><strong>Fine framing</strong><span>Micro-corrections with a fingertip, without losing the field.</span></li>
+                <li><strong>Full sweep</strong><span>Reposition the head in one continuous gesture.</span></li>
+                <li><strong>One grip</strong><span>Framing and repositioning from the same handle.</span></li>
+            </ul>
+        </div>
+
+        <!-- 2 · Pressure-sensing release (video 11.5–15.5 s) -->
+        <div class="story-card is-left" data-card="release">
+            <span class="story-kicker"><em>02</em>Pressure-sensing release</span>
+            <h2>Minimal force unlocks the joint. Let go and it re-locks.</h2>
+            <p>The joint senses the pressure of your hand. Push and it releases, so the whole microscope swings freely; let go and it locks again exactly where you left it. No brake levers, no drift, no second hand needed to hold it in place.</p>
+            <ul class="story-points">
+                <li><strong>Light-touch release</strong><span>Minimal force is enough to unlock the joint.</span></li>
+                <li><strong>Instant re-lock</strong><span>Let go and the position is held.</span></li>
+                <li><strong>One-handed</strong><span>Reposition mid-procedure while the other hand keeps working.</span></li>
+            </ul>
+        </div>
+
+        <!-- 3 · Ergonomic eyepiece positioning (video 16.6–20.4 s) -->
+        <div class="story-card is-left" data-card="eyepieces">
+            <span class="story-kicker"><em>03</em>Ergonomic eyepiece positioning</span>
+            <h2>Set your working posture without moving the optics.</h2>
+            <p>The eyepieces ride on their own articulated arm, separate from the optical head. Raise them, lower them or bring them closer to match how you sit or stand, while the optics, and your field of view, stay exactly where they are.</p>
+            <ul class="story-points">
+                <li><strong>Decoupled</strong><span>Eyepiece height and reach change; the field of view doesn't.</span></li>
+                <li><strong>Always level</strong><span>The eyepieces keep their attitude through the whole movement.</span></li>
+                <li><strong>Seated or standing</strong><span>Adapt the microscope to your posture, not the other way round.</span></li>
+            </ul>
+        </div>
+
+        <!-- 4 · The app on the phone (video 21.1–27.9 s) -->
+        <div class="story-card is-left" data-card="app">
+            <span class="story-kicker"><em>04</em>Your iPhone, in control</span>
+            <div class="app-panel" id="app-panel" role="tabpanel" aria-live="polite">
+                <h3 id="app-title"></h3>
+                <p id="app-text"></p>
+                <div class="app-more" id="app-more"></div>
+            </div>
+        </div>
+
+        <div class="story-cue" id="story-cue"><span>Scroll to explore</span><i></i></div>
+
+        <button type="button" class="story-replay" id="story-replay" aria-label="Replay the movement" title="Replay">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        </button>
+
+        <nav class="story-rail" id="story-rail" aria-label="Chapters">
+            <div class="rail-set rail-chapters">
+                <button type="button" data-go="resistance"><b>01</b><span>Handle match</span></button>
+                <button type="button" data-go="release"><b>02</b><span>Release</span></button>
+                <button type="button" data-go="eyepieces"><b>03</b><span>Eyepieces</span></button>
+                <button type="button" data-go="app"><b>04</b><span>App</span></button>
+            </div>
+            <!-- in the app chapter the bar turns into the app features: phone screen and text follow the
+                 selected tab (tabs, texts and screenshots: APP_FEATURES in the story script) -->
+            <div class="rail-set rail-app" aria-label="App features">
+                <button type="button" class="app-arrow" data-step="-1" aria-label="Previous feature">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <div class="app-tabs" id="app-tabs" role="tablist" aria-label="App features"></div>
+                <button type="button" class="app-arrow" data-step="1" aria-label="Next feature">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+            </div>
+        </nav>
     </div>
 </section>
 
 
 
-<section class="spec-section section-bg" id="intended-use">
+<section class="spec-section" id="intended-use">
   <div class="container">
-      <div class="chapter-label">Intended Use</div>
-      <h3 class="chapter-title">Built for the field. Used everywhere.</h3>
-      <p class="chapter-intro">DP Mini is engineered for clinical environments where precision, mobility and documentation matter. Its modular configuration adapts to specialty-specific working distances and workflows.</p>
+      <h2 class="end-title">Built for the field. <span class="gradient-text">Used everywhere.</span></h2>
+      <p class="end-intro">DP Mini is engineered for clinical environments where precision, mobility and documentation matter. Its 75 mm objective gives a wide field of view that suits every specialty below.</p>
 
       <div class="specialty-grid">
           <div class="specialty-card">
@@ -1603,6 +2259,47 @@ footer {
   </div>
 </section>
 
+<!-- ========== ACCESSORIES: DP Pedal | DP Stand — two tiles in the style of apple.com ========== -->
+<section class="acc-section" id="accessories" aria-label="Accessories">
+    <article class="acc-tile">
+        <div class="acc-head">
+            <h3>DP Pedal</h3>
+            <p class="acc-sub">Zoom, focus, light and your library. All underfoot.</p>
+        </div>
+        <!-- DP Pedal image goes here: replace the placeholder div with
+             <div class="acc-visual"><img src="renders/dp-pedal.webp" alt="DP Pedal"></div> -->
+        <div class="acc-visual acc-placeholder" aria-hidden="true">
+            <span>DP Pedal image</span>
+        </div>
+        <div class="acc-foot">
+            <p class="acc-price">€670 with DP Mini · €1.490 on its own · excl. VAT</p>
+            <div class="acc-cta">
+                <a class="pill-btn is-primary" href="contactus.html">Learn more</a>
+                <a class="pill-btn" href="buydpmini.html">Buy</a>
+            </div>
+        </div>
+    </article>
+
+    <article class="acc-tile">
+        <div class="acc-head">
+            <h3>DP Stand</h3>
+            <p class="acc-sub">Quick attach. Quick release. Room to room in seconds.</p>
+        </div>
+        <!-- DP Stand image goes here: replace the placeholder div with
+             <div class="acc-visual"><img src="renders/dp-stand.webp" alt="DP Stand"></div> -->
+        <div class="acc-visual acc-placeholder" aria-hidden="true">
+            <span>DP Stand image</span>
+        </div>
+        <div class="acc-foot">
+            <p class="acc-price">First stand included with DP Mini · additional stands €1.850 excl. VAT</p>
+            <div class="acc-cta">
+                <a class="pill-btn is-primary" href="stands.html">Learn more</a>
+                <a class="pill-btn" href="buydpmini.html">Buy</a>
+            </div>
+        </div>
+    </article>
+</section>
+
 <!-- ========== DP MINI VIDEO TUTORIALS (cinematic) — placed after "Built for the field" ========== -->
 <!--
   Each .tut-chip carries: data-src (video file), data-step, data-title, data-desc, data-dur.
@@ -1610,11 +2307,8 @@ footer {
 -->
 <section class="section" id="mini-tutorials">
   <div class="container">
-      <div class="section-header">
-          <span class="eyebrow">Step by Step</span>
-          <h2>Learn your DP Mini</h2>
-          <p>From the box to your first 3D capture — follow the guided steps. Tap any chapter to play it.</p>
-      </div>
+      <h2 class="end-title">Learn your DP Mini.</h2>
+      <p class="end-intro">From the box to your first 3D capture, step by step. Pick a chapter to play it.</p>
 
       <!-- Player (left) + chapter rail (right) -->
       <div class="tut-cine">
@@ -1651,9 +2345,9 @@ footer {
           </button>
 
           <button class="tut-chip" data-src="3.mp4" data-step="4" data-dur="4:20"
-                  data-title="Calibration" data-desc="Calibrate the Fusion 3D depth and white balance for accurate imaging.">
+                  data-title="Calibration" data-desc="Calibrate the 3D depth and white balance for accurate imaging.">
               <div class="tut-chip-media"><span class="tut-chip-num">4</span><span class="tut-chip-dur">4:20</span></div>
-              <div class="tut-chip-body"><strong>Calibration</strong><span>Fusion 3D depth &amp; white balance</span></div>
+              <div class="tut-chip-body"><strong>Calibration</strong><span>3D depth &amp; white balance</span></div>
           </button>
 
           <button class="tut-chip" data-src="1.mp4" data-step="5" data-dur="3:32"
@@ -1678,205 +2372,94 @@ footer {
   </div>
 </section>
 
-<section class="section section-bg" id="voice-commands-section">
-<div class="container">
-    <div class="feature-row align-top-mobile">
-        <div class="feature-text text-content-padded">
-            <span class="eyebrow">Neural Engine Control</span>
-            <h2>Instant Voice Command</h2>
-            <p>
-                Leveraging the immense power of Apple Silicon, DP Mini delivers immediate, on-device Speech-to-Text processing. Execute commands with sub-second latency and keep your hands completely sterile.
-            </p>
-            <div class="modern-feature-list">
-                <div class="feature-item">
-                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
-                    <div class="feature-detail">
-                        <strong>Sub-Second Latency</strong>
-                        <span>Powered by the iPhone's Neural Engine.</span>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg></div>
-                    <div class="feature-detail">
-                        <strong>Fully Customizable</strong>
-                        <span>Map "Focus" or "Next" to your specific workflow.</span>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg></div>
-                    <div class="feature-detail">
-                        <strong>Ecosystem Integration</strong>
-                        <span>Control connected devices hands-free.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="image-stack-column">
-            <div class="feature-image-wrapper split-card">
-                <img src="voicecommands.png" alt="Voice Control Main">
-            </div>
-            <div class="feature-image-wrapper split-card">
-                <img src="voicecommand2.png" alt="Voice Control Secondary">
-            </div>
-        </div>
-    </div>
-</div>
-</section>
-
-<section class="section">
-<div class="container">
-    <div class="feature-row reverse align-top-mobile">
-        <div class="feature-text text-content-padded">
-            <span class="eyebrow">Med Connect</span>
-            <h2>Streaming & Learning Platform</h2>
-            <p>
-              Turn any procedure into a live, interactive session. Create a private classroom and share a simple access code. You see everyone in real time, guide them step-by-step, and deliver consultations with full context.
-            </p>
-            <div class="modern-feature-list">
-                <div class="feature-item">
-                    <div class="feature-icon">4K</div>
-                    <div class="feature-detail">
-                        <strong>High Fidelity Stream</strong>
-                        <span>4K @ 60fps in 2D or true 3D mode (VR compatible).</span>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg></div>
-                    <div class="feature-detail">
-                        <strong>Interactive Overlays</strong>
-                        <span>Stream 3D models, NDI data, and annotations directly in-view.</span>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg></div>
-                    <div class="feature-detail">
-                        <strong>Two-Way Communication</strong>
-                        <span>In-stream chat & voice mode for instant Q&A.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="feature-image-wrapper vertical-card">
-             <img src="classroom.jpg" alt="Streaming Platform UI">
-        </div>
-    </div>
-</div>
-</section>
-
-<section class="section section-bg" id="recording-section">
-<div class="container">
-    <div class="feature-row align-items-center">
-        <div class="feature-text text-content-padded">
-            <span class="eyebrow">Seamless Documentation</span>
-            <h2>Integrated Recording & Editing</h2>
-            <p>
-                Capture clinical excellence in 4K and edit directly on the device. Annotate key moments, trim footage, and instantly post your cases to <strong>Med Connect</strong>.
-            </p>
-            <p style="margin-top: 20px; font-size: 16px;">
-                This secure integration allows authenticated peers to view your recordings, exchange feedback, and interact with your procedural content in a professional, collaborative environment.
-            </p>
-        </div>
-        <div class="feature-image-wrapper horizontal-card">
-            <img src="editing.jpg" alt="Video Editing Interface">
-        </div>
-    </div>
-</div>
-</section>
-  <section class="section" id="handle-section">
-    <div class="container">
-        <div class="feature-row align-top-mobile">
-            
-            <div class="feature-text text-content-padded">
-                <span class="eyebrow">Bluetooth Connectivity</span>
-                <h2>Wireless Smart Handle</h2>
-                <p>
-                    Connects seamlessly to your phone via Bluetooth. Use the integrated <strong>joystick, buttons, and touchpad</strong> to manage your entire workflow without ever touching the screen.
-                </p>
-  
-                <div class="modern-feature-list">
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
-                        </div>
-                        <div class="feature-detail">
-                            <strong>Full Optical Control</strong>
-                            <span>Instantly pull focus, calibrate the microscope, and adjust zoom levels.</span>
-                        </div>
-                    </div>
-  
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                        </div>
-                        <div class="feature-detail">
-                            <strong>Digital Overlays</strong>
-                            <span>Cycle NDI streams, image overlays, videos, and 3D models on the fly.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-  
-            <div class="image-stack-column">
-                <div class="feature-image-wrapper split-card">
-                    <img src="joystick2.jpg" alt="Smart Handle Overview" onerror="this.src='https://via.placeholder.com/600x300?text=Joystick+2'">
-                </div>
-                <div class="feature-image-wrapper split-card">
-                    <img src="joystick.jpg" alt="Smart Handle Controls" onerror="this.src='https://via.placeholder.com/600x300?text=Joystick+1'">
-                </div>
-            </div>
-  
-        </div>
-    </div>
-  </section>
-
-
-
-<section class="spec-section section-bg" id="specs">
+<!-- ========== TECH SPECS, in the style of apple.com: key figures, then one row per group ========== -->
+<section class="tech-specs section-bg" id="specs">
   <div class="container">
-      <div class="chapter-label">Datasheet — DP Mini</div>
-      <h3 class="chapter-title">Specifications.</h3>
-      <p class="chapter-intro">Optical, computational and mechanical details for the DP Mini Fusion 3D system. Configurable across three objectives and two eyepiece options to match your specialty.</p>
+      <h2 class="ts-title">Tech Specs</h2>
 
-      <div class="spec-table">
-          <div class="spec-table-grid">
-              <div class="spec-row"><div class="spec-label">Imaging</div><div class="spec-value">Fusion 3D — active stereoscopic depth from a single sensor</div></div>
-              <div class="spec-row"><div class="spec-label">Resolution</div><div class="spec-value">4K HDR @ 60 fps</div></div>
-              <div class="spec-row"><div class="spec-label">Magnification</div><div class="spec-value">5× optical + 5–10× digital zoom</div></div>
-              <div class="spec-row"><div class="spec-label">Working Distance</div><div class="spec-value">25–35 cm (configurable: 50 / 60 / 75 mm objectives)</div></div>
-              <div class="spec-row"><div class="spec-label">Illumination</div><div class="spec-value">Coaxial LED, intensity-controlled</div></div>
-              <div class="spec-row"><div class="spec-label">Latency</div><div class="spec-value">Sub-frame, real-time pipeline</div></div>
-
-              <div class="spec-row"><div class="spec-label">Compute</div><div class="spec-value">Apple Silicon (iPhone 17 Pro+ recommended)</div></div>
-              <div class="spec-row"><div class="spec-label">Voice Control</div><div class="spec-value">On-device, sub-second latency (Neural Engine)</div></div>
-              <div class="spec-row"><div class="spec-label">Smart Handle</div><div class="spec-value">Bluetooth 5.3 — joystick, buttons, touchpad</div></div>
-              <div class="spec-row"><div class="spec-label">Eyepieces</div><div class="spec-value">Screen-only · Full HD 1080p · 4K UHD OLED</div></div>
-              <div class="spec-row"><div class="spec-label">Mounting</div><div class="spec-value">Ergonomic handle · Articulated arm · Table stand</div></div>
-              <div class="spec-row"><div class="spec-label">Streaming</div><div class="spec-value">Med Connect — 4K/60 in 2D or true 3D (VR-compatible)</div></div>
-
-              <div class="spec-row"><div class="spec-label">Weight</div><div class="spec-value">2.5 kg (head unit)</div></div>
-              <div class="spec-row"><div class="spec-label">Dimensions</div><div class="spec-value">34 × 28 × 15 cm</div></div>
-              <div class="spec-row"><div class="spec-label">Power</div><div class="spec-value">100–240 V AC, USB-C PD</div></div>
-              <div class="spec-row"><div class="spec-label">Connectivity</div><div class="spec-value">Wi-Fi 6E · Bluetooth 5.3 · NDI · USB-C</div></div>
-              <div class="spec-row"><div class="spec-label">EU MDR Class</div><div class="spec-value">Class I</div></div>
-              <div class="spec-row"><div class="spec-label">Certifications</div><div class="spec-value">CE · Made in Italy</div></div>
-          </div>
-          <div class="spec-footnote">
-              Specifications are indicative and may evolve before launch. Final values, certifications and accessory compatibility will be confirmed in the released IFU and Declaration of Conformity.
-          </div>
+      <div class="ts-highlights">
+          <div><strong>5K</strong><span>Displays</span></div>
+          <div><strong>5×</strong><span>Optical zoom, plus 5–10× digital</span></div>
+          <div><strong>75 mm</strong><span>Objective, wide field of view</span></div>
+          <div><strong>4.5 kg</strong><span>The whole microscope</span></div>
       </div>
+
+      <div class="ts-group">
+          <h3>Optics</h3>
+          <dl>
+              <div><dt>Imaging</dt><dd>Active stereoscopic depth from a single sensor</dd></div>
+              <div><dt>Resolution</dt><dd>5K displays</dd></div>
+              <div><dt>Magnification</dt><dd>5× optical + 5–10× digital zoom</dd></div>
+              <div><dt>Objective</dt><dd>75 mm, wide field of view</dd></div>
+              <div><dt>Illumination</dt><dd>Coaxial LED, intensity-controlled</dd></div>
+              <div><dt>Latency</dt><dd>Sub-frame, real-time pipeline</dd></div>
+          </dl>
+      </div>
+
+      <div class="ts-group">
+          <h3>iPhone and app</h3>
+          <dl>
+              <div><dt>iPhone</dt><dd>iPhone 17 Pro or newer required (genlock)</dd></div>
+              <div><dt>Voice control</dt><dd>On-device, sub-second latency (Neural Engine)</dd></div>
+              <div><dt>Streaming</dt><dd>Med Connect, 4K/60 in 2D or true 3D (VR-compatible)</dd></div>
+          </dl>
+      </div>
+
+      <div class="ts-group">
+          <h3>Controls and mounting</h3>
+          <dl>
+              <div><dt>Smart Handle</dt><dd>Bluetooth 5.3, with joystick, buttons and touchpad</dd></div>
+              <div><dt>Eyepieces</dt><dd>Screen-only · 5K OLED</dd></div>
+              <div><dt>Mounting</dt><dd>Ergonomic handle · Articulated arm · Table stand</dd></div>
+          </dl>
+      </div>
+
+      <div class="ts-group">
+          <h3>Size, weight and power</h3>
+          <dl>
+              <div><dt>Weight</dt><dd>4.5 kg, complete microscope</dd></div>
+              <div><dt>Dimensions</dt><dd>34 × 28 × 15 cm</dd></div>
+              <div><dt>Power</dt><dd>100–240 V AC, USB-C PD</dd></div>
+              <div><dt>Connectivity</dt><dd>Wi-Fi 6E · Bluetooth 5.3 · NDI · USB-C</dd></div>
+          </dl>
+      </div>
+
+      <div class="ts-group">
+          <h3>Regulatory</h3>
+          <dl>
+              <div><dt>EU MDR class</dt><dd>Class I</dd></div>
+              <div><dt>Certifications</dt><dd>CE · Made in Italy</dd></div>
+          </dl>
+      </div>
+
+      <p class="ts-note">Specifications are indicative and may evolve before launch. Final values, certifications and accessory compatibility will be confirmed in the released IFU and Declaration of Conformity.</p>
   </div>
 </section>
 
-<section class="section">
+<!-- ========== CLOSING: three ways to get DP Mini, like the end of an apple.com product page ========== -->
+<section class="closing" id="closing">
   <div class="container">
-      <div class="section-header">
-          <span class="eyebrow">Ready when you are</span>
-          <h2>Bring Fusion 3D to your clinic.</h2>
-          <p>Configure the objectives, eyepieces and mounting that fit your specialty — or talk to the team for a guided setup.</p>
-      </div>
-      <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:32px;">
-          <a href="buydpmini.html" class="btn btn-primary btn-lg">Buy DP Mini</a>
-          <a href="contactus.html" class="btn btn-ghost btn-lg">Talk to the team</a>
+      <h2 class="closing-title">Bring <span class="gradient-text">DP MINI</span> to your clinic.</h2>
+      <p class="closing-price">From €31.990 excl. VAT</p>
+      <div class="closing-ways">
+          <a class="way" href="buydpmini.html">
+              <svg class="way-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0"/></svg>
+              <span class="way-title">Buy online</span>
+              <span class="way-text">Choose the mounting and accessories that fit your clinic, and order DP Mini directly.</span>
+              <span class="way-link">Buy DP Mini</span>
+          </a>
+          <a class="way" href="contactus.html">
+              <svg class="way-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg>
+              <span class="way-title">Talk to the team</span>
+              <span class="way-text">Tell us about your clinic and get a guided setup.</span>
+              <span class="way-link">Contact us</span>
+          </a>
+          <a class="way" href="consultation.html">
+              <svg class="way-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+              <span class="way-title">Book a consultation</span>
+              <span class="way-text">A free 30-minute session with our specialists to plan your setup.</span>
+              <span class="way-link">Schedule a consultation</span>
+          </a>
       </div>
   </div>
 </section>
@@ -1893,7 +2476,7 @@ footer {
                 <address class="footer-address">
                     <strong>Dal Pont Medical S.r.l.s</strong><br>
                     Piazza San Vito 12<br>
-                    31100 Treviso — Italia<br><br>
+                    31100 Treviso — Italy<br><br>
                     VAT / C.F.: 05355480269<br>
                     REA: 437837<br>
                     EUDAMED SRN: IT-MF-000052836
@@ -1999,19 +2582,6 @@ h1, p, .hero-cta, .model-stage { transform: translateY(20px); }
       }
       window.scrollTo(0,0);
       window.onbeforeunload = function () { window.scrollTo(0, 0); }
-
-      // --- 3D MODEL LOADER ---
-      const heroModel = document.querySelector('.model-stage model-viewer');
-      if (heroModel) {
-          const loader = heroModel.querySelector('.model-loader');
-          const pctEl = heroModel.querySelector('.model-loader-pct');
-          heroModel.addEventListener('progress', (e) => {
-              const p = Math.round(e.detail.totalProgress * 100);
-              if (pctEl) pctEl.textContent = p + '%';
-              if (e.detail.totalProgress === 1 && loader) loader.classList.add('hide');
-          });
-          heroModel.addEventListener('load', () => { if (loader) loader.classList.add('hide'); });
-      }
 
       // --- SPLASH SCREEN ---
       const splash = document.querySelector('.splash-screen');
@@ -2383,6 +2953,726 @@ h1, p, .hero-cta, .model-stage { transform: translateY(20px); }
       updateFade();
   })();
   </script>
+<script type="module">
+/* ===== DP Mini — scroll story =====
+   Scrolling through #story only picks the chapter. When a chapter comes in, the camera
+   flies to its pose and the movement from the DP Mini video plays by itself at real speed
+   (Blender frames baked into dpmini-anim.glb, 24 fps), then holds. Scroll unit: 1 = one viewport height. */
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+const FPS = 24, F0 = 144;            // first exported Blender frame = clip time 0
+const CAM_DUR = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0.3 : 1.6;   // s, camera flight
+const BLEND_DUR = 0.7;               // s, parts ease back to the chapter's start pose
+const ANIM_DELAY = CAM_DUR * 0.7;    // s, the movement starts as the camera settles
+const DRIFT_DUR = 7;                 // s, slow camera drift once a chapter is on screen
+const CARD_DELAY = CAM_DUR * 0.75;   // s, text waits for the camera when the model changes side
+const CARD_BEAT = 0.35;              // s, otherwise it follows the outgoing text after a beat
+
+// len: scroll length that keeps the chapter on screen. rest: Blender frame held when not playing.
+// frames: Blender frames played when the chapter comes in (phase table in
+// /Users/giorgio/blender/pipeline/LEGGIMI.md).
+const CHAPTERS = [
+    { id: 'hero',       len: 1.0, rest: 144 },
+    { id: 'resistance', len: 1.3, rest: 150, frames: [150, 259] },   // corpo centrale 0 → −25 → +25 → 0
+    { id: 'release',    len: 1.3, rest: 275, frames: [275, 369] },   // whole microscope 0 → +25 → −25 → 0
+    { id: 'eyepieces',  len: 1.3, rest: 401, frames: [401, 495] },   // braccetti + oculari
+    { id: 'app',        len: 1.2, rest: 560 },
+];
+// Camera pose per chapter. az/el in degrees (az 0 = facing the phone screen),
+// dist in model heights, sx / sy = shift of the model on desktop (fraction of the viewport, + = right / up).
+// Anchors: 'center' = rest pose, 'body' = optical head, 'screen' = phone glass,
+// 'sweep' / 'eyes' = middle of the space the microscope takes up during the release / eyepiece movement.
+const POSES = {
+    hero:       { az: -30, el:  6, dist: 3.65, at: 'center', sx:  0.20, sy: 0.055, drift:  8 },
+    resistance: { az: -40, el: 12, dist: 3.0, at: 'body',   sx: -0.21, sy: 0,    drift: -8 },
+    release:    { az:  42, el: 16, dist: 3.6, at: 'sweep',  sx:  0.22, sy: 0,    drift:  8 },
+    eyepieces:  { az:  50, el:  6, dist: 3.35, at: 'eyes',  sx:  0.21, sy: 0.05, drift: -6 },
+    app:        { az:   0, el:  2, dist: 0,   at: 'screen', sx:  0.25, sy: 0,    drift:  0 },
+};
+
+const section = document.getElementById('story');
+const sticky  = section.querySelector('.story-sticky');
+const canvas  = document.getElementById('story-canvas');
+const loaderEl = document.getElementById('story-loader');
+const pctEl   = document.getElementById('story-pct');
+const cueEl   = document.getElementById('story-cue');
+const railEl  = document.getElementById('story-rail');
+const railBtns = [...railEl.querySelectorAll('[data-go]')];
+const railChapters = railEl.querySelector('.rail-chapters');
+const replayBtn = document.getElementById('story-replay');
+const cards   = Object.fromEntries([...sticky.querySelectorAll('[data-card]')].map(el => [el.dataset.card, el]));
+const mqMobile = matchMedia('(max-width: 860px)');
+
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp  = (a, b, u) => a + (b - a) * u;
+const ease  = u => u * u * (3 - 2 * u);
+const easeInOut = u => u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+
+let T = 0;
+for (const c of CHAPTERS) { c.s = T; T += c.len; c.e = T; }
+const ch = Object.fromEntries(CHAPTERS.map(c => [c.id, c]));
+// a chapter takes over a little before its own stretch of scroll begins
+const chapterAt = t => [...CHAPTERS].reverse().find(c => c.s <= t + 0.35) || CHAPTERS[0];
+
+// ---- three.js -------------------------------------------------------------
+let renderer;
+try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+} catch (err) {
+    console.warn('WebGL not available, showing the still render', err);
+    loaderEl.classList.add('hide');
+    sticky.querySelector('.story-fallback').hidden = false;
+}
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(24, 1, 0.01, 30);
+scene.add(camera);
+let model = null, clipDur = 0, screenMat = null, animNodes = [];
+const tracks = [];
+const anchors = {}; let H = 0.5, screenNormal = new THREE.Vector3(0, 0, 1), screenW = 0.145;
+
+if (renderer) {
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.NeutralToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    renderer.setClearColor(0x000000, 0);
+
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environmentIntensity = 0.65;
+
+    // studio lights ride with the camera, so every chapter is lit the same way
+    const aim = new THREE.Object3D(); scene.add(aim);
+    const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(-1.2, 1.4, 1.0); key.target = aim;
+    const rim = new THREE.DirectionalLight(0xdfe8ff, 2.6); rim.position.set(1.5, 0.9, -1.2); rim.target = aim;
+    const fill = new THREE.DirectionalLight(0xffffff, 0.5); fill.position.set(0.8, -0.4, 1.0); fill.target = aim;
+    camera.add(key, rim, fill);
+
+    const draco = new DRACOLoader().setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/gltf/');
+    const loader = new GLTFLoader().setDRACOLoader(draco);
+    // ?v= changes with every new export, so browsers and sw.js never serve the old model
+    loader.load('dpmini-anim.glb?v=2', gltf => {
+        model = gltf.scene;
+        scene.add(model);
+        // Tracks are sampled directly instead of through an AnimationMixer: the mixer only writes a
+        // node when its own value changes, so a part that is still in one chapter kept whatever pose
+        // the blend between chapters had left on it, and then jumped.
+        const clip = gltf.animations[0];
+        clipDur = clip.duration;
+        for (const tr of clip.tracks) {
+            const { nodeName, propertyName } = THREE.PropertyBinding.parseTrackName(tr.name);
+            const node = THREE.PropertyBinding.findNode(model, nodeName);
+            if (node && node[propertyName]?.fromArray) tracks.push({ target: node[propertyName], interp: tr.createInterpolant() });
+            if (node && !animNodes.includes(node)) animNodes.push(node);
+        }
+        setFrame(F0);
+        model.updateMatrixWorld(true);
+        mergeByPart(model, animNodes);
+
+        // centre the rest pose on the origin, then measure the anchors the camera aims at
+        const box = new THREE.Box3().setFromObject(model);
+        const c = box.getCenter(new THREE.Vector3());
+        model.position.sub(c);
+        model.updateMatrixWorld(true);
+        H = box.getSize(new THREE.Vector3()).y;
+        const centreOf = name => {
+            const o = model.getObjectByName(name);
+            return o ? new THREE.Box3().setFromObject(o).getCenter(new THREE.Vector3()) : new THREE.Vector3();
+        };
+        anchors.center = new THREE.Vector3();
+        anchors.body = centreOf('Corpo_centrale').lerp(anchors.center, 0.6);
+        const sweepOf = ([f0, f1]) => {
+            const box = new THREE.Box3();
+            for (let f = f0; f <= f1; f += 8) {
+                setFrame(f);
+                model.updateMatrixWorld(true);
+                box.union(new THREE.Box3().setFromObject(model));
+            }
+            return box;
+        };
+        anchors.sweep = sweepOf(ch.release.frames).getCenter(new THREE.Vector3());
+        anchors.eyes = sweepOf(ch.eyepieces.frames).getCenter(new THREE.Vector3());
+        setFrame(F0);
+        model.updateMatrixWorld(true);
+
+        // the app screenshot goes on the AppScreen quad that sits on the phone glass
+        const scr = model.getObjectByName('AppScreen');
+        if (scr) {
+            // Draco reorders vertices: take the normal from the first triangle, the width from the edges
+            const g = scr.geometry, pos = g.attributes.position;
+            const v = i => new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(scr.matrixWorld);
+            const tri = g.index ? [0, 1, 2].map(i => v(g.index.getX(i))) : [v(0), v(1), v(2)];
+            screenNormal = new THREE.Vector3().subVectors(tri[1], tri[0]).cross(new THREE.Vector3().subVectors(tri[2], tri[0])).normalize();
+            if (screenNormal.z < 0) screenNormal.negate();          // the phone faces the front (+Z)
+            const pts = Array.from({ length: pos.count }, (_, i) => v(i));
+            const d = [];
+            for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) d.push(pts[i].distanceTo(pts[j]));
+            d.sort((a, b) => a - b);
+            screenW = d[d.length - 3];                              // long side (the two largest are diagonals)
+            anchors.screen = new THREE.Box3().setFromObject(scr).getCenter(new THREE.Vector3());
+            // the phone shows one app feature at a time (see APP_FEATURES), drawn into a canvas texture
+            screenTex = new THREE.CanvasTexture(screenCanvas);
+            screenTex.colorSpace = THREE.SRGBColorSpace;
+            screenTex.flipY = false;
+            screenTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            inset(screenTex);
+            loadAppScreens();
+            screenMat = new THREE.MeshBasicMaterial({ map: screenTex, alphaMap: screenMask(), transparent: true, opacity: 0, toneMapped: false,
+                depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+            scr.material = screenMat;
+            scr.renderOrder = 2;
+        } else {
+            anchors.screen = anchors.body.clone();
+        }
+
+        // start on the current chapter without a flight
+        const p0 = poseValues(active, (performance.now() - actStart) / 1000);
+        Object.assign(cam, p0, { target: p0.target.clone() });
+        camFrom = { ...cam, target: cam.target.clone() };
+        partsFrom = null;
+        renderer.compile(scene, camera);     // build every shader now, not on the first frames of a movement
+        loaderEl.classList.add('hide');
+        canvas.classList.add('is-ready');
+        kick();
+    }, xhr => {
+        if (xhr.total) pctEl.textContent = Math.round(100 * xhr.loaded / xhr.total) + '%';
+    }, err => {
+        console.error('dpmini-anim.glb failed to load', err);
+        loaderEl.classList.add('hide');
+        sticky.querySelector('.story-fallback').hidden = false;
+    });
+}
+
+// The export keeps every CAD piece as its own mesh: 572 draw calls, ~6 ms a frame whatever the
+// resolution. Pieces that move together and look the same are merged: one mesh per (moving part,
+// material), identical materials shared. AppScreen stays on its own (its material fades in).
+function mergeByPart(root, movers) {
+    const look = m => [m.type, m.color?.getHexString(), m.metalness, m.roughness, m.clearcoat, m.clearcoatRoughness,
+        m.specularIntensity, m.specularColor?.getHexString(), m.ior, m.emissive?.getHexString(), m.emissiveIntensity,
+        m.side, m.transparent, m.opacity, !!m.map].join('|');
+    const partOf = o => { let p = o.parent; while (p && p !== root && !movers.includes(p)) p = p.parent; return p || root; };
+    const scr = root.getObjectByName('AppScreen');
+    if (scr) partOf(scr).attach(scr);                   // keep it when its phone mesh is merged away
+    const mats = new Map(), groups = new Map(), merged = [];
+    root.traverse(o => {
+        if (!o.isMesh || o === scr || movers.includes(o)) return;
+        const part = partOf(o), g = o.geometry;
+        const mk = look(o.material);
+        if (!mats.has(mk)) mats.set(mk, o.material);
+        const key = mk + '#' + Object.keys(g.attributes).sort().join() + (g.index ? '#i' : '');
+        if (!groups.has(part)) groups.set(part, new Map());
+        const byKey = groups.get(part);
+        if (!byKey.has(key)) byKey.set(key, { mat: mats.get(mk), geos: [] });
+        const rel = part.matrixWorld.clone().invert().multiply(o.matrixWorld);
+        const geo = g.clone().applyMatrix4(rel);
+        if (rel.determinant() < 0 && geo.index) {       // a mirrored piece: keep its triangles facing out
+            const ix = geo.index.array;
+            for (let i = 0; i < ix.length; i += 3) { const t = ix[i + 1]; ix[i + 1] = ix[i + 2]; ix[i + 2] = t; }
+        }
+        byKey.get(key).geos.push(geo);
+        merged.push(o);
+    });
+    for (const o of merged) { o.removeFromParent(); o.geometry.dispose(); }
+    for (const [part, byKey] of groups) {
+        for (const { mat, geos } of byKey.values()) {
+            const geo = geos.length > 1 ? mergeGeometries(geos) : geos[0];
+            if (geo) part.add(new THREE.Mesh(geo, mat));
+        }
+    }
+}
+
+function setFrame(f) {
+    const t = clamp((f - F0) / FPS, 0, clipDur);
+    for (const tr of tracks) tr.target.fromArray(tr.interp.evaluate(t));
+}
+
+// ---- camera ----------------------------------------------------------------
+const cam = { az: 0, el: 0, dist: 1, target: new THREE.Vector3(), sx: 0, sy: 0, scr: 0 };   // what is on screen now
+let camFrom = null;
+function distOf(p) {
+    const mobile = mqMobile.matches, aspect = camera.aspect;
+    const tanHalf = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    if (p.at === 'screen') {                 // frame the phone: its glass fills a set share of the width
+        const share = mobile ? 0.84 : 0.36;
+        return screenW / share / (2 * tanHalf * aspect);
+    }
+    const d = p.dist * H;
+    return mobile ? d * clamp(1.0 / aspect, 1, 2.3) * 0.92 : d * Math.max(1, 1.45 / aspect);
+}
+// pose of a chapter, `el` seconds after it came in (the drift keeps the shot alive)
+function poseValues(id, el) {
+    const p = POSES[id];
+    return {
+        az: p.az + p.drift * (ease(clamp(el / DRIFT_DUR)) - 0.5), el: p.el, dist: distOf(p),
+        target: anchors[p.at] || anchors.center || new THREE.Vector3(), sx: p.sx, sy: p.sy, scr: p.at === 'screen' ? 1 : 0,
+    };
+}
+function placeCamera(w, h) {
+    const az = THREE.MathUtils.degToRad(cam.az), el = THREE.MathUtils.degToRad(cam.el);
+    const dir = new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el));
+    if (cam.scr > 0) dir.lerp(screenNormal, cam.scr).normalize();   // the phone shot looks down the screen normal
+    camera.position.copy(cam.target).addScaledVector(dir, cam.dist);
+    camera.lookAt(cam.target);
+    // shift the model sideways (or up on phones) to leave room for the text
+    const mobile = mqMobile.matches;
+    const sx = mobile ? 0 : cam.sx, sy = mobile ? 0.17 : cam.sy;
+    camera.setViewOffset(w, h, -sx * w, sy * h, w, h);
+    const glow = `translate(${(sx * w).toFixed(1)}px, ${(-sy * h).toFixed(1)}px)`;
+    if (glow !== lastGlow) { lastGlow = glow; glowEl.style.transform = glow; }
+}
+const glowEl = sticky.querySelector('.story-glow');
+let lastGlow = '';
+
+// ---- app chapter: one phone screen per feature -----------------------------------
+// screen: a landscape iPhone screenshot in renders/ (1600×736, the corners are rounded by the page);
+// null draws a placeholder with the feature's icon and title until the real one exists.
+// video: a screen recording or animation (1600×736, 30 fps, no sound) that plays on the phone and
+// loops, from loopFrom (s) when it has an intro; screen is its first frame, shown until it can play.
+// app-live.mp4: the live view (app-live.jpg) with a blue focus on Go Live, drawn frame by frame.
+// text: one or two lines. more: what follows, in the form that suits the feature —
+// figures (big number + caption), points, steps (numbered), modes (side by side) or chips (examples).
+const APP_FEATURES = [
+    { id: 'zoom', tab: 'Zoom & light', screen: 'renders/app-live.jpg',
+      title: 'Fine control over zoom and light',
+      text: 'Two sliders tune magnification and light in fine steps, while DP Mini works out the working distance and shows it live on screen.',
+      more: { figures: [['5×', 'Optical zoom'], ['5–10×', 'Digital zoom'], ['Live', 'Distance and zoom readout']] },
+      icon: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/>' },
+    { id: 'images', tab: 'Images', screen: 'renders/app-images.jpg?v=2', video: 'renders/app-images.mp4?v=2',
+      title: 'Image library',
+      text: 'Bring up radiographs and clinical images during the procedure and compare them with the live view.',
+      more: { points: ['Radiographs and clinical photos, next to the live view', 'Scroll and select with the DP Pedal', 'Open and close the library by voice'] },
+      icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-8 8"/>' },
+    { id: 'models', tab: '3D models', screen: 'renders/app-models.jpg?v=2', video: 'renders/app-models.mp4?v=2',
+      title: '3D model library',
+      text: 'Select several structures at once, and DP Mini sets up the view for you.',
+      more: { steps: ['Select the tooth', 'Add its pulp to the selection', 'The tooth turns transparent, the pulp is highlighted in its own color'] },
+      icon: '<path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M3 7l9 5 9-5"/>' },
+    { id: 'layout', tab: 'Layout', screen: 'renders/app-layout.jpg',
+      title: 'Your screen, your layout',
+      text: 'Decide where images and 3D models appear on the screen, so reference material sits where it helps.',
+      more: { points: ['Images and 3D models placed where you want them', 'The field you are working on stays clear'] },
+      icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>' },
+    { id: 'live', tab: 'Go Live', screen: 'renders/app-live.jpg', video: 'renders/app-live.mp4', loopFrom: 1,
+      title: 'Live consultations',
+      text: 'Stream with low latency and bring other clinicians into the procedure for a consultation.',
+      more: { modes: [['Private', 'You accept each participant.'], ['Public', 'Open for others to join.']] },
+      icon: '<circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 010 8.4M7.8 16.2a6 6 0 010-8.4M19.1 4.9a10 10 0 010 14.2M4.9 19.1a10 10 0 010-14.2"/>' },
+    { id: 'laser', tab: 'Laser drawing', screen: 'renders/app-laser.jpg',
+      title: 'Draw on the field, not on the screen',
+      text: 'What you draw is projected onto the field by a visible laser, so it is not only on a display.',
+      more: { figures: [['60,000', 'Laser points per second'], ['Whole OR', 'Everyone in the room sees it']] },
+      icon: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>' },
+    { id: 'record', tab: 'Record & edit', screen: 'renders/app-record.jpg',
+      title: 'Record and edit on the spot',
+      text: 'Record the procedure and edit it right on the device, without moving to a computer.',
+      more: { steps: ['Record the procedure', 'Cut it into sections', 'Save the clips directly'] },
+      icon: '<rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4z"/>' },
+    { id: 'handle', tab: 'Handle buttons', screen: 'renders/app-handle.jpg',
+      title: 'Set up the handle',
+      text: 'Choose what each button on the handle does, so the controls you use most are always under your fingers.',
+      more: { points: ['An action of your choice for every button', 'Change it whenever your workflow changes'] },
+      icon: '<circle cx="12" cy="6" r="3"/><path d="M12 9v7"/><rect x="5" y="16" width="14" height="5" rx="2"/>' },
+    { id: 'voice', tab: 'Voice commands', screen: 'renders/app-voice.jpg', video: 'renders/app-voice.mp4',
+      title: 'Voice commands',
+      text: 'Customizable voice commands for nearly everything, plus an AI assistant that explains how to use each of the microscope\u2019s features.',
+      more: { label: 'For example', chips: ['\u201cZoom in\u201d', '\u201cFocus\u201d', '\u201cOpen images\u201d', '\u201cClose library\u201d', '\u201cHow do I record?\u201d'] },
+      icon: '<path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3"/>' },
+];
+const svgIcon = (inner, stroke = 'currentColor') =>
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+const screenCanvas = Object.assign(document.createElement('canvas'), { width: 1600, height: 736 });
+const screenCtx = screenCanvas.getContext('2d');
+const appScreens = {};
+const appTabsEl = document.getElementById('app-tabs'), appPanel = document.getElementById('app-panel');
+const appTitleEl = document.getElementById('app-title'), appTextEl = document.getElementById('app-text');
+const appMoreEl = document.getElementById('app-more');
+// the structured part under each feature's text
+function moreBlock(m = {}) {
+    const el = (tag, cls, text) => Object.assign(document.createElement(tag), cls ? { className: cls } : {}, text != null ? { textContent: text } : {});
+    const box = el('div');
+    if (m.label) box.append(el('span', 'app-more-label', m.label));
+    if (m.figures) {
+        const d = el('div', 'app-figures');
+        d.append(...m.figures.map(([big, small]) => { const c = el('div'); c.append(el('strong', null, big), el('span', null, small)); return c; }));
+        box.append(d);
+    }
+    if (m.points) { const ul = el('ul', 'app-points'); ul.append(...m.points.map(t => el('li', null, t))); box.append(ul); }
+    if (m.steps) { const ol = el('ol', 'app-steps'); ol.append(...m.steps.map(t => el('li', null, t))); box.append(ol); }
+    if (m.modes) {
+        const d = el('div', 'app-modes');
+        d.append(...m.modes.map(([name, line]) => { const c = el('div'); c.append(el('strong', null, name), el('span', null, line)); return c; }));
+        box.append(d);
+    }
+    if (m.chips) { const ul = el('ul', 'app-chips'); ul.append(...m.chips.map(t => el('li', null, t))); box.append(ul); }
+    return box;
+}
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let screenTex = null, screenFrom = null, screenTo = null, screenFadeAt = 0;
+let appIndex = 0, appOn = false, screenLive = false;
+let playing = null;                                     // the screen recording on the phone right now
+
+// the AppScreen quad covers the phone's glass up to the frame (144.8 × 66.7 mm). Like a real iPhone,
+// the picture sits inside a thin black border: inset by SCREEN_BORDER on every side, with corners
+// a little tighter than the frame's, so no grey glass shows there. The mask cuts the shape, inset() shrinks each texture into it.
+const SCREEN_MM = [144.8, 66.7], SCREEN_BORDER = 0.5, SCREEN_RADIUS = 9.2;    // mm
+function screenMask() {
+    const k = 10;                                         // px per mm
+    const c = Object.assign(document.createElement('canvas'), { width: SCREEN_MM[0] * k, height: SCREEN_MM[1] * k });
+    const x = c.getContext('2d'), b = SCREEN_BORDER * k;
+    x.fillStyle = '#000'; x.fillRect(0, 0, c.width, c.height);
+    x.fillStyle = '#fff'; x.beginPath(); x.roundRect(b, b, c.width - 2 * b, c.height - 2 * b, SCREEN_RADIUS * k); x.fill();
+    const t = new THREE.CanvasTexture(c);
+    t.flipY = false;
+    return t;
+}
+function inset(t) {
+    const iu = SCREEN_BORDER / SCREEN_MM[0], iv = SCREEN_BORDER / SCREEN_MM[1];
+    t.repeat.set(1 / (1 - 2 * iu), 1 / (1 - 2 * iv));
+    t.offset.set(-iu / (1 - 2 * iu), -iv / (1 - 2 * iv));
+    return t;
+}
+// the app's black screen with the feature's icon and title
+async function placeholderScreen(f) {
+    await document.fonts.load('600 40px Inter').catch(() => {});
+    const c = Object.assign(document.createElement('canvas'), { width: screenCanvas.width, height: screenCanvas.height });
+    const x = c.getContext('2d'), W = c.width, H = c.height;
+    x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
+    const img = new Image();
+    img.src = 'data:image/svg+xml,' + encodeURIComponent(svgIcon(f.icon, '#ff7a18'));
+    await img.decode().catch(() => {});
+    const s = H * 0.2;
+    x.drawImage(img, (W - s) / 2, H * 0.28, s, s);
+    x.fillStyle = '#f5f5f7'; x.textAlign = 'center';
+    x.font = `600 ${Math.round(H * 0.07)}px Inter, -apple-system, sans-serif`;
+    x.fillText(f.title, W / 2, H * 0.68);
+    return c;
+}
+// a screen recording: a muted video in the stage, drawn into the canvas while the screens cross-fade,
+// then shown on the phone as a video texture that redraws only when the video has a new frame
+const frameCb = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+function makeVideo(f, poster) {
+    const v = document.createElement('video');
+    v.muted = v.defaultMuted = true; v.playsInline = true;
+    v.preload = f === APP_FEATURES[appIndex] ? 'auto' : 'none';   // the others load when picked
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
+    v.className = 'app-video';
+    v.dpPoster = poster;
+    v.addEventListener('loadeddata', kick);
+    v.addEventListener('ended', () => {                    // loops, from loopFrom when it has an intro
+        if (v !== playing) return;
+        v.currentTime = f.loopFrom || 0;
+        v.play().catch(() => {});
+    });
+    v.src = f.video;
+    sticky.append(v);
+    f.el = v;
+    if (screenMat && !screenMat.userData.videoReady) {       // build the video shader now, not mid-fade
+        const map = screenMat.map;
+        screenMat.map = videoTex(v); screenMat.needsUpdate = true;
+        renderer.compile(scene, camera);
+        screenMat.map = map; screenMat.needsUpdate = true;
+        screenMat.userData.videoReady = true;
+    }
+    return v;
+}
+function videoTex(v) {
+    if (!v.dpTex) {
+        v.dpTex = new THREE.VideoTexture(v);
+        v.dpTex.colorSpace = THREE.SRGBColorSpace;
+        v.dpTex.flipY = false;
+        inset(v.dpTex);
+    }
+    return v.dpTex;
+}
+// a video that can't show a frame yet shows its first frame, the poster
+const frameOf = src => src && src.tagName === 'VIDEO' && src.readyState < 2 ? src.dpPoster : src;
+function watchFrames(v) {
+    if (!frameCb || v.dpWatch) return;
+    v.dpWatch = true;
+    v.requestVideoFrameCallback(() => { v.dpWatch = false; if (v === playing) { kick(); watchFrames(v); } });
+}
+// only the selected feature's recording plays, and only while the phone is on screen
+function syncVideo(restart = false) {
+    const f = APP_FEATURES[appIndex];
+    const want = appOn && screenLive && f.el && document.body.classList.contains('story-on') && !document.hidden ? f.el : null;
+    for (const g of APP_FEATURES) if (g.el && g.el !== want && !g.el.paused) g.el.pause();
+    playing = want;
+    if (!want) return;
+    want.preload = 'auto';
+    if (restart) want.currentTime = 0;
+    if (want.paused) want.play().catch(() => {});         // e.g. Low Power Mode: the poster stays
+    watchFrames(want);
+}
+document.addEventListener('visibilitychange', () => syncVideo());
+
+function loadAppScreens() {
+    APP_FEATURES.forEach((f, i) => {
+        const ready = f.screen
+            ? new Promise(res => { const img = new Image(); img.onload = () => res(img); img.onerror = () => res(placeholderScreen(f)); img.src = f.screen; })
+            : placeholderScreen(f);
+        Promise.resolve(ready).then(img => {
+            const src = f.video ? makeVideo(f, img) : img;
+            appScreens[f.id] = src;
+            if (i !== appIndex || screenTo === src) return;   // arrived after its tab was picked: show it now
+            screenFrom = screenTo; screenTo = src; screenFadeAt = performance.now();
+            if (!screenFrom) drawScreen(1);
+            syncVideo(true);
+            kick();
+        });
+    });
+}
+function drawScreen(u) {
+    const W = screenCanvas.width, H = screenCanvas.height, from = frameOf(screenFrom), to = frameOf(screenTo);
+    screenCtx.clearRect(0, 0, W, H);
+    if (from && u < 1) screenCtx.drawImage(from, 0, 0, W, H);
+    if (to) { screenCtx.globalAlpha = from ? u : 1; screenCtx.drawImage(to, 0, 0, W, H); screenCtx.globalAlpha = 1; }
+    if (screenTex) screenTex.needsUpdate = true;
+}
+function selectFeature(i, instant = false) {
+    const f = APP_FEATURES[i], dir = i >= appIndex ? 1 : -1;
+    appIndex = i;
+    renderTabs(dir, instant);
+    // the text slides sideways, in the direction you are moving through the features
+    const setText = () => { appTitleEl.textContent = f.title; appTextEl.textContent = f.text; appMoreEl.replaceChildren(moreBlock(f.more)); };
+    if (instant || calm) setText();
+    else appPanel.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translateX(${-dir * 28}px)` }],
+            { duration: 160, easing: 'ease-in', fill: 'forwards' }).onfinish = () => {
+        setText();
+        appPanel.animate([{ opacity: 0, transform: `translateX(${dir * 28}px)` }, { opacity: 1, transform: 'none' }],
+            { duration: 280, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
+    };
+    // the phone cross-fades to the feature's screen; a recording starts from the beginning
+    const next = appScreens[f.id];
+    if (next && next !== screenTo) {
+        screenFrom = instant ? null : screenTo;
+        screenTo = next;
+        screenFadeAt = performance.now();
+        if (instant) drawScreen(1);
+        kick();
+    }
+    syncVideo(true);
+}
+// the bottom bar is as wide as what it shows: the four chapters, or the app features (arrows included)
+function setRailWidth() {
+    const frame = 12;                                     // 5px padding + 1px border, each side
+    const tabs = [...appTabsEl.children].reduce((w, b) => w + b.offsetWidth, 0) + 2 * (appTabsEl.children.length - 1);
+    const want = railEl.classList.contains('is-app')
+        ? tabs + 2 * 32 + 8 + frame                        // three tabs, the two arrows and the gaps
+        : railChapters.scrollWidth + frame;
+    railEl.style.width = Math.min(want, window.innerWidth - (mqMobile.matches ? 24 : 48)) + 'px';
+}
+// the bar shows three features at a time, from the first to the last, no loop: the selected one in
+// the middle (at the start and at the end it sits at the edge). When the three change, the row slides
+// sideways: the old ones leave on one side, the new ones come in on the other.
+let tabsFirst = -1;
+const appArrows = [...sticky.querySelectorAll('.rail-app .app-arrow')];
+function renderTabs(dir, instant) {
+    const n = APP_FEATURES.length;
+    const first = clamp(appIndex - 1, 0, n - 3);
+    const build = () => {
+        appTabsEl.replaceChildren(...[0, 1, 2].map(k => {
+            const i = first + k, f = APP_FEATURES[i];
+            const b = document.createElement('button');
+            b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(i === appIndex));
+            b.className = i === appIndex ? 'is-active' : 'is-side';
+            b.append(Object.assign(document.createElement('span'), { textContent: f.tab }));
+            if (i !== appIndex) b.addEventListener('click', () => selectFeature(i));
+            return b;
+        }));
+        appArrows[0].disabled = appIndex === 0;
+        appArrows[1].disabled = appIndex === n - 1;
+        setRailWidth();
+    };
+    const slide = first !== tabsFirst && tabsFirst >= 0;
+    tabsFirst = first;
+    if (instant || calm || !slide) { build(); return; }
+    appTabsEl.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translateX(${-dir * 36}px)` }],
+            { duration: 150, easing: 'ease-in', fill: 'forwards' }).onfinish = () => {
+        build();
+        appTabsEl.animate([{ opacity: 0, transform: `translateX(${dir * 36}px)` }, { opacity: 1, transform: 'none' }],
+            { duration: 320, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
+    };
+}
+appArrows.forEach(b => b.addEventListener('click', () => {
+    const i = clamp(appIndex + Number(b.dataset.step), 0, APP_FEATURES.length - 1);
+    if (i !== appIndex) selectFeature(i);
+}));
+selectFeature(0, true);
+
+// ---- chapters ----------------------------------------------------------------
+let active = null, actStart = 0, partsFrom = null, screenOp = 0, raf = 0, lastNow = 0, cardTimer = 0;
+const tmpP = new THREE.Vector3(), tmpQ = new THREE.Quaternion();
+const splashAt = performance.now() + 1600;     // hero text comes in as the DP MINI splash fades
+
+function activate(id) {
+    const same = id === active;                  // replay: the text stays
+    const prev = active;
+    active = id;
+    actStart = performance.now();
+    camFrom = { ...cam, target: cam.target.clone() };
+    partsFrom = animNodes.map(n => ({ n, p: n.position.clone(), q: n.quaternion.clone() }));
+    // the old text leaves as the camera starts. When the model moves to the other side of the
+    // screen it would pass under the new text, so that waits until the model has nearly arrived;
+    // when it stays on its side, the new text follows after a beat
+    const show = () => {
+        for (const k in cards) cards[k].classList.toggle('is-active', k === active);
+    };
+    clearTimeout(cardTimer);
+    if (!same) for (const k in cards) cards[k].classList.remove('is-active');
+    const crosses = prev && Math.sign(POSES[prev].sx) !== Math.sign(POSES[id].sx);
+    const wait = id === 'hero' && actStart < splashAt ? splashAt - actStart
+        : same ? 0 : (crosses ? CARD_DELAY : CARD_BEAT) * 1000;
+    cardTimer = setTimeout(show, wait);
+    railEl.classList.toggle('is-visible', id !== 'hero');
+    railBtns.forEach(b => b.classList.toggle('is-active', b.dataset.go === id));
+    railEl.classList.toggle('is-app', id === 'app');   // the chapter bar turns into the app features
+    setRailWidth();
+    replayBtn.classList.toggle('is-visible', !!ch[id].frames);
+    cueEl.style.opacity = id === 'hero' ? '' : '0';
+    // the phone plays the selected feature's recording only in the app chapter
+    appOn = id === 'app';
+    syncVideo(true);
+    kick();
+}
+
+function kick() {
+    if (!raf) { lastNow = performance.now(); raf = requestAnimationFrame(tick); }
+}
+function tick(now) {
+    raf = 0;
+    const dt = Math.min(0.1, (now - lastNow) / 1000); lastNow = now;
+    if (fpsMeter) fpsMeter(now, dt);
+    if (update(now, dt)) raf = requestAnimationFrame(tick);
+}
+// DPMini.html?fps shows frames per second while something moves (for checking browsers)
+const fpsMeter = new URLSearchParams(location.search).has('fps') && (() => {
+    const el = Object.assign(document.createElement('div'), { style: 'position:fixed;left:12px;bottom:12px;z-index:9999;padding:6px 10px;border-radius:8px;background:#000c;color:#0f0;font:600 12px ui-monospace,monospace;pointer-events:none' });
+    document.body.appendChild(el);
+    let frames = 0, from = 0, worst = 0;
+    return (now, dt) => {
+        frames++; worst = Math.max(worst, dt);
+        if (now - from < 1000) return;
+        el.textContent = `${Math.round(frames * 1000 / (now - from))} fps · slowest frame ${Math.round(worst * 1000)} ms`;
+        frames = 0; from = now; worst = 0;
+    };
+})();
+
+// advances camera, parts and app screen; returns true while something is still moving
+function update(now, dt) {
+    const c = ch[active], el = (now - actStart) / 1000;
+    const animLen = c.frames ? (c.frames[1] - c.frames[0]) / FPS : 0;
+    if (!renderer || !model) return false;
+
+    // camera: fly from wherever it was to the chapter pose
+    const u = easeInOut(clamp(el / CAM_DUR));
+    const to = poseValues(active, el);
+    cam.az = lerp(camFrom.az, to.az, u);
+    cam.el = lerp(camFrom.el, to.el, u);
+    cam.dist = lerp(camFrom.dist, to.dist, u);
+    cam.sx = lerp(camFrom.sx, to.sx, u);
+    cam.sy = lerp(camFrom.sy, to.sy, u);
+    cam.scr = lerp(camFrom.scr, to.scr, u);
+    cam.target.lerpVectors(camFrom.target, to.target, u);
+
+    // parts: ease back to the chapter's start pose, then play its movement at real speed
+    let frame = c.rest;
+    if (c.frames && el > ANIM_DELAY) frame = Math.min(c.frames[1], c.frames[0] + (el - ANIM_DELAY) * FPS);
+    setFrame(frame);
+    const w = ease(clamp(el / BLEND_DUR));
+    if (partsFrom && w < 1) {
+        for (const s of partsFrom) {
+            tmpP.copy(s.n.position); s.n.position.lerpVectors(s.p, tmpP, w);
+            tmpQ.copy(s.n.quaternion); s.n.quaternion.slerpQuaternions(s.q, tmpQ, w);
+        }
+    }
+
+    // the app fades onto the phone once the camera is on it
+    const scrTarget = active === 'app' && el > CAM_DUR * 0.6 ? 1 : 0;
+    screenOp += (scrTarget - screenOp) * (1 - Math.exp(-dt * 3.5));
+    if (Math.abs(scrTarget - screenOp) < 0.002) screenOp = scrTarget;
+    if (screenMat) screenMat.opacity = screenOp;
+    // recordings start from the beginning once the screen is in view, not during the flight to it
+    if ((screenOp > 0.5) !== screenLive) { screenLive = screenOp > 0.5; syncVideo(screenLive); }
+
+    // cross-fade between two app screens
+    let screenFading = false;
+    if (screenFrom) {
+        const f = clamp((now - screenFadeAt) / 450);
+        drawScreen(ease(f));
+        if (f >= 1) screenFrom = null; else screenFading = true;
+    }
+    if (screenMat) {
+        const map = !screenFrom && screenTo && screenTo.tagName === 'VIDEO' && screenTo.readyState >= 2 ? videoTex(screenTo) : screenTex;
+        // a video texture has its own shader (three decodes its sRGB there), so the material is rebuilt
+        if (screenMat.map !== map) { screenMat.map = map; screenMat.needsUpdate = true; }
+    }
+
+    placeCamera(stageW, stageH);
+    renderer.render(scene, camera);
+    return el < Math.max(CAM_DUR, DRIFT_DUR) || (c.frames && el < ANIM_DELAY + animLen) || screenOp !== scrTarget || screenFading
+        || (!frameCb && playing && !playing.paused);     // no frame callbacks: redraw every frame while it plays
+}
+
+// full sharpness: the screen's own density, up to 2×
+const pixelRatio = () => Math.min(window.devicePixelRatio || 1, 2);
+
+// ---- scroll + layout -------------------------------------------------------
+let vh = 1, stageW = 1, stageH = 1;
+function layout(full = true) {
+    stageW = sticky.clientWidth; stageH = sticky.clientHeight;
+    if (full) {
+        vh = stageH || window.innerHeight;
+        section.style.height = Math.round((T + 1) * vh) + 'px';
+    }
+    if (renderer) {
+        renderer.setPixelRatio(pixelRatio());
+        renderer.setSize(stageW, stageH, false);
+        camera.aspect = stageW / stageH;
+        camera.updateProjectionMatrix();
+    }
+    onScroll();
+    setRailWidth();
+    kick();
+}
+document.fonts.ready.then(setRailWidth);
+const takeover = i => CHAPTERS[i].s - 0.35;
+let storyOn = null;
+function onScroll() {
+    const rect = section.getBoundingClientRect();
+    if ((rect.bottom > 0) !== storyOn) { storyOn = rect.bottom > 0; document.body.classList.toggle('story-on', storyOn); syncVideo(); }
+    const t = clamp(-rect.top / vh, 0, T);
+    const k = CHAPTERS.indexOf(chapterAt(t)), a = CHAPTERS.indexOf(ch[active]);
+    // a little hysteresis, so stopping right on a boundary doesn't restart the movement
+    if (a < 0 || (k > a && t >= takeover(k) + 0.1) || (k < a && t < takeover(k + 1) - 0.1)) {
+        if (k !== a) activate(CHAPTERS[k].id);
+    }
+}
+
+railBtns.forEach(b => b.addEventListener('click', () => {
+    const c = ch[b.dataset.go];
+    window.scrollTo({ top: section.getBoundingClientRect().top + window.scrollY + (c.s + 0.3 * c.len) * vh, behavior: 'auto' });
+}));
+replayBtn.addEventListener('click', () => {
+    replayBtn.classList.remove('spin');
+    void replayBtn.offsetWidth;                  // restart the spin if clicked again
+    replayBtn.classList.add('spin');
+    activate(active);
+});
+window.addEventListener('scroll', onScroll, { passive: true });
+let lastW = window.innerWidth;
+window.addEventListener('resize', () => {
+    // phones fire resize when the URL bar collapses: keep the scroll length unless the size really changed
+    const full = window.innerWidth !== lastW || Math.abs(sticky.clientHeight - vh) > 120;
+    lastW = window.innerWidth;
+    layout(full);
+});
+mqMobile.addEventListener('change', layout);
+layout();
+
+</script>
 <script type="module" src="customer-account-nav.js"></script>
 </body>
 </html>

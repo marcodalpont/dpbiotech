@@ -4,15 +4,16 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-<link rel="apple-touch-icon" href="favicon-192.png"><title>Accesso Riservato — DP Biotech</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=2">
+<link rel="apple-touch-icon" href="favicon-192.png?v=2"><title>Restricted Access — DP Biotech</title>
+<script src="gate.js" data-login></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  /* Variabili di colore dal tuo sito per coerenza */
+  /* Colour variables from the rest of the site */
   :root { 
     --bg:#ffffff; 
     --text:#0a0a0a; 
@@ -33,7 +34,7 @@
     } 
   }
   
-  /* Stili per la pagina di login */
+  /* Login page styles */
   body {
     margin: 0;
     font-family: Inter, system-ui, -apple-system, sans-serif;
@@ -99,7 +100,7 @@
     color: #ef4444;
     font-size: 14px;
     margin-top: 12px;
-    display: none; /* Nascosto di default */
+    display: none; /* hidden until needed */
   }
 </style>
 </head>
@@ -130,29 +131,45 @@
   </div>
 
 <script>
-  // IMPOSTA LA TUA PASSWORD QUI
-  const correctPassword = 'laguna';
-  const alternativePassword = 'lauramarcus';
-
+  // The passwords are not here: gate.js only knows their fingerprints (PBKDF2 + SHA-256).
+  // To change them, see the comment at the top of gate.js.
   const loginBtn = document.getElementById('login-btn');
   const input = document.getElementById('access-key');
   const errorMessage = document.getElementById('error-message');
 
-  function doLogin() {
+  // the page that was being opened, if it is a page of this site (a root page, or one in old/)
+  function nextFile() {
+    const n = new URLSearchParams(location.search).get('next') || '';
+    const ok = /^(old\/)?[A-Za-z0-9_-]+(\.html)?([?#].*)?$/.test(n) && !/^(old\/)?login(\.html)?([?#]|$)/.test(n);
+    return ok ? n.replace(/^old\//, '') : '';
+  }
+  // each password opens its own version of the site: go to that page in that version
+
+  function showError(text) {
+    errorMessage.textContent = text;
+    errorMessage.style.display = 'block';
+  }
+
+  // the form is always shown, even to a browser that already has a password, so it can switch version
+  if (!dpbGate.available) showError('Open the site over https to log in.');
+
+  async function doLogin() {
     const entered = input.value;
-    // Prima di qualsiasi navigazione, svuotiamo e "neutralizziamo" il campo
-    // per non attivare euristiche dei password manager.
-    if (entered === correctPassword || entered === alternativePassword) {
-      input.value = '';
-      // Chiave di sessione + eventuale cookie di comodo
-      sessionStorage.setItem('isAuthenticated', 'true');
-      document.cookie = "dpb_gate=1; Path=/; Max-Age=7200; SameSite=Lax; Secure";
-      window.location.href = 'index.html';
-    } else {
-      errorMessage.style.display = 'block';
-      input.value = '';
-      input.focus();
+    if (!entered || loginBtn.disabled) return;
+    // Empty the field straight away so password managers don't try to save it.
+    input.value = '';
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Checking…';
+    errorMessage.style.display = 'none';
+    const version = await dpbGate.login(entered);
+    if (version) {
+      location.replace(dpbGate.pageIn(version, nextFile()));
+      return;
     }
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Login';
+    showError('Incorrect password.');
+    input.focus();
   }
 
   loginBtn.addEventListener('click', doLogin);

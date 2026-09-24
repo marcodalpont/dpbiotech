@@ -4,33 +4,30 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-<link rel="apple-touch-icon" href="favicon-192.png"><title>Checkout — DP Biotech</title>
-<script>
-    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
-      window.location.href = 'login.html';
-    }
-</script>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=2">
+<link rel="apple-touch-icon" href="favicon-192.png?v=2"><title>Checkout — DP Biotech</title>
+<script src="gate.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* =========================================
-   DESIGN SYSTEM — aligned with index.html
+   DESIGN SYSTEM — aligned with index.html and buydpmini.html (Apple greys, Apple blue)
    ========================================= */
 :root {
-    --bg-body: #fafafa;
-    --bg-secondary: #f2f2f4;
+    --bg-body: #f5f5f7;
+    --bg-secondary: #f5f5f7;
     --bg-card: #ffffff;
-    --text-primary: #0a0a0f;
-    --text-secondary: #6b6b78;
-    --accent: #0f766e;
-    --accent-2: #1e293b;
-    --accent-gradient: linear-gradient(135deg, #1e293b 0%, #0f766e 100%);
-    --divider: rgba(10, 10, 15, 0.06);
-    --divider-strong: rgba(10, 10, 15, 0.1);
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --accent: #0071e3;
+    --accent-2: #1d1d1f;
+    --accent-gradient: linear-gradient(135deg, #1d1d1f 0%, #6e6e73 100%);
+    --divider: rgba(0, 0, 0, 0.08);
+    --divider-strong: rgba(0, 0, 0, 0.14);
+    --input-border: #d2d2d7;
     --radius-lg: 32px;
     --radius-md: 20px;
     --radius-sm: 12px;
@@ -47,13 +44,15 @@
 }
 @media (prefers-color-scheme: dark) {
     :root {
-        --bg-body: #0a0a0f;
-        --bg-secondary: #13131a;
-        --bg-card: #1a1a24;
+        --bg-body: #000;
+        --bg-secondary: #1c1c1e;
+        --bg-card: #161618;
         --text-primary: #f5f5f7;
-        --text-secondary: #9ca3af;
-        --divider: rgba(255, 255, 255, 0.08);
-        --divider-strong: rgba(255, 255, 255, 0.14);
+        --text-secondary: #a1a1a6;
+        --accent: #2997ff;
+        --divider: rgba(255, 255, 255, 0.1);
+        --divider-strong: rgba(255, 255, 255, 0.16);
+        --input-border: #3a3a3c;
         --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 20px 40px -12px rgba(0,0,0,0.3);
         --shadow-lg: 0 8px 24px rgba(0,0,0,0.5), 0 32px 64px -16px rgba(0,0,0,0.4);
     }
@@ -91,8 +90,8 @@ a:hover { opacity: 0.7; }
     padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600;
     transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; border: none; text-decoration: none !important;
 }
-.btn-primary { background: var(--text-primary); color: var(--bg-body); }
-.btn-primary:hover { transform: scale(1.02); opacity: 0.95; }
+.btn-primary { background: #0071e3; color: #fff; }
+.btn-primary:hover { background: #0077ed; opacity: 1; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--divider); }
 .btn-ghost:hover { background: var(--bg-secondary); }
@@ -123,81 +122,22 @@ a:hover { opacity: 0.7; }
    CHECKOUT PAGE
    ========================= */
 .checkout-hero {
-    padding: 80px 0 32px;
-    background: radial-gradient(circle at 50% 0%, rgba(15, 118, 110, 0.06) 0%, transparent 60%);
+    padding: 72px 0 28px;
 }
-
-/* Auth gate (guest vs sign-in) */
-.checkout-auth-gate {
-    max-width: 640px;
-    margin: 60px auto 80px;
-    padding: 40px 28px;
-    background: var(--bg-card, #fff);
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-lg, 32px);
-    box-shadow: 0 8px 24px rgba(10,10,15,0.06), 0 32px 64px -16px rgba(15,23,42,0.10);
-    text-align: center;
-}
-.checkout-auth-gate .eyebrow { margin-bottom: 12px; }
-.checkout-auth-gate h2 { font-size: 26px; letter-spacing: -0.02em; margin: 0 0 8px; }
-.checkout-auth-gate p.lead { font-size: 15px; color: var(--text-secondary); max-width: 460px; margin: 0 auto 32px; line-height: 1.5; }
-.checkout-auth-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    max-width: 520px;
-    margin: 0 auto;
-}
-@media (max-width: 560px) {
-    .checkout-auth-options { grid-template-columns: 1fr; }
-}
-.checkout-auth-card {
-    display: flex; flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
-    text-align: left;
-    padding: 18px 20px;
-    background: var(--bg-secondary, #f2f2f4);
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-md, 20px);
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s, transform 0.15s;
-    font-family: inherit;
-}
-.checkout-auth-card:hover {
-    border-color: var(--text-primary);
-    transform: translateY(-1px);
-}
-.checkout-auth-card.primary { background: var(--text-primary, #0a0a0f); color: var(--bg-body, #fafafa); border-color: var(--text-primary); }
-.checkout-auth-card.primary:hover { opacity: 0.92; }
-.checkout-auth-card-icon {
-    width: 36px; height: 36px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.15);
-    display: grid; place-items: center;
-    margin-bottom: 4px;
-}
-.checkout-auth-card:not(.primary) .checkout-auth-card-icon {
-    background: var(--bg-card, #fff);
-    border: 1px solid var(--divider);
-}
-.checkout-auth-card-icon svg { width: 18px; height: 18px; }
-.checkout-auth-card h3 { font-size: 16px; margin: 0; letter-spacing: -0.01em; font-weight: 600; }
-.checkout-auth-card p { font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85; }
 
 /* Signed-in banner on top of checkout form */
 .checkout-signed-banner {
     display: flex; align-items: center; gap: 12px;
     padding: 14px 18px;
-    background: rgba(15, 118, 110, 0.06);
-    border: 1px solid rgba(15, 118, 110, 0.20);
-    border-radius: var(--radius-md, 20px);
-    margin-bottom: 24px;
+    background: var(--bg-card);
+    border: 0;
+    border-radius: 16px;
+    margin-bottom: 16px;
 }
 .checkout-signed-banner-icon {
     width: 32px; height: 32px;
     border-radius: 999px;
-    background: var(--accent, #0f766e);
+    background: var(--accent, #0071e3);
     color: white;
     display: grid; place-items: center;
     font-weight: 700; font-size: 13px;
@@ -221,6 +161,7 @@ a:hover { opacity: 0.7; }
 .checkout-signed-banner-btn.primary {
     background: var(--accent); color: white; border-color: var(--accent);
 }
+a.checkout-signed-banner-btn { display: inline-flex; align-items: center; text-decoration: none; padding: 8px 16px; font-size: 13.5px; }
 .checkout-signed-banner-btn.primary:hover { opacity: 0.92; }
 
 .checkout-loading {
@@ -230,8 +171,8 @@ a:hover { opacity: 0.7; }
 }
 .checkout-hero .eyebrow {
     display: block;
-    font-size: 12px; font-weight: 700;
-    color: var(--accent); text-transform: uppercase;
+    font-size: 12px; font-weight: 600;
+    color: var(--text-secondary); text-transform: uppercase;
     letter-spacing: 0.08em; margin-bottom: 12px;
 }
 .checkout-hero h1 {
@@ -254,13 +195,19 @@ a:hover { opacity: 0.7; }
 .checkout-stepper .step { display: inline-flex; align-items: center; gap: 8px; }
 .checkout-stepper .step-num {
     width: 22px; height: 22px; border-radius: 999px;
-    background: var(--bg-secondary); color: var(--text-secondary);
+    background: var(--bg-card); color: var(--text-secondary);
     display: grid; place-items: center; font-size: 11px; font-weight: 700;
     border: 1px solid var(--divider);
 }
-.checkout-stepper .step.active .step-num { background: var(--text-primary); color: var(--bg-body); border-color: transparent; }
+.checkout-stepper .step.active .step-num { background: var(--accent); color: #fff; border-color: transparent; }
 .checkout-stepper .step.active { color: var(--text-primary); font-weight: 600; }
 .checkout-stepper .sep { width: 24px; height: 1px; background: var(--divider-strong); }
+@media (max-width: 560px) {
+    .checkout-stepper { gap: 8px; font-size: 12.5px; }
+    .checkout-stepper .sep { width: 12px; }
+    .type-toggle label { padding: 11px 4px; font-size: 13px; white-space: nowrap; }
+    .type-toggle label svg { display: none; }
+}
 
 .checkout-layout {
     display: grid; grid-template-columns: 1.6fr 1fr;
@@ -273,72 +220,86 @@ a:hover { opacity: 0.7; }
 
 .checkout-section {
     background: var(--bg-card);
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-md);
-    padding: 28px;
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 20px;
+    border-radius: 18px;
+    padding: 30px 32px;
+    margin-bottom: 16px;
 }
 .checkout-section h2 {
-    font-size: 20px; letter-spacing: -0.01em;
+    font-size: 21px; letter-spacing: -0.015em;
     margin-bottom: 4px;
 }
+@media (max-width: 560px) { .checkout-section { padding: 24px 20px; } }
 .checkout-section .section-sub {
     font-size: 14px; color: var(--text-secondary);
     margin-bottom: 20px;
 }
 
 /* Order items */
-.order-items { display: flex; flex-direction: column; gap: 12px; }
+.order-items { display: flex; flex-direction: column; }
 .product-card {
-    display: flex; gap: 16px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-sm);
-    padding: 16px 56px 16px 16px;
-    position: relative;
-    transition: border-color 0.2s ease;
+    display: flex; gap: 20px;
+    padding: 22px 0;
+    border-top: 1px solid var(--divider);
 }
-.product-card:hover { border-color: var(--divider-strong); }
+.product-card:first-child { border-top: 0; padding-top: 6px; }
+.product-card:last-child { padding-bottom: 0; }
+.product-thumb {
+    position: relative;
+    flex: 0 0 96px; height: 96px;
+    border-radius: 14px;
+    background: var(--bg-secondary);
+    display: grid; place-items: center;
+    overflow: hidden; color: var(--text-secondary);
+}
+.product-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 8px; }
 .product-info { flex-grow: 1; min-width: 0; }
-.product-title { font-size: 16px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
-.product-subtitle { font-size: 13px; color: var(--text-secondary); margin: 4px 0 0 0; }
-.product-price { font-size: 15px; font-weight: 600; margin-top: 12px; color: var(--text-primary); }
-.title-dp-mini { background: linear-gradient(90deg, var(--mini-1), var(--mini-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.title-dp-pro { background: linear-gradient(90deg, var(--pro-1), var(--pro-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.product-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.product-title { font-size: 17px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+.product-price { font-size: 17px; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+.product-each { font-size: 12px; color: var(--text-secondary); text-align: right; margin-top: 2px; }
+.product-options { list-style: none; margin: 6px 0 0; padding: 0; font-size: 14px; line-height: 1.5; color: var(--text-secondary); }
+.product-yearly {
+    display: flex; gap: 8px; align-items: flex-start;
+    margin-top: 10px; padding: 9px 12px;
+    background: var(--bg-secondary); border-radius: 10px;
+    font-size: 13px; line-height: 1.45; color: var(--text-secondary);
+}
+.product-yearly svg { flex-shrink: 0; margin-top: 2px; color: var(--accent); }
+.product-yearly strong { color: var(--text-primary); font-weight: 600; }
+.product-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+@media (max-width: 560px) {
+    .product-card { gap: 14px; }
+    .product-thumb { flex-basis: 64px; height: 64px; border-radius: 12px; }
+}
 
-.quantity-control { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
+.quantity-control { display: inline-flex; align-items: center; gap: 2px; padding: 3px; background: var(--bg-secondary); border-radius: 999px; }
 .quantity-btn {
     width: 30px; height: 30px;
-    background: var(--bg-card);
-    border: 1px solid var(--divider);
-    border-radius: 8px;
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
     cursor: pointer;
     display: grid; place-items: center;
-    font-size: 16px; font-weight: 600; color: var(--text-primary);
+    font-size: 17px; font-weight: 500; color: var(--text-primary);
     transition: background 0.15s ease;
 }
-.quantity-btn:hover { background: var(--divider); }
+.quantity-btn:hover { background: var(--bg-card); }
 .quantity-input {
-    width: 40px; height: 30px; text-align: center;
-    border: 1px solid var(--divider); border-radius: 8px;
-    font-family: inherit; font-weight: 600;
-    background: var(--bg-card); color: var(--text-primary);
+    width: 30px; height: 30px; text-align: center;
+    border: 0;
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    background: transparent; color: var(--text-primary);
     -moz-appearance: textfield;
     appearance: textfield;
 }
 .quantity-input::-webkit-outer-spin-button,
 .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .remove-btn {
-    position: absolute; top: 12px; right: 12px;
-    width: 30px; height: 30px;
-    background: transparent; border: 1px solid var(--divider);
-    border-radius: 999px; font-size: 16px; line-height: 1;
-    cursor: pointer; color: var(--text-secondary);
-    transition: color .2s ease, background .2s ease, border-color .2s ease;
-    display: grid; place-items: center;
+    background: none; border: 0; padding: 4px 0;
+    font: inherit; font-size: 14px; color: var(--accent);
+    cursor: pointer;
 }
-.remove-btn:hover { color: var(--text-primary); background: var(--bg-secondary); border-color: var(--divider-strong); }
+.remove-btn:hover { text-decoration: underline; }
 
 /* Form fields */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -346,34 +307,32 @@ a:hover { opacity: 0.7; }
 @media(max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
 .form-field { display: flex; flex-direction: column; gap: 6px; }
 .form-field label {
-    font-size: 12px; font-weight: 600;
+    font-size: 13px; font-weight: 500;
     color: var(--text-secondary);
-    text-transform: uppercase; letter-spacing: 0.04em;
 }
 .text-input {
-    width: 100%; padding: 12px 14px;
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-sm);
-    background: var(--bg-body);
+    width: 100%; padding: 14px 16px;
+    border: 1px solid var(--input-border);
+    border-radius: 12px;
+    background: var(--bg-card);
     color: var(--text-primary);
-    font-family: inherit; font-size: 15px;
+    font-family: inherit; font-size: 16px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.text-input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+.text-input::placeholder { color: var(--text-secondary); opacity: 0.55; }
 .text-input:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 /* Customer type toggle */
 .type-toggle {
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 4px;
     background: var(--bg-secondary);
-    padding: 6px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--divider);
+    padding: 4px;
+    border-radius: 12px;
 }
 .type-toggle input { position: absolute; opacity: 0; pointer-events: none; }
 .type-toggle label {
@@ -389,7 +348,7 @@ a:hover { opacity: 0.7; }
 .type-toggle input:checked + label {
     background: var(--bg-card);
     color: var(--text-primary);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 .type-toggle label svg { flex-shrink: 0; }
 
@@ -400,25 +359,26 @@ a:hover { opacity: 0.7; }
     font-size: 12px; color: var(--text-secondary);
     margin-top: 4px;
 }
-.einvoice-toggle {
-    display: flex; gap: 8px;
-    margin-bottom: 12px;
+.einvoice-toggle {                     /* same segmented control as Private / Business */
+    display: flex; gap: 4px;
+    padding: 4px; margin-bottom: 14px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
 }
 .einvoice-toggle button {
-    flex: 1; padding: 10px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-sm);
+    flex: 1; padding: 9px 6px;
+    background: transparent;
+    border: 0;
+    border-radius: 9px;
     font-family: inherit; font-size: 13px; font-weight: 600;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 .einvoice-toggle button.active {
     background: var(--bg-card);
     color: var(--text-primary);
-    border-color: var(--divider-strong);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
 .section-divider {
@@ -440,12 +400,12 @@ a:hover { opacity: 0.7; }
     flex-shrink: 0; margin-top: 2px;
     width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent);
 }
-.consent-item label { font-size: 13px; line-height: 1.5; color: var(--text-secondary); cursor: pointer; }
+.consent-item label { font-size: 14px; line-height: 1.5; color: var(--text-secondary); cursor: pointer; }
 .consent-item label strong { color: var(--text-primary); font-weight: 600; }
 .consent-item label a { text-decoration: underline; color: var(--text-primary); }
 .consent-item .required { color: #dc2626; font-weight: 700; }
 .req { color: #dc2626; font-weight: 700; margin-left: 3px; }
-.text-input:invalid:not(:placeholder-shown) {
+.text-input:user-invalid {                       /* red only once the field has been touched */
     border-color: #dc2626;
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
@@ -454,8 +414,8 @@ a:hover { opacity: 0.7; }
     display: flex; gap: 12px; align-items: center;
     padding: 14px 16px;
     background: var(--bg-secondary);
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-sm);
+    border: 0;
+    border-radius: 12px;
     cursor: pointer;
     margin-bottom: 16px;
     transition: border-color 0.2s ease;
@@ -476,9 +436,9 @@ a:hover { opacity: 0.7; }
 .payment-methods { display: flex; flex-direction: column; gap: 10px; }
 .payment-method {
     display: flex; gap: 14px; align-items: center;
-    padding: 16px 18px;
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    border: 1px solid var(--input-border);
+    border-radius: 12px;
     cursor: pointer;
     background: var(--bg-card);
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
@@ -490,22 +450,22 @@ a:hover { opacity: 0.7; }
 }
 .payment-method.is-selected {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+    box-shadow: inset 0 0 0 1px var(--accent);
 }
 .payment-method-info { flex: 1; }
-.payment-method-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-.payment-method-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; }
+.payment-method-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.payment-method-desc { font-size: 13px; color: var(--text-secondary); margin-top: 3px; line-height: 1.45; }
 
 /* Promo code */
 .promo-code-row { display: flex; gap: 8px; }
 .promo-code-row .text-input { flex: 1; }
 .promo-code-row button {
-    padding: 0 20px;
-    border: 1px solid var(--divider);
-    background: var(--bg-card);
-    border-radius: var(--radius-sm);
-    font-family: inherit; font-weight: 600; font-size: 14px;
-    color: var(--text-primary); cursor: pointer;
+    padding: 0 22px;
+    border: 1px solid var(--accent);
+    background: transparent;
+    border-radius: 12px;
+    font-family: inherit; font-weight: 500; font-size: 15px;
+    color: var(--accent); cursor: pointer;
     transition: background 0.15s ease;
 }
 .promo-code-row button:hover { background: var(--bg-secondary); }
@@ -537,14 +497,12 @@ select.text-input { appearance: none; -webkit-appearance: none; background-image
 .summary-aside { position: sticky; top: calc(var(--nav-height) + 24px); }
 .summary-box {
     background: var(--bg-card);
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-md);
-    padding: 28px;
-    box-shadow: var(--shadow-md);
+    border-radius: 18px;
+    padding: 30px 28px 26px;
 }
 .summary-box h2 {
-    font-size: 18px; margin-bottom: 4px;
-    letter-spacing: -0.01em;
+    font-size: 21px; margin-bottom: 4px;
+    letter-spacing: -0.015em;
 }
 .summary-box .summary-sub {
     font-size: 13px; color: var(--text-secondary);
@@ -556,33 +514,39 @@ select.text-input { appearance: none; -webkit-appearance: none; background-image
 }
 .summary-row span:last-child { color: var(--text-primary); font-weight: 500; }
 .summary-row.total {
-    font-size: 18px; font-weight: 700;
-    margin-top: 20px; padding-top: 16px;
+    font-size: 21px; font-weight: 600;
+    margin-top: 18px; padding-top: 18px;
     border-top: 1px solid var(--divider);
     color: var(--text-primary);
 }
-.summary-row.total span:last-child { font-weight: 700; }
+.summary-row.total span:last-child { font-weight: 600; }
 .summary-box .btn-primary {
-    width: 100%; padding: 14px;
-    font-size: 15px;
-    margin-top: 20px;
-    box-shadow: 0 1px 2px rgba(10,10,15,0.1), 0 8px 24px -8px rgba(10,10,15,0.3);
+    width: 100%; min-height: 50px; padding: 14px;
+    font-size: 17px; font-weight: 500;
+    border-radius: 12px;
+    margin-top: 22px;
 }
+.summary-vat-note { font-size: 12px; line-height: 1.45; margin: -6px 0 12px; }
+.summary-yearly {
+    margin-top: 20px; padding: 16px;
+    background: var(--bg-secondary); border-radius: 12px;
+}
+.summary-yearly-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+.summary-yearly .summary-row { margin-bottom: 6px; }
+.summary-yearly p { font-size: 12px; line-height: 1.45; margin-top: 8px; }
 .summary-trust {
     display: flex; gap: 8px; align-items: center; justify-content: center;
     margin-top: 14px;
     font-size: 12px; color: var(--text-secondary);
 }
-.summary-trust svg { color: var(--accent); }
+.summary-trust svg { color: var(--text-secondary); }
 
 /* Empty cart */
 .empty-cart-container {
     text-align: center; padding: 80px 32px;
     margin: 48px 0;
     background: var(--bg-card);
-    border: 1px solid var(--divider);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    border-radius: 24px;
 }
 .empty-cart-container .empty-icon {
     width: 72px; height: 72px;
@@ -749,6 +713,40 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
 .cart-sidebar .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .cart-sidebar .cart-items { padding: 18px 22px !important; }
 .cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
+/* Cart buttons with room to breathe: a proper Checkout button, Clear Cart as a quiet link */
+.cart-sidebar .cart-footer { padding: 22px 24px 24px !important; }
+.cart-sidebar .cart-total { font-size: 17px; margin-bottom: 16px !important; }
+.cart-sidebar #checkout-btn {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 100% !important; height: 48px !important; padding: 0 20px !important; margin: 0 !important;
+    border: none !important; border-radius: 12px !important; box-shadow: none !important;
+    background: #0071e3 !important; color: #fff !important;
+    font-size: 16px !important; font-weight: 500 !important; letter-spacing: -0.01em;
+}
+.cart-sidebar #checkout-btn:hover { background: #0077ed !important; }
+.cart-sidebar #checkout-btn:disabled { opacity: 0.4 !important; cursor: default; }
+.cart-sidebar #clear-cart-btn {
+    display: block !important; width: 100% !important; height: 40px !important;
+    margin: 8px 0 0 !important; padding: 0 !important;
+    border: none !important; background: none !important; box-shadow: none !important;
+    font-size: 14px !important; font-weight: 400 !important; color: #0071e3 !important;
+}
+.cart-sidebar #clear-cart-btn:hover { text-decoration: underline; }
+.cart-sidebar #clear-cart-btn:disabled { color: var(--text-secondary, #86868b) !important; text-decoration: none; cursor: default; }
+.cart-sidebar .cart-product-subtitle { margin-bottom: 16px !important; }
+.cart-sidebar .cart-product-remove-btn,
+.cart-sidebar .cart-product-header > button { width: 30px !important; height: 30px !important; min-width: 30px !important; }
+.cart-sidebar .quantity-control { padding: 3px !important; }
+.cart-sidebar .quantity-btn,
+.cart-sidebar .quantity-input,
+.cart-sidebar span.quantity-input,
+.cart-sidebar input.quantity-input { width: 34px !important; height: 34px !important; min-width: 34px !important; line-height: 34px !important; }
+.cart-sidebar .quantity-btn { font-size: 18px !important; }
+.cart-sidebar .cart-footer::after {
+    content: "Prices exclude VAT, added at checkout. Free shipping.";
+    display: block; margin-top: 6px; text-align: center;
+    font-size: 12px; color: var(--text-secondary, #86868b);
+}
 </style>
 <style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
 </head>
@@ -866,7 +864,7 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                 <address class="footer-address">
                     <strong>Dal Pont Medical S.r.l.s</strong><br>
                     Piazza San Vito 12<br>
-                    31100 Treviso — Italia<br><br>
+                    31100 Treviso — Italy<br><br>
                     VAT / C.F.: 05355480269<br>
                     REA: 437837<br>
                     EUDAMED SRN: IT-MF-000052836
@@ -942,7 +940,43 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
   document.addEventListener('DOMContentLoaded', () => {
     const checkoutContent = document.getElementById('checkout-content');
     let cart = [];
-    const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+    // prices written like the rest of the site: €32.660, cents only when there are any
+    const EUR = { format: n => '€' + Number(n).toLocaleString('de-DE', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }) };
+
+    // the yearly charges a configured product carries (buydpmini.html writes them into options.yearly,
+    // e.g. "Billed yearly, excl. VAT: License €3.199/year, DP Care+ €1.490/year"); they are not part of today's total
+    function yearlyOf(item) {
+        const text = item.options && typeof item.options === 'object' ? item.options.yearly : '';
+        const out = [];
+        String(text || '').replace(/([^,:]+?)\s*€\s*([\d.,]+)\s*\/\s*year/g, (m, name, amount) => {
+            out.push({ name: name.trim(), price: Number(amount.replace(/\./g, '').replace(',', '.')) });
+        });
+        return out;
+    }
+    // what the item is, one line each, without the yearly charges and without "No accessories"
+    function optionLines(item) {
+        const o = item.options;
+        if (o && typeof o === 'object') {
+            return Object.entries(o).filter(([k, v]) => k !== 'yearly' && v && v !== 'No accessories').map(([, v]) => v);
+        }
+        return o ? [o] : [];
+    }
+    function thumbFor(name) {
+        if (/dp mini/i.test(name)) return '<img src="renders/dpmini-hero@800.webp" alt="" loading="lazy">';
+        return '<svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-4.5-9 4.5m18 0l-9 4.5m9-4.5v9l-9 4.5m0-9L3 7.5m9 4.5v9m-9-13.5v9l9 4.5"/></svg>';
+    }
+
+    // Countries we deliver to: the whole EU, the rest of Europe that accepts the CE mark, and "Other".
+    // Standard VAT rates of the EU countries, in %. They change now and then: check them once a year.
+    const EU_VAT = { AT: 20, BE: 21, BG: 20, HR: 25, CY: 19, CZ: 21, DK: 25, EE: 24, FI: 25.5, FR: 20, DE: 19, GR: 24, HU: 27, IE: 23,
+                     IT: 22, LV: 21, LT: 21, LU: 17, MT: 18, NL: 21, PL: 23, PT: 23, RO: 21, SK: 23, SI: 22, ES: 21, SE: 25 };
+    const COUNTRY_NAMES = { AT: 'Austria', BE: 'Belgium', BG: 'Bulgaria', HR: 'Croatia', CY: 'Cyprus', CZ: 'Czechia', DK: 'Denmark',
+        EE: 'Estonia', FI: 'Finland', FR: 'France', DE: 'Germany', GR: 'Greece', HU: 'Hungary', IE: 'Ireland', IT: 'Italy', LV: 'Latvia',
+        LT: 'Lithuania', LU: 'Luxembourg', MT: 'Malta', NL: 'Netherlands', PL: 'Poland', PT: 'Portugal', RO: 'Romania', SK: 'Slovakia',
+        SI: 'Slovenia', ES: 'Spain', SE: 'Sweden', IS: 'Iceland', LI: 'Liechtenstein', NO: 'Norway', CH: 'Switzerland', GB: 'United Kingdom' };
+    const COUNTRY_OPTIONS = Object.entries(COUNTRY_NAMES).sort((a, b) => a[1].localeCompare(b[1]))
+        .map(([c, n]) => `<option value="${c}"${c === 'IT' ? ' selected' : ''}>${n}</option>`).join('')
+        + '<option value="OTHER">Other country</option>';
 
     const SERVER_URL = 'https://server-pagamenti-dp.onrender.com';
 
@@ -955,13 +989,6 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
     function saveCart() {
       sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
       renderPage();
-    }
-
-    function formatOptions(options) {
-        if (typeof options === 'object' && options !== null) {
-            return Object.values(options).filter(val => val).join(', ');
-        }
-        return options || '';
     }
 
     function changeQuantity(itemId, amount) {
@@ -993,7 +1020,7 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
             </div>
             <h1>Your cart is empty</h1>
             <p>Looks like you haven't added a microscope or accessory yet. Browse our models to get started.</p>
-            <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+            <a href="index.html" class="btn btn-primary">Continue shopping</a>
           </div>
         `;
         return;
@@ -1007,12 +1034,8 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
         window.addEventListener("checkout-auth-ready", () => renderPage(), { once: true });
         return;
       }
-      const isSignedIn = !!authState.user;
-      const guestChosen = sessionStorage.getItem("checkout_guest") === "1";
-      if (!isSignedIn && !guestChosen) {
-        renderAuthGate();
-        return;
-      }
+      // no separate sign-in step: guests check out straight away, signed-in customers get their details
+      // prefilled (see the hook at the end of this script)
 
       const consolidatedCart = {};
       cart.forEach(item => {
@@ -1026,35 +1049,49 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
 
       let subtotal = 0;
       cart.forEach(item => { subtotal += item.price; });
-      const shipping = 49.90;
+      const shipping = 0;                 // free shipping on every order
       const taxRate = 0.22;
       const tax = subtotal * taxRate;
       const total = subtotal + shipping + tax;
       const itemCount = cart.length;
 
+      // yearly charges across the whole order (one license per DP Mini)
+      const yearlyTotals = {};
+      cart.forEach(item => yearlyOf(item).forEach(y => { yearlyTotals[y.name] = (yearlyTotals[y.name] || 0) + y.price; }));
+      const yearlyList = Object.entries(yearlyTotals);
+
       let itemsHTML = '';
       displayCart.forEach((item) => {
         const baseName = item.name.split('(')[0].trim();
-        const formattedOptions = formatOptions(item.options);
-
-        let titleClass = '';
-        const lower = baseName.toLowerCase();
-        if (lower.includes('dp mini')) titleClass = 'title-dp-mini';
-        else if (lower.includes('dp pro')) titleClass = 'title-dp-pro';
+        const lines = optionLines(item);
+        const yearly = yearlyOf(item);
 
         itemsHTML += `
           <div class="product-card">
+            <div class="product-thumb">${thumbFor(baseName)}</div>
             <div class="product-info">
-              <h3 class="product-title ${titleClass}">${baseName}</h3>
-              <p class="product-subtitle">${formattedOptions}</p>
-              <p class="product-price">${EUR.format(item.price)}</p>
-              <div class="quantity-control">
-                <button class="quantity-btn" data-action="decrease" data-id="${item.id}" aria-label="Decrease quantity">−</button>
-                <input type="number" class="quantity-input" value="${item.quantity}" min="1" readonly>
-                <button class="quantity-btn" data-action="increase" data-id="${item.id}" aria-label="Increase quantity">+</button>
+              <div class="product-head">
+                <h3 class="product-title">${baseName}</h3>
+                <div>
+                  <div class="product-price">${EUR.format(item.price * item.quantity)}</div>
+                  ${item.quantity > 1 ? `<div class="product-each">${EUR.format(item.price)} each</div>` : ''}
+                </div>
+              </div>
+              ${lines.length ? `<ul class="product-options">${lines.map(l => `<li>${l}</li>`).join('')}</ul>` : ''}
+              ${yearly.length ? `
+              <div class="product-yearly">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 11v5M12 8h.01"/></svg>
+                <span><strong>Billed every year:</strong> ${yearly.map(y => `${y.name} ${EUR.format(y.price * item.quantity)}`).join(' · ')}, excl. VAT. Not part of today's total.</span>
+              </div>` : ''}
+              <div class="product-actions">
+                <div class="quantity-control">
+                  <button class="quantity-btn" data-action="decrease" data-id="${item.id}" aria-label="Decrease quantity">−</button>
+                  <input type="number" class="quantity-input" value="${item.quantity}" min="1" readonly aria-label="Quantity">
+                  <button class="quantity-btn" data-action="increase" data-id="${item.id}" aria-label="Increase quantity">+</button>
+                </div>
+                <button class="remove-btn" data-action="remove" data-id="${item.id}">Remove</button>
               </div>
             </div>
-            <button class="remove-btn" data-action="remove" data-id="${item.id}" aria-label="Remove item">&times;</button>
           </div>
         `;
       });
@@ -1116,22 +1153,22 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                     </div>
                     <div class="form-field full">
                         <label for="phone">Phone number<span class="req">*</span></label>
-                        <input type="tel" id="phone" class="text-input" placeholder="+39 ..." required autocomplete="tel">
+                        <input type="tel" id="phone" class="text-input" placeholder="With country code, e.g. +39" required autocomplete="tel">
                     </div>
                 </div>
             </section>
 
             <section class="checkout-section" id="billing-section">
                 <h2>Billing &amp; invoice details</h2>
-                <p class="section-sub" id="billing-sub">For receipts and tax-deductible invoices (fattura).</p>
+                <p class="section-sub" id="billing-sub">For receipts and tax-deductible invoices.</p>
 
-                <!-- Private: optional Codice Fiscale -->
+                <!-- Private: optional tax number (any country) -->
                 <div class="conditional-block is-visible" id="private-block">
                     <div class="form-grid">
                         <div class="form-field full">
-                            <label for="cf-private">Codice Fiscale <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional — for tax-deductible receipt)</span></label>
-                            <input type="text" id="cf-private" class="text-input" placeholder="RSSMRA85M01H501Z" maxlength="16" style="text-transform:uppercase;" autocomplete="off">
-                            <span class="field-helper">16-character Italian tax code. Required only if you need a fiscal receipt for tax deduction.</span>
+                            <label for="cf-private">Tax number <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
+                            <input type="text" id="cf-private" class="text-input" maxlength="20" style="text-transform:uppercase;" autocomplete="off">
+                            <span class="field-helper" id="cf-private-help">Add it if you need it on your receipt, for example for a tax deduction.</span>
                         </div>
                     </div>
                 </div>
@@ -1141,83 +1178,68 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                     <div class="subsection-title">Company details</div>
                     <div class="form-grid">
                         <div class="form-field full">
-                            <label for="ragione-sociale">Ragione sociale (legal company name)<span class="req">*</span></label>
-                            <input type="text" id="ragione-sociale" class="text-input" placeholder="Dal Pont Medical S.r.l.s" autocomplete="organization">
+                            <label for="ragione-sociale">Company legal name<span class="req">*</span></label>
+                            <input type="text" id="ragione-sociale" class="text-input" placeholder="Company name" autocomplete="organization">
                         </div>
                         <div class="form-field">
-                            <label for="partita-iva">Partita IVA / VAT number<span class="req">*</span></label>
+                            <label for="partita-iva"><span id="vat-label">VAT number</span><span class="req">*</span></label>
                             <input type="text" id="partita-iva" class="text-input" placeholder="IT05355480269" style="text-transform:uppercase;" autocomplete="off">
-                            <span class="field-helper">Include country prefix (e.g. IT) for EU VAT.</span>
+                            <span class="field-helper" id="vat-help">With the country prefix. EU numbers are checked in the VIES register.</span>
                         </div>
-                        <div class="form-field">
-                            <label for="cf-business">Codice Fiscale</label>
+                        <div class="form-field" id="cf-business-field">
+                            <label for="cf-business">Company tax code</label>
                             <input type="text" id="cf-business" class="text-input" placeholder="05355480269" maxlength="16" style="text-transform:uppercase;" autocomplete="off">
-                            <span class="field-helper">May match Partita IVA for SRL/SPA.</span>
+                            <span class="field-helper">Italian companies, only if different from the VAT number.</span>
                         </div>
                     </div>
 
+                    <div id="einvoice-block">   <!-- Italy only: electronic invoices go through SDI -->
                     <div class="section-divider"></div>
 
-                    <div class="subsection-title">Electronic invoicing (fatturazione elettronica)</div>
-                    <p class="field-helper" style="margin: -4px 0 14px;">For Italian companies, provide either a 7-character SDI code or a PEC address. The invoice will be transmitted via SDI.</p>
+                    <div class="subsection-title">Electronic invoicing</div>
+                    <p class="field-helper" style="margin: -4px 0 14px;">Italian companies receive the invoice through SDI: give your 7-character SDI code or a PEC address.</p>
                     <div class="einvoice-toggle">
-                        <button type="button" data-einvoice="sdi" class="active">Codice SDI</button>
+                        <button type="button" data-einvoice="sdi" class="active">SDI code</button>
                         <button type="button" data-einvoice="pec">PEC</button>
-                        <button type="button" data-einvoice="foreign">Foreign / EU</button>
                     </div>
                     <div class="form-grid">
                         <div class="form-field full" id="sdi-field">
-                            <label for="codice-sdi">Codice destinatario (SDI)<span class="req">*</span></label>
+                            <label for="codice-sdi">SDI recipient code<span class="req">*</span></label>
                             <input type="text" id="codice-sdi" class="text-input" placeholder="ABCDE12" maxlength="7" style="text-transform:uppercase;" autocomplete="off">
-                            <span class="field-helper">7-character recipient code assigned by your accountant. Use 0000000 if unknown — invoice will be available on Agenzia delle Entrate.</span>
+                            <span class="field-helper">7-character recipient code assigned by your accountant. Use 0000000 if unknown: the invoice will then be available in the Italian Revenue Agency portal.</span>
                         </div>
                         <div class="form-field full" id="pec-field" style="display:none;">
-                            <label for="pec-address">PEC (certified email)<span class="req">*</span></label>
-                            <input type="email" id="pec-address" class="text-input" placeholder="azienda@pec.it" autocomplete="email">
-                            <span class="field-helper">Posta Elettronica Certificata used to deliver the electronic invoice.</span>
-                        </div>
-                        <div class="form-field full" id="foreign-field" style="display:none;">
-                            <label for="foreign-tax-id">EU VAT / Tax ID<span class="req">*</span></label>
-                            <input type="text" id="foreign-tax-id" class="text-input" placeholder="DE123456789" style="text-transform:uppercase;" autocomplete="off">
-                            <span class="field-helper">For non-Italian businesses. Include the country prefix.</span>
+                            <label for="pec-address">Certified email (PEC)<span class="req">*</span></label>
+                            <input type="email" id="pec-address" class="text-input" placeholder="company@pec.it" autocomplete="email">
+                            <span class="field-helper">The certified email address the electronic invoice is delivered to.</span>
                         </div>
                     </div>
+                    </div><!-- /einvoice-block -->
 
                     <div class="section-divider"></div>
 
-                    <div class="subsection-title">Sede legale (legal address)</div>
+                    <div class="subsection-title">Registered office address</div>
                     <div class="form-grid">
                         <div class="form-field full">
                             <label for="bill-address">Address<span class="req">*</span></label>
-                            <input type="text" id="bill-address" class="text-input" placeholder="Via Roma 12" autocomplete="address-line1">
+                            <input type="text" id="bill-address" class="text-input" placeholder="Street and number" autocomplete="address-line1">
                         </div>
                         <div class="form-field">
                             <label for="bill-city">City<span class="req">*</span></label>
-                            <input type="text" id="bill-city" class="text-input" placeholder="Treviso" autocomplete="address-level2">
+                            <input type="text" id="bill-city" class="text-input" autocomplete="address-level2">
                         </div>
                         <div class="form-field">
                             <label for="bill-zip">Postal code<span class="req">*</span></label>
-                            <input type="text" id="bill-zip" class="text-input" placeholder="31100" autocomplete="postal-code">
+                            <input type="text" id="bill-zip" class="text-input" autocomplete="postal-code">
                         </div>
                         <div class="form-field">
-                            <label for="bill-province">Province<span class="req">*</span></label>
+                            <label for="bill-province">Province / state<span class="req" id="bill-province-req">*</span></label>
                             <input type="text" id="bill-province" class="text-input" placeholder="TV" maxlength="2" style="text-transform:uppercase;" autocomplete="address-level1">
                         </div>
                         <div class="form-field">
                             <label for="bill-country">Country<span class="req">*</span></label>
                             <select id="bill-country" class="text-input" autocomplete="country">
-                                <option value="IT" selected>Italy</option>
-                                <option value="AT">Austria</option>
-                                <option value="BE">Belgium</option>
-                                <option value="DE">Germany</option>
-                                <option value="ES">Spain</option>
-                                <option value="FR">France</option>
-                                <option value="GR">Greece</option>
-                                <option value="NL">Netherlands</option>
-                                <option value="PT">Portugal</option>
-                                <option value="CH">Switzerland</option>
-                                <option value="GB">United Kingdom</option>
-                                <option value="OTHER">Other</option>
+                                ${COUNTRY_OPTIONS}
                             </select>
                         </div>
                     </div>
@@ -1230,7 +1252,7 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
 
                 <div class="checkbox-row" id="same-as-billing-row" style="display:none;">
                     <input type="checkbox" id="same-as-billing" checked>
-                    <label for="same-as-billing">Ship to legal address (same as sede legale)</label>
+                    <label for="same-as-billing">Ship to the registered office address</label>
                 </div>
 
                 <div id="shipping-fields">
@@ -1242,7 +1264,7 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                         </div>
                         <div class="form-field full">
                             <label for="ship-address">Address<span class="req">*</span></label>
-                            <input type="text" id="ship-address" class="text-input" placeholder="Via Roma 12" autocomplete="shipping address-line1">
+                            <input type="text" id="ship-address" class="text-input" placeholder="Street and number" autocomplete="shipping address-line1">
                         </div>
                         <div class="form-field full">
                             <label for="ship-address2">Address line 2 <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
@@ -1250,36 +1272,25 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                         </div>
                         <div class="form-field">
                             <label for="ship-city">City<span class="req">*</span></label>
-                            <input type="text" id="ship-city" class="text-input" placeholder="Treviso" autocomplete="shipping address-level2">
+                            <input type="text" id="ship-city" class="text-input" autocomplete="shipping address-level2">
                         </div>
                         <div class="form-field">
                             <label for="ship-zip">Postal code<span class="req">*</span></label>
-                            <input type="text" id="ship-zip" class="text-input" placeholder="31100" autocomplete="shipping postal-code">
+                            <input type="text" id="ship-zip" class="text-input" autocomplete="shipping postal-code">
                         </div>
                         <div class="form-field">
-                            <label for="ship-province">Province<span class="req">*</span></label>
+                            <label for="ship-province">Province / state<span class="req" id="ship-province-req">*</span></label>
                             <input type="text" id="ship-province" class="text-input" placeholder="TV" maxlength="2" style="text-transform:uppercase;" autocomplete="shipping address-level1">
                         </div>
                         <div class="form-field">
                             <label for="ship-country">Country<span class="req">*</span></label>
                             <select id="ship-country" class="text-input" autocomplete="shipping country">
-                                <option value="IT" selected>Italy</option>
-                                <option value="AT">Austria</option>
-                                <option value="BE">Belgium</option>
-                                <option value="DE">Germany</option>
-                                <option value="ES">Spain</option>
-                                <option value="FR">France</option>
-                                <option value="GR">Greece</option>
-                                <option value="NL">Netherlands</option>
-                                <option value="PT">Portugal</option>
-                                <option value="CH">Switzerland</option>
-                                <option value="GB">United Kingdom</option>
-                                <option value="OTHER">Other</option>
+                                ${COUNTRY_OPTIONS}
                             </select>
                         </div>
                         <div class="form-field full">
                             <label for="ship-phone">Delivery contact phone<span class="req">*</span></label>
-                            <input type="tel" id="ship-phone" class="text-input" placeholder="+39 ..." autocomplete="shipping tel">
+                            <input type="tel" id="ship-phone" class="text-input" placeholder="With country code, e.g. +39" autocomplete="shipping tel">
                             <span class="field-helper">Used by the courier on delivery day.</span>
                         </div>
                         <div class="form-field full">
@@ -1301,20 +1312,17 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                     </div>
                     <div class="form-field">
                         <label for="cost-center">Cost center / department <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
-                        <input type="text" id="cost-center" class="text-input" placeholder="Reparto chirurgia">
+                        <input type="text" id="cost-center" class="text-input" placeholder="Surgery department">
                     </div>
                 </div>
 
                 <div class="section-divider"></div>
                 <div class="subsection-title">Tax regime</div>
                 <div style="display:flex; flex-direction:column; gap:14px;">
-                    <label class="inline-check">
-                        <input type="checkbox" id="reverse-charge">
-                        <span><strong>Apply reverse charge</strong> — non-Italian EU business with valid VAT number. Italian VAT (22%) is not charged; tax is accounted for in your country.<br><span class="field-helper">Subject to VIES validation by our team. If the VAT number is invalid, the order will be re-quoted with VAT.</span></span>
-                    </label>
-                    <label class="inline-check">
+                    <p class="field-helper" id="vat-regime-note" style="margin:0; font-size:13px;"></p>
+                    <label class="inline-check" id="split-payment-row">
                         <input type="checkbox" id="split-payment">
-                        <span><strong>Split payment (Scissione dei Pagamenti)</strong> — sale to Italian Pubblica Amministrazione under Art. 17-ter DPR 633/72.</span>
+                        <span><strong>Split payment</strong> — sale to an Italian public administration under Art. 17-ter of Presidential Decree 633/72.</span>
                     </label>
                 </div>
             </section>
@@ -1341,7 +1349,7 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                     </div>
                     <div class="form-field">
                         <label for="license-number">License / Albo number <span style="text-transform:none; font-weight:500; color:var(--text-secondary);">(optional)</span></label>
-                        <input type="text" id="license-number" class="text-input" placeholder="Ordine dei Medici n. 12345">
+                        <input type="text" id="license-number" class="text-input" placeholder="Medical board no. 12345">
                     </div>
                 </div>
                 <div class="consent-list" style="margin-top:18px;">
@@ -1370,7 +1378,7 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                     <label class="payment-method">
                         <input type="radio" name="payment-method" value="bank_transfer">
                         <div class="payment-method-info">
-                            <div class="payment-method-name">Bank transfer (Bonifico)</div>
+                            <div class="payment-method-name">Bank transfer</div>
                             <div class="payment-method-desc">We'll email you our IBAN and order reference. Order ships once payment clears (typically 1–2 business days). Recommended for B2B orders over €5.000.</div>
                         </div>
                     </label>
@@ -1405,7 +1413,7 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                     </div>
                     <div class="consent-item" id="withdrawal-consent">
                         <input type="checkbox" id="consent-withdrawal">
-                        <label for="consent-withdrawal">I acknowledge my <strong>14-day right of withdrawal</strong> under Art. 52 of the Italian Consumer Code (Codice del Consumo). For sterile, custom-configured, or installed medical devices, the limits set out in the Terms of Sale apply. <span class="required">*</span></label>
+                        <label for="consent-withdrawal">I acknowledge my <strong>14-day right of withdrawal</strong> under EU consumer law (Directive 2011/83/EU, Art. 52 of the Italian Consumer Code). For sterile, custom-configured, or installed medical devices, the limits set out in the Terms of Sale apply. <span class="required">*</span></label>
                     </div>
                     <div class="consent-item">
                         <input type="checkbox" id="consent-marketing">
@@ -1418,23 +1426,30 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
           <aside class="summary-aside">
             <div class="summary-box">
               <h2>Order summary</h2>
-              <p class="summary-sub">Prices in EUR. Taxes shown for EU shipping.</p>
+              <p class="summary-sub">Free shipping on every order.</p>
               <div class="summary-row">
                 <span>Subtotal (${itemCount} item${itemCount === 1 ? '' : 's'})</span>
                 <span>${EUR.format(subtotal)}</span>
               </div>
               <div class="summary-row">
                 <span>Shipping</span>
-                <span>${EUR.format(shipping)}</span>
+                <span>${shipping ? EUR.format(shipping) : 'Free'}</span>
               </div>
               <div class="summary-row" id="summary-tax-row">
                 <span>VAT (22%)</span>
                 <span id="summary-tax-amount">${EUR.format(tax)}</span>
               </div>
+              <p class="summary-vat-note" id="summary-vat-note" hidden></p>
               <div class="summary-row total">
-                <span>Total</span>
+                <span>Total today</span>
                 <span id="summary-total-amount">${EUR.format(total)}</span>
               </div>
+              ${yearlyList.length ? `
+              <div class="summary-yearly">
+                <div class="summary-yearly-title">Billed every year</div>
+                ${yearlyList.map(([name, price]) => `<div class="summary-row"><span>${name}</span><span>${EUR.format(price)}/year</span></div>`).join('')}
+                <p>Not included in today's total. Invoiced separately each year, excl. VAT. Cancel at any renewal.</p>
+              </div>` : ''}
               <button id="checkout-button" class="btn btn-primary">
                 Continue to payment
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-left:8px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
@@ -1474,11 +1489,11 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
           privateBlock.classList.toggle('is-visible', !isBusiness);
           businessBlock.classList.toggle('is-visible', isBusiness);
           billingSub.textContent = isBusiness
-              ? 'Required by Italian law for electronic invoicing (fatturazione elettronica).'
-              : 'For receipts and tax-deductible invoices (fattura).';
+              ? "The details that go on your company's invoice."
+              : 'For receipts and tax-deductible invoices.';
           sameAsBillingRow.style.display = isBusiness ? '' : 'none';
           businessExtras.style.display = isBusiness ? '' : 'none';
-          // Right of withdrawal (Codice del Consumo) only applies to consumers (B2C)
+          // Right of withdrawal (Italian Consumer Code) only applies to consumers (B2C)
           withdrawalConsent.style.display = isBusiness ? 'none' : '';
 
           setRequired(businessRequiredIds, isBusiness);
@@ -1506,15 +1521,16 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
           setRequired(shippingRequiredIds, !hidden);
       });
 
-      // E-invoicing channel tabs (SDI / PEC / Foreign)
+      // E-invoicing channel tabs (SDI / PEC), for Italian companies only
       let einvoiceMode = 'sdi';
+      const billCountry = () => document.getElementById('bill-country').value;
+      const shipCountry = () => document.getElementById('ship-country').value;
       function applyEinvoiceMode() {
+          const italian = billCountry() === 'IT';
           document.getElementById('sdi-field').style.display = einvoiceMode === 'sdi' ? '' : 'none';
           document.getElementById('pec-field').style.display = einvoiceMode === 'pec' ? '' : 'none';
-          document.getElementById('foreign-field').style.display = einvoiceMode === 'foreign' ? '' : 'none';
-          document.getElementById('codice-sdi').required = einvoiceMode === 'sdi';
-          document.getElementById('pec-address').required = einvoiceMode === 'pec';
-          document.getElementById('foreign-tax-id').required = einvoiceMode === 'foreign';
+          document.getElementById('codice-sdi').required = italian && einvoiceMode === 'sdi';
+          document.getElementById('pec-address').required = italian && einvoiceMode === 'pec';
       }
       document.querySelectorAll('.einvoice-toggle button').forEach(btn => {
           btn.addEventListener('click', () => {
@@ -1523,7 +1539,6 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
               applyEinvoiceMode();
           });
       });
-      applyEinvoiceMode();
 
       // Payment method visual selection
       document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
@@ -1533,29 +1548,79 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
           });
       });
 
-      // Reverse-charge toggle recomputes summary (no IT VAT for valid intra-EU B2B)
-      const reverseChargeBox = document.getElementById('reverse-charge');
+      // ----- VAT -----
+      // Goods are taxed where they are delivered (EU rules for distance sales of goods):
+      //   Italy                                        22%
+      //   another EU country, private buyer            that country's rate (declared through the EU OSS)
+      //   another EU country, business with VAT no.    0%, reverse charge (the number is checked in VIES before shipping)
+      //   outside the EU                               0%, export: import VAT and duties are paid on delivery
+      //   Italian public administration                split payment: the buyer pays the VAT to the tax office
       const splitPaymentBox = document.getElementById('split-payment');
+      const isBusinessNow = () => document.querySelector('input[name="customer-type"]:checked').value === 'business';
+      const deliveryCountry = () => (isBusinessNow() && sameAsBillingCheckbox.checked ? billCountry() : shipCountry());
+      let currentVat = null;
+      function vatRule() {
+          const c = deliveryCountry(), business = isBusinessNow();
+          const hasVatNumber = document.getElementById('partita-iva').value.trim().length > 0;
+          if (!(c in EU_VAT)) return { country: c, rate: 0, regime: 'export', label: 'VAT (export, 0%)',
+              note: 'Shipped outside the EU without VAT. Import VAT and duties, if any, are charged on delivery.' };
+          if (c === 'IT') {
+              if (business && splitPaymentBox.checked) return { country: c, rate: 0, regime: 'split-payment', label: 'VAT (split payment)',
+                  note: 'The 22% VAT is paid by you directly to the tax office.' };
+              return { country: c, rate: 0.22, regime: 'standard', label: 'VAT (Italy, 22%)', note: '' };
+          }
+          if (business && hasVatNumber) return { country: c, rate: 0, regime: 'reverse-charge', label: 'VAT (reverse charge, 0%)',
+              note: 'Sale to a VAT-registered EU business: VAT is accounted for in your country. We check your VAT number in VIES before shipping.' };
+          const pct = EU_VAT[c];
+          return { country: c, rate: pct / 100, regime: 'destination', label: `VAT (${COUNTRY_NAMES[c]}, ${String(pct).replace('.', ',')}%)`,
+              note: business ? 'Add your VAT number to buy without VAT (reverse charge).' : '' };
+      }
       function recomputeSummary() {
-          const reverseCharge = reverseChargeBox && reverseChargeBox.checked;
-          const splitPayment = splitPaymentBox && splitPaymentBox.checked;
-          const taxApplies = !reverseCharge && !splitPayment;
-          const newTax = taxApplies ? subtotal * taxRate : 0;
+          currentVat = vatRule();
+          const newTax = subtotal * currentVat.rate;
           const newTotal = subtotal + shipping + newTax;
           const taxRow = document.getElementById('summary-tax-row');
-          const taxAmount = document.getElementById('summary-tax-amount');
-          const totalAmount = document.getElementById('summary-total-amount');
-          if (taxAmount) taxAmount.textContent = EUR.format(newTax);
-          if (totalAmount) totalAmount.textContent = EUR.format(newTotal);
-          if (taxRow) {
-              const label = taxRow.querySelector('span:first-child');
-              if (reverseCharge) label.textContent = 'VAT (reverse charge — 0%)';
-              else if (splitPayment) label.textContent = 'VAT (split payment)';
-              else label.textContent = 'VAT (22%)';
-          }
+          const note = document.getElementById('summary-vat-note');
+          document.getElementById('summary-tax-amount').textContent = EUR.format(newTax);
+          document.getElementById('summary-total-amount').textContent = EUR.format(newTotal);
+          if (taxRow) taxRow.querySelector('span:first-child').textContent = currentVat.label;
+          if (note) { note.textContent = currentVat.note; note.hidden = !currentVat.note; }
+          const regimeNote = document.getElementById('vat-regime-note');
+          if (regimeNote) regimeNote.textContent = currentVat.note || (currentVat.label + ' applies to this order.');
       }
-      if (reverseChargeBox) reverseChargeBox.addEventListener('change', recomputeSummary);
-      if (splitPaymentBox) splitPaymentBox.addEventListener('change', recomputeSummary);
+      // everything that depends on the country: Italian-only fields, the name of the tax number, provinces, VAT
+      function applyCountry() {
+          const bc = billCountry(), euBilling = bc in EU_VAT;
+          document.getElementById('einvoice-block').style.display = bc === 'IT' ? '' : 'none';
+          document.getElementById('cf-business-field').style.display = bc === 'IT' ? '' : 'none';
+          document.getElementById('split-payment-row').style.display = bc === 'IT' ? '' : 'none';
+          if (bc !== 'IT') splitPaymentBox.checked = false;
+          applyEinvoiceMode();
+          document.getElementById('vat-label').textContent = euBilling ? 'VAT number' : 'Tax number';
+          document.getElementById('vat-help').textContent = euBilling
+              ? 'With the country prefix. EU numbers are checked in the VIES register.'
+              : "Your company's VAT or tax number.";
+          document.getElementById('partita-iva').placeholder = euBilling ? (bc === 'GR' ? 'EL' : bc) + '123456789' : '';
+          document.getElementById('partita-iva').closest('.form-field').classList.toggle('full', bc !== 'IT');   // alone on its row
+          // province: two letters and required only in Italy
+          [['bill', bc], ['ship', shipCountry()]].forEach(([pre, country]) => {
+              const el = document.getElementById(pre + '-province'), it = country === 'IT';
+              el.maxLength = it ? 2 : 40;
+              el.placeholder = it ? 'TV' : '';
+              el.style.textTransform = it ? 'uppercase' : 'none';
+              document.getElementById(pre + '-province-req').style.display = it ? '' : 'none';
+              if (!it) el.removeAttribute('required');
+          });
+          document.getElementById('cf-private-help').textContent = shipCountry() === 'IT'
+              ? 'Your 16-character Italian tax code, if you need it on your receipt for a tax deduction.'
+              : 'Add it if you need it on your receipt, for example for a tax deduction.';
+          recomputeSummary();
+      }
+      ['bill-country', 'ship-country', 'split-payment', 'same-as-billing'].forEach(id =>
+          document.getElementById(id).addEventListener('change', applyCountry));
+      document.querySelectorAll('input[name="customer-type"]').forEach(r => r.addEventListener('change', applyCountry));
+      document.getElementById('partita-iva').addEventListener('input', recomputeSummary);
+      applyCountry();
 
       // Promo code (UI only — server validates the actual code)
       const applyPromoBtn = document.getElementById('apply-promo');
@@ -1592,8 +1657,11 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
 
           if (customerType === 'private') {
               const cf = document.getElementById('cf-private').value.trim().toUpperCase();
-              if (cf && !/^[A-Z0-9]{16}$/.test(cf)) {
-                  alert('Codice Fiscale must be exactly 16 alphanumeric characters, or leave it empty.');
+              const cfOk = shipCountry() === 'IT' ? /^[A-Z0-9]{16}$/.test(cf) : /^[A-Z0-9 .\-\/]{3,20}$/.test(cf);
+              if (cf && !cfOk) {
+                  alert(shipCountry() === 'IT'
+                      ? 'The Italian tax code must be exactly 16 letters and numbers, or leave it empty.'
+                      : 'Please check your tax number, or leave it empty.');
                   document.getElementById('cf-private').focus();
                   return;
               }
@@ -1604,33 +1672,31 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
               const cfBusiness = document.getElementById('cf-business').value.trim().toUpperCase();
               const codiceSdi = document.getElementById('codice-sdi').value.trim().toUpperCase();
               const pec = document.getElementById('pec-address').value.trim();
-              const foreignTaxId = document.getElementById('foreign-tax-id').value.trim().toUpperCase();
               const address = document.getElementById('bill-address').value.trim();
               const city = document.getElementById('bill-city').value.trim();
               const zip = document.getElementById('bill-zip').value.trim();
               const province = document.getElementById('bill-province').value.trim().toUpperCase();
               const country = document.getElementById('bill-country').value;
 
-              if (!ragioneSociale) { alert('Please enter the legal company name (Ragione sociale).'); document.getElementById('ragione-sociale').focus(); return; }
-              if (!partitaIva) { alert('Please enter the Partita IVA / VAT number.'); document.getElementById('partita-iva').focus(); return; }
+              if (!ragioneSociale) { alert('Please enter the legal name of the company.'); document.getElementById('ragione-sociale').focus(); return; }
+              if (!partitaIva) { alert(country in EU_VAT ? 'Please enter the VAT number.' : "Please enter the company's tax number."); document.getElementById('partita-iva').focus(); return; }
               if (!address || !city || !zip) { alert('Please complete the legal billing address.'); return; }
               if (country === 'IT' && (!province || province.length !== 2)) { alert('Please enter the 2-letter Italian province (e.g. TV, MI, RM).'); document.getElementById('bill-province').focus(); return; }
 
-              if (einvoiceMode === 'sdi') {
-                  if (!codiceSdi || codiceSdi.length !== 7) { alert('Codice SDI must be exactly 7 characters. Use 0000000 if unknown.'); document.getElementById('codice-sdi').focus(); return; }
-              } else if (einvoiceMode === 'pec') {
+              const italian = country === 'IT';
+              if (italian && einvoiceMode === 'sdi') {
+                  if (!codiceSdi || codiceSdi.length !== 7) { alert('The SDI code must be exactly 7 characters. Use 0000000 if unknown.'); document.getElementById('codice-sdi').focus(); return; }
+              } else if (italian && einvoiceMode === 'pec') {
                   if (!pec || !/^\S+@\S+\.\S+$/.test(pec)) { alert('Please enter a valid PEC address.'); document.getElementById('pec-address').focus(); return; }
-              } else if (einvoiceMode === 'foreign') {
-                  if (!foreignTaxId) { alert('Please enter the foreign VAT / Tax ID.'); document.getElementById('foreign-tax-id').focus(); return; }
               }
 
               billing.company = {
                   ragioneSociale, partitaIva,
-                  codiceFiscale: cfBusiness || null,
-                  einvoiceChannel: einvoiceMode,
-                  codiceSdi: einvoiceMode === 'sdi' ? codiceSdi : null,
-                  pec: einvoiceMode === 'pec' ? pec : null,
-                  foreignTaxId: einvoiceMode === 'foreign' ? foreignTaxId : null
+                  codiceFiscale: italian ? (cfBusiness || null) : null,
+                  einvoiceChannel: italian ? einvoiceMode : null,
+                  codiceSdi: italian && einvoiceMode === 'sdi' ? codiceSdi : null,
+                  pec: italian && einvoiceMode === 'pec' ? pec : null,
+                  foreignTaxId: italian ? null : partitaIva
               };
               billing.address = { line1: address, city, zip, province, country };
           }
@@ -1682,7 +1748,7 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
               businessOrder = {
                   poNumber: document.getElementById('po-number').value.trim() || null,
                   costCenter: document.getElementById('cost-center').value.trim() || null,
-                  reverseCharge: document.getElementById('reverse-charge').checked,
+                  reverseCharge: !!currentVat && currentVat.regime === 'reverse-charge',
                   splitPayment: document.getElementById('split-payment').checked
               };
           }
@@ -1723,6 +1789,8 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                   confirmedIntendedUse: consentIntendedUse
               },
               paymentMethod: paymentMethod,
+              // how VAT was worked out on this page; the payment server has to apply the same rule
+              vat: currentVat ? { country: currentVat.country, rate: currentVat.rate, regime: currentVat.regime } : null,
               promoCode: promoCode,
               notes: orderNotes,
               consents: {
@@ -1777,50 +1845,6 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
     });
 
     // ── AUTH GATE & PROFILE PREFILL ─────────────────────────────────
-    function renderAuthGate() {
-      checkoutContent.innerHTML = `
-        <div class="checkout-hero">
-            <span class="eyebrow">Checkout</span>
-            <h1>Almost there — how would you like to continue?</h1>
-            <p class="lead">Sign in to reuse your saved shipping and billing details, or keep going as a guest and fill them in now.</p>
-        </div>
-        <div class="checkout-auth-gate">
-            <div class="checkout-auth-options">
-                <button type="button" class="checkout-auth-card primary" id="gate-signin">
-                    <div class="checkout-auth-card-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                            <polyline points="10 17 15 12 10 7"/>
-                            <line x1="15" y1="12" x2="3" y2="12"/>
-                        </svg>
-                    </div>
-                    <h3>Sign in</h3>
-                    <p>Use saved shipping &amp; billing. Faster, and your order history stays in one place.</p>
-                </button>
-                <button type="button" class="checkout-auth-card" id="gate-guest">
-                    <div class="checkout-auth-card-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                    </div>
-                    <h3>Continue as guest</h3>
-                    <p>You can create an account later with the same email.</p>
-                </button>
-            </div>
-        </div>
-      `;
-      document.getElementById('gate-signin').addEventListener('click', () => {
-        window.location.href = "loginprofile.html?return=checkout.html";
-      });
-      document.getElementById('gate-guest').addEventListener('click', () => {
-        sessionStorage.setItem("checkout_guest", "1");
-        renderPage();
-      });
-    }
-    // Expose to renderPage()
-    window.__checkout_renderAuthGate = renderAuthGate;
-
     // Prefill saved profile into the form when the customer is signed in
     function prefillFromProfile(user, profile) {
       const set = (id, val) => {
@@ -1902,18 +1926,40 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
       });
     }
 
-    // Hook: after renderPage finishes building the form, prefill + show banner
+    // for guests: one quiet line on top of the form, with a way to sign in and use saved details
+    function renderSignInPrompt() {
+      const main = document.querySelector('.checkout-layout > main');
+      if (!main || document.getElementById('checkout-signed-banner')) return;
+      const banner = document.createElement('div');
+      banner.id = 'checkout-signed-banner';
+      banner.className = 'checkout-signed-banner is-guest';
+      banner.innerHTML = `
+        <div class="checkout-signed-banner-text">
+          <div class="checkout-signed-banner-title">Have a DP Biotech account?</div>
+          <div class="checkout-signed-banner-sub">Sign in to use your saved details, or just fill in the form below.</div>
+        </div>
+        <div class="checkout-signed-banner-actions">
+          <a class="checkout-signed-banner-btn primary" href="loginprofile.html?return=checkout.html">Sign in</a>
+        </div>
+      `;
+      main.prepend(banner);
+    }
+
+    // Hook: after renderPage finishes building the form, prefill + show the right banner
     const _renderPage = renderPage;
     renderPage = function() {
       _renderPage();
       const a = window.__checkoutAuth;
-      if (a && a.resolved && a.user) {
-        // Defer to next tick so the form HTML is in the DOM
-        setTimeout(() => {
+      if (!a || !a.resolved || !document.querySelector('.checkout-layout')) return;
+      // Defer to next tick so the form HTML is in the DOM
+      setTimeout(() => {
+        if (a.user) {
           prefillFromProfile(a.user, a.profile || null);
           renderSignedInBanner(a.user);
-        }, 0);
-      }
+        } else {
+          renderSignInPrompt();
+        }
+      }, 0);
     };
 
     loadCart();
@@ -1946,9 +1992,8 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
   let resolved = false;
   onAuthStateChanged(auth, async (user) => {
     if (resolved) {
-      // If the user signs out mid-session, drop them back to the gate
+      // If the user signs out mid-session, carry on as a guest
       window.__checkoutAuth = { resolved: true, user: null, profile: null };
-      sessionStorage.removeItem("checkout_guest");
       window.dispatchEvent(new CustomEvent("checkout-auth-ready"));
       return;
     }

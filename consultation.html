@@ -4,15 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-<link rel="apple-touch-icon" href="favicon-192.png"><title>Schedule a Consultation — DP Biotech</title>
-<script>
-    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
-      window.location.href = 'login.html';
-    }
-</script>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=2">
+<link rel="apple-touch-icon" href="favicon-192.png?v=2"><title>Schedule a Consultation — DP Biotech</title>
+<script src="gate.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -390,6 +386,40 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
 .cart-sidebar .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .cart-sidebar .cart-items { padding: 18px 22px !important; }
 .cart-sidebar .cart-items > .cart-item { padding: 0 !important; border: none !important; }
+/* Cart buttons with room to breathe: a proper Checkout button, Clear Cart as a quiet link */
+.cart-sidebar .cart-footer { padding: 22px 24px 24px !important; }
+.cart-sidebar .cart-total { font-size: 17px; margin-bottom: 16px !important; }
+.cart-sidebar #checkout-btn {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 100% !important; height: 48px !important; padding: 0 20px !important; margin: 0 !important;
+    border: none !important; border-radius: 12px !important; box-shadow: none !important;
+    background: #0071e3 !important; color: #fff !important;
+    font-size: 16px !important; font-weight: 500 !important; letter-spacing: -0.01em;
+}
+.cart-sidebar #checkout-btn:hover { background: #0077ed !important; }
+.cart-sidebar #checkout-btn:disabled { opacity: 0.4 !important; cursor: default; }
+.cart-sidebar #clear-cart-btn {
+    display: block !important; width: 100% !important; height: 40px !important;
+    margin: 8px 0 0 !important; padding: 0 !important;
+    border: none !important; background: none !important; box-shadow: none !important;
+    font-size: 14px !important; font-weight: 400 !important; color: #0071e3 !important;
+}
+.cart-sidebar #clear-cart-btn:hover { text-decoration: underline; }
+.cart-sidebar #clear-cart-btn:disabled { color: var(--text-secondary, #86868b) !important; text-decoration: none; cursor: default; }
+.cart-sidebar .cart-product-subtitle { margin-bottom: 16px !important; }
+.cart-sidebar .cart-product-remove-btn,
+.cart-sidebar .cart-product-header > button { width: 30px !important; height: 30px !important; min-width: 30px !important; }
+.cart-sidebar .quantity-control { padding: 3px !important; }
+.cart-sidebar .quantity-btn,
+.cart-sidebar .quantity-input,
+.cart-sidebar span.quantity-input,
+.cart-sidebar input.quantity-input { width: 34px !important; height: 34px !important; min-width: 34px !important; line-height: 34px !important; }
+.cart-sidebar .quantity-btn { font-size: 18px !important; }
+.cart-sidebar .cart-footer::after {
+    content: "Prices exclude VAT, added at checkout. Free shipping.";
+    display: block; margin-top: 6px; text-align: center;
+    font-size: 12px; color: var(--text-secondary, #86868b);
+}
 </style>
 <style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
 </head>
@@ -525,7 +555,7 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                         </div>
                         <div class="form-field full">
                             <label for="organization">Organization / Hospital<span class="req">*</span></label>
-                            <input type="text" id="organization" name="organization" class="text-input" placeholder="Studio Medico Dr. Rossi" required autocomplete="organization">
+                            <input type="text" id="organization" name="organization" class="text-input" placeholder="Dr. Rossi Medical Practice" required autocomplete="organization">
                             <div class="error-message" id="organizationError">Organization is required.</div>
                         </div>
                         <div class="form-field">
@@ -672,7 +702,7 @@ footer { border-top: 1px solid var(--divider); padding: 64px 0 32px; background:
                 <address class="footer-address">
                     <strong>Dal Pont Medical S.r.l.s</strong><br>
                     Piazza San Vito 12<br>
-                    31100 Treviso — Italia<br><br>
+                    31100 Treviso — Italy<br><br>
                     VAT / C.F.: 05355480269<br>
                     REA: 437837<br>
                     EUDAMED SRN: IT-MF-000052836

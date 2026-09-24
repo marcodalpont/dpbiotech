@@ -1,2 +1,6 @@
 3-original.mov
 *-original.*
+
+# secrets never go in this public repository
+key.env
+*.env
