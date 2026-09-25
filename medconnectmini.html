@@ -312,7 +312,7 @@ footer {
     background: var(--bg-card);
     border-radius: 22px;
     border: 1px solid rgba(10,10,15,0.06);
-    transform: translateX(calc(100% + 32px));
+    transform: translateX(calc(100% + 100px));
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 201;
     display: flex; flex-direction: column;
@@ -348,6 +348,13 @@ footer {
 /* === End canonical === */
 </style>
 <style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
+<style>
+/* The same space between the products in every cart, on every page: only the list's gap, no margins on the
+   rows or on the cards (each page added its own, so the space changed from page to page) */
+.cart-sidebar .cart-items { display: flex !important; flex-direction: column; gap: 12px !important; }
+.cart-sidebar .cart-items > * { margin: 0 !important; flex-shrink: 0; }
+.cart-sidebar .cart-items .cart-product-card { margin: 0 !important; }
+</style>
 </head>
 <body>
 
@@ -359,6 +366,7 @@ footer {
     <a href="DPMini.html" class="mobile-link">DP Mini</a>
     <a href="DPPro.html" class="mobile-link">DP Pro</a>
     <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="accessories.html" class="mobile-link">Accessories</a>
     <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
     <a href="licensing.html" class="mobile-link">Licensing</a>
 </div>
@@ -399,6 +407,7 @@ footer {
               </ul>
               <ul class="menu-link-column">
                   <li>Quick Links</li>
+                  <li><a href="accessories.html">Accessories</a></li>
                   <li><a href="all-models.html">Compare Models</a></li>
               </ul>
           </div>
@@ -763,7 +772,7 @@ footer {
                 <ul>
                     <li><a href="DPMini.html">DP Mini</a></li>
                     <li><a href="DPPro.html">DP Pro</a></li>
-                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
                     <li><a href="all-models.html">Compare Models</a></li>
                     <li><a href="#specs">Specifications</a></li>
                 </ul>
@@ -908,6 +917,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
-<script type="module" src="customer-account-nav.js?v=3"></script>
+<script type="module" src="customer-account-nav.js?v=4"></script>
 </body>
 </html>

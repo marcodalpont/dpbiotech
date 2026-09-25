@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <script src="gate.js"></script>
+<script src="products.js"></script>
+<script src="cart-thumbs.js"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
@@ -16,6 +18,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<!-- The two models start downloading while the hero is on screen (loading="eager" on their model-viewers),
+     not when their section scrolls in. Both are Draco-compressed; model-viewer fetches the decoder from gstatic. -->
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 
 <style>
 /* =========================================
@@ -345,7 +350,7 @@ a:hover { opacity: 0.7; }
     width: calc(100% - 32px); max-width: 400px;
     background: var(--bg-card);
     border-radius: 22px;
-    transform: translateX(calc(100% + 32px));
+    transform: translateX(calc(100% + 100px));
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 201;
     display: flex; flex-direction: column;
@@ -1586,6 +1591,11 @@ footer { background: var(--bg-secondary); }
     display: block; margin-top: 6px; text-align: center;
     font-size: 12px; color: var(--text-secondary, #86868b);
 }
+/* The same space between the products in every cart, on every page: only the list's gap, no margins on the
+   rows or on the cards (each page added its own, so the space changed from page to page) */
+.cart-sidebar .cart-items { display: flex !important; flex-direction: column; gap: 12px !important; }
+.cart-sidebar .cart-items > * { margin: 0 !important; flex-shrink: 0; }
+.cart-sidebar .cart-items .cart-product-card { margin: 0 !important; }
 </style>
 <style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
 </head>
@@ -1707,6 +1717,7 @@ footer { background: var(--bg-secondary); }
               </ul>
               <ul class="menu-link-column">
                   <li>Quick Links</li>
+                  <li><a href="accessories.html">Accessories</a></li>
                   <li><a href="all-models.html">Compare Models</a></li>
               </ul>
           </div>
@@ -1766,6 +1777,7 @@ footer { background: var(--bg-secondary); }
     <a href="DPMini.html" class="mobile-link">DP Mini</a>
     <a href="DPPro.html" class="mobile-link">DP Pro</a>
     <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="accessories.html" class="mobile-link">Accessories</a>
     <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
     <div class="mobile-account">
         <button type="button" class="mobile-account-toggle" aria-expanded="false" aria-controls="mobile-account-links"
@@ -1969,6 +1981,8 @@ footer { background: var(--bg-secondary); }
             <div class="feature-visual mini-bg">
                 <model-viewer
                     src="dpmini.glb"
+                    loading="eager"
+                    disable-zoom
                     ios-src="dpmini.usdz"
                     alt="DP Mini"
                     camera-controls
@@ -2079,6 +2093,8 @@ footer { background: var(--bg-secondary); }
             <div class="feature-visual pro-bg">
                  <model-viewer
                     src="dppro.glb"
+                    loading="eager"
+                    disable-zoom
                     ios-src="dppro.usdz"
                     alt="DP Pro"
                     camera-controls
@@ -2274,8 +2290,7 @@ footer { background: var(--bg-secondary); }
           
           <div class="team-member">
               
-              <img src="franco.jpg" 
-                   onerror="this.src='papa.png'" 
+              <img src="papa.png" loading="lazy" decoding="async"
                    alt="Franco Dal Pont" 
                    class="team-photo">
               <h3>Franco Dal Pont</h3>
@@ -2285,8 +2300,7 @@ footer { background: var(--bg-secondary); }
 
           <div class="team-member">
               
-              <img src="giorgio.jpg" 
-                   onerror="this.src='giorgio.png'" 
+              <img src="giorgio.png" loading="lazy" decoding="async"
                    alt="Giorgio Dal Pont" 
                    class="team-photo">
               <h3>Giorgio Dal Pont – Eco 2</h3>
@@ -2296,8 +2310,7 @@ footer { background: var(--bg-secondary); }
 
           <div class="team-member">
               
-              <img src="marco.jpg" 
-                   onerror="this.src='marco.png'" 
+              <img src="marco.png" loading="lazy" decoding="async"
                    alt="Marco Dal Pont" 
                    class="team-photo">
               <h3>Marco Dal Pont – Eco 1</h3>
@@ -2435,7 +2448,7 @@ footer { background: var(--bg-secondary); }
                 <ul>
                     <li><a href="DPMini.html">DP Mini</a></li>
                     <li><a href="DPPro.html">DP Pro</a></li>
-                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
                     <li><a href="all-models.html">Compare Models</a></li>
                     <li><a href="#dppro-whats-next">DP Pro Roadmap</a></li>
                 </ul>
@@ -2665,7 +2678,7 @@ footer { background: var(--bg-secondary); }
                   const formattedOptions = formatOptions(item.options);
 
                   li.innerHTML = `
-                      <div class="cart-product-card">
+                      <div class="cart-product-card has-thumb">${window.dpbCartThumb ? dpbCartThumb(item.name) : ''}
                           <div class="cart-product-header">
                               <h4 class="cart-product-title">${baseName}</h4>
                               <button class="cart-product-remove-btn" data-cart-action="rm" data-cart-idx="${idx}">&times;</button>
@@ -2823,6 +2836,25 @@ footer { background: var(--bg-secondary); }
   </script>
 <script src="waitlist-modal.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
+<script>
+// Once both models on this page are in, fetch the animated model of DPMini.html in the background, so the
+// page behind "Learn more" opens with it already cached (sw.js keeps it). Same URL as DPMini.html loads.
+(function () {
+    var viewers = [].slice.call(document.querySelectorAll('model-viewer'));
+    var left = viewers.length, done = false;
+    function warm() {
+        if (done) return;
+        done = true;
+        var idle = window.requestIdleCallback || function (f) { setTimeout(f, 1500); };
+        idle(function () { fetch('dpmini-anim.glb?v=2').catch(function () {}); });
+    }
+    viewers.forEach(function (v) {
+        v.addEventListener('load', function () { if (--left === 0) warm(); }, { once: true });
+        v.addEventListener('error', warm, { once: true });
+    });
+    setTimeout(warm, 20000);   // a model that never loads doesn't block it
+})();
+</script>
 
 <!-- ========== FIREBASE AUTH STATE ==========
      Switches the nav between a simple "Log in" link (signed out) and a

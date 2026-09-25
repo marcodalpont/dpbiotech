@@ -11,6 +11,8 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#000000">
 <script src="gate.js"></script>
+<script src="products.js"></script>
+<script src="cart-thumbs.js"></script>
 <script>
     // the page always opens on the DP MINI splash + hero, never mid-story
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -871,7 +873,7 @@ model-viewer { width: 100%; height: 100%; position: relative; z-index: 1; --post
     background: var(--bg-card);
     border: 1px solid rgba(10,10,15,0.06);
     border-radius: 22px;
-    transform: translateX(calc(100% + 32px));
+    transform: translateX(calc(100% + 100px));
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 201;
     display: flex; flex-direction: column;
@@ -1193,6 +1195,11 @@ footer {
     display: block; margin-top: 6px; text-align: center;
     font-size: 12px; color: var(--text-secondary, #86868b);
 }
+/* The same space between the products in every cart, on every page: only the list's gap, no margins on the
+   rows or on the cards (each page added its own, so the space changed from page to page) */
+.cart-sidebar .cart-items { display: flex !important; flex-direction: column; gap: 12px !important; }
+.cart-sidebar .cart-items > * { margin: 0 !important; flex-shrink: 0; }
+.cart-sidebar .cart-items .cart-product-card { margin: 0 !important; }
 </style>
 <style>
 /* =========================================
@@ -1800,12 +1807,13 @@ body.story-on .nav {
 
 /* =========================================
    ACCESSORIES — DP Pedal | DP Stand, tiles in the style of apple.com:
-   12px frame, name + one line + price + two pill buttons on top, the product below
+   12px frame, name + one line + price + two pill buttons on top, the product below.
+   Light, as on apple.com: grey-white tiles on a white band (charcoal on black was too dark for him)
    ========================================= */
 .acc-section {
     display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     padding: 12px;
-    background: #000;
+    background: #ffffff;
 }
 .acc-tile {
     position: relative;
@@ -1814,8 +1822,8 @@ body.story-on .nav {
     display: flex; flex-direction: column; align-items: center; justify-content: space-between;
     text-align: center;
     background:
-        radial-gradient(ellipse 65% 50% at 50% 52%, rgba(92, 96, 108, 0.24) 0%, rgba(40, 42, 48, 0.1) 50%, transparent 75%),
-        #161618;                               /* the charcoal of Tech Specs */
+        radial-gradient(ellipse 65% 50% at 50% 52%, #ffffff 0%, rgba(255, 255, 255, 0.45) 45%, transparent 75%),
+        #f5f5f7;
 }
 .acc-head, .acc-foot {
     position: relative; z-index: 2;
@@ -1824,15 +1832,15 @@ body.story-on .nav {
 .acc-foot { padding: 0 24px clamp(36px, 4vw, 56px); }
 .acc-head h3 {
     font-size: clamp(34px, 3.4vw, 48px); font-weight: 600; line-height: 1.08;
-    letter-spacing: -0.015em; color: #f5f5f7;
+    letter-spacing: -0.015em; color: #1d1d1f;
     margin: 0 0 6px;
 }
 .acc-head p, .acc-foot p { transform: none; }
 .acc-sub {
     font-size: clamp(18px, 1.7vw, 24px); font-weight: 400; line-height: 1.25;
-    color: #f5f5f7; max-width: 520px; margin: 0 auto;
+    color: #1d1d1f; max-width: 520px; margin: 0 auto;
 }
-.acc-price { font-size: 14px; color: #86868b; }
+.acc-price { font-size: 14px; color: #6e6e73; }
 .acc-cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-top: 18px; }
 .pill-btn {
     pointer-events: auto;
@@ -1845,14 +1853,20 @@ body.story-on .nav {
 .pill-btn:hover { opacity: 1; background: #2997ff; color: #fff; }
 .pill-btn.is-primary { background: #0071e3; border-color: #0071e3; color: #fff; }
 .pill-btn.is-primary:hover { background: #0077ed; border-color: #0077ed; }
+/* on the light tiles, the light-page blue (#2997ff is for dark backgrounds) */
+.acc-section .pill-btn { border-color: #0071e3; color: #0071e3; }
+.acc-section .pill-btn:hover { background: #0071e3; color: #fff; }
+.acc-section .pill-btn.is-primary { color: #fff; }
 .acc-visual { position: absolute; inset: 0; }
 .acc-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .acc-placeholder { display: grid; place-items: center; }
+/* a product render on a transparent background (the DP Stand): whole, between the name on top and the price below */
+.acc-visual.is-product img { inset: 30% 8% 23%; width: 84%; height: 46%; object-fit: contain; }
 .acc-placeholder span {
     padding: 10px 16px; border-radius: 12px;
-    border: 1px dashed rgba(255, 255, 255, 0.18);
+    border: 1px dashed rgba(0, 0, 0, 0.16);
     font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(0, 0, 0, 0.32);
 }
 @media (max-width: 860px) {
     .acc-section { grid-template-columns: 1fr; }
@@ -2012,6 +2026,7 @@ body.story-on .nav {
                 </ul>
                 <ul class="menu-link-column">
                     <li>Quick Links</li>
+                    <li><a href="accessories.html">Accessories</a></li>
                     <li><a href="all-models.html">Compare Models</a></li>
                 </ul>
             </div>
@@ -2072,6 +2087,7 @@ body.story-on .nav {
     <a href="DPMini.html" class="mobile-link">DP Mini</a>
     <a href="DPPro.html" class="mobile-link">DP Pro</a>
     <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="accessories.html" class="mobile-link">Accessories</a>
     <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
     <div class="mobile-account">   <!-- styled and kept in sync with the sign-in state by customer-account-nav.js -->
         <button type="button" class="mobile-account-toggle" aria-expanded="false" aria-controls="mobile-account-links"
@@ -2293,7 +2309,7 @@ body.story-on .nav {
         <div class="acc-foot">
             <p class="acc-price">€670 with DP Mini · €1.490 on its own · excl. VAT</p>
             <div class="acc-cta">
-                <a class="pill-btn is-primary" href="contactus.html">Learn more</a>
+                <a class="pill-btn is-primary" href="accessories.html#dp-pedal">Learn more</a>
                 <a class="pill-btn" href="buydpmini.html">Buy</a>
             </div>
         </div>
@@ -2304,15 +2320,12 @@ body.story-on .nav {
             <h3>DP Stand</h3>
             <p class="acc-sub">Quick attach. Quick release. Room to room in seconds.</p>
         </div>
-        <!-- DP Stand image goes here: replace the placeholder div with
-             <div class="acc-visual"><img src="renders/dp-stand.webp" alt="DP Stand"></div> -->
-        <div class="acc-visual acc-placeholder" aria-hidden="true">
-            <span>DP Stand image</span>
-        </div>
+        <!-- the DP Stand render (blender/DPSTAND.blend), fitted between the name and the price -->
+        <div class="acc-visual is-product"><img src="renders/dp-stand.webp" alt="DP Stand" loading="lazy"></div>
         <div class="acc-foot">
             <p class="acc-price">First stand included with DP Mini · additional stands €1.850 excl. VAT</p>
             <div class="acc-cta">
-                <a class="pill-btn is-primary" href="stands.html">Learn more</a>
+                <a class="pill-btn is-primary" href="accessories.html#dp-stand">Learn more</a>
                 <a class="pill-btn" href="buydpmini.html">Buy</a>
             </div>
         </div>
@@ -2507,7 +2520,7 @@ body.story-on .nav {
                 <ul>
                     <li><a href="DPMini.html">DP Mini</a></li>
                     <li><a href="DPPro.html">DP Pro</a></li>
-                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
                     <li><a href="all-models.html">Compare Models</a></li>
                     <li><a href="index.html#specs">Specifications</a></li>
                 </ul>
@@ -2780,7 +2793,7 @@ h1, p, .hero-cta, .model-stage { transform: translateY(20px); }
                   const formattedOptions = formatOptions(item.options);
 
                   li.innerHTML = `
-                      <div class="cart-product-card">
+                      <div class="cart-product-card has-thumb">${window.dpbCartThumb ? dpbCartThumb(item.name) : ''}
                           <div class="cart-product-header">
                               <h4 class="cart-product-title">${baseName}</h4>
                               <button class="cart-product-remove-btn" data-cart-action="rm" data-cart-idx="${idx}">&times;</button>
@@ -3693,6 +3706,6 @@ mqMobile.addEventListener('change', layout);
 layout();
 
 </script>
-<script type="module" src="customer-account-nav.js?v=3"></script>
+<script type="module" src="customer-account-nav.js?v=4"></script>
 </body>
 </html>

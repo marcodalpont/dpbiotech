@@ -628,7 +628,7 @@ font-size: 32px;
     border: 1px solid rgba(10,10,15,0.06);
     border-left: 1px solid rgba(10,10,15,0.06);
     border-radius: 22px;
-    transform: translateX(calc(100% + 32px));
+    transform: translateX(calc(100% + 100px));
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 201;
     display: flex; flex-direction: column;
@@ -860,6 +860,11 @@ footer {
     display: block; margin-top: 6px; text-align: center;
     font-size: 12px; color: var(--text-secondary, #86868b);
 }
+/* The same space between the products in every cart, on every page: only the list's gap, no margins on the
+   rows or on the cards (each page added its own, so the space changed from page to page) */
+.cart-sidebar .cart-items { display: flex !important; flex-direction: column; gap: 12px !important; }
+.cart-sidebar .cart-items > * { margin: 0 !important; flex-shrink: 0; }
+.cart-sidebar .cart-items .cart-product-card { margin: 0 !important; }
 </style>
 <style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
 </head>
@@ -902,6 +907,7 @@ footer {
               </ul>
               <ul class="menu-link-column">
                   <li>Quick Links</li>
+                  <li><a href="accessories.html">Accessories</a></li>
                   <li><a href="all-models.html">Compare Models</a></li>
               </ul>
           </div>
@@ -984,6 +990,7 @@ footer {
     <a href="DPMini.html" class="mobile-link">DP Mini</a>
     <a href="DPPro.html" class="mobile-link">DP Pro</a>
     <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="accessories.html" class="mobile-link">Accessories</a>
     <a href="index.html#team" class="mobile-link">Company</a>
     <a href="contactus.html" class="mobile-link">Support</a>
     <a href="licensing.html" class="mobile-link">Licensing</a>
@@ -1096,7 +1103,7 @@ environment-image="neutral">
                 <ul>
                     <li><a href="DPMini.html">DP Mini</a></li>
                     <li><a href="DPPro.html">DP Pro</a></li>
-                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
                     <li><a href="all-models.html">Compare Models</a></li>
                     <li><a href="index.html#specs">Specifications</a></li>
                 </ul>
@@ -1158,6 +1165,6 @@ environment-image="neutral">
 
 <script src="waitlist-modal.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
-<script type="module" src="customer-account-nav.js?v=3"></script>
+<script type="module" src="customer-account-nav.js?v=4"></script>
 </body>
 </html>

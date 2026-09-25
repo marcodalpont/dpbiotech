@@ -131,6 +131,7 @@ const MOBILE_MENU_HTML = `
   <a href="DPMini.html" class="mobile-link">DP Mini</a>
   <a href="DPPro.html" class="mobile-link">DP Pro</a>
   <a href="all-models.html" class="mobile-link">All Models</a>
+  <a href="accessories.html" class="mobile-link">Accessories</a>
   <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
   <div class="mobile-account">
     <button type="button" class="mobile-account-toggle" aria-expanded="false" aria-controls="mobile-account-links"

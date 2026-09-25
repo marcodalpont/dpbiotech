@@ -343,7 +343,7 @@ a:hover { opacity: 0.7; }
     width: calc(100% - 32px); max-width: 400px;
     background: var(--bg-card);
     border-radius: 22px;
-    transform: translateX(calc(100% + 32px));
+    transform: translateX(calc(100% + 100px));
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 201;
     display: flex; flex-direction: column;
@@ -2937,8 +2937,15 @@ body.account-page .top-zone {
 @media (prefers-color-scheme: dark) {
     .sub-card { background: var(--bg-secondary); }
 }
+/* The same space between the products in every cart, on every page: only the list's gap, no margins on the
+   rows or on the cards (each page added its own, so the space changed from page to page) */
+.cart-sidebar .cart-items { display: flex !important; flex-direction: column; gap: 12px !important; }
+.cart-sidebar .cart-items > * { margin: 0 !important; flex-shrink: 0; }
+.cart-sidebar .cart-items .cart-product-card { margin: 0 !important; }
 </style>
 <style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
+<script src="products.js"></script>
+<script src="cart-thumbs.js"></script>
 </head>
 <body class="account-page">
 
@@ -3021,6 +3028,7 @@ body.account-page .top-zone {
               </ul>
               <ul class="menu-link-column">
                   <li>Quick Links</li>
+                  <li><a href="accessories.html">Accessories</a></li>
                   <li><a href="all-models.html">Compare Models</a></li>
               </ul>
           </div>
@@ -3080,6 +3088,7 @@ body.account-page .top-zone {
     <a href="DPMini.html" class="mobile-link">DP Mini</a>
     <a href="DPPro.html" class="mobile-link">DP Pro</a>
     <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="accessories.html" class="mobile-link">Accessories</a>
     <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
     <div class="account-menu">
       <div class="account-menu-panel">
@@ -3534,7 +3543,7 @@ body.account-page .top-zone {
                 <ul>
                     <li><a href="DPMini.html">DP Mini</a></li>
                     <li><a href="DPPro.html">DP Pro</a></li>
-                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
                     <li><a href="all-models.html">Compare Models</a></li>
                     <li><a href="index.html#specs">Specifications</a></li>
                     <li><a href="index.html#dppro-whats-next">DP Pro Roadmap</a></li>
@@ -3786,7 +3795,7 @@ body.account-page .top-zone {
                   const formattedOptions = formatOptions(item.options);
 
                   li.innerHTML = `
-                      <div class="cart-product-card">
+                      <div class="cart-product-card has-thumb">${window.dpbCartThumb ? dpbCartThumb(item.name) : ''}
                           <div class="cart-product-header">
                               <h4 class="cart-product-title">${baseName}</h4>
                               <button class="cart-product-remove-btn" data-cart-action="rm" data-cart-idx="${idx}">&times;</button>

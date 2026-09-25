@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <script src="gate.js"></script>
+<script src="products.js"></script>
+<script src="cart-thumbs.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -479,7 +481,7 @@
     width: calc(100% - 32px); max-width: 400px;
     background: var(--bg-card, #fff);
     border-radius: 22px;
-    transform: translateX(calc(100% + 32px));
+    transform: translateX(calc(100% + 100px));
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 201;
     display: flex; flex-direction: column;
@@ -664,6 +666,11 @@ footer .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
     display: block; margin-top: 6px; text-align: center;
     font-size: 12px; color: var(--text-secondary, #86868b);
 }
+/* The same space between the products in every cart, on every page: only the list's gap, no margins on the
+   rows or on the cards (each page added its own, so the space changed from page to page) */
+.cart-sidebar .cart-items { display: flex !important; flex-direction: column; gap: 12px !important; }
+.cart-sidebar .cart-items > * { margin: 0 !important; flex-shrink: 0; }
+.cart-sidebar .cart-items .cart-product-card { margin: 0 !important; }
 </style>
 <style>/*footer-alt-bg*/footer{background:var(--bg-secondary)}</style>
 </head>
@@ -705,6 +712,7 @@ footer .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
               </ul>
               <ul class="menu-link-column">
                   <li>Quick Links</li>
+                  <li><a href="accessories.html">Accessories</a></li>
                   <li><a href="all-models.html">Compare Models</a></li>
               </ul>
           </div>
@@ -761,6 +769,7 @@ footer .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
     <a href="DPMini.html" class="mobile-link">DP Mini</a>
     <a href="DPPro.html" class="mobile-link">DP Pro</a>
     <a href="all-models.html" class="mobile-link">All Models</a>
+    <a href="accessories.html" class="mobile-link">Accessories</a>
     <a href="contactus.html" class="mobile-link">Company &amp; Support</a>
     <a href="licensing.html" class="mobile-link">Licensing</a>
 </div>
@@ -1300,7 +1309,7 @@ function escHtml(s) {
                 <ul>
                     <li><a href="DPMini.html">DP Mini</a></li>
                     <li><a href="DPPro.html">DP Pro</a></li>
-                    <li><a href="stands.html">Stands &amp; Mounts</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
                     <li><a href="all-models.html">Compare Models</a></li>
                     <li><a href="index.html#specs">Specifications</a></li>
                 </ul>
@@ -1431,7 +1440,7 @@ function escHtml(s) {
         cart.forEach(function(item){
           var li = document.createElement('div');
           li.className = 'cart-item';
-          li.innerHTML = '<div class="cart-product-card"><div class="cart-product-header"><p class="cart-product-title">' + (item.name || 'Item') + '</p><span>' + EUR.format(item.price || 0) + '</span></div></div>';
+          li.innerHTML = '<div class="cart-product-card has-thumb">' + (window.dpbCartThumb ? dpbCartThumb(item.name) : '') + '<div class="cart-product-header"><p class="cart-product-title">' + (item.name || 'Item') + '</p><span>' + EUR.format(item.price || 0) + '</span></div></div>';
           cartItemsEl.appendChild(li);
         });
       }
@@ -1443,6 +1452,6 @@ function escHtml(s) {
 })();
 </script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
-<script type="module" src="customer-account-nav.js?v=3"></script>
+<script type="module" src="customer-account-nav.js?v=4"></script>
 </body>
 </html>

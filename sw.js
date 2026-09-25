@@ -7,7 +7,7 @@
                       while a background fetch refreshes the cache so an edited image
                       shows up on the next reload (no manual cache clearing needed).
    Bump CACHE_NAME to invalidate cached assets. */
-const CACHE_NAME = 'dpbiotech-assets-v7';
+const CACHE_NAME = 'dpbiotech-assets-v9';
 
 self.addEventListener('install', event => {
     self.skipWaiting();
